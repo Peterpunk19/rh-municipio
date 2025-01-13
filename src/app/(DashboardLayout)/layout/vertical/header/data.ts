@@ -179,4 +179,4 @@ const pageLinks: LinkType[] = [
   },
 ];
 
-export { notifications,  profile, pageLinks, appsLink };
+export { notifications, profile, pageLinks, appsLink };
