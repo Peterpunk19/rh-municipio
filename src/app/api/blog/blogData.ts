@@ -7,7 +7,6 @@ import { BlogType, BlogPostType } from "../../(DashboardLayout)/types/apps/blog"
 
 const chance = new Chance();
 
-
 const BlogComment: BlogType[] = [
   {
     id: uniqueId("#comm_"),
@@ -92,8 +91,7 @@ const BlogPost: BlogPostType[] = [
   },
   {
     id: chance.integer({ min: 1, max: 2000 }),
-    title:
-      "Apple is apparently working on a new streamlined accessibility for iOS",
+    title: "Apple is apparently working on a new streamlined accessibility for iOS",
     content: chance.paragraph({ sentences: 2 }),
     coverImg: "/images/blog/blog-img3.jpg",
     createdAt: sub(new Date(), { days: 5, hours: 2, minutes: 20 }),
@@ -161,8 +159,7 @@ const BlogPost: BlogPostType[] = [
   },
   {
     id: chance.integer({ min: 1, max: 2000 }),
-    title:
-      "Intel loses bid to revive antitrust case against patent foe Fortress",
+    title: "Intel loses bid to revive antitrust case against patent foe Fortress",
     content: chance.paragraph({ sentences: 2 }),
     coverImg: "/images/blog/blog-img11.jpg",
     createdAt: sub(new Date(), { days: 3, hours: 6, minutes: 20 }),

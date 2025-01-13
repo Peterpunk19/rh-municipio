@@ -1,4 +1,3 @@
-
 export interface ProductType {
   title: string;
   price: number;
@@ -22,7 +21,7 @@ export interface ProductFiterType {
   filterbyTitle?: string;
   name?: string;
   sort?: string;
-  icon?:  any;
+  icon?: any;
   devider?: boolean;
 }
 

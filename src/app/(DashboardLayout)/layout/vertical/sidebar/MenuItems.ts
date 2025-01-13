@@ -75,11 +75,10 @@ import {
   IconHome2,
   IconUser,
   IconBrandGolang,
-  IconUsers
+  IconUsers,
 } from "@tabler/icons-react";
 
 const Menuitems: MenuitemsType[] = [
-
   {
     id: uniqueId(),
     title: "Inicio",

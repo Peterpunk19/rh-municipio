@@ -18,8 +18,7 @@ const KanbanData: TodoCategory[] = [
         id: "102",
         task: "lets do some task on pd",
         taskImage: "",
-        taskText:
-          "Lorem ipsum dolor sit amet, consectetur adipisicing elit, o eiusmod tempor incid.",
+        taskText: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, o eiusmod tempor incid.",
         date: "24 july",
         taskProperty: "Mobile",
       },
