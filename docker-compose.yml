@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  nextjs:
+    build: .  # This will look for the Dockerfile in the current directory
+    container_name: nextjs-app
+    ports:
+      - "3001:3000"  # Expose Next.js app on port 3000
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - DB_ENABLED=${DB_ENABLED}
+      - DB_TYPE=${DB_TYPE}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - DB_USER=${DB_USER}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+    volumes:
+      - .:/app  # Mount the current directory into the container as /app
+      - /app/node_modules  # Ensure node_modules persists across restarts
+    depends_on:
+      - mysql
+    networks:
+      - app_network
+
+  mysql:
+    image: mysql:8.0  # MySQL 8.0 image
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"  # Expose MySQL on port 3306
+    volumes:
+      - mysql-data:/var/lib/mysql  # Persist MySQL data
+    networks:
+      - app_network
+
+  adminer:
+    image: adminer  # Adminer image
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+      ADMINER_DESIGN: dracula
+    container_name: adminer
+    ports:
+      - "8081:8080"  # Expose Adminer on port 8080
+    depends_on:
+      - mysql  # Ensure MySQL starts before Adminer
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local

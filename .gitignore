@@ -12,5 +12,5 @@ node_modules/
 
 .idea/
 .next/
- yarn.lock
+yarn.lock
 .env

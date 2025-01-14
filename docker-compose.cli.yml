@@ -1,0 +1,13 @@
+services:
+  app:
+    environment:
+      - NODE_ENV=cli  # Set environment for CLI tasks
+    command: yarn run cli-task  # Run a one-off task for the CLI
+    volumes:
+      - .:/app
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

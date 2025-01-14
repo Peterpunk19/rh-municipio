@@ -1,0 +1,10 @@
+services:
+  nextjs:
+    environment:
+      - NODE_ENV=development  # Set environment to development
+    volumes:
+      - .:/app  # Mount the entire project directory into the container
+      - /app/node_modules  # Ensure node_modules persists across restarts
+    ports:
+      - "3010:3000"  # Expose the Next.js app on a different port (e.g., 3010) for development
+    command: ["yarn", "dev"]  # Override the default CMD to run the Next.js development server
