@@ -9,6 +9,422 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "mysql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_NON_POOLING")
+}
+
+model User {
+  id                     Int                  @id @default(autoincrement())
+  uuid                   String               @unique
+  username               String               @unique
+  password               String
+  set_password_key       String?
+  active                 Boolean              @default(true)
+  createdAt              DateTime?            @default(now())
+  updatedAt              DateTime?            @updatedAt
+  employee               Employee?            @relation(fields: [employee_id], references: [id])
+  employee_id            Int?                 @unique
+  role_id                Int                  @unique
+  role                   Role                 @relation(fields: [role_id], references: [id])
+  user_module_actions    UserModuleActions[]
+  attendances_created_by EmployeeAttendance[]
+  employee_incidents     EmployeeIncidents[]
+  created_by             User?                @relation("UserCreatedBy", fields: [created_by_id], references: [id])
+  created_by_id          Int?
+  users_created          User[]               @relation("UserCreatedBy")
+}
+
+model Employee {
+  id                            Int                 @id @default(autoincrement())
+  number_employee               String
+  name                          String
+  paternal_last_name            String
+  maternal_last_name            String
+  birthday                      String
+  rfc                           String
+  curp                          String
+  active                        Boolean             @default(true)
+  created_at                    DateTime?           @default(now())
+  updated_at                    DateTime?           @updatedAt
+  user                          User?
+  user_id                       Int?
+  status_employee               StatusEmployee      @relation(fields: [status_employee_id], references: [id])
+  status_employee_id            Int
+  gender                        Gender              @relation(fields: [gender_id], references: [id])
+  gender_id                     Int
+  employee_hiring_id            Int                 @unique
+  employee_hiring               EmployeeHiring      @relation(fields: [employee_hiring_id], references: [id])
+  locations                     EmployeeLocation[]
+  director_id                   Int                 @unique
+  director                      Director            @relation("Director", fields: [director_id], references: [id])
+  sustitute_id                  Int                 @unique
+  sustitute                     Director            @relation("Substitute", fields: [sustitute_id], references: [id])
+  employee_incidents            EmployeeIncidents[]
+  employee_incidents_created_by EmployeeIncidents[] @relation("createdByEmployee")
+  employee_vacations            EmployeeVacations[] @relation("employeeVacations")
+  employee_vacations_created_by EmployeeVacations[] @relation("employeeVacationsCreators")
+  employee_requests             EmployeeRequest[]
+  employee_requests_by          EmployeeRequest[]   @relation("requestedBy")
+  employee_requests_resolved_by EmployeeRequest[]   @relation("resolvedBy")
+  employee_created_by           EmployeeHiring[]    @relation("EmployeeCreatedBy")
+}
+
+model EmployeeHiring {
+  id                  Int                  @id @default(autoincrement())
+  employee_id         Int
+  start_job_date      DateTime
+  end_job_date        DateTime
+  category_id         Int
+  employee_type_id    Int
+  departamento_id     Int
+  payroll_id          Int
+  active              Boolean              @default(true)
+  created_by          Int
+  created_at          DateTime?            @default(now())
+  updated_at          DateTime?            @updatedAt
+  category            Category             @relation(fields: [category_id], references: [id])
+  employee_type       EmployeeType         @relation(fields: [employee_type_id], references: [id])
+  departamento        Departamento         @relation(fields: [departamento_id], references: [id])
+  payroll             Payroll              @relation(fields: [payroll_id], references: [id])
+  employee            Employee?
+  created_by_user     Employee             @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
+  employee_attendance EmployeeAttendance[]
+}
+
+model EmployeeLocation {
+  id          Int       @id @default(autoincrement())
+  employee_id Int
+  location_id Int
+  active      Boolean   @default(true)
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  location    Location? @relation(fields: [location_id], references: [id])
+  employee    Employee? @relation(fields: [employee_id], references: [id])
+}
+
+model Director {
+  id            Int       @id @default(autoincrement())
+  direccion_id  Int
+  employee_id   Int
+  substitute_id Int
+  profesion     String
+  direccion     Direccion @relation(fields: [direccion_id], references: [id])
+  employee      Employee? @relation("Director")
+  substitute    Employee? @relation("Substitute")
+  active        Boolean   @default(true)
+  start_date    DateTime
+  end_date      DateTime
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @updatedAt
+
+  @@unique([direccion_id, employee_id, substitute_id, active])
+}
+
+model Attendance {
+  id                      Int                     @id @default(autoincrement())
+  name                    String
+  display_name            String
+  active                  Boolean                 @default(true)
+  created_at              DateTime?               @default(now())
+  updated_at              DateTime?               @updatedAt
+  employee_attendance     EmployeeAttendance[]
+  employee_request_detail EmployeeRequestDetail[]
+}
+
+model EmployeeAttendance {
+  id                 Int                 @id @default(autoincrement())
+  check_in           DateTime
+  check_out          DateTime
+  active             Boolean             @default(true)
+  created_by_id      Int
+  location_id        Int
+  employee_hiring_id Int
+  attendance_id      Int
+  attendance         Attendance          @relation(fields: [attendance_id], references: [id])
+  created_by         User                @relation(fields: [created_by_id], references: [id])
+  location           Location            @relation(fields: [location_id], references: [id])
+  employee_hiring    EmployeeHiring      @relation(fields: [employee_hiring_id], references: [id])
+  created_at         DateTime?           @default(now())
+  udpated_at         DateTime?           @updatedAt
+  employee_incidents EmployeeIncidents[]
+}
+
+model EmployeeIncidents {
+  id Int @id @default(autoincrement())
+
+  folio                  Int
+  oficio                 String
+  start_date             DateTime
+  end_date               DateTime
+  description            String
+  incident_status_id     Int
+  incident_status        IncidentStatus      @relation(fields: [incident_status_id], references: [id])
+  incident_id            Int
+  incident               Incident            @relation(fields: [incident_id], references: [id])
+  employee_id            Int
+  employee               Employee            @relation(fields: [employee_id], references: [id])
+  employee_attendance_id Int
+  employee_attendance    EmployeeAttendance  @relation(fields: [employee_attendance_id], references: [id])
+  created_by_id          Int
+  created_by             Employee            @relation("createdByEmployee", fields: [created_by_id], references: [id])
+  validated_by           Int
+  user_id                Int?
+  user                   User?               @relation(fields: [user_id], references: [id])
+  employee_vacations     EmployeeVacations[]
+  created_at             DateTime?           @default(now())
+  recived_at             DateTime?           @updatedAt
+  validated_at           DateTime?           @updatedAt
+}
+
+model Incident {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  display_name       String
+  type               Int
+  active             Boolean
+  employee_incidents EmployeeIncidents[]
+}
+
+model IncidentStatus {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  display_name       String
+  type               Int
+  active             Boolean
+  employee_incidents EmployeeIncidents[]
+}
+
+model Vacation {
+  id         Int     @id @default(autoincrement())
+  years_from Int
+  years_to   Int
+  days       Int
+  active     Boolean @default(true)
+}
+
+model EmployeeVacations {
+  id                   Int               @id @default(autoincrement())
+  start                DateTime
+  end                  DateTime
+  color                String
+  created_by_id        Int
+  created_by           Employee          @relation("employeeVacationsCreators", fields: [created_by_id], references: [id])
+  employee_incident_id Int
+  employee_incident    EmployeeIncidents @relation(fields: [employee_incident_id], references: [id])
+  employee_id          Int
+  employee             Employee          @relation("employeeVacations", fields: [employee_id], references: [id])
+  created_at           DateTime?         @default(now())
+  updated_at           DateTime?         @updatedAt
+}
+
+model Request {
+  id                Int               @id @default(autoincrement())
+  name              String
+  display_name      String
+  description       String
+  active            Boolean           @default(true)
+  employee_requests EmployeeRequest[]
+}
+
+model RequestStatus {
+  id                Int               @id @default(autoincrement())
+  name              String
+  display_name      String
+  description       String
+  active            Boolean           @default(true)
+  employee_requests EmployeeRequest[]
+}
+
+model EmployeeRequest {
+  id                      Int                     @id @default(autoincrement())
+  employee_id             Int
+  request_id              Int
+  request_status_id       Int
+  request_date            DateTime
+  requested_by_id         Int
+  resolved_by_id          Int
+  resolved_at             DateTime
+  created_at              DateTime?               @default(now())
+  updated_at              DateTime?               @updatedAt
+  active                  Boolean                 @default(true)
+  employee                Employee                @relation(fields: [employee_id], references: [id])
+  request                 Request                 @relation(fields: [request_id], references: [id])
+  request_status          RequestStatus           @relation(fields: [request_status_id], references: [id])
+  requested_by            Employee                @relation("requestedBy", fields: [requested_by_id], references: [id])
+  resolved_by             Employee                @relation("resolvedBy", fields: [resolved_by_id], references: [id])
+  employee_request_detail EmployeeRequestDetail[]
+}
+
+model EmployeeRequestDetail {
+  id                  Int             @id @default(autoincrement())
+  start_at            DateTime
+  end_at              DateTime
+  attendance_date     DateTime
+  employee_request_id Int
+  employee_request    EmployeeRequest @relation(fields: [employee_request_id], references: [id])
+  location_id         Int
+  location            Location        @relation(fields: [location_id], references: [id])
+  attendance_id       Int
+  attendance          Attendance      @relation(fields: [attendance_id], references: [id])
+}
+
+model JobScheduleEmployee {
+  id            Int       @id @default(autoincrement())
+  name          String
+  description   String
+  active        Boolean   @default(true)
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @updatedAt
+  start_day_id  Int
+  end_day_id    Int
+  start_day     Day       @relation("StartDay", fields: [start_day_id], references: [id])
+  end_day       Day       @relation("EndDay", fields: [end_day_id], references: [id])
+  start_hour_id Int
+  end_hour_id   Int
+  start_hour    Hour      @relation("StartHour", fields: [start_hour_id], references: [id])
+  end_hour      Hour      @relation("EndHour", fields: [end_hour_id], references: [id])
+}
+
+model Day {
+  id                           Int                   @id @default(autoincrement())
+  day                          String
+  active                       Boolean               @default(true)
+  job_schedule_employees_start JobScheduleEmployee[] @relation("StartDay")
+  job_schedule_employees_end   JobScheduleEmployee[] @relation("EndDay")
+}
+
+model Hour {
+  id                           Int                   @id @default(autoincrement())
+  hour                         String
+  active                       Boolean               @default(true)
+  job_schedule_employees_start JobScheduleEmployee[] @relation("StartHour")
+  job_schedule_employees_end   JobScheduleEmployee[] @relation("EndHour")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  active      Boolean  @default(true)
+  users       User[]
+  modules     Module[] @relation("ModuleRoles")
+}
+
+model Module {
+  id           Int            @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean        @default(true)
+  role_id      Int
+  roles        Role[]         @relation("ModuleRoles")
+  actions      ModuleAction[]
+}
+
+model Action {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String
+  active      Boolean        @default(true)
+  modules     ModuleAction[]
+}
+
+model ModuleAction {
+  id                  Int                 @id @default(autoincrement())
+  module_id           Int
+  action_id           Int
+  active              Boolean             @default(true)
+  module              Module              @relation(fields: [module_id], references: [id])
+  action              Action              @relation(fields: [action_id], references: [id])
+  user_module_actions UserModuleActions[]
+
+  @@unique([module_id, action_id])
+}
+
+model UserModuleActions {
+  id               Int          @id @default(autoincrement())
+  active           Boolean
+  module_action_id Int
+  module_action    ModuleAction @relation(fields: [module_action_id], references: [id])
+  user_id          Int
+  user             User         @relation(fields: [user_id], references: [id])
+}
+
+model StatusEmployee {
+  id           Int        @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean    @default(true)
+  employees    Employee[]
+}
+
+model Gender {
+  id           Int        @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean    @default(true)
+  employees    Employee[]
+}
+
+model EmployeeType {
+  id           Int              @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean          @default(true)
+  employees    EmployeeHiring[]
+}
+
+model Category {
+  id           Int              @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean          @default(true)
+  employees    EmployeeHiring[]
+}
+
+model Payroll {
+  id           Int              @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean          @default(true)
+  employees    EmployeeHiring[]
+}
+
+model Location {
+  id                      Int                     @id @default(autoincrement())
+  name                    String
+  display_name            String
+  active                  Boolean                 @default(true)
+  employees               EmployeeLocation[]
+  employee_attendance     EmployeeAttendance[]
+  employee_request_detail EmployeeRequestDetail[]
+}
+
+model Departamento {
+  id           Int              @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean          @default(true)
+  employees    EmployeeHiring[]
+  direccion    Direccion        @relation(fields: [direccion_id], references: [id])
+  direccion_id Int
+}
+
+model Direccion {
+  id            Int            @id @default(autoincrement())
+  name          String
+  display_name  String
+  active        Boolean        @default(true)
+  departamentos Departamento[]
+  secretaria    Secretaria     @relation(fields: [secretaria_id], references: [id])
+  secretaria_id Int
+  directors     Director[]
+}
+
+model Secretaria {
+  id           Int         @id @default(autoincrement())
+  name         String
+  display_name String
+  active       Boolean     @default(true)
+  direcciones  Direccion[]
 }
