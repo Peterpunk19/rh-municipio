@@ -25,7 +25,28 @@ And only execute the api in console to see the operations
 docker-compose up nextjs
 ```
 
-## Access Services:
+## Configuration PRISMA ORM
+
+Instalamos las dependencies del proyecto y las necesarias de PRISMA que se encuentran en el archivo de package.json
+
+```bash
+yarn install
+```
+
+Aplicar las migraciones directamente para crear la estructura de la base de datos:
+
+```bash
+npx prisma migrate deploy
+```
+
+Ejecuta el proyecto con la base de datos configurada
+
+```bash
+npm run dev
+```
+
+## Access Services
+
 Next.js: Visit http://localhost:3001 to see your Next.js app.
 
 Adminer: Visit http://localhost:8081 to interact with the MySQL database.
