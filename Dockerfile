@@ -8,4 +8,6 @@ COPY package.json ./
 RUN yarn install
 COPY . .
 EXPOSE 3001
+# Set environment to development
+ENV NODE_ENV=development
 CMD ["yarn", "dev"]
