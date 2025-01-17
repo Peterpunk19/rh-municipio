@@ -2,21 +2,30 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+### Install
 
 ```bash
 cp .env.dist .env
 cp docker-compose.override.yml.dist docker-compose.override.yml
 docker-compose build
 docker-compose up
+dcli yarn install
 ```
+
+> `dcli` is an alias for `docker-compose -f docker-compose.cli.yml run --rm`
 
 #### Run Dev
 
-It will start api, mysql, adminer and nextjs
+It will start mysql, adminer and nextjs
 
 ```bash
-docker-compose up -d
+docker-compose up
+```
+
+If you prefer in background the dependencies:
+
+```bash
+docker-compose up -d mysql adminer
 ```
 
 And only execute the api in console to see the operations
@@ -45,6 +54,28 @@ Ejecuta el proyecto con la base de datos configurada
 npm run dev
 ```
 
+### Run Seeds
+
+```bash
+npx tsc prisma/seed.ts
+node prisma/seed.js
+```
+### To rollback a seed in Prisma
+```bash
+npx tsc prisma/rollback-seed.ts
+node prisma/rollback-seed.js
+```
+
+### Create migration
+```bash
+npx prisma migrate dev --name <migration-name>
+npx prisma migrate deploy
+```
+
+### To rollback a migration
+```bash
+npx prisma migrate reset
+```
 ## Access Services
 
 Next.js: Visit http://localhost:3001 to see your Next.js app.

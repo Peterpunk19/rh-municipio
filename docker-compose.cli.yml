@@ -1,12 +1,20 @@
 services:
-  app:
-    environment:
-      - NODE_ENV=cli  # Set environment for CLI tasks
-    command: yarn run cli-task  # Run a one-off task for the CLI
+  yarn:
+    image: 'nextjs-app:dev'
+    init: true
+    entrypoint: yarn
+    user: node
     volumes:
       - .:/app
+      - yarn_cache:/node/.cache/yarn/v1
     networks:
       - app_network
+
+volumes:
+  yarn_cache:
+  data:
+  mysql-data:
+    driver: local
 
 networks:
   app_network:
