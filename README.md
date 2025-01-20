@@ -45,13 +45,8 @@ yarn install
 Aplicar las migraciones directamente para crear la estructura de la base de datos:
 
 ```bash
-npx prisma migrate deploy
-```
-
-Ejecuta el proyecto con la base de datos configurada
-
-```bash
-npm run dev
+dcli yarn prisma generate
+dcli yarn prisma migrate deploy
 ```
 
 ### Run Seeds
@@ -62,20 +57,21 @@ node prisma/seed.js
 ```
 ### To rollback a seed in Prisma
 ```bash
-npx tsc prisma/rollback-seed.ts
-node prisma/rollback-seed.js
+dcli yarn tsc prisma/rollback-seed.ts
+dcli yarn prisma/rollback-seed.js
 ```
 
 ### Create migration
 ```bash
-npx prisma migrate dev --name <migration-name>
-npx prisma migrate deploy
+dcli yarn prisma migrate dev --name <migration-name>
+dcli yarn prisma migrate deploy
 ```
 
 ### To rollback a migration
 ```bash
-npx prisma migrate reset
+dcli yarn prisma migrate reset
 ```
+
 ## Access Services
 
 Next.js: Visit http://localhost:3001 to see your Next.js app.

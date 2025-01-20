@@ -5,14 +5,13 @@ services:
     build:
         context: .
         target: development
-    image: 'nextjs-app:dev'
+    image: 'nextjs:latest'
     ports:
       - "3001:3000"  # Expose Next.js app on port 3000
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3001
     volumes:
       - .:/app  # Mount the current directory into the container as /app
-      - /app/node_modules  # Ensure node_modules persists across restarts
     depends_on:
       - mysql
     networks:
