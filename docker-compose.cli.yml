@@ -1,6 +1,6 @@
 services:
   yarn:
-    image: 'nextjs-app:dev'
+    image: 'nextjs:latest'
     init: true
     entrypoint: yarn
     user: node

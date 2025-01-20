@@ -179,7 +179,7 @@ model EmployeeIncidents {
 
 model Incident {
   id                 Int                 @id @default(autoincrement())
-  name               String
+  name               String              @unique
   display_name       String
   type               Int
   active             Boolean
@@ -188,7 +188,7 @@ model Incident {
 
 model IncidentStatus {
   id                 Int                 @id @default(autoincrement())
-  name               String
+  name               String              @unique
   display_name       String
   type               Int
   active             Boolean
@@ -288,7 +288,7 @@ model JobScheduleEmployee {
 
 model Day {
   id                           Int                   @id @default(autoincrement())
-  day                          String
+  day                          String                @unique
   active                       Boolean               @default(true)
   job_schedule_employees_start JobScheduleEmployee[] @relation("StartDay")
   job_schedule_employees_end   JobScheduleEmployee[] @relation("EndDay")
@@ -296,24 +296,25 @@ model Day {
 
 model Hour {
   id                           Int                   @id @default(autoincrement())
-  hour                         String
+  hour                         String                @unique
   active                       Boolean               @default(true)
   job_schedule_employees_start JobScheduleEmployee[] @relation("StartHour")
   job_schedule_employees_end   JobScheduleEmployee[] @relation("EndHour")
 }
 
 model Role {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  active      Boolean  @default(true)
-  users       User[]
-  modules     Module[] @relation("ModuleRoles")
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  display_name String
+  description  String
+  active       Boolean  @default(true)
+  users        User[]
+  modules      Module[] @relation("ModuleRoles")
 }
 
 model Module {
   id           Int            @id @default(autoincrement())
-  name         String
+  name         String         @unique
   display_name String
   active       Boolean        @default(true)
   role_id      Int
@@ -323,7 +324,7 @@ model Module {
 
 model Action {
   id          Int            @id @default(autoincrement())
-  name        String
+  name        String         @unique
   description String
   active      Boolean        @default(true)
   modules     ModuleAction[]
@@ -352,7 +353,7 @@ model UserModuleActions {
 
 model StatusEmployee {
   id           Int        @id @default(autoincrement())
-  name         String
+  name         String     @unique
   display_name String
   active       Boolean    @default(true)
   employees    Employee[]
@@ -360,7 +361,7 @@ model StatusEmployee {
 
 model Gender {
   id           Int        @id @default(autoincrement())
-  name         String
+  name         String     @unique
   display_name String
   active       Boolean    @default(true)
   employees    Employee[]
@@ -368,7 +369,7 @@ model Gender {
 
 model EmployeeType {
   id           Int              @id @default(autoincrement())
-  name         String
+  name         String           @unique
   display_name String
   active       Boolean          @default(true)
   employees    EmployeeHiring[]
@@ -376,7 +377,7 @@ model EmployeeType {
 
 model Category {
   id           Int              @id @default(autoincrement())
-  name         String
+  name         String           @unique
   display_name String
   active       Boolean          @default(true)
   employees    EmployeeHiring[]
@@ -384,7 +385,7 @@ model Category {
 
 model Payroll {
   id           Int              @id @default(autoincrement())
-  name         String
+  name         String           @unique
   display_name String
   active       Boolean          @default(true)
   employees    EmployeeHiring[]
@@ -392,7 +393,7 @@ model Payroll {
 
 model Location {
   id                      Int                     @id @default(autoincrement())
-  name                    String
+  name                    String                  @unique
   display_name            String
   active                  Boolean                 @default(true)
   employees               EmployeeLocation[]
@@ -402,7 +403,7 @@ model Location {
 
 model Departamento {
   id           Int              @id @default(autoincrement())
-  name         String
+  name         String           @unique
   display_name String
   active       Boolean          @default(true)
   employees    EmployeeHiring[]
@@ -412,7 +413,7 @@ model Departamento {
 
 model Direccion {
   id            Int            @id @default(autoincrement())
-  name          String
+  name          String         @unique
   display_name  String
   active        Boolean        @default(true)
   departamentos Departamento[]
@@ -423,7 +424,7 @@ model Direccion {
 
 model Secretaria {
   id           Int         @id @default(autoincrement())
-  name         String
+  name         String      @unique
   display_name String
   active       Boolean     @default(true)
   direcciones  Direccion[]
