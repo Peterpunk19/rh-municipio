@@ -9,10 +9,13 @@ export async function POST(request: Request) {
     const validatedRequest = LoginSchema.parse(await request.json());
     const { username, password } = validatedRequest;
 
-    const user = await prisma.user.findUnique({ where: { username } });
+    const user = await prisma.user.findUnique({ where: { username }});
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+ 
+
+    console.log(await bcryptjs.hash(password, 10));
     const isPasswordValid =  await bcryptjs.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'User password wrong' }, { status: 401 });

@@ -12,8 +12,9 @@ export default {
       async authorize(credentials) {
         const validatedFields = LoginSchema.safeParse(credentials);
         if (validatedFields.success) {
-          const user = await login(validatedFields.data);
-          if (!user || !user.password) return null;
+          const response = await login(validatedFields.data);
+          const user = response.payload;
+          if (!user || !user.id) return null;
           return  user ;
         }
         return null;

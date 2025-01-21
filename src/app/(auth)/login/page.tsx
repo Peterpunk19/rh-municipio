@@ -6,7 +6,7 @@ import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import PageContainer from "@/app/components/container/PageContainer";
 import AuthLogin from "../../components/auth/AuthLogin";
 
-export default function Login2() {
+export default function Login() {
   return (
     (<PageContainer title="Login Page" description="this is Sample page">
       <Box

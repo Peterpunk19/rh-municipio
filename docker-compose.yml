@@ -1,3 +1,7 @@
 services:
   nextjs:
+<<<<<<< HEAD
     image: "nextjs:latest"
+=======
+    image: "nextjs:latest"
+>>>>>>> ccb635e (Feature[implement-auth-with-next]: adding library and config to user next auth in this project)
