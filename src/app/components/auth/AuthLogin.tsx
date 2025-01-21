@@ -1,4 +1,5 @@
 'use client'
+import { useState, useTransition } from "react";
 import {
   Box,
   Typography,
@@ -9,13 +10,72 @@ import {
   Divider,
 } from "@mui/material";
 import Link from "next/link";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { loginType } from "@/app/(DashboardLayout)/types/auth/auth";
 import CustomCheckbox from "@/app/components/forms/theme-elements/CustomCheckbox";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
+import { LoginSchema } from "@/schemas/authentication";
+import { useRouter } from 'next/navigation';
 
-const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
-  <>
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormError } from "@/components/ui/form-error";
+import { FormSuccess } from "@/components/ui/form-success";
+
+//import { login } from "@/services/authentication";
+import { login } from "@/actions/login";
+
+const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
+
+  const [isPending, startTransition] = useTransition();
+  const [errror, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
+  const [loading, setLoading] = useState(false);
+  const [hasErrors, setHasErrors] = useState(false);
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      username: "",
+      password: ""
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
+    setError("");
+    setSuccess("");
+    startTransition(() => {
+      login(data).then((data) => {
+        if(data){
+          setError(data.error);
+          setSuccess(data.success);
+        }
+      });
+    });
+  };
+
+
+  
+  return (<>
+     <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-6 items-center justify-center">
+          {hasErrors && (
+            <div className="col-span-3 bg-white border-l-4 border-red-500 p-4 my-2">
+              <p className="font-bold text-red-500">Error en el formulario</p>
+              <p>Por favor revisa los campos.</p>
+            </div>
+          )}
+          
     {title ? (
       <Typography fontWeight="700" variant="h3" mb={1}>
         {title}
@@ -41,18 +101,46 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
     </Box>
 
     <Stack>
+ 
+
       <Box>
-        <CustomFormLabel htmlFor="username">Usuario</CustomFormLabel>
-        <CustomTextField id="username" variant="outlined" fullWidth />
+
+      <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <CustomFormLabel htmlFor="username">Usuario</CustomFormLabel>
+                      <FormControl>
+                        <CustomTextField
+                         disabled={isPending} {...field} placeholder="********" type="text" id="username" fullWidth/>
+                      </FormControl>
+                      <FormMessage>{form.formState.errors.username?.message}</FormMessage>
+                    </FormItem>
+                  )}
+                />
       </Box>
       <Box>
-        <CustomFormLabel htmlFor="password">Contraseña</CustomFormLabel>
-        <CustomTextField
-          id="password"
-          type="password"
-          variant="outlined"
-          fullWidth
-        />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <CustomFormLabel htmlFor="password">Contraseña</CustomFormLabel>
+                      <FormControl>
+                        <CustomTextField disabled={isPending} {...field} placeholder="********" type="password"
+                        id="password" variant="outlined" fullWidth
+                        />
+                      </FormControl>
+                      <FormMessage>{form.formState.errors.password?.message}</FormMessage>
+                    </FormItem>
+                  )}
+                />
+                 <FormError message={errror} />
+                 <FormSuccess message={success} />
+              
+
       </Box>
       <Stack
         justifyContent="space-between"
@@ -66,34 +154,24 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
             label="Recordar contraseña"
           />
         </FormGroup>
-        <Typography
-          component={Link}
-          href="/auth/auth1/forgot-password"
-          fontWeight="500"
-          sx={{
-            textDecoration: "none",
-            color: "primary.main",
-          }}
-        >
-          ¿Olvidaste tu contraseña?
-        </Typography>
       </Stack>
     </Stack>
     <Box>
       <Button
+        disabled={isPending}
         color="primary"
         variant="contained"
         size="large"
         fullWidth
-        component={Link}
-        href="/"
         type="submit"
       >
-        Ingresar
+          {loading ? "Cargando..." : "Iniciar Sesión"}
       </Button>
     </Box>
     {subtitle}
-  </>
-);
+    </form>
+    </Form>
+  </>);
+};
 
 export default AuthLogin;

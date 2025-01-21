@@ -2,7 +2,7 @@ export const publicRoutes = [
   "/events",
 ];
 
-export const authRoutes = ["/login", "/forgot-password", "/reset-password"];
+export const authRoutes = ["/login"];
 
 export const apiAuthPrefix = "/api/auth";
 export const apiPrefix = "/api";

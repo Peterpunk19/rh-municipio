@@ -8,6 +8,10 @@ declare global {
 export const prisma = global.prismaClient || new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
+<<<<<<< HEAD
   console.log("Global prisma:", global.prismaClient);
   global.prismaClient = prisma;
+=======
+  global.prisma = prisma;
+>>>>>>> ccb635e (Feature[implement-auth-with-next]: adding library and config to user next auth in this project)
 }

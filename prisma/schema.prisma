@@ -56,10 +56,10 @@ model Employee {
   employee_hiring_id            Int                 @unique
   employee_hiring               EmployeeHiring      @relation(fields: [employee_hiring_id], references: [id])
   locations                     EmployeeLocation[]
-  director_id                   Int                 @unique
-  director                      Director            @relation("Director", fields: [director_id], references: [id])
-  sustitute_id                  Int                 @unique
-  sustitute                     Director            @relation("Substitute", fields: [sustitute_id], references: [id])
+  director_id                   Int?                 @unique
+  director                      Director?           @relation("Director", fields: [director_id], references: [id])
+  sustitute_id                  Int?                 @unique
+  sustitute                     Director?            @relation("Substitute", fields: [sustitute_id], references: [id])
   employee_incidents            EmployeeIncidents[]
   employee_incidents_created_by EmployeeIncidents[] @relation("createdByEmployee")
   employee_vacations            EmployeeVacations[] @relation("employeeVacations")
@@ -88,7 +88,7 @@ model EmployeeHiring {
   departamento        Departamento         @relation(fields: [departamento_id], references: [id])
   payroll             Payroll              @relation(fields: [payroll_id], references: [id])
   employee            Employee?
-  created_by_user     Employee             @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
+  created_by_user     Employee?             @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
   employee_attendance EmployeeAttendance[]
 }
 
