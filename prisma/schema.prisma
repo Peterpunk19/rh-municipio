@@ -21,10 +21,10 @@ model User {
   password               String
   set_password_key       String?
   active                 Boolean              @default(true)
-  createdAt              DateTime?            @default(now())
-  updatedAt              DateTime?            @updatedAt
-  employee               Employee?            @relation(fields: [employee_id], references: [id])
-  employee_id            Int?                 @unique
+  created_at             DateTime?            @default(now())
+  updated_at             DateTime?            @updatedAt
+  employee               Employee?
+  employee_id            Int?
   role_id                Int                  @unique
   role                   Role                 @relation(fields: [role_id], references: [id])
   user_module_actions    UserModuleActions[]
@@ -37,29 +37,29 @@ model User {
 
 model Employee {
   id                            Int                 @id @default(autoincrement())
-  number_employee               String
+  number_employee               String              @unique
   name                          String
   paternal_last_name            String
   maternal_last_name            String
-  birthday                      String
-  rfc                           String
-  curp                          String
+  birthday                      DateTime
+  rfc                           String              @unique
+  curp                          String              @unique
   active                        Boolean             @default(true)
   created_at                    DateTime?           @default(now())
   updated_at                    DateTime?           @updatedAt
-  user                          User?
-  user_id                       Int?
+  user                          User                @relation(fields: [user_id], references: [id])
+  user_id                       Int                 @unique
   status_employee               StatusEmployee      @relation(fields: [status_employee_id], references: [id])
   status_employee_id            Int
   gender                        Gender              @relation(fields: [gender_id], references: [id])
   gender_id                     Int
-  employee_hiring_id            Int                 @unique
-  employee_hiring               EmployeeHiring      @relation(fields: [employee_hiring_id], references: [id])
+  employee_hiring_id            Int?                @unique
+  employee_hiring               EmployeeHiring?     @relation(fields: [employee_hiring_id], references: [id])
   locations                     EmployeeLocation[]
-  director_id                   Int?                 @unique
+  director_id                   Int?                @unique
   director                      Director?           @relation("Director", fields: [director_id], references: [id])
-  sustitute_id                  Int?                 @unique
-  sustitute                     Director?            @relation("Substitute", fields: [sustitute_id], references: [id])
+  sustitute_id                  Int?                @unique
+  sustitute                     Director?           @relation("Substitute", fields: [sustitute_id], references: [id])
   employee_incidents            EmployeeIncidents[]
   employee_incidents_created_by EmployeeIncidents[] @relation("createdByEmployee")
   employee_vacations            EmployeeVacations[] @relation("employeeVacations")
@@ -88,8 +88,10 @@ model EmployeeHiring {
   departamento        Departamento         @relation(fields: [departamento_id], references: [id])
   payroll             Payroll              @relation(fields: [payroll_id], references: [id])
   employee            Employee?
-  created_by_user     Employee?             @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
+  created_by_user     Employee?            @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
   employee_attendance EmployeeAttendance[]
+
+  @@unique([employee_id, category_id, departamento_id, payroll_id, active])
 }
 
 model EmployeeLocation {
@@ -101,6 +103,8 @@ model EmployeeLocation {
   updated_at  DateTime? @updatedAt
   location    Location? @relation(fields: [location_id], references: [id])
   employee    Employee? @relation(fields: [employee_id], references: [id])
+
+  @@unique([employee_id, location_id, active])
 }
 
 model Director {
@@ -151,8 +155,7 @@ model EmployeeAttendance {
 }
 
 model EmployeeIncidents {
-  id Int @id @default(autoincrement())
-
+  id                     Int                 @id @default(autoincrement())
   folio                  Int
   oficio                 String
   start_date             DateTime

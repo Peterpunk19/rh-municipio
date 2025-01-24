@@ -49,7 +49,6 @@ dcli yarn prisma generate
 dcli yarn prisma migrate deploy
 ```
 
-<<<<<<< HEAD
 ### Run Seeds
 
 ```bash
@@ -72,8 +71,14 @@ dcli yarn prisma migrate deploy
 ```bash
 dcli yarn prisma migrate reset
 ```
-=======
->>>>>>> ccb635e (Feature[implement-auth-with-next]: adding library and config to user next auth in this project)
+
+## Commands
+
+Run tests
+
+```bash
+dcli yarn test
+```
 
 ## Access Services
 
