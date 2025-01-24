@@ -39,4 +39,16 @@ export const roles = [
     description:
       "Administrador Nominas es el usuario que tiene acceso a todos los modulos de incidencias, asistencias, empleados y nomina",
   },
+  {
+    id: 9,
+    name: "servicio_social",
+    display_name: "Servicio social",
+    description: "Servicio social es el usuario que solo tiene acceso a empleados",
+  },
+  {
+    id: 10,
+    name: "regidor",
+    display_name: "Regidor",
+    description: "Regidor es el usuario que tiene acceso para para realizar solicitudes",
+  },
 ];
