@@ -14,7 +14,7 @@ export const EmployeeService = {
 
   async createEmployee(employee: IEmployee) {
     return prisma.$transaction(async (tx) => {
-      const user = await tx.user.create({
+      const createUser = await tx.user.create({
         data: {
           uuid: uuidv4(),
           username: employee.rfc,
@@ -25,7 +25,7 @@ export const EmployeeService = {
         },
       });
 
-      const create = await tx.employee.create({
+      const createEmployee = await tx.employee.create({
         data: {
           number_employee: employee.numberEmployee,
           name: employee.name,
@@ -42,13 +42,18 @@ export const EmployeeService = {
           },
           user: {
             connect: {
-              id: user.id,
+              id: createUser.id,
             },
           },
         },
       });
 
-      return [user, create];
+      await tx.user.update({
+        where: { id: createUser.id },
+        data: { employee_id: createEmployee.id },
+      });
+
+      return [createUser, createEmployee];
     });
   },
 };

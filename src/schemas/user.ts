@@ -5,12 +5,12 @@ export const UserSchema = z.object({
   uuid: z.string().optional(),
   username: z.string().min(1),
   password: z.string().min(1),
-  set_password_key: z.string().min(1),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  set_password_key: z.string().min(1).optional().nullable(),
+  create_at: z.date().optional(),
+  updated_at: z.date().optional(),
   employee_id: z.number().int().optional(),
   role_id: z.number().int().positive().optional(),
-  created_by_id: z.number().int().positive().optional(),
+  created_by_id: z.number().int().positive().optional().nullable(),
 
   /**
    * createdAt              DateTime?            @default(now())

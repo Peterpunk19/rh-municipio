@@ -19,7 +19,7 @@ export const response = {
         messages: ["Formato de Fecha de nacimiento inválida"],
       },
       genderId: {
-        messages: ["Género debe ser un número"],
+        messages: ["Género es requerido"],
       },
       rfc: {
         messages: ["Required"],
@@ -85,7 +85,7 @@ export const response = {
     message: "Invalid request",
     responseObject: {
       genderId: {
-        messages: ["Género debe ser un número"],
+        messages: ["Género es requerido"],
       },
     },
     statusCode: 400,

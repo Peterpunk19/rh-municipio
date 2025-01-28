@@ -39,9 +39,7 @@ const UserFormSchema = z.object({
     }),
   email: z.string().email({ message: "Correo electrónico inválido" }),
   ish: z.string().optional(),
-  phone_number: z
-    .string()
-    .min(1, { message: "El número de teléfono es obligatorio" }),
+  phone_number: z.string().min(1, { message: "El número de teléfono es obligatorio" }),
   office_address: z.string().optional(),
   office_phone: z.string().optional(),
   tax_address: z.string().optional(),
@@ -49,9 +47,7 @@ const UserFormSchema = z.object({
   birthday: z.date().optional(),
   badge_number: z.string().optional(),
   sex: z.enum(["M", "F"]),
-  user_type: z
-    .number()
-    .int({ message: "El tipo de usuario debe ser un número entero" }),
+  user_type: z.number().int({ message: "El tipo de usuario debe ser un número entero" }),
   entry_date: z.date().optional(),
   valid_until: z.date().optional(),
   visible_in_directory: z.boolean(),
@@ -66,8 +62,7 @@ const UserSchema = z.object({
   password: z.string().min(1),
   name: z
     .string({
-      required_error:
-        "El nombre es requerido y debe ser de al menos 1 caracter",
+      required_error: "El nombre es requerido y debe ser de al menos 1 caracter",
     })
     .min(1),
   lastname: z.string().min(1),
@@ -165,11 +160,9 @@ const EventFormSchema = z.object({
     .string({ message: "La descripción del evento es requerida" })
     .min(10, { message: "La descripción debe tener al menos 10 caracteres" }),
   date: z.date(),
-  location: z
-    .string({ message: "El lugar del evento es requerida" })
-    .min(10, {
-      message: "El lugar del evento debe tener al menos 10 caracteres",
-    }),
+  location: z.string({ message: "El lugar del evento es requerida" }).min(10, {
+    message: "El lugar del evento debe tener al menos 10 caracteres",
+  }),
   event_type: z.number().int(),
   event_status: z.number().int(),
   event_banner: z
@@ -179,11 +172,9 @@ const EventFormSchema = z.object({
       // 5MB max
       message: "La imagen del banner es requerida y debe ser menor de 5MB",
     }),
-  banner_text: z
-    .string({ message: "El texto del banner es requerido" })
-    .min(10, {
-      message: "El texto del banner debe tener al menos 10 caracteres",
-    }),
+  banner_text: z.string({ message: "El texto del banner es requerido" }).min(10, {
+    message: "El texto del banner debe tener al menos 10 caracteres",
+  }),
   event_url: z.string().optional(),
   event_file_a: FileSchema.optional(),
   event_file_b: FileSchema.optional(),
@@ -223,7 +214,7 @@ const EventSchema = z.object({
   onlyPrivate: z.boolean().optional(),
   isFull: z.boolean().optional(),
   has_limit: z.boolean().optional(),
-  max_limit:z.number().positive().optional(),
+  max_limit: z.number().positive().optional(),
   onlyUserTypes: z.array(z.number()),
   onlySpecialities: z.array(z.number()),
 });
@@ -284,8 +275,8 @@ const FileAttachmentSchema = z.object({
   ownerId: z.number().int().optional(),
   paymentId: z.number().int().optional(),
   is_active: z.boolean().optional(),
-  is_payment:   z.boolean().optional(),
-  is_deleted:   z.boolean().optional(),
+  is_payment: z.boolean().optional(),
+  is_deleted: z.boolean().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
@@ -351,7 +342,7 @@ export {
   ModuleSchema,
   ForgotPasswordSchema,
   ResetPasswordSchema,
-  RequestVacationSchema
+  RequestVacationSchema,
 };
 
 /** V1 TO DELETE

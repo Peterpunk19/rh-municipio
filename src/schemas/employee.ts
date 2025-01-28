@@ -32,7 +32,7 @@ export const EmployeePostSchema = z.object({
     },
     z.date({ message: validationMessages.invalidaFormat("Fecha de nacimiento") }),
   ),
-  genderId: z.number({ message: validationMessages.number("Género") }),
+  genderId: z.number({ message: validationMessages.required("Género") }),
   rfc: z
     .string()
     .min(1, { message: validationMessages.required("RFC") })
