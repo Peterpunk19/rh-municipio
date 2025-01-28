@@ -92,20 +92,20 @@ const Menuitems: MenuitemsType[] = [
     id: uniqueId(),
     title: "Incidencias",
     icon: IconAlertCircle,
-    href: "/incidents",
+    href: "/admin/incidents",
     chipColor: "secondary",
   },
   {
     id: uniqueId(),
     title: "Usuarios",
     icon: IconUser,
-    href: "/users",
+    href: "/admin/users",
   },
   {
     id: uniqueId(),
     title: "Empleados",
     icon: IconUsers,
-    href: "/employees",
+    href: "/admin/employees",
   },
   {
     id: uniqueId(),

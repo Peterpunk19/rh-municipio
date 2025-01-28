@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "biome format .",
-    "fix": "git diff --cached --name-only --diff-filter=d | grep '\\.\\(js\\|jsx\\|ts\\|tsx\\|css\\|html\\)$' | xargs biome format --fix",
+    "fix": "biome format --fix",
     "test": "jest"
   },
   "prisma": {

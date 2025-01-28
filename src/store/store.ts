@@ -11,6 +11,7 @@ import NotesReducer from "./apps/notes/NotesSlice";
 import EmailReducer from "./apps/email/EmailSlice";
 import TicketReducer from "./apps/tickets/TicketSlice";
 import ContactsReducer from "./apps/contacts/ContactSlice";
+import EmployeesReducer from "./apps/employees/EmployeeSlice";
 import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
 import BlogReducer from "./apps/blog/BlogSlice";
 
@@ -28,6 +29,7 @@ export const store = configureStore({
     emailReducer: EmailReducer,
     notesReducer: NotesReducer,
     contactsReducer: ContactsReducer,
+    employeesReducer: EmployeesReducer,
     ticketReducer: TicketReducer,
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
@@ -44,6 +46,7 @@ const rootReducer = combineReducers({
   emailReducer: EmailReducer,
   notesReducer: NotesReducer,
   contactsReducer: ContactsReducer,
+  employeesReducer: EmployeesReducer,
   ticketReducer: TicketReducer,
   userpostsReducer: UserProfileReducer,
   blogReducer: BlogReducer,
