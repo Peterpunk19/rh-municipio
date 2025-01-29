@@ -45,15 +45,15 @@ yarn install
 Aplicar las migraciones directamente para crear la estructura de la base de datos:
 
 ```bash
-dcli yarn prisma generate
+dcli yarn prisma migrate dev --name init
 dcli yarn prisma migrate deploy
 ```
 
 ### Run Seeds
 
 ```bash
-npx tsc prisma/seed.ts
-node prisma/seed.js
+dcli yarn tsc prisma/seed.ts
+dcli yarn node prisma/seed.js
 ```
 ### To rollback a seed in Prisma
 ```bash
