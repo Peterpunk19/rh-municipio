@@ -9,7 +9,7 @@ const Logo = () => {
   const customizer = useSelector((state: AppState) => state.customizer);
   const LinkStyled = styled(Link)(() => ({
     height: customizer.TopbarHeight,
-    width: customizer.isCollapse ? "40px" : "180px",
+    width: customizer.isCollapse ? "40px" : "280px",
     overflow: "hidden",
     display: "block",
   }));
@@ -19,18 +19,18 @@ const Logo = () => {
       <LinkStyled href="/">
         {customizer.activeMode === "dark" ? (
           <Image
-            src="/images/logos/logo.png"
+            src="/images/logos/light-logo.svg"
             alt="logo"
             height={customizer.TopbarHeight}
-            width={200}
+            width={280}
             priority
           />
         ) : (
           <Image
-            src={"/images/logos/logo.png"}
+            src={"/images/logos/dark-logo.svg"}
             alt="logo"
             height={customizer.TopbarHeight}
-            width={200}
+            width={280}
             priority
           />
         )}
@@ -42,18 +42,18 @@ const Logo = () => {
     <LinkStyled href="/">
       {customizer.activeMode === "dark" ? (
         <Image
-          src="/images/logos/logo.png"
+          src="/images/logos/dark-rtl-logo.svg"
           alt="logo"
           height={customizer.TopbarHeight}
-          width={200}
+          width={280}
           priority
         />
       ) : (
         <Image
-          src="/images/logos/logo.png"
+          src="/images/logos/light-logo-rtl.svg"
           alt="logo"
           height={customizer.TopbarHeight}
-          width={200}
+          width={280}
           priority
         />
       )}
