@@ -1,4 +1,4 @@
-export const roles = [
+const roles = [
   { id: 1, name: "admin", display_name: "Administrator", description: "Administrator" },
   { id: 2, name: "user", display_name: "User", description: "User" },
   {
@@ -52,3 +52,4 @@ export const roles = [
     description: "Regidor es el usuario que tiene acceso para para realizar solicitudes",
   },
 ];
+module.exports = roles;

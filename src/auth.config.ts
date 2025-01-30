@@ -1,4 +1,3 @@
-
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { LoginSchema } from "@/schemas/authentication";
@@ -15,7 +14,7 @@ export default {
           const response = await login(validatedFields.data);
           const user = response.payload;
           if (!user || !user.id) return null;
-          return  user ;
+          return user;
         }
         return null;
       },

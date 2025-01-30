@@ -1,4 +1,4 @@
-export const hours = [
+const hours = [
   { id: 1, hour: "00:00" },
   { id: 2, hour: "00:30" },
   { id: 3, hour: "01:00" },
@@ -48,3 +48,4 @@ export const hours = [
   { id: 47, hour: "23:00" },
   { id: 48, hour: "23:30" },
 ];
+module.exports = hours;

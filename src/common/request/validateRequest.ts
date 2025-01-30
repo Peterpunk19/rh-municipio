@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 import { HttpResponse } from "@/common/response/model";
 import { mapValidationErrors } from "@/utils/validation";
 import { handleHttpResponse } from "@/common/response/handler";
@@ -21,6 +21,26 @@ export async function validateRequest<T>(request: NextRequest, schema?: any): Pr
 
       const validatedRequest = schema.safeParse(body);
 
+      if (!validatedRequest.success) {
+        const errors = mapValidationErrors(validatedRequest.error.issues);
+        const response = HttpResponse.failure("Invalid request", errors);
+        return { data: null, response: handleHttpResponse(response) };
+      }
+
+      return { data: validatedRequest.data, response: null };
+    }
+
+    return { data: null, response: null };
+  } catch (error) {
+    const response = HttpResponse.internalServerError("Internal server error", {});
+    return { data: null, response: handleHttpResponse(response) };
+  }
+}
+
+export async function validateRequestByUrlParams<T>(urlParams: T, schema?: any): Promise<ValidationResult<T>> {
+  try {
+    if (schema) {
+      const validatedRequest = schema.safeParse(urlParams);
       if (!validatedRequest.success) {
         const errors = mapValidationErrors(validatedRequest.error.issues);
         const response = HttpResponse.failure("Invalid request", errors);

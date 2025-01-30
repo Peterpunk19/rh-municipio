@@ -1,4 +1,4 @@
-export const requests = [
+const requests = [
   { id: 1, name: "schedule_change_request", display_name: "HORARIO", description: "Solicitud de cambio de horario" },
   {
     id: 2,
@@ -19,3 +19,4 @@ export const requests = [
     description: "Solicitud de registro de huella en checador",
   },
 ];
+module.exports = requests;

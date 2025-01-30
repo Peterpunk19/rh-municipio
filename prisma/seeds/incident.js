@@ -1,4 +1,4 @@
-export const incident = [
+const incident = [
   { id: 1, name: "incapacidad", display_name: "INCAPACIDADES", type: 1, active: true },
   { id: 2, name: "justificacion_entrada", display_name: "JUSTIFICACION DE ENTRADA", type: 1, active: true },
   { id: 3, name: "justificacion_salida", display_name: "JUSTIFICACION DE SALIDA", type: 1, active: true },
@@ -17,3 +17,4 @@ export const incident = [
   { id: 10, name: "vacacion", display_name: "VACACIONES", type: 1, active: true },
   { id: 11, name: "other", display_name: "Otro", type: 1, active: true },
 ];
+module.exports = incident;

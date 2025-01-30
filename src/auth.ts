@@ -5,7 +5,12 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 
 import { getUserById } from "./services/user";
-export const { handlers:{GET, POST}, auth, signIn, signOut } = NextAuth({
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
+} = NextAuth({
   callbacks: {
     async signIn({ user }) {
       const existingUser = await getUserById(Number(user.id));
@@ -16,16 +21,16 @@ export const { handlers:{GET, POST}, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({token}){
-      if(!token.sub) return token;
+    async jwt({ token }) {
+      if (!token.sub) return token;
       const existingUser = await getUserById(Number(token.sub));
-      if(!existingUser) return token;
+      if (!existingUser) return token;
       token.role = existingUser.role;
       token.picture = existingUser.photo;
       return token;
     },
-    async session({token, session}){
-      if(token.sub && session.user){
+    async session({ token, session }) {
+      if (token.sub && session.user) {
         session.user.id = token.sub;
       }
       /*if(token.role && session.user){
@@ -40,6 +45,5 @@ export const { handlers:{GET, POST}, auth, signIn, signOut } = NextAuth({
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
- ...authConfig})
-
-
+  ...authConfig,
+});

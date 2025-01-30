@@ -1,4 +1,4 @@
-export const day = [
+const day = [
   { id: 1, day: "monday" },
   { id: 2, day: "tuesday" },
   { id: 3, day: "wednesday" },
@@ -7,3 +7,4 @@ export const day = [
   { id: 6, day: "saturday" },
   { id: 7, day: "sunday" },
 ];
+module.exports = day;

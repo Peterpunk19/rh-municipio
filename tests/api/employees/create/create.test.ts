@@ -1,7 +1,7 @@
 import { POST } from "@/app/api/employees/create/route";
 import { dataProvider } from "./dataProvider";
 import { EmployeeService } from "@/app/api/services/employee.service";
-import { IEmployee } from "@/app/api/employees/interface";
+import type { IEmployee } from "@/app/api/employees/interface";
 
 jest.mock("@/app/api/services/employee.service", () => ({
   EmployeeService: {

@@ -1,4 +1,4 @@
-export const category = [
+const category = [
   {
     id: 1,
     name: "abogado_municipal",
@@ -965,3 +965,5 @@ export const category = [
     display_name: "OFICIAL ADMINISTRATIVO",
   },
 ];
+
+module.exports = category;
