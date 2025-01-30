@@ -1,4 +1,4 @@
-export const location = [
+const locations = [
   {
     id: 1,
     name: "agencia_cerro_hueco",
@@ -765,3 +765,5 @@ export const location = [
     display_name: "ZONA DE TOLERANCIA",
   },
 ];
+
+module.exports = locations;

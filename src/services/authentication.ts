@@ -3,7 +3,7 @@ import type * as z from "zod";
 
 export const login = async (authCredentials: z.infer<typeof LoginSchema>) => {
   const { username, password } = authCredentials;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const body = JSON.stringify({ username, password });
   console.log(body);
   try {

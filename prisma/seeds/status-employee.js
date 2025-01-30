@@ -4,3 +4,4 @@ export const statusEmployee = [
   { id: 3, name: "baja", display_name: "BAJA" },
   { id: 4, name: "pensionado", display_name: "PENSIONADO" },
 ];
+module.exports = statusEmployee;

@@ -25,7 +25,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         case "CredentialsSignin":
           return { error: "Credenciales incorrectas!" };
         default:
-          return { error: `Error al iniciar sesión! ${error.message} `};
+          return { error: `Error al iniciar sesión! ${error.message} ` };
       }
     }
     throw error;

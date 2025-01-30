@@ -8,7 +8,10 @@ export const validationMessages = {
   email: "Dirección de correo inválida",
   oneLowercaseLetter: (field: string) => `${field} debe contener al menos una letra minúscula`,
   oneUppercaseLetter: (field: string) => `${field} debe contener al menos una letra mayúscula`,
-  oneSymbol: (field: string) => `${field} must contain at least one of the following symbols [!@#$%^&*,._-=?]`,
-  oneNumber: (field: string) => `${field} must contain at least one number`,
+  oneSymbol: (field: string) => `${field} debe contener al menos alguno de los siguientes simbolos [!@#$%^&*,._-=?]`,
+  oneNumber: (field: string) => `${field} debe contener al menos un número`,
   number: (field: string) => `${field} debe ser un número`,
+  minNumber: (field: string, minNumber: number) => `${field} debe ser un número igual o mayor a ${minNumber}`,
+  maxNumber: (field: string, maxNumber: number) => `${field} debe ser un número igual o menor a ${maxNumber}`,
+  invalidBoolean: (field: string) => `${field} debe ser un valor booleano`,
 };

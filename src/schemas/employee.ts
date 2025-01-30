@@ -1,4 +1,6 @@
 import { validationMessages } from "@/common/validation/messages";
+import { UserSchema } from "./user";
+import { GenderSchema, StatusEmployeeSchema } from "./catalogs";
 import { z } from "zod";
 
 const rfcRegex = /^([A-ZÑ&]{3}|[A-Z][AEIOU][A-Z]{2})\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[A-Z0-9]{3}$/;
@@ -26,7 +28,7 @@ export const EmployeePostSchema = z.object({
     (val) => {
       if (typeof val === "string" || val instanceof String) {
         const parsedDate = new Date(val as string);
-        return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+        return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
       }
       return val;
     },
@@ -41,4 +43,115 @@ export const EmployeePostSchema = z.object({
     .string()
     .min(1, { message: validationMessages.required("CURP") })
     .regex(curpRegex, { message: validationMessages.invalidFormat("CURP") }),
+});
+
+export const EmployeeGetByFilterSchema = z.object({
+  page: z
+    .number({ message: validationMessages.number("Página") })
+    .min(1, { message: validationMessages.minNumber("Página", 1) })
+    .nullable(),
+  limit: z
+    .number({ message: validationMessages.number("Limite") })
+    .min(1, { message: validationMessages.minNumber("Limite", 1) })
+    .nullable(),
+  active: z.preprocess((val) => {
+    if (typeof val === "string" || val instanceof String) {
+      const stringValue = val.toString().toLowerCase();
+      if (stringValue === "true") return true;
+      if (stringValue === "false") return false;
+      return undefined;
+    }
+    return val;
+  }, z.boolean({ message: validationMessages.invalidBoolean("Activo") }).nullable()),
+  status_employee_id: z
+    .number({ message: validationMessages.number("Id estatus del empleado") })
+    .min(1, { message: validationMessages.minNumber("Id estatus del empleado", 1) })
+    .nullable(),
+  location_id: z
+    .number({ message: validationMessages.number("Id de ubicación") })
+    .min(1, { message: validationMessages.minNumber("Id de ubicación", 1) })
+    .nullable(),
+  start_date: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+          if (!isoDateRegex.test(val)) {
+            return "invalid";
+          }
+          const parsedDate = new Date(val);
+          if (Number.isNaN(parsedDate.getTime())) {
+            return "invalid";
+          }
+          return parsedDate;
+        }
+        if (typeof val === "number") return "invalid";
+        return val;
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }),
+    )
+    .optional()
+    .nullable(),
+  end_date: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+          if (!isoDateRegex.test(val)) {
+            return "invalid";
+          }
+          const parsedDate = new Date(val);
+          if (Number.isNaN(parsedDate.getTime())) {
+            return "invalid";
+          }
+          return parsedDate;
+        }
+        if (typeof val === "number") return "invalid";
+        return val;
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha de termino") }),
+    )
+    .optional()
+    .nullable(),
+  search: z
+    .string({ message: validationMessages.required("Búsqueda") })
+    .min(1, { message: validationMessages.required("Búsqueda") })
+    .max(255, { message: validationMessages.maxLength("Búsqueda", 255) })
+    .optional()
+    .nullable(),
+});
+
+export const EmployeeSchema = z.object({
+  id: z.number().int().positive(),
+  number_employee: z.string().min(1),
+  name: z.string().min(1),
+  paternal_last_name: z.string().min(1),
+  maternal_last_name: z.string().min(1),
+  birthday: z.string().min(1),
+  rfc: z.string().min(1),
+  curp: z.string().min(1),
+  active: z.boolean(),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+  user: UserSchema.optional(),
+  user_id: z.number().int().positive().optional(),
+  status_employee: StatusEmployeeSchema.optional(),
+  status_employee_id: z.number().int().positive(),
+  gender: GenderSchema,
+  gender_id: z.number().int().positive(),
+  employee_hiring_id: z.number().int().positive(),
+  employee_hiring: z.object({ id: z.number().int().positive() }).optional(),
+  locations: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  director_id: z.number().int().positive().optional(),
+  director: z.object({ id: z.number().int().positive() }).optional(),
+  sustitute_id: z.number().int().positive().optional(),
+  sustitute: z.object({ id: z.number().int().positive() }).optional(),
+  employee_incidents: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_incidents_created_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_vacations: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_vacations_created_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_requests: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_requests_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_requests_resolved_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_created_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
 });

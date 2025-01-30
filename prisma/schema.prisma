@@ -24,8 +24,8 @@ model User {
   created_at             DateTime?            @default(now())
   updated_at             DateTime?            @updatedAt
   employee               Employee?
-  employee_id            Int?
-  role_id                Int                  @unique
+  employee_id            Int?                 @unique
+  role_id                Int
   role                   Role                 @relation(fields: [role_id], references: [id])
   user_module_actions    UserModuleActions[]
   attendances_created_by EmployeeAttendance[]
@@ -80,7 +80,7 @@ model EmployeeHiring {
   departamento_id     Int
   payroll_id          Int
   active              Boolean              @default(true)
-  created_by          Int
+  created_by          Int?
   created_at          DateTime?            @default(now())
   updated_at          DateTime?            @updatedAt
   category            Category             @relation(fields: [category_id], references: [id])

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { encryptPassword } from "@/common/utils";
-import { IEmployee } from "@/app/api/employees/interface";
+import type { IEmployee, IEmployeeFilters } from "@/app/api/employees/interface";
 
 export const EmployeeService = {
   async getEmployeeByRfcCurp(rfc: string, curp: string) {
@@ -55,5 +55,130 @@ export const EmployeeService = {
 
       return [createUser, createEmployee];
     });
+  },
+  async getEmployeesByParams(employeeFilters: IEmployeeFilters) {
+    const pageSize = employeeFilters.limit;
+    const pageNumber = employeeFilters.page;
+    const offset = (pageNumber - 1) * pageSize;
+    const whereClause: any = {};
+
+    console.log(`Employee Filters ${JSON.stringify(employeeFilters)}`);
+
+    if (employeeFilters.active) {
+      whereClause.active = employeeFilters.active;
+    }
+
+    if (employeeFilters.status_employee_id) {
+      whereClause.status_employee_id = employeeFilters.status_employee_id;
+    }
+
+    if (employeeFilters.location_id) {
+      whereClause.locations = {
+        some: {
+          location_id: employeeFilters.location_id,
+          active: true,
+        },
+      };
+    }
+
+    /*if (employeeFilters.start_date) {
+      whereClause.employee_hiring = {
+        start_job_date:  employeeFilters.start_date
+      };
+    }
+
+    if (employeeFilters.end_date) {
+      whereClause.employee_hiring = {
+        end_job_date:  employeeFilters.end_date
+      };
+    }*/
+
+    if (employeeFilters.start_date || employeeFilters.end_date) {
+      whereClause.employee_hiring = {
+        ...(employeeFilters.start_date && { start_job_date: { gte: employeeFilters.start_date } }),
+        ...(employeeFilters.end_date && { end_job_date: { lte: employeeFilters.end_date } }),
+      };
+    }
+
+    if (employeeFilters.search) {
+      whereClause.OR = [
+        {
+          name: {
+            contains: employeeFilters.search,
+          },
+        },
+        {
+          paternal_last_name: {
+            contains: employeeFilters.search,
+          },
+        },
+        {
+          maternal_last_name: {
+            contains: employeeFilters.search,
+          },
+        },
+        {
+          rfc: {
+            contains: employeeFilters.search,
+          },
+        },
+        {
+          curp: {
+            contains: employeeFilters.search,
+          },
+        },
+        {
+          number_employee: {
+            contains: employeeFilters.search,
+          },
+        },
+      ];
+    }
+
+    const data = await prisma.employee.findMany({
+      where: whereClause,
+      skip: offset,
+      take: pageSize,
+      orderBy: {
+        id: "desc",
+      },
+      select: {
+        id: true,
+        name: true,
+        paternal_last_name: true,
+        maternal_last_name: true,
+        number_employee: true,
+        birthday: true,
+        rfc: true,
+        curp: true,
+        gender_id: true,
+        status_employee_id: true,
+        active: true,
+        created_at: true,
+        updated_at: true,
+        status_employee: true,
+        user: false,
+        user_id: false,
+        gender: true,
+        employee_hiring: true,
+        employee_hiring_id: true,
+        locations: true,
+        director_id: true,
+        director: true,
+        sustitute_id: true,
+        sustitute: true,
+        employee_created_by: false,
+      },
+    });
+
+    const total = await prisma.employee.count({ where: whereClause });
+    const totalPages = Math.ceil(total / pageSize);
+    const response = {
+      data,
+      total,
+      totalPages,
+      currentPage: pageNumber,
+    };
+    return response;
   },
 };
