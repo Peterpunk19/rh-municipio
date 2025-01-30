@@ -77,4 +77,39 @@ export const dataProvider = {
     request: request.duplicatedRfcCurp,
     response: response.duplicatedRfcCurp,
   },
+  emptyStartJobDate: {
+    status: 400,
+    request: request.emptyStartJobDate,
+    response: response.emptyStartJobDate,
+  },
+  emptyEndJobDate: {
+    status: 400,
+    request: request.emptyEndJobDate,
+    response: response.emptyEndJobDate,
+  },
+  emptyCategoryId: {
+    status: 400,
+    request: request.emptyCategoryId,
+    response: response.emptyCategoryId,
+  },
+  emptyEmployeeTypeId: {
+    status: 400,
+    request: request.emptyEmployeeTypeId,
+    response: response.emptyEmployeeTypeId,
+  },
+  emptyDepartamentoId: {
+    status: 400,
+    request: request.emptyDepartamentoId,
+    response: response.emptyDepartamentoId,
+  },
+  emptyPayrollId: {
+    status: 400,
+    request: request.emptyPayrollId,
+    response: response.emptyPayrollId,
+  },
+  emptyLocationId: {
+    status: 400,
+    request: request.emptyLocationId,
+    response: response.emptyLocationId,
+  },
 };

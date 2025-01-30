@@ -1,0 +1,143 @@
+import { IEmployee } from "@/app/api/employees/interface";
+import { dataProvider } from "./dataProvider";
+
+export const testCases = [
+  {
+    description: "should return invalid request",
+    requestData: {} as IEmployee,
+    expectedStatus: dataProvider.invalidRequest.status,
+    expectedResponse: dataProvider.invalidRequest.response,
+  },
+  {
+    description: "should return error for empty number employee",
+    requestData: dataProvider.emptyNumberEmployee.request as IEmployee,
+    expectedStatus: dataProvider.emptyNumberEmployee.status,
+    expectedResponse: dataProvider.emptyNumberEmployee.response,
+  },
+  {
+    description: "should return error for empty name",
+    requestData: dataProvider.emptyName.request as IEmployee,
+    expectedStatus: dataProvider.emptyName.status,
+    expectedResponse: dataProvider.emptyName.response,
+  },
+  {
+    description: "should return error for empty paternal last name",
+    requestData: dataProvider.emptyPaternalLastName.request as IEmployee,
+    expectedStatus: dataProvider.emptyPaternalLastName.status,
+    expectedResponse: dataProvider.emptyPaternalLastName.response,
+  },
+  {
+    description: "should return error for empty maternal last name",
+    requestData: dataProvider.emptyMaternalLastName.request as IEmployee,
+    expectedStatus: dataProvider.emptyMaternalLastName.status,
+    expectedResponse: dataProvider.emptyMaternalLastName.response,
+  },
+  {
+    description: "should return error for empty birthday",
+    requestData: dataProvider.emptyBirthday.request as IEmployee,
+    expectedStatus: dataProvider.emptyBirthday.status,
+    expectedResponse: dataProvider.emptyBirthday.response,
+  },
+  {
+    description: "should return error for empty gender id",
+    requestData: dataProvider.emptyGenderId.request as IEmployee,
+    expectedStatus: dataProvider.emptyGenderId.status,
+    expectedResponse: dataProvider.emptyGenderId.response,
+  },
+  {
+    description: "should return error for empty rfc",
+    requestData: dataProvider.emptyRfc.request as IEmployee,
+    expectedStatus: dataProvider.emptyRfc.status,
+    expectedResponse: dataProvider.emptyRfc.response,
+  },
+  {
+    description: "should return error for empty curp",
+    requestData: dataProvider.emptyCurp.request as IEmployee,
+    expectedStatus: dataProvider.emptyCurp.status,
+    expectedResponse: dataProvider.emptyCurp.response,
+  },
+  {
+    description: "should return error for long number employee",
+    requestData: dataProvider.longNumberEmployee.request as IEmployee,
+    expectedStatus: dataProvider.longNumberEmployee.status,
+    expectedResponse: dataProvider.longNumberEmployee.response,
+  },
+  {
+    description: "should return error for long name",
+    requestData: dataProvider.longName.request as IEmployee,
+    expectedStatus: dataProvider.longName.status,
+    expectedResponse: dataProvider.longName.response,
+  },
+  {
+    description: "should return error for long paternal last name",
+    requestData: dataProvider.longPaternalLastName.request as IEmployee,
+    expectedStatus: dataProvider.longPaternalLastName.status,
+    expectedResponse: dataProvider.longPaternalLastName.response,
+  },
+  {
+    description: "should return error for long maternal last name",
+    requestData: dataProvider.longMaternalLastName.request as IEmployee,
+    expectedStatus: dataProvider.longMaternalLastName.status,
+    expectedResponse: dataProvider.longMaternalLastName.response,
+  },
+  {
+    description: "should return error for existing employee by RFC or CURP",
+    requestData: dataProvider.duplicatedRfcCurp.request as IEmployee,
+    expectedStatus: dataProvider.duplicatedRfcCurp.status,
+    expectedResponse: dataProvider.duplicatedRfcCurp.response,
+  },
+  {
+    description: "should successfully send message with valid data",
+    requestData: dataProvider.validData.request as IEmployee,
+    expectedStatus: dataProvider.validData.status,
+    expectedResponse: dataProvider.validData.response,
+  },
+  {
+    description: "should return error for empty start job date",
+    requestData: dataProvider.emptyStartJobDate.request as IEmployee,
+    expectedStatus: dataProvider.emptyStartJobDate.status,
+    expectedResponse: dataProvider.emptyStartJobDate.response,
+  },
+  {
+    description: "should return error for empty end job date",
+    requestData: dataProvider.emptyEndJobDate.request as IEmployee,
+    expectedStatus: dataProvider.emptyEndJobDate.status,
+    expectedResponse: dataProvider.emptyEndJobDate.response,
+  },
+  {
+    description: "should return error for empty category id",
+    requestData: dataProvider.emptyCategoryId.request as IEmployee,
+    expectedStatus: dataProvider.emptyCategoryId.status,
+    expectedResponse: dataProvider.emptyCategoryId.response,
+  },
+  {
+    description: "should return error for empty employee type id",
+    requestData: dataProvider.emptyEmployeeTypeId.request as IEmployee,
+    expectedStatus: dataProvider.emptyEmployeeTypeId.status,
+    expectedResponse: dataProvider.emptyEmployeeTypeId.response,
+  },
+  {
+    description: "should return error for empty employee type id",
+    requestData: dataProvider.emptyEmployeeTypeId.request as IEmployee,
+    expectedStatus: dataProvider.emptyEmployeeTypeId.status,
+    expectedResponse: dataProvider.emptyEmployeeTypeId.response,
+  },
+  {
+    description: "should return error for empty departamento id",
+    requestData: dataProvider.emptyDepartamentoId.request as IEmployee,
+    expectedStatus: dataProvider.emptyDepartamentoId.status,
+    expectedResponse: dataProvider.emptyDepartamentoId.response,
+  },
+  {
+    description: "should return error for empty payroll id",
+    requestData: dataProvider.emptyPayrollId.request as IEmployee,
+    expectedStatus: dataProvider.emptyPayrollId.status,
+    expectedResponse: dataProvider.emptyPayrollId.response,
+  },
+  {
+    description: "should return error for empty location id",
+    requestData: dataProvider.emptyLocationId.request as IEmployee,
+    expectedStatus: dataProvider.emptyLocationId.status,
+    expectedResponse: dataProvider.emptyLocationId.response,
+  },
+];

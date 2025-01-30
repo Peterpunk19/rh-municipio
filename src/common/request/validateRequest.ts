@@ -15,6 +15,7 @@ export async function validateRequest<T>(request: NextRequest, schema?: any): Pr
       try {
         body = await request.json();
       } catch (error) {
+        console.log(error);
         const response = HttpResponse.failure("Invalid JSON format", {});
         return { data: null, response: handleHttpResponse(response) };
       }

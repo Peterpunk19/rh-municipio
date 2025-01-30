@@ -99,6 +99,7 @@ model EmployeeLocation {
   employee_id Int
   location_id Int
   active      Boolean   @default(true)
+  created_by  Int?
   created_at  DateTime? @default(now())
   updated_at  DateTime? @updatedAt
   location    Location? @relation(fields: [location_id], references: [id])

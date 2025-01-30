@@ -11,8 +11,8 @@ for (let i = 0; i < NUM_FAKE_USERS; i++) {
     password: faker.internet.password(),
     set_password_key: faker.string.alphanumeric(10),
     active: faker.datatype.boolean(),
-    createdAt: faker.date.past(),
-    updatedAt: faker.date.recent(),
+    created_at: faker.date.past(),
+    updated_at: faker.date.recent(),
     role_id: 1,
   });
 }

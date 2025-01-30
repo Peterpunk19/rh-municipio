@@ -1,17 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { attendance } from "./seeds/attendance";
-import { category } from "./seeds/category";
-import { day } from "./seeds/day";
-import { employeeType } from "./seeds/employee-type";
-import { gender } from "./seeds/gender";
-import { hours } from "./seeds/hour";
-import { incident } from "./seeds/incident";
-import { incidentStatus } from "./seeds/incident-status";
-import { location } from "./seeds/location";
-import { requests } from "./seeds/request";
-import { requestStatus } from "./seeds/request-status";
-import { roles } from "./seeds/roles";
-import { statusEmployee } from "./seeds/status-employee";
+const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 

@@ -43,6 +43,31 @@ export const EmployeePostSchema = z.object({
     .string()
     .min(1, { message: validationMessages.required("CURP") })
     .regex(curpRegex, { message: validationMessages.invalidFormat("CURP") }),
+  startJobDate: z.preprocess(
+    (val) => {
+      if (typeof val === "string" || val instanceof String) {
+        const parsedDate = new Date(val as string);
+        return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+      }
+      return val;
+    },
+    z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }),
+  ),
+  endJobDate: z.preprocess(
+    (val) => {
+      if (typeof val === "string" || val instanceof String) {
+        const parsedDate = new Date(val as string);
+        return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+      }
+      return val;
+    },
+    z.date({ message: validationMessages.invalidaFormat("Fecha de terminación") }),
+  ),
+  categoryId: z.number({ message: validationMessages.required("Categoria") }),
+  employeeTypeId: z.number({ message: validationMessages.required("Tipo de empleado") }),
+  departamentoId: z.number({ message: validationMessages.required("Departamento") }),
+  payrollId: z.number({ message: validationMessages.required("Tipo de nómina") }),
+  locationId: z.number({ message: validationMessages.required("Ubicación") }),
 });
 
 export const EmployeeGetByFilterSchema = z.object({

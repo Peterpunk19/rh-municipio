@@ -6,7 +6,14 @@ export interface IEmployee {
   birthday: string;
   rfc: string;
   curp: string;
-  genderId: number;
+  genderId: number | null;
+  startJobDate: string;
+  endJobDate: string;
+  categoryId: number | null;
+  employeeTypeId: number | null;
+  departamentoId: number | null;
+  payrollId: number | null;
+  locationId: number | null;
 }
 
 export interface IEmployeeFilters {
@@ -18,4 +25,14 @@ export interface IEmployeeFilters {
   start_date: string | null | undefined;
   end_date: string | null | undefined;
   search: string | null | undefined;
+}
+
+export interface IEmployeeHiring {
+  employeeId: number;
+  startJobDate: string;
+  endJobDate: string;
+  categoryId: number;
+  employeeTypeId: number;
+  departamentoId: number;
+  payrollId: number;
 }
