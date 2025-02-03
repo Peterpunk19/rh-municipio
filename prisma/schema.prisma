@@ -26,7 +26,7 @@ model User {
   employee               Employee?
   employee_id            Int?                 @unique
   role_id                Int
-  role                   Role                 @relation(fields: [role_id], references: [id])
+  role                   Role                 @relation(fields: [role_id], references: [id]) 
   user_module_actions    UserModuleActions[]
   attendances_created_by EmployeeAttendance[]
   employee_incidents     EmployeeIncidents[]

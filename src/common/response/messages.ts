@@ -14,4 +14,13 @@ export const HttpMessages = {
     notFound: "Datos no encontrados",
     validationFields: "Datos incorrectos, por favor revise de nuevo el formulario.",
   },
+  user: {
+    usernameAlreadyExists: "El nombre de usuario ya existe",
+    uuidAlreadyExists: "El UUID ya existe",
+    employeeIdAlreadyExists: "El ID de empleado ya está vinculado con otro usuario",
+    createdSuccess: "Usuario creado correctamente",
+  },
+  role: {
+    notFound: "El rol no existe",
+  },
 };

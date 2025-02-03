@@ -30,6 +30,14 @@ export const EmployeeService = {
     return (lastNumber + 1).toString().padStart(6, "0");
   },
 
+  async getEmployeeById(id: number) {
+    return prisma.employee.findFirst({
+      where: {
+        id,
+      },
+    });
+  },
+
   async createEmployee(employee: IEmployee) {
     return prisma.$transaction(async (tx) => {
       const createUser = await tx.user.create({
