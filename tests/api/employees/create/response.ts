@@ -27,6 +27,27 @@ export const response = {
       curp: {
         messages: ["Required"],
       },
+      startJobDate: {
+        messages: ["Formato de Fecha de inicio inválida"],
+      },
+      endJobDate: {
+        messages: ["Formato de Fecha de terminación inválida"],
+      },
+      categoryId: {
+        messages: ["Categoria es requerido"],
+      },
+      employeeTypeId: {
+        messages: ["Tipo de empleado es requerido"],
+      },
+      departamentoId: {
+        messages: ["Departamento es requerido"],
+      },
+      payrollId: {
+        messages: ["Tipo de nómina es requerido"],
+      },
+      locationId: {
+        messages: ["Ubicación es requerido"],
+      },
     },
     statusCode: 400,
   },
@@ -170,8 +191,78 @@ export const response = {
     success: false,
     message: "RFC or CURP ya existen",
     responseObject: {
-      rfc: "DIBP921019QV0",
-      curp: "DIBP921019HDFZLD09",
+      rfc: "DIBP921019Q12",
+      curp: "DIBP921019HDFZLD12",
+    },
+    statusCode: 400,
+  },
+  emptyStartJobDate: {
+    success: false,
+    message: "Invalid request",
+    responseObject: {
+      startJobDate: {
+        messages: ["Formato de Fecha de inicio inválida"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyEndJobDate: {
+    success: false,
+    message: "Invalid request",
+    responseObject: {
+      endJobDate: {
+        messages: ["Formato de Fecha de terminación inválida"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyCategoryId: {
+    success: false,
+    message: "Invalid request",
+    responseObject: {
+      categoryId: {
+        messages: ["Categoria es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyEmployeeTypeId: {
+    success: false,
+    message: "Invalid request",
+    responseObject: {
+      employeeTypeId: {
+        messages: ["Tipo de empleado es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyDepartamentoId: {
+    success: false,
+    message: "Invalid request",
+    responseObject: {
+      departamentoId: {
+        messages: ["Departamento es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyPayrollId: {
+    success: false,
+    message: "Invalid request",
+    responseObject: {
+      payrollId: {
+        messages: ["Tipo de nómina es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyLocationId: {
+    success: false,
+    message: "Invalid request",
+    responseObject: {
+      locationId: {
+        messages: ["Ubicación es requerido"],
+      },
     },
     statusCode: 400,
   },

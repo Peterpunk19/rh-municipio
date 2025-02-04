@@ -8,7 +8,6 @@ import { EmployeeService } from "@/app/api/services/employee.service";
 
 export async function GET(request: Request) {
   try {
-    console.log(`request url ${request.url}`);
     const { searchParams } = new URL(request.url);
     const page = Number.parseInt(searchParams.get("page") || ("1" as string), 10);
     const limit = Number.parseInt(searchParams.get("limit") || ("10" as string), 10);

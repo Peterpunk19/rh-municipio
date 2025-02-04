@@ -4,10 +4,10 @@ import { encryptPassword } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters } from "@/app/api/employees/interface";
 
 export const EmployeeService = {
-  async getEmployeeByRfcCurp(rfc: string, curp: string) {
+  async getEmployeeByRfcCurp(rfc: string, curp: string, number_employee: string) {
     return prisma.employee.findFirst({
       where: {
-        OR: [{ rfc }, { curp }],
+        OR: [{ rfc }, { curp }, { number_employee }],
       },
     });
   },
@@ -48,14 +48,42 @@ export const EmployeeService = {
         },
       });
 
+      const createEmployeeHiring = await tx.employeeHiring.create({
+        data: {
+          employee_id: createEmployee.id,
+          start_job_date: employee.startJobDate,
+          end_job_date: employee.endJobDate,
+          category_id: employee.categoryId,
+          employee_type_id: employee.employeeTypeId,
+          departamento_id: employee.departamentoId,
+          payroll_id: employee.payrollId,
+          created_at: new Date(),
+        },
+      });
+
+      const createEmployeeLocation = await tx.employeeLocation.create({
+        data: {
+          employee_id: createEmployee.id,
+          location_id: employee.locationId,
+        },
+      });
+
       await tx.user.update({
         where: { id: createUser.id },
         data: { employee_id: createEmployee.id },
       });
 
-      return [createUser, createEmployee];
+      await tx.employee.update({
+        where: { id: createEmployee.id },
+        data: {
+          employee_hiring_id: createEmployeeHiring.id,
+        },
+      });
+
+      return [createUser, createEmployee, createEmployeeHiring, createEmployeeLocation];
     });
   },
+
   async getEmployeesByParams(employeeFilters: IEmployeeFilters) {
     const pageSize = employeeFilters.limit;
     const pageNumber = employeeFilters.page;
@@ -80,18 +108,6 @@ export const EmployeeService = {
         },
       };
     }
-
-    /*if (employeeFilters.start_date) {
-      whereClause.employee_hiring = {
-        start_job_date:  employeeFilters.start_date
-      };
-    }
-
-    if (employeeFilters.end_date) {
-      whereClause.employee_hiring = {
-        end_job_date:  employeeFilters.end_date
-      };
-    }*/
 
     if (employeeFilters.start_date || employeeFilters.end_date) {
       whereClause.employee_hiring = {

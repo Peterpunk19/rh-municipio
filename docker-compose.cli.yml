@@ -6,7 +6,7 @@ services:
     user: node
     volumes:
       - .:/app
-      - yarn_cache:/node/.cache/yarn/v1
+      - yarn_cache:/home/node/.cache/yarn
     networks:
       - app_network
 

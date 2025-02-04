@@ -1,11 +1,11 @@
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { EmployeePostSchema } from "@/schemas/employee";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { validateRequest } from "@/common/request/validateRequest";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
-import type { IEmployee } from "@/app/api/employees/interface";
+import { IEmployee } from "@/app/api/employees/interface";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployee>(request, EmployeePostSchema);
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(body.rfc, body.curp);
+    const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(body.rfc, body.curp, body.numberEmployee);
 
     if (existingEmployee) {
       const response = HttpResponse.failure(HttpMessages.employee.alreadyExists, {
@@ -37,7 +37,10 @@ export async function POST(request: NextRequest) {
 
     return handleHttpResponse(response);
   } catch (error: any) {
+    console.log(error.message);
+
     const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message });
+
     return handleHttpResponse(response);
   }
 }
