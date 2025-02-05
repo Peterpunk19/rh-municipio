@@ -11,7 +11,9 @@ export const EmployeePostSchema = z.object({
   numberEmployee: z
     .string({ message: validationMessages.required("Número de empleado") })
     .min(1, { message: validationMessages.required("Número de empleado") })
-    .max(6, { message: validationMessages.maxLength("Número de empleado", 6) }),
+    .max(6, { message: validationMessages.maxLength("Número de empleado", 6) })
+    .optional()
+    .nullable(),
   name: z
     .string({ message: validationMessages.required("Nombre(s)") })
     .min(1, { message: validationMessages.required("Nombre(s)") })

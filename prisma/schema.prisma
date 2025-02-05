@@ -54,7 +54,7 @@ model Employee {
   gender                        Gender              @relation(fields: [gender_id], references: [id])
   gender_id                     Int
   employee_hiring_id            Int?                @unique
-  employee_hiring               EmployeeHiring?     @relation(fields: [employee_hiring_id], references: [id])
+  employee_hiring               EmployeeHiring[]
   locations                     EmployeeLocation[]
   director_id                   Int?                @unique
   director                      Director?           @relation("Director", fields: [director_id], references: [id])
@@ -87,7 +87,7 @@ model EmployeeHiring {
   employee_type       EmployeeType         @relation(fields: [employee_type_id], references: [id])
   departamento        Departamento         @relation(fields: [departamento_id], references: [id])
   payroll             Payroll              @relation(fields: [payroll_id], references: [id])
-  employee            Employee?
+  employee            Employee?            @relation(fields: [employee_id], references: [id])
   created_by_user     Employee?            @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
   employee_attendance EmployeeAttendance[]
 

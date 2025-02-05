@@ -4,12 +4,30 @@ import { encryptPassword } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters } from "@/app/api/employees/interface";
 
 export const EmployeeService = {
-  async getEmployeeByRfcCurp(rfc: string, curp: string, number_employee: string) {
+  async getEmployeeByRfcCurp(rfc: string, curp: string) {
     return prisma.employee.findFirst({
       where: {
-        OR: [{ rfc }, { curp }, { number_employee }],
+        OR: [{ rfc }, { curp }],
       },
     });
+  },
+
+  async getNumberEmployee() {
+    const lastEmployee = await prisma.employee.findFirst({
+      orderBy: {
+        number_employee: "desc",
+      },
+      select: {
+        number_employee: true,
+      },
+    });
+
+    if (!lastEmployee) {
+      return "000001";
+    }
+
+    const lastNumber = parseInt(lastEmployee.number_employee, 10);
+    return (lastNumber + 1).toString().padStart(6, "0");
   },
 
   async createEmployee(employee: IEmployee) {

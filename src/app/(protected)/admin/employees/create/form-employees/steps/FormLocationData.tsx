@@ -3,7 +3,7 @@
 import React from "react";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import { Box, Grid2 as Grid } from "@mui/material";
-import {fetchGenderData} from "@/services/catalogs";
+import {fetchLocationsData} from "@/services/catalogs";
 import { useDispatch } from "react-redux";
 import { useSelector } from "@/store/hooks";
 import { updateValues, updateErrors } from "@/store/employees/EmployeeSlice";
@@ -12,7 +12,7 @@ import {useFetchOptions} from "@/components/customHooks/useFetchOptions";
 import {useRenderInputFields} from "@/components/customHooks/useRenderInputFields";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 
-export const FormPersonalData = () => {
+export const FormLocationData = () => {
   const dispatch = useDispatch();
   const formValues = useSelector((state: any) => state.employeesReducer.values);
   const errors = useSelector((state: any) => state.employeesReducer.errors);
@@ -23,16 +23,16 @@ export const FormPersonalData = () => {
     dispatch(updateErrors({ [name as string]: '' }));
   };
 
-  const { options: gender, isLoading, error } = useFetchOptions(fetchGenderData);
+  const { options: location, isLoading, error } = useFetchOptions(fetchLocationsData);
   const { renderField } = useRenderInputFields(formValues, handleChange);
 
   return (
     <Box>
       <Grid container spacing={3}>
-        {stepFormFields.personalDataConfig.map((field) => (
+        {stepFormFields.locationConfig.map((field) => (
           <Grid key={field.id} size={field.gridSize}>
             <CustomFormLabel htmlFor={field.id}>{field.label}</CustomFormLabel>
-            {renderField(field, gender, isLoading, error, errors[field.name])}
+            {renderField(field, location, isLoading, error, errors[field.name])}
             <CustomLabelError field={errors[field.name]} />
           </Grid>
         ))}

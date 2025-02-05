@@ -4,6 +4,7 @@ import { testCases } from "./testCases";
 
 jest.mock("@/app/api/services/employee.service", () => ({
   EmployeeService: {
+    getNumberEmployee: jest.fn(),
     getEmployeeByRfcCurp: jest.fn(),
     createEmployee: jest.fn(),
   },

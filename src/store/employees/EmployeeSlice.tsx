@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {IEmployeeState} from "@/store/apps/employees/Interface";
+import {IEmployeeState} from "@/store/employees/Interface";
 
 const initialState: IEmployeeState = {
   values: {
@@ -10,6 +10,15 @@ const initialState: IEmployeeState = {
     rfc: '',
     curp: '',
     genderId: '0',
+    startJobDate: '',
+    endJobDate: '',
+    categoryId: '0',
+    employeeTypeId: '0',
+    secretariaId: '0',
+    direccionId: '0',
+    departamentoId: '0',
+    payrollId: '0',
+    locationId: '0',
   },
   errors: {
     name: '',
@@ -19,6 +28,15 @@ const initialState: IEmployeeState = {
     rfc: '',
     curp: '',
     genderId: '',
+    startJobDate: '',
+    endJobDate: '',
+    categoryId: '',
+    employeeTypeId: '',
+    secretariaId: '',
+    direccionId: '',
+    departamentoId: '',
+    payrollId: '',
+    locationId: '',
   },
 };
 

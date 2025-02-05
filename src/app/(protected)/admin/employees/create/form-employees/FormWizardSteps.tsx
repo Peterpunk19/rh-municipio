@@ -7,7 +7,6 @@ import {
   Step,
   StepLabel,
   Button,
-  Typography,
   Alert,
   CircularProgress,
 } from '@mui/material'
@@ -15,11 +14,13 @@ import {
 import ParentCard from '@/app/components/shared/ParentCard'
 import { Stack } from '@mui/system'
 import {useDispatch, useSelector} from "react-redux";
-import {resetFormValues, updateErrors} from "@/store/apps/employees/EmployeeSlice";
+import {resetFormValues, updateErrors} from "@/store/employees/EmployeeSlice";
 import {FormPersonalData} from "@/app/(protected)/admin/employees/create/form-employees/steps/FormPersonalData";
 import {createEmployee} from "@/services/employees";
+import {FormHiringData} from "@/app/(protected)/admin/employees/create/form-employees/steps/FormHiringData";
+import {FormLocationData} from "@/app/(protected)/admin/employees/create/form-employees/steps/FormLocationData";
 
-const steps = ['Datos personales', 'Finalizar']
+const steps = ['Datos personales','Datos de Contratación','Datos Ubicación','Jornadas y Horarios', 'Finalizar']
 
 const FormWizardSteps = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -78,6 +79,14 @@ const FormWizardSteps = () => {
         return (
           <FormPersonalData/>
         );
+      case 1:
+        return (
+          <FormHiringData/>
+        );
+      case 2:
+        return (
+          <FormLocationData/>
+        );
       default:
         break
     }
@@ -119,19 +128,11 @@ const FormWizardSteps = () => {
     <ParentCard title='LLena los siguientes datos:'>
       <Box width='100%'>
         <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
+          {steps.map((label) => {
             const stepProps: { completed?: boolean } = {}
             const labelProps: {
               optional?: React.ReactNode
             } = {}
-            if (isStepOptional(index)) {
-              labelProps.optional = (
-                <Typography variant='caption'>Optional</Typography>
-              )
-            }
-            if (isStepSkipped(index)) {
-              stepProps.completed = false
-            }
 
             return (
               <Step key={label} {...stepProps}>
