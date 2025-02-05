@@ -1,11 +1,10 @@
+import { HttpMessages } from "@/common/response/messages";
+
 export const response = {
   invalidRequest: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
-      numberEmployee: {
-        messages: ["Número de empleado es requerido"],
-      },
       name: {
         messages: ["Nombre(s) es requerido"],
       },
@@ -53,7 +52,7 @@ export const response = {
   },
   emptyNumberEmployee: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       numberEmployee: {
         messages: ["Número de empleado es requerido"],
@@ -63,7 +62,7 @@ export const response = {
   },
   emptyName: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       name: {
         messages: ["Nombre(s) es requerido"],
@@ -73,7 +72,7 @@ export const response = {
   },
   emptyPaternalLastName: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       paternalLastName: {
         messages: ["Apellido paterno es requerido"],
@@ -83,7 +82,7 @@ export const response = {
   },
   emptyMaternalLastName: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       maternalLastName: {
         messages: ["Apellido materno es requerido"],
@@ -93,7 +92,7 @@ export const response = {
   },
   emptyBirthday: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       birthday: {
         messages: ["Formato de Fecha de nacimiento inválida"],
@@ -103,7 +102,7 @@ export const response = {
   },
   emptyGenderId: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       genderId: {
         messages: ["Género es requerido"],
@@ -113,7 +112,7 @@ export const response = {
   },
   emptyRfc: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       rfc: {
         messages: ["RFC es requerido", "Formato de RFC inválido"],
@@ -123,7 +122,7 @@ export const response = {
   },
   emptyCurp: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       curp: {
         messages: ["CURP es requerido", "Formato de CURP inválido"],
@@ -133,7 +132,7 @@ export const response = {
   },
   longNumberEmployee: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       numberEmployee: {
         messages: ["Número de empleado no puede exceder de 6 caracteres"],
@@ -143,7 +142,7 @@ export const response = {
   },
   longName: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       name: {
         messages: ["Nombre(s) no puede exceder de 255 caracteres"],
@@ -153,7 +152,7 @@ export const response = {
   },
   longFirstName: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       name: {
         messages: ["Nombre(s) no puede exceder de 255 caracteres"],
@@ -163,7 +162,7 @@ export const response = {
   },
   longPaternalLastName: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       paternalLastName: {
         messages: ["Apellido paterno no puede exceder de 255 caracteres"],
@@ -173,7 +172,7 @@ export const response = {
   },
   longMaternalLastName: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       maternalLastName: {
         messages: ["Apellido materno no puede exceder de 255 caracteres"],
@@ -198,7 +197,7 @@ export const response = {
   },
   emptyStartJobDate: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       startJobDate: {
         messages: ["Formato de Fecha de inicio inválida"],
@@ -208,7 +207,7 @@ export const response = {
   },
   emptyEndJobDate: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       endJobDate: {
         messages: ["Formato de Fecha de terminación inválida"],
@@ -218,7 +217,7 @@ export const response = {
   },
   emptyCategoryId: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       categoryId: {
         messages: ["Categoria es requerido"],
@@ -228,7 +227,7 @@ export const response = {
   },
   emptyEmployeeTypeId: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       employeeTypeId: {
         messages: ["Tipo de empleado es requerido"],
@@ -238,7 +237,7 @@ export const response = {
   },
   emptyDepartamentoId: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       departamentoId: {
         messages: ["Departamento es requerido"],
@@ -248,7 +247,7 @@ export const response = {
   },
   emptyPayrollId: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       payrollId: {
         messages: ["Tipo de nómina es requerido"],
@@ -258,7 +257,7 @@ export const response = {
   },
   emptyLocationId: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       locationId: {
         messages: ["Ubicación es requerido"],

@@ -2,6 +2,7 @@ import type { NextRequest, NextResponse } from "next/server";
 import { HttpResponse } from "@/common/response/model";
 import { mapValidationErrors } from "@/utils/validation";
 import { handleHttpResponse } from "@/common/response/handler";
+import { HttpMessages } from "@/common/response/messages";
 
 type ValidationResult<T> = {
   data: T | null;
@@ -24,7 +25,7 @@ export async function validateRequest<T>(request: NextRequest, schema?: any): Pr
 
       if (!validatedRequest.success) {
         const errors = mapValidationErrors(validatedRequest.error.issues);
-        const response = HttpResponse.failure("Invalid request", errors);
+        const response = HttpResponse.failure(HttpMessages.error.validationFields, errors);
         return { data: null, response: handleHttpResponse(response) };
       }
 

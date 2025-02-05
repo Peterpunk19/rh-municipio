@@ -27,6 +27,7 @@ export const useRenderInputFields = (formData: any, handleChange: (e: any) => vo
                   handleChange(e);
                 }
               }}
+              inputProps={{ maxLength: 255, autoComplete: 'off' }}
               variant="outlined"
               fullWidth
             />
@@ -47,10 +48,15 @@ export const useRenderInputFields = (formData: any, handleChange: (e: any) => vo
       case "select":
         return (
           <CustomSelect id={field.id} name={field.name} fullWidth value={formData[field.name] || "0"} onChange={handleChange}>
-            <MenuItem key="default" value="0">Seleccione uno</MenuItem>
-            {isLoading ? <MenuItem disabled>Loading...</MenuItem> : error ? <MenuItem disabled>{error}</MenuItem> : options.map((option) => (
-              <MenuItem key={option.id} value={option.id}>{option.display_name}</MenuItem>
-            ))}
+            <MenuItem key="default" value="0">{field.placeholder ?? 'Seleccione una opción'}</MenuItem>
+            {isLoading ?
+              <MenuItem disabled>Loading...</MenuItem> : error ?
+                <MenuItem disabled>{error}</MenuItem> :
+                options.map((option) => (
+                  <MenuItem key={option.id} value={option.id}>{option.display_name}</MenuItem>
+                )
+              )
+            }
           </CustomSelect>
         );
       default:

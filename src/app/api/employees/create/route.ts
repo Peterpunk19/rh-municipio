@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(body.rfc, body.curp, body.numberEmployee);
+    body.numberEmployee = await EmployeeService.getNumberEmployee();
+    const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(body.rfc, body.curp);
 
     if (existingEmployee) {
       const response = HttpResponse.failure(HttpMessages.employee.alreadyExists, {
