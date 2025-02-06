@@ -43,7 +43,6 @@ const NoteList = () => {
   const notes = useSelector((state) =>
     filterNotes(state.notesReducer.notes, state.notesReducer.noteSearch)
   );
-  console.log(notes)
   return (<>
     <Box p={3} px={2}>
       <TextField

@@ -108,8 +108,6 @@ export const EmployeeService = {
     const offset = (pageNumber - 1) * pageSize;
     const whereClause: any = {};
 
-    console.log(`Employee Filters ${JSON.stringify(employeeFilters)}`);
-
     if (employeeFilters.active) {
       whereClause.active = employeeFilters.active;
     }
