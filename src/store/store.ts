@@ -14,6 +14,8 @@ import ContactsReducer from "./apps/contacts/ContactSlice";
 import EmployeesReducer from "@/store/employees/EmployeeSlice";
 import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
 import BlogReducer from "./apps/blog/BlogSlice";
+import EmployeesFiltersReducer from "./employees/EmployeesFiltersSlice";
+import FiltersReducer from "./tables/FiltersSlice";
 
 const persistConfig = {
   key: "root",
@@ -29,10 +31,12 @@ export const store = configureStore({
     emailReducer: EmailReducer,
     notesReducer: NotesReducer,
     contactsReducer: ContactsReducer,
-    employeesReducer: EmployeesReducer,
     ticketReducer: TicketReducer,
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
+    employeesReducer: EmployeesReducer,
+    filterEmployeesSlice: EmployeesFiltersReducer,
+    filters: FiltersReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),

@@ -10,7 +10,6 @@ const StatusCard = () => {
     const [status, setStatus] = useState(2);
     const handleChange = (event: any) => {
         setStatus(event.target.value);
-        console.log('test')
     };
 
     return (

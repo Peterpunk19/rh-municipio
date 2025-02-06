@@ -51,9 +51,8 @@ const BlogDetail = () => {
       .replace(/ /g, "-")
       .replace(/[^\w-]+/g, "");
 
-  // Get post
+
   const getPost = useSelector((state: AppState) => state.blogReducer.blogposts);
-  console.log(getPost);
   const post: BlogPostType | any = getPost.find(
     (p: BlogPostType) => getTitle === paramCase(p.title)
   );
@@ -90,7 +89,6 @@ const BlogDetail = () => {
     setReplyTxt("");
   };
 
-  // skeleton
   const [isLoading, setLoading] = React.useState(true);
 
   useEffect(() => {

@@ -14,8 +14,6 @@ export const {
   callbacks: {
     async signIn({ user }) {
       const existingUser = await getUserById(Number(user.id));
-      console.log(`existing User: ${JSON.stringify(existingUser)}`);
-
       if (!existingUser) {
         return false;
       }
