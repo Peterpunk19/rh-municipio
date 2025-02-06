@@ -7,7 +7,7 @@ import { ColumnTypeConfig } from "@/interfaces/ColumnTypeConfig";
 import { useDispatch } from 'react-redux';
 import { fetchEmployees } from '@/store/employees/EmployeesFiltersSlice';
 import { AppDispatch } from '@/store/store';
-import { headCells } from './HeadCells';
+import { headCells } from './(list)/HeadCells';
 
 export default function Employees () {
   const dispatch = useDispatch<AppDispatch>();
