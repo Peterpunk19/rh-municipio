@@ -66,6 +66,19 @@ export const EmployeeService = {
         },
       });
 
+      const createEmployeeAddress = await tx.employeeAddress.create({
+        data: {
+          employee_id: createEmployee.id,
+          address_line_1: employee.addressLine1,
+          address_line_2: employee.addressLine2,
+          address_line_3: employee.addressLine3,
+          postal_code: employee.postalCode,
+          postal_code_sat: employee.postalCodeSat,
+          municipality_id: employee.municipalityId,
+          created_at: new Date(),
+        },
+      });
+
       const createEmployeeHiring = await tx.employeeHiring.create({
         data: {
           employee_id: createEmployee.id,
@@ -73,16 +86,8 @@ export const EmployeeService = {
           end_job_date: employee.endJobDate,
           category_id: employee.categoryId,
           employee_type_id: employee.employeeTypeId,
-          departamento_id: employee.departamentoId,
-          payroll_id: employee.payrollId,
+          direccion_id: employee.direccionId,
           created_at: new Date(),
-        },
-      });
-
-      const createEmployeeLocation = await tx.employeeLocation.create({
-        data: {
-          employee_id: createEmployee.id,
-          location_id: employee.locationId,
         },
       });
 
@@ -98,7 +103,7 @@ export const EmployeeService = {
         },
       });
 
-      return [createUser, createEmployee, createEmployeeHiring, createEmployeeLocation];
+      return [createUser, createEmployee, createEmployeeHiring, createEmployeeAddress];
     });
   },
 

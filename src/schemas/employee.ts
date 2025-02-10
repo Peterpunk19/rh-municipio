@@ -65,11 +65,27 @@ export const EmployeePostSchema = z.object({
     },
     z.date({ message: validationMessages.invalidaFormat("Fecha de terminación") }),
   ),
+  addressLine1: z
+    .string({ message: validationMessages.required("Calle") })
+    .min(1, { message: validationMessages.required("Calle") })
+    .max(255, { message: validationMessages.maxLength("Calle", 255) }),
+  addressLine2: z
+    .string({ message: validationMessages.required("Número de casa") })
+    .min(1, { message: validationMessages.required("Número de casa") })
+    .max(255, { message: validationMessages.maxLength("Número de casa", 255) }),
+  addressLine3: z.string({ message: validationMessages.required("Número de Departamento") }),
+  postalCode: z
+    .string({ message: validationMessages.required("Código postal") })
+    .min(1, { message: validationMessages.required("Código postal") })
+    .max(255, { message: validationMessages.maxLength("Código postal", 255) }),
+  postalCodeSat: z
+    .string({ message: validationMessages.required("Código postal SAT") })
+    .min(1, { message: validationMessages.required("Código postal SAT") })
+    .max(255, { message: validationMessages.maxLength("Código postal SAT", 255) }),
+  municipalityId: z.number({ message: validationMessages.required("Municipio") }),
   categoryId: z.number({ message: validationMessages.required("Categoria") }),
   employeeTypeId: z.number({ message: validationMessages.required("Tipo de empleado") }),
-  departamentoId: z.number({ message: validationMessages.required("Departamento") }),
-  payrollId: z.number({ message: validationMessages.required("Tipo de nómina") }),
-  locationId: z.number({ message: validationMessages.required("Ubicación") }),
+  direccionId: z.number({ message: validationMessages.required("Organo administrativo") }),
 });
 
 export const EmployeeGetByFilterSchema = z.object({

@@ -18,9 +18,8 @@ import {resetFormValues, updateErrors} from "@/store/employees/EmployeeSlice";
 import {FormPersonalData} from "@/app/(protected)/admin/employees/create/form-employees/steps/FormPersonalData";
 import {createEmployee} from "@/services/employees";
 import {FormHiringData} from "@/app/(protected)/admin/employees/create/form-employees/steps/FormHiringData";
-import {FormLocationData} from "@/app/(protected)/admin/employees/create/form-employees/steps/FormLocationData";
 
-const steps = ['Datos personales','Datos de Contratación','Datos Ubicación','Jornadas y Horarios', 'Finalizar']
+const steps = ['Datos Personales', 'Datos de Contratación', 'Finalizar']
 
 const FormWizardSteps = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -82,10 +81,6 @@ const FormWizardSteps = () => {
       case 1:
         return (
           <FormHiringData/>
-        );
-      case 2:
-        return (
-          <FormLocationData/>
         );
       default:
         break

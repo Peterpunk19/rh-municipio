@@ -11,7 +11,7 @@ for (let i = 0; i < NUM_FAKE_EMPLOYEES; i++) {
     end_job_date: faker.date.future({ years: 2 }),
     category_id: 1,
     employee_type_id: 1,
-    departamento_id: 1,
+    direccion_id: 1,
     payroll_id: 1,
     active: true,
     created_at: faker.date.past(),

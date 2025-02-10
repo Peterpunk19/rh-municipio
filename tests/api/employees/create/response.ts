@@ -26,6 +26,24 @@ export const response = {
       curp: {
         messages: ["Required"],
       },
+      addressLine1: {
+        messages: ["Calle es requerido"],
+      },
+      addressLine2: {
+        messages: ["Número de casa es requerido"],
+      },
+      addressLine3: {
+        messages: ["Número de Departamento es requerido"],
+      },
+      postalCode: {
+        messages: ["Código postal es requerido"],
+      },
+      postalCodeSat: {
+        messages: ["Código postal SAT es requerido"],
+      },
+      municipalityId: {
+        messages: ["Municipio es requerido"],
+      },
       startJobDate: {
         messages: ["Formato de Fecha de inicio inválida"],
       },
@@ -38,14 +56,8 @@ export const response = {
       employeeTypeId: {
         messages: ["Tipo de empleado es requerido"],
       },
-      departamentoId: {
-        messages: ["Departamento es requerido"],
-      },
-      payrollId: {
-        messages: ["Tipo de nómina es requerido"],
-      },
-      locationId: {
-        messages: ["Ubicación es requerido"],
+      direccionId: {
+        messages: ["Organo administrativo es requerido"],
       },
     },
     statusCode: 400,
@@ -195,6 +207,56 @@ export const response = {
     },
     statusCode: 400,
   },
+  emptyAddressLine1: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      addressLine1: {
+        messages: ["Calle es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyAddressLine2: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      addressLine2: {
+        messages: ["Número de casa es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyPostalCode: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      postalCode: {
+        messages: ["Código postal es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyPostalCodeSat: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      postalCodeSat: {
+        messages: ["Código postal SAT es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
+  emptyMunicipalityId: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      municipalityId: {
+        messages: ["Municipio es requerido"],
+      },
+    },
+    statusCode: 400,
+  },
   emptyStartJobDate: {
     success: false,
     message: HttpMessages.error.validationFields,
@@ -235,32 +297,12 @@ export const response = {
     },
     statusCode: 400,
   },
-  emptyDepartamentoId: {
+  emptyDireccionId: {
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      departamentoId: {
-        messages: ["Departamento es requerido"],
-      },
-    },
-    statusCode: 400,
-  },
-  emptyPayrollId: {
-    success: false,
-    message: HttpMessages.error.validationFields,
-    responseObject: {
-      payrollId: {
-        messages: ["Tipo de nómina es requerido"],
-      },
-    },
-    statusCode: 400,
-  },
-  emptyLocationId: {
-    success: false,
-    message: HttpMessages.error.validationFields,
-    responseObject: {
-      locationId: {
-        messages: ["Ubicación es requerido"],
+      direccionId: {
+        messages: ["Organo administrativo es requerido"],
       },
     },
     statusCode: 400,

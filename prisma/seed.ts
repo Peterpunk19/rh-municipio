@@ -8,17 +8,15 @@ const hours = require("./seeds/hour");
 const incident = require("./seeds/incident");
 const incidentStatus = require("./seeds/incident-status");
 const locations = require("./seeds/location");
-const payroll = require("./seeds/payroll");
 const requests = require("./seeds/request");
 const requestStatus = require("./seeds/request-status");
 const roles = require("./seeds/roles");
 const statusEmployee = require("./seeds/status-employee");
-const users = require("./seeds/user");
-const employees = require("./seeds/employee");
-const employeeHiring = require("./seeds/employee-hiring");
-const departamento = require("./seeds/departamento");
 const direccion = require("./seeds/direccion");
 const secretaria = require("./seeds/secretaria");
+const country = require("./seeds/country");
+const state = require("./seeds/state");
+const municipality = require("./seeds/municipality");
 
 const prisma = new PrismaClient();
 
@@ -34,17 +32,15 @@ async function main() {
   await prisma.incident.createMany({ data: incident });
   await prisma.incidentStatus.createMany({ data: incidentStatus });
   await prisma.location.createMany({ data: locations });
-  await prisma.payroll.createMany({ data: payroll });
   await prisma.request.createMany({ data: requests });
   await prisma.requestStatus.createMany({ data: requestStatus });
   await prisma.role.createMany({ data: roles });
   await prisma.statusEmployee.createMany({ data: statusEmployee });
-  await prisma.user.createMany({ data: users });
   await prisma.secretaria.createMany({ data: secretaria });
   await prisma.direccion.createMany({ data: direccion });
-  await prisma.departamento.createMany({ data: departamento });
-  await prisma.employeeHiring.createMany({ data: employeeHiring });
-  await prisma.employee.createMany({ data: employees });
+  await prisma.country.createMany({ data: country });
+  await prisma.state.createMany({ data: state });
+  await prisma.municipality.createMany({ data: municipality });
 
   console.log("Seeding finished.");
 }

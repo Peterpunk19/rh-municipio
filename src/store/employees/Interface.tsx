@@ -14,8 +14,6 @@ export interface IEmployeeState {
     secretariaId: string;
     direccionId: string;
     departamentoId: string;
-    payrollId: string;
-    locationId: string;
   };
   errors: {
     name: string;
@@ -31,8 +29,5 @@ export interface IEmployeeState {
     employeeTypeId: string;
     secretariaId: string;
     direccionId: string;
-    departamentoId: string;
-    payrollId: string;
-    locationId: string;
   };
 }

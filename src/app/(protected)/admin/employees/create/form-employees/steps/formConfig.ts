@@ -90,7 +90,7 @@ const hiringConfig: IFieldConfig[] = [
   },
   {
     id: "secretariaId",
-    label: "Secretarías",
+    label: "Organismo público",
     type: "select",
     name: "secretariaId",
     gridSize: { xs: 12, sm: 12, lg: 4 },
@@ -98,17 +98,9 @@ const hiringConfig: IFieldConfig[] = [
   },
   {
     id: "direccionId",
-    label: "Direcciones",
+    label: "Organo administrativo",
     type: "select",
     name: "direccionId",
-    gridSize: { xs: 12, sm: 12, lg: 4 },
-    options: [],
-  },
-  {
-    id: "departamentoId",
-    label: "Departamentos",
-    type: "select",
-    name: "departamentoId",
     gridSize: { xs: 12, sm: 12, lg: 4 },
     options: [],
   },
@@ -117,14 +109,6 @@ const hiringConfig: IFieldConfig[] = [
     label: "Tipo de empleado",
     type: "select",
     name: "employeeTypeId",
-    gridSize: { xs: 12, sm: 12, lg: 4 },
-    options: [],
-  },
-  {
-    id: "payrollId",
-    label: "Tipo de nómina",
-    type: "select",
-    name: "payrollId",
     gridSize: { xs: 12, sm: 12, lg: 4 },
     options: [],
   },
@@ -142,8 +126,70 @@ const locationConfig: IFieldConfig[] = [
   },
 ];
 
+const addressConfig: IFieldConfig[] = [
+  {
+    id: "address",
+    label: "Calle",
+    type: "text",
+    name: "address",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+  },
+  {
+    id: "homeNumber",
+    label: "Número de Casa",
+    type: "text",
+    name: "name",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+  },
+  {
+    id: "homeNumber",
+    label: "Número de Departamento",
+    type: "text",
+    name: "name",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+  },
+  {
+    id: "postalCode",
+    label: "Código Postal",
+    type: "text",
+    name: "name",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+  },
+  {
+    id: "postalCodeSat",
+    label: "Código Postal SAT",
+    type: "text",
+    name: "name",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+  },
+  {
+    id: "colonia",
+    label: "Colonia",
+    type: "text",
+    name: "name",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+  },
+  {
+    id: "stateId",
+    label: "Estado",
+    type: "select",
+    name: "stateId",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+    options: [],
+  },
+  {
+    id: "municipalityId",
+    label: "Municipio",
+    type: "select",
+    name: "municipalityId",
+    gridSize: { xs: 12, sm: 12, lg: 4 },
+    options: [],
+  },
+];
+
 export const stepFormFields = {
   personalDataConfig,
   hiringConfig,
   locationConfig,
+  addressConfig,
 };

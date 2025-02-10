@@ -7,9 +7,7 @@ import {
   fetchSecretariasData,
   fetchCategoryData,
   fetchDireccionesData,
-  fetchDepartamentosData,
   fetchEmployeeTypesData,
-  fetchPayrollsData,
 } from "@/services/catalogs";
 import { useDispatch } from "react-redux";
 import { useSelector } from "@/store/hooks";
@@ -25,7 +23,6 @@ export const FormHiringData = () => {
   const formValues = useSelector((state: any) => state.employeesReducer.values);
   const errors = useSelector((state: any) => state.employeesReducer.errors);
   const [selectedSecretaria, setSelectedSecretaria] = useState<number | null>(formValues.secretariaId);
-  const [selectedDireccion, setSelectedDireccion] = useState<number | null>(formValues.direccionId);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
@@ -34,13 +31,11 @@ export const FormHiringData = () => {
 
     if (name === "secretariaId") {
       setSelectedSecretaria(value ? Number(value) : null);
-      dispatch(updateValues({ direccionId: '0', departamentoId: '0' }));
-      setSelectedDireccion(null);
+      dispatch(updateValues({ direccionId: '0' }));
     }
 
     if (name === "direccionId") {
-      setSelectedDireccion(value ? Number(value) : null);
-      dispatch(updateValues({ departamentoId: '0' }));
+      dispatch(updateValues({ direccionId: '0' }));
     }
 
   };
@@ -51,8 +46,6 @@ export const FormHiringData = () => {
   const { options: employeeTypeOptions, isLoading: employeeTypeLoading, error: employeeTypeError } = useFetchOptions(fetchEmployeeTypesData);
   const { options: secretariaOptions, isLoading: secretariaLoading, error: secretariaError } = useFetchOptions(fetchSecretariasData);
   const { options: direccionOptions, isLoading: direccionLoading, error: direccionError } = useFetchOptions(fetchDireccionesData, selectedSecretaria);
-  const { options: departamentoOptions, isLoading: departamentoLoading, error: departamentoError } = useFetchOptions(fetchDepartamentosData, selectedDireccion);
-  const { options: payrollOptions, isLoading: payrollLoading, error: payrollError } = useFetchOptions(fetchPayrollsData);
 
   return (
     <Box>
@@ -82,16 +75,6 @@ export const FormHiringData = () => {
               selectOptions = direccionOptions;
               isLoading = direccionLoading;
               errorMessage = direccionError ?? '';
-              break;
-            case "departamentoId":
-              selectOptions = departamentoOptions;
-              isLoading = departamentoLoading;
-              errorMessage = departamentoError ?? '';
-              break;
-            case "payrollId":
-              selectOptions = payrollOptions;
-              isLoading = payrollLoading;
-              errorMessage = payrollError ?? '';
               break;
           }
 

@@ -43,18 +43,6 @@ export const fetchDireccionesData = async (secretariaId: number): Promise<IRespo
   }
 };
 
-export const fetchDepartamentosData = async (direccionId: number): Promise<IResponseObject | null> => {
-  if (!direccionId || direccionId == 0) return null;
-
-  try {
-    const response = await http.get<IResponseObject>(`/api/catalogs/departamentos?id=${direccionId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch departamentos:", error);
-    return null;
-  }
-};
-
 export const fetchEmployeeTypesData = async (): Promise<IResponseObject | null> => {
   try {
     const response = await http.get<IResponseObject>("/api/catalogs/employeeType");
@@ -65,22 +53,32 @@ export const fetchEmployeeTypesData = async (): Promise<IResponseObject | null> 
   }
 };
 
-export const fetchPayrollsData = async (): Promise<IResponseObject | null> => {
-  try {
-    const response = await http.get<IResponseObject>("/api/catalogs/payroll");
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch payroll:", error);
-    return null;
-  }
-};
-
 export const fetchLocationsData = async (): Promise<IResponseObject | null> => {
   try {
     const response = await http.get<IResponseObject>("/api/catalogs/location");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch location:", error);
+    return null;
+  }
+};
+
+export const fetchDayData = async (): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>("/api/catalogs/day");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch day:", error);
+    return null;
+  }
+};
+
+export const fetchHoursData = async (): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>("/api/catalogs/hour");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch hour:", error);
     return null;
   }
 };
