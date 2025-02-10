@@ -1,22 +1,31 @@
 import { z } from "zod";
-import { RoleSchema } from "./role-module-actions";
+import { validationMessages } from "@/common/validation/messages";
 
 export const UserSchema = z.object({
   id: z.number().int().positive().optional(),
-  uuid: z.string().optional(),
-  username: z.string({ required_error: "El nombre del usuario es requerido y debe ser de al menos 1 caracter" }).min(1),
-  password: z.string().min(1),
+  uuid: z
+    .string()
+    .uuid({ message: validationMessages.invalidFormat("UUID") })
+    .optional(),
+  username: z
+    .string({ message: validationMessages.required("Usuario") })
+    .min(1, { message: validationMessages.required("Usuario") })
+    .max(30, { message: validationMessages.maxLength("Usuario", 30) }),
+  password: z
+    .string({ message: validationMessages.required("Contraseña") })
+    .min(8, { message: validationMessages.minLength("Contraseña", 8) })
+    .max(30, { message: validationMessages.maxLength("Contraseña", 30) })
+    .regex(/[A-Z]/, { message: validationMessages.oneUppercaseLetter("Contraseña") })
+    .regex(/[a-z]/, { message: validationMessages.oneLowercaseLetter("Contraseña") })
+    .regex(/[0-9]/, { message: validationMessages.oneNumber("Contraseña") })
+    .regex(/[^A-Za-z0-9]/, { message: validationMessages.oneSymbol("Contraseña") }),
   set_password_key: z.string().min(1).optional().nullable(),
-  create_at: z.date().optional(),
+  created_at: z.date().optional(),
   updated_at: z.date().optional(),
-  employee_id: z.number().int().optional(),
-  role_id: z.number().int().positive(),
-  created_by_id: z.number().int().positive().optional(),
-  employee: z.object({ id: z.number().int().positive() }).optional(),
-  role: RoleSchema,
-  user_module_actions: z.array(z.object({ id: z.number().int().positive() })),
-  attendances_created_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
-  employee_incidents: z.array(z.object({ id: z.number().int().positive() })).optional(),
-  created_by: z.object({ id: z.number().int().positive() }).optional(),
-  users_created: z.array(z.object({ id: z.number().int().positive() })).optional(),
+  employee_id: z
+    .number({ message: validationMessages.number("Empleado") })
+    .optional()
+    .nullable(),
+  role_id: z.number({ message: validationMessages.required("Rol") }).nullable(),
+  created_by_id: z.number().int().positive().optional().nullable(),
 });
