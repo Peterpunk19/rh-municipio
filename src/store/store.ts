@@ -16,6 +16,7 @@ import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
 import BlogReducer from "./apps/blog/BlogSlice";
 import EmployeesFiltersReducer from "./employees/EmployeesFiltersSlice";
 import FiltersReducer from "./tables/FiltersSlice";
+import PaginationReducer from "./tables/PaginationSlice";
 
 const persistConfig = {
   key: "root",
@@ -37,6 +38,7 @@ export const store = configureStore({
     employeesReducer: EmployeesReducer,
     filterEmployeesSlice: EmployeesFiltersReducer,
     filters: FiltersReducer,
+    pagination: PaginationReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),

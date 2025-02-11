@@ -1,5 +1,5 @@
 import http from "@/lib/http";
-import { IResponseObject } from "@/utils/types";
+import type { IResponseObject } from "@/utils/types";
 
 export const fetchGenderData = async (): Promise<IResponseObject | null> => {
   try {
@@ -32,7 +32,7 @@ export const fetchSecretariasData = async (): Promise<IResponseObject | null> =>
 };
 
 export const fetchDireccionesData = async (secretariaId: number): Promise<IResponseObject | null> => {
-  if (!secretariaId || secretariaId == 0) return null;
+  if (!secretariaId || secretariaId === 0) return null;
 
   try {
     const response = await http.get<IResponseObject>(`/api/catalogs/direcciones?id=${secretariaId}`);
@@ -79,6 +79,16 @@ export const fetchHoursData = async (): Promise<IResponseObject | null> => {
     return response.data;
   } catch (error) {
     console.error("Failed to fetch hour:", error);
+    return null;
+  }
+};
+
+export const fetchEmployeeStatusData = async (): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>("/api/catalogs/employeeStatus");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch category:", error);
     return null;
   }
 };

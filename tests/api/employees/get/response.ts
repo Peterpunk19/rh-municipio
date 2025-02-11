@@ -81,7 +81,7 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      status_employee_id: {
+      employee_status: {
         messages: ["Id estatus del empleado debe ser un número"],
       },
     },
@@ -91,7 +91,7 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      status_employee_id: {
+      employee_status: {
         messages: ["Id estatus del empleado debe ser un número igual o mayor a 1"],
       },
     },
@@ -101,7 +101,7 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      status_employee_id: {
+      employee_status: {
         messages: ["Id estatus del empleado debe ser un número igual o mayor a 1"],
       },
     },
@@ -111,7 +111,7 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      location_id: {
+      location: {
         messages: ["Id de ubicación debe ser un número"],
       },
     },
@@ -121,7 +121,7 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      location_id: {
+      location: {
         messages: ["Id de ubicación debe ser un número igual o mayor a 1"],
       },
     },
@@ -131,7 +131,7 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      location_id: {
+      location: {
         messages: ["Id de ubicación debe ser un número igual o mayor a 1"],
       },
     },
@@ -141,8 +141,11 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      start_date: {
-        messages: ["Formato de Fecha de inicio inválida"],
+      start_job_date_end: {
+        messages: ["Formato de Fecha fin en rango de inicio inválida"],
+      },
+      start_job_date_start: {
+        messages: ["Formato de Fecha de inicio en rango de inicio inválida"],
       },
     },
     statusCode: 400,
@@ -151,8 +154,11 @@ export const response = {
     success: false,
     message: "Invalid request",
     responseObject: {
-      end_date: {
-        messages: ["Formato de Fecha de termino inválida"],
+      end_job_date_end: {
+        messages: ["Formato de Fecha fin en rango final inválida"],
+      },
+      end_job_date_start: {
+        messages: ["Formato de Fecha de inicio en rango final inválida"],
       },
     },
     statusCode: 400,

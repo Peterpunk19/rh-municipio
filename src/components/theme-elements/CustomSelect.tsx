@@ -1,8 +1,11 @@
-'use client'
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import { Select } from '@mui/material';
+"use client";
+import { FormControl, InputLabel, Select } from "@mui/material";
 
-const CustomSelect = styled((props: any) => <Select {...props} />)(({}) => ({}));
-
-export default CustomSelect;
+export default function CustomSelect(props: any & { label: string }) {
+  return (
+    <FormControl fullWidth={props.fullWidth}>
+      <InputLabel id={`${props.label}-label`}>{props.label}</InputLabel>
+      <Select {...props} labelId={`${props.label}-label`} label={props.label} />
+    </FormControl>
+  );
+}

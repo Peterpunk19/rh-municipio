@@ -44,4 +44,11 @@ export const CatalogsService = {
       where: { state_id: stateId },
     });
   },
+  async getEmployeeStatus() {
+    return prisma.statusEmployee.findMany(
+      {
+        orderBy: { display_name: 'asc' }
+      }
+    );
+  },
 };

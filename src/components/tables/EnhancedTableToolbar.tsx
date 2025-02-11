@@ -7,18 +7,22 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import { IconFilter, IconSearch, IconTrash } from "@tabler/icons-react";
+import { IconSearch, IconTrash } from "@tabler/icons-react";
 import CustomTextField from "../theme-elements/CustomTextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CustomSelect from "../theme-elements/CustomSelect";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { EnhancedTableToolbarProps } from "@/interfaces/EnhancedTableToolbarProps";
 import { FiltersConfig } from "@/interfaces/FiltersConfig";
 import { updateFilter } from "@/store/tables/FiltersSlice";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const { numSelected, handleSearch, search, filters = [] } = props;
@@ -27,12 +31,22 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const [localState, setLocalState] = useState<Record<string, any>>({});
 
   const handleFilterChange = (filterKey: string, value: any) => {
-    setLocalState((prev) => ({ ...prev, [filterKey]: value }));
-    dispatch(updateFilter({ key: filterKey, value }));
+    const isDateFilter = filters.some(
+      (f) => (f.key === filterKey || filterKey.startsWith(f.key + "_")) && f.type === "date-range",
+    );
+
+    let formattedValue = value;
+
+    if (isDateFilter) {
+      formattedValue = value ? dayjs(value).format("YYYY-MM-DD") : null;
+    }
+
+    setLocalState((prev) => ({ ...prev, [filterKey]: formattedValue }));
+    dispatch(updateFilter({ key: filterKey, value: formattedValue }));
 
     const filterConfig = filters.find((f) => f.key === filterKey);
     if (filterConfig?.onChange) {
-      filterConfig.onChange(value);
+      filterConfig.onChange(formattedValue);
     }
   };
 
@@ -61,10 +75,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           <CustomSelect
             key={filter.key}
             value={localState[filter.key] || ""}
+            label={filter.label}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFilterChange(filter.key, e.target.value)}
             fullWidth
-            variant="outlined"
           >
+            <MenuItem value="">
+              <em>- Seleccionar -</em>
+            </MenuItem>
             {filter.options?.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
@@ -83,19 +100,15 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             onChange={(_, value) => handleFilterChange(filter.key, value)}
             getOptionLabel={(option) => option.label}
             renderInput={(params) => (
-              <CustomTextField
-                {...params}
-                placeholder={filter.label}
-                aria-label={filter.label}
-              />
+              <CustomTextField {...params} placeholder={filter.label} aria-label={filter.label} />
             )}
           />
         );
 
       case "date":
         return (
-          <LocalizationProvider key={filter.key} dateAdapter={AdapterDayjs}>
-            <DateTimePicker
+          <LocalizationProvider key={filter.key} dateAdapter={AdapterDayjs} adapterLocale="es">
+            <DatePicker
               value={localState[filter.key] || null}
               onChange={(newValue) => handleFilterChange(filter.key, newValue)}
               slotProps={{
@@ -110,6 +123,74 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             />
           </LocalizationProvider>
         );
+      case "date-range":
+        const startKey = `${filter.key}_start`;
+        const endKey = `${filter.key}_end`;
+        return (
+          <LocalizationProvider key={filter.key} dateAdapter={AdapterDayjs} adapterLocale="es">
+            <FormControl
+              fullWidth
+              sx={{
+                marginTop: 1,
+                "& .MuiFormLabel-root": {
+                  transform: "translate(14px, 8px) scale(1)",
+                },
+              }}
+            >
+              <InputLabel
+                shrink
+                htmlFor={`${filter.key}-range`}
+                sx={{
+                  backgroundColor: "background.paper",
+                  px: 1,
+                  transform: "translate(14px, -9px) scale(0.75)",
+                }}
+              >
+                {filter.label}
+              </InputLabel>
+              <Box
+                id={`${filter.key}-range`}
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  flexDirection: { xs: "column", sm: "row" },
+                  pt: 4,
+                }}
+              >
+                <DatePicker
+                  label="Inicio"
+                  value={localState[startKey] ? dayjs(localState[startKey], "YYYY-MM-DD") : null}
+                  format="DD-MM-YYYY"
+                  onChange={(newValue) => handleFilterChange(startKey, newValue)}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      sx: {
+                        "& .MuiInputLabel-root": { display: "none" },
+                        "& .MuiSvgIcon-root": { width: "18px", height: "18px" },
+                      },
+                    },
+                  }}
+                />
+                <DatePicker
+                  label="Fin"
+                  value={localState[endKey] ? dayjs(localState[endKey], "YYYY-MM-DD") : null}
+                  format="DD-MM-YYYY"
+                  onChange={(newValue) => handleFilterChange(endKey, newValue)}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      sx: {
+                        "& .MuiInputLabel-root": { display: "none" },
+                        "& .MuiSvgIcon-root": { width: "18px", height: "18px" },
+                      },
+                    },
+                  }}
+                />
+              </Box>
+            </FormControl>
+          </LocalizationProvider>
+        );
 
       default:
         return null;
@@ -122,52 +203,78 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
+          bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
         }),
       }}
     >
       {numSelected > 0 ? (
         <Typography>{numSelected} selected</Typography>
       ) : (
-        <Box sx={{ flex: "1 1 100%", display: "none", gap: 2 }}>
+        <Box
+          sx={{
+            flex: "1 1 100%",
+            display: "flex",
+            gap: 2,
+            flexWrap: "wrap",
+            alignItems: "flex-start",
+          }}
+        >
           {handleSearch && (
-            <TextField
-              placeholder="Buscar"
-              size="small"
-              value={search}
-              onChange={handleSearch}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconSearch size="1.1rem" />
-                  </InputAdornment>
-                ),
+            <Box
+              sx={{
+                minWidth: 150,
+                flex: "1 1 auto",
               }}
-            />
+            >
+              <TextField
+                placeholder="Buscar"
+                size="medium"
+                value={search}
+                onChange={handleSearch}
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconSearch size="1.1rem" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
           )}
 
-          {filters.map((filter) => (
-            <Box key={filter.key} sx={{ width: 250 }}>
-              {renderFilter(filter)}
-            </Box>
-          ))}
+          {filters.map((filter) =>
+            filter.type === "date-range" ? (
+              <Box
+                key={filter.key}
+                sx={{
+                  width: 500,
+                  flex: "0 0 auto",
+                  minWidth: 400,
+                }}
+              >
+                {renderFilter(filter)}
+              </Box>
+            ) : (
+              <Box
+                key={filter.key}
+                sx={{
+                  width: 250,
+                  flex: "0 0 auto",
+                  minWidth: 200,
+                }}
+              >
+                {renderFilter(filter)}
+              </Box>
+            ),
+          )}
         </Box>
       )}
 
-      {numSelected > 0 ? (
+      {numSelected > 0 && (
         <Tooltip title="Delete">
           <IconButton>
             <IconTrash width="18" />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list" sx={{display: "none"}} >
-          <IconButton>
-            <IconFilter size="1.2rem" />
           </IconButton>
         </Tooltip>
       )}
