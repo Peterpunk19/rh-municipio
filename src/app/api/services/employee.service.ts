@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { encryptPassword } from "@/common/utils";
+import { encryptPassword, startOfDay, endOfDay } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters } from "@/app/api/employees/interface";
 
 export const EmployeeService = {
@@ -26,7 +26,7 @@ export const EmployeeService = {
       return "000001";
     }
 
-    const lastNumber = parseInt(lastEmployee.number_employee, 10);
+    const lastNumber = Number.parseInt(lastEmployee.number_employee, 10);
     return (lastNumber + 1).toString().padStart(6, "0");
   },
 
@@ -125,23 +125,98 @@ export const EmployeeService = {
       whereClause.active = employeeFilters.active;
     }
 
-    if (employeeFilters.status_employee_id) {
-      whereClause.status_employee_id = employeeFilters.status_employee_id;
+    if (employeeFilters.employee_status) {
+      whereClause.status_employee_id = employeeFilters.employee_status;
     }
 
-    if (employeeFilters.location_id) {
-      whereClause.locations = {
-        some: {
-          location_id: employeeFilters.location_id,
+    if (employeeFilters.gender) {
+      whereClause.gender_id = employeeFilters.gender;
+    }
+
+    const employeeHiringConditions: any[] = [];
+
+    if (employeeFilters.employee_type) {
+      employeeHiringConditions.push({
+        employee_type_id: employeeFilters.employee_type,
+        active: true,
+      });
+    }
+
+    if (employeeFilters.category) {
+      employeeHiringConditions.push({
+        category_id: employeeFilters.category,
+        active: true,
+      });
+    }
+
+    if (employeeFilters.direccion) {
+      employeeHiringConditions.push({
+        direccion_id: employeeFilters.direccion,
+        active: true,
+      });
+    }
+
+    if (employeeFilters.secretaria) {
+      employeeHiringConditions.push({
+        direccion: {
+          secretaria_id: employeeFilters.secretaria,
           active: true,
+        },
+        active: true,
+      });
+    }
+
+    if (
+      employeeFilters.start_job_date_start ||
+      employeeFilters.start_job_date_end ||
+      employeeFilters.end_job_date_start ||
+      employeeFilters.end_job_date_end
+    ) {
+      const rangeCondition: any = {};
+
+      if (employeeFilters.start_job_date_start || employeeFilters.start_job_date_end) {
+        rangeCondition.start_job_date = {};
+
+        if (employeeFilters.start_job_date_start) {
+          rangeCondition.start_job_date.gte = startOfDay(new Date(employeeFilters.start_job_date_start));
+        }
+
+        if (employeeFilters.start_job_date_end) {
+          rangeCondition.start_job_date.lte = endOfDay(new Date(employeeFilters.start_job_date_end));
+        }
+      }
+
+      if (employeeFilters.end_job_date_start || employeeFilters.end_job_date_end) {
+        rangeCondition.end_job_date = {};
+
+        if (employeeFilters.end_job_date_start) {
+          rangeCondition.end_job_date.gte = startOfDay(new Date(employeeFilters.end_job_date_start));
+        }
+
+        if (employeeFilters.end_job_date_end) {
+          rangeCondition.end_job_date.lte = endOfDay(new Date(employeeFilters.end_job_date_end));
+        }
+      }
+
+      if (Object.keys(rangeCondition).length > 0) {
+        employeeHiringConditions.push(rangeCondition);
+      }
+    }
+
+    if (employeeHiringConditions.length > 0) {
+      whereClause.employee_hiring = {
+        some: {
+          AND: employeeHiringConditions,
         },
       };
     }
 
-    if (employeeFilters.start_date || employeeFilters.end_date) {
-      whereClause.employee_hiring = {
-        ...(employeeFilters.start_date && { start_job_date: { gte: employeeFilters.start_date } }),
-        ...(employeeFilters.end_date && { end_job_date: { lte: employeeFilters.end_date } }),
+    if (employeeFilters.location) {
+      whereClause.locations = {
+        some: {
+          location_id: employeeFilters.location,
+          active: true,
+        },
       };
     }
 
@@ -205,9 +280,44 @@ export const EmployeeService = {
         user: false,
         user_id: false,
         gender: true,
-        employee_hiring: true,
         employee_hiring_id: true,
-        locations: true,
+        employee_hiring: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          select: {
+            id: true,
+            category: true,
+            active: true,
+            start_job_date: true,
+            end_job_date: true,
+            employee_type_id: true,
+            direccion: {
+              select: {
+                id: true,
+                display_name: true,
+                secretaria: true,
+                secretaria_id: true,
+              },
+            },
+          },
+        },
+        locations: {
+          select: {
+            id: true,
+            location_id: true,
+            active: true,
+            created_at: true,
+            updated_at: true,
+            location: {
+              select: {
+                id: true,
+                display_name: true,
+              },
+            },
+          },
+        },
         director_id: true,
         director: true,
         sustitute_id: true,
@@ -218,6 +328,12 @@ export const EmployeeService = {
 
     const total = await prisma.employee.count({ where: whereClause });
     const totalPages = Math.ceil(total / pageSize);
+    data.forEach((employee) => {
+      (employee as any).employee_hiring_active = employee.employee_hiring.find((hiring: any) => hiring.active) || null;
+    });
+    data.forEach((employee) => {
+      (employee as any).location_active = employee.locations.find((location: any) => location.active) || null;
+    });
     const response = {
       data,
       total,

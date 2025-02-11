@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { AppDispatch } from '../store';
 import { getEmployees as fetchEmployeesAPI } from '@/services/employees';
+import { updateTotal } from "@/store/tables/PaginationSlice";
 
 
 interface StateType {
@@ -88,6 +89,7 @@ export const fetchEmployees = (filters:string) => async (dispatch: AppDispatch) 
   try {
     const response = await fetchEmployeesAPI(filters);
     dispatch(getEmployees(response.responseObject.data));
+    dispatch(updateTotal(response.responseObject.total));
   } catch (error) {
     dispatch(hasError(error));
   }

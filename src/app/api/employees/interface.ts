@@ -23,11 +23,18 @@ export interface IEmployee {
 export interface IEmployeeFilters {
   page: number;
   limit: number;
+  gender: number | null | undefined;
+  employee_type: number | null | undefined;
   active: string | boolean | null | undefined;
-  status_employee_id: number | null | undefined;
-  location_id: number | null | undefined;
-  start_date: string | null | undefined;
-  end_date: string | null | undefined;
+  employee_status: number | null | undefined;
+  location: number | null | undefined;
+  category: number | null | undefined;
+  direccion: number | null | undefined;
+  secretaria: number | null | undefined;
+  start_job_date_start: string | null | undefined;
+  start_job_date_end: string | null | undefined;
+  end_job_date_start: string | null | undefined;
+  end_job_date_end: string | null | undefined;
   search: string | null | undefined;
 }
 

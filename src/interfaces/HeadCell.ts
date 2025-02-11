@@ -3,4 +3,5 @@ export interface HeadCell {
   id: string;
   label: string;
   numeric: boolean;
+  empty_text?: string;
 }

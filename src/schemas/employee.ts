@@ -106,24 +106,41 @@ export const EmployeeGetByFilterSchema = z.object({
     }
     return val;
   }, z.boolean({ message: validationMessages.invalidBoolean("Activo") }).nullable()),
-  status_employee_id: z
+  employee_status: z
     .number({ message: validationMessages.number("Id estatus del empleado") })
     .min(1, { message: validationMessages.minNumber("Id estatus del empleado", 1) })
     .nullable(),
-  location_id: z
+  location: z
     .number({ message: validationMessages.number("Id de ubicación") })
     .min(1, { message: validationMessages.minNumber("Id de ubicación", 1) })
     .nullable(),
-  start_date: z
+  gender: z
+    .number({ message: validationMessages.number("El id del genero") })
+    .min(1, { message: validationMessages.minNumber("El id del genero", 1) })
+    .nullable(),
+  employee_type: z
+    .number({ message: validationMessages.number("El id del tipo de empleado") })
+    .min(1, { message: validationMessages.minNumber("El id del tipo de empleado", 1) })
+    .nullable(),
+  category: z
+    .number({ message: validationMessages.number("La categoría del empleado") })
+    .min(1, { message: validationMessages.minNumber("La categoría del empleado", 1) })
+    .nullable(),
+  direccion: z
+    .number({ message: validationMessages.number("El id de direccion del empleado") })
+    .min(1, { message: validationMessages.minNumber("El id de direccion del empleado", 1) })
+    .nullable(),
+  secretaria: z
+    .number({ message: validationMessages.number("El id de la secretaria del empleado") })
+    .min(1, { message: validationMessages.minNumber("El id la secreatria del empleado", 1) })
+    .nullable(),
+  start_job_date_start: z
     .preprocess(
       (val) => {
         if (typeof val === "string") {
           const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
-          if (!isoDateRegex.test(val)) {
-            return "invalid";
-          }
           const parsedDate = new Date(val);
-          if (Number.isNaN(parsedDate.getTime())) {
+          if (!isoDateRegex.test(val) || Number.isNaN(parsedDate.getTime())) {
             return "invalid";
           }
           return parsedDate;
@@ -131,20 +148,17 @@ export const EmployeeGetByFilterSchema = z.object({
         if (typeof val === "number") return "invalid";
         return val;
       },
-      z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }),
+      z.date({ message: validationMessages.invalidaFormat("Fecha de inicio en rango de inicio") }),
     )
     .optional()
     .nullable(),
-  end_date: z
+  start_job_date_end: z
     .preprocess(
       (val) => {
         if (typeof val === "string") {
           const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
-          if (!isoDateRegex.test(val)) {
-            return "invalid";
-          }
           const parsedDate = new Date(val);
-          if (Number.isNaN(parsedDate.getTime())) {
+          if (!isoDateRegex.test(val) || Number.isNaN(parsedDate.getTime())) {
             return "invalid";
           }
           return parsedDate;
@@ -152,7 +166,43 @@ export const EmployeeGetByFilterSchema = z.object({
         if (typeof val === "number") return "invalid";
         return val;
       },
-      z.date({ message: validationMessages.invalidaFormat("Fecha de termino") }),
+      z.date({ message: validationMessages.invalidaFormat("Fecha fin en rango de inicio") }),
+    )
+    .optional()
+    .nullable(),
+  end_job_date_start: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+          const parsedDate = new Date(val);
+          if (!isoDateRegex.test(val) || Number.isNaN(parsedDate.getTime())) {
+            return "invalid";
+          }
+          return parsedDate;
+        }
+        if (typeof val === "number") return "invalid";
+        return val;
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha de inicio en rango final") }),
+    )
+    .optional()
+    .nullable(),
+  end_job_date_end: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+          const parsedDate = new Date(val);
+          if (!isoDateRegex.test(val) || Number.isNaN(parsedDate.getTime())) {
+            return "invalid";
+          }
+          return parsedDate;
+        }
+        if (typeof val === "number") return "invalid";
+        return val;
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha fin en rango final") }),
     )
     .optional()
     .nullable(),
