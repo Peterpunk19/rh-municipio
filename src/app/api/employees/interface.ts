@@ -7,13 +7,17 @@ export interface IEmployee {
   rfc: string;
   curp: string;
   genderId: number | null;
+  addressLine1: string;
+  addressLine2: string;
+  addressLine3: string | null;
+  postalCode: string;
+  postalCodeSat: string;
+  municipalityId: number | null;
   startJobDate: string;
   endJobDate: string;
   categoryId: number | null;
   employeeTypeId: number | null;
-  departamentoId: number | null;
-  payrollId: number | null;
-  locationId: number | null;
+  direccionId: number | null;
 }
 
 export interface IEmployeeFilters {
@@ -33,6 +37,5 @@ export interface IEmployeeHiring {
   endJobDate: string;
   categoryId: number;
   employeeTypeId: number;
-  departamentoId: number;
-  payrollId: number;
+  direccionId: number;
 }

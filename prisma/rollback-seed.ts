@@ -17,8 +17,16 @@ async function rollback() {
   await prisma.payroll.deleteMany();
   await prisma.request.deleteMany();
   await prisma.requestStatus.deleteMany();
+  await prisma.employeeHiring.deleteMany();
+  await prisma.employee.deleteMany();
+  await prisma.user.deleteMany();
   await prisma.role.deleteMany();
   await prisma.statusEmployee.deleteMany();
+  await prisma.direccion.deleteMany();
+  await prisma.secretaria.deleteMany();
+  await prisma.municipality.deleteMany();
+  await prisma.state.deleteMany();
+  await prisma.country.deleteMany();
 
   console.log("Rollback completed.");
 }

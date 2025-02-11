@@ -4,29 +4,44 @@ export const CatalogsService = {
   async getGender() {
     return prisma.gender.findMany();
   },
+
   async getCategory() {
     return prisma.category.findMany();
   },
+
   async getSecretarias() {
     return prisma.secretaria.findMany();
   },
+
   async getDirecciones(secretariaId: number) {
     return prisma.direccion.findMany({
       where: { secretaria_id: secretariaId },
     });
   },
-  async getDepartamentos(direccionId: number) {
-    return prisma.departamento.findMany({
-      where: { direccion_id: direccionId },
-    });
-  },
+
   async getEmployeeTypes() {
     return prisma.employeeType.findMany();
   },
-  async getPayrolls() {
-    return prisma.payroll.findMany();
-  },
+
   async getLocations() {
     return prisma.location.findMany();
+  },
+
+  async getDays() {
+    return prisma.day.findMany();
+  },
+
+  async getHours() {
+    return prisma.hour.findMany();
+  },
+
+  async getState() {
+    return prisma.state.findMany();
+  },
+
+  async getMunicipalities(stateId: number) {
+    return prisma.municipality.findMany({
+      where: { state_id: stateId },
+    });
   },
 };

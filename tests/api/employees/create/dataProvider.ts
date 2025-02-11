@@ -72,6 +72,31 @@ export const dataProvider = {
     request: request.validData,
     response: response.validData,
   },
+  emptyAddressLine1: {
+    status: 400,
+    request: request.emptyAddressLine1,
+    response: response.emptyAddressLine1,
+  },
+  emptyAddressLine2: {
+    status: 400,
+    request: request.emptyAddressLine2,
+    response: response.emptyAddressLine2,
+  },
+  emptyPostalCode: {
+    status: 400,
+    request: request.emptyPostalCode,
+    response: response.emptyPostalCode,
+  },
+  emptyPostalCodeSat: {
+    status: 400,
+    request: request.emptyPostalCodeSat,
+    response: response.emptyPostalCodeSat,
+  },
+  emptyMunicipalityId: {
+    status: 400,
+    request: request.emptyMunicipalityId,
+    response: response.emptyMunicipalityId,
+  },
   duplicatedRfcCurp: {
     status: 400,
     request: request.duplicatedRfcCurp,
@@ -97,19 +122,9 @@ export const dataProvider = {
     request: request.emptyEmployeeTypeId,
     response: response.emptyEmployeeTypeId,
   },
-  emptyDepartamentoId: {
+  emptyDireccionId: {
     status: 400,
-    request: request.emptyDepartamentoId,
-    response: response.emptyDepartamentoId,
-  },
-  emptyPayrollId: {
-    status: 400,
-    request: request.emptyPayrollId,
-    response: response.emptyPayrollId,
-  },
-  emptyLocationId: {
-    status: 400,
-    request: request.emptyLocationId,
-    response: response.emptyLocationId,
+    request: request.emptyDireccionId,
+    response: response.emptyDireccionId,
   },
 };

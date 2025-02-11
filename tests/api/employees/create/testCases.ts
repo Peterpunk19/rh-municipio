@@ -93,6 +93,36 @@ export const testCases = [
     expectedResponse: dataProvider.validData.response,
   },
   {
+    description: "should return error for empty address line 1",
+    requestData: dataProvider.emptyAddressLine1.request as IEmployee,
+    expectedStatus: dataProvider.emptyAddressLine1.status,
+    expectedResponse: dataProvider.emptyAddressLine1.response,
+  },
+  {
+    description: "should return error for empty address line 2",
+    requestData: dataProvider.emptyAddressLine2.request as IEmployee,
+    expectedStatus: dataProvider.emptyAddressLine2.status,
+    expectedResponse: dataProvider.emptyAddressLine2.response,
+  },
+  {
+    description: "should return error for empty postal code",
+    requestData: dataProvider.emptyPostalCode.request as IEmployee,
+    expectedStatus: dataProvider.emptyPostalCode.status,
+    expectedResponse: dataProvider.emptyPostalCode.response,
+  },
+  {
+    description: "should return error for empty postal code sat",
+    requestData: dataProvider.emptyPostalCodeSat.request as IEmployee,
+    expectedStatus: dataProvider.emptyPostalCodeSat.status,
+    expectedResponse: dataProvider.emptyPostalCodeSat.response,
+  },
+  {
+    description: "should return error for empty municipality Id",
+    requestData: dataProvider.emptyMunicipalityId.request as IEmployee,
+    expectedStatus: dataProvider.emptyMunicipalityId.status,
+    expectedResponse: dataProvider.emptyMunicipalityId.response,
+  },
+  {
     description: "should return error for empty start job date",
     requestData: dataProvider.emptyStartJobDate.request as IEmployee,
     expectedStatus: dataProvider.emptyStartJobDate.status,
@@ -123,21 +153,9 @@ export const testCases = [
     expectedResponse: dataProvider.emptyEmployeeTypeId.response,
   },
   {
-    description: "should return error for empty departamento id",
-    requestData: dataProvider.emptyDepartamentoId.request as IEmployee,
-    expectedStatus: dataProvider.emptyDepartamentoId.status,
-    expectedResponse: dataProvider.emptyDepartamentoId.response,
-  },
-  {
-    description: "should return error for empty payroll id",
-    requestData: dataProvider.emptyPayrollId.request as IEmployee,
-    expectedStatus: dataProvider.emptyPayrollId.status,
-    expectedResponse: dataProvider.emptyPayrollId.response,
-  },
-  {
-    description: "should return error for empty location id",
-    requestData: dataProvider.emptyLocationId.request as IEmployee,
-    expectedStatus: dataProvider.emptyLocationId.status,
-    expectedResponse: dataProvider.emptyLocationId.response,
+    description: "should return error for empty direccion id",
+    requestData: dataProvider.emptyDireccionId.request as IEmployee,
+    expectedStatus: dataProvider.emptyDireccionId.status,
+    expectedResponse: dataProvider.emptyDireccionId.response,
   },
 ];

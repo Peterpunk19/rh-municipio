@@ -6,21 +6,21 @@ import { CatalogsService } from "@/app/api/services/catalogs.service";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const direccionId = Number(searchParams.get("id"));
+    const stateId = Number(searchParams.get("id"));
 
-    if (!direccionId) {
+    if (!stateId) {
       const response = HttpResponse.failure(HttpMessages.error.notFound, {});
       return handleHttpResponse(response);
     }
 
-    const departamentos = await CatalogsService.getDepartamentos(direccionId);
+    const municipality = await CatalogsService.getMunicipalities(stateId);
 
-    if (!departamentos.length) {
+    if (!municipality.length) {
       const response = HttpResponse.failure(HttpMessages.error.notFound, {});
       return handleHttpResponse(response);
     }
 
-    const response = HttpResponse.success(HttpMessages.catalog.success, departamentos);
+    const response = HttpResponse.success(HttpMessages.catalog.success, municipality);
 
     return handleHttpResponse(response);
   } catch (error: any) {

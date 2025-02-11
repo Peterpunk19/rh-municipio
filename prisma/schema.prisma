@@ -68,6 +68,24 @@ model Employee {
   employee_requests_by          EmployeeRequest[]   @relation("requestedBy")
   employee_requests_resolved_by EmployeeRequest[]   @relation("resolvedBy")
   employee_created_by           EmployeeHiring[]    @relation("EmployeeCreatedBy")
+  EmployeeAddress               EmployeeAddress[]
+}
+
+model EmployeeAddress {
+  id              Int           @id @default(autoincrement())
+  employee_id     Int
+  address_line_1  String
+  address_line_2  String
+  address_line_3  String
+  postal_code         String
+  postal_code_sat     String
+  municipality_id Int
+  active          Boolean       @default(true)
+  created_by      Int?
+  created_at      DateTime?     @default(now())
+  updated_at      DateTime?     @updatedAt
+  employee        Employee?     @relation(fields: [employee_id], references: [id])
+  Municipality    Municipality? @relation(fields: [municipality_id], references: [id])
 }
 
 model EmployeeHiring {
@@ -77,21 +95,19 @@ model EmployeeHiring {
   end_job_date        DateTime
   category_id         Int
   employee_type_id    Int
-  departamento_id     Int
-  payroll_id          Int
+  direccion_id        Int
   active              Boolean              @default(true)
   created_by          Int?
   created_at          DateTime?            @default(now())
   updated_at          DateTime?            @updatedAt
   category            Category             @relation(fields: [category_id], references: [id])
   employee_type       EmployeeType         @relation(fields: [employee_type_id], references: [id])
-  departamento        Departamento         @relation(fields: [departamento_id], references: [id])
-  payroll             Payroll              @relation(fields: [payroll_id], references: [id])
+  direccion           Direccion            @relation(fields: [direccion_id], references: [id])
   employee            Employee?            @relation(fields: [employee_id], references: [id])
   created_by_user     Employee?            @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
   employee_attendance EmployeeAttendance[]
 
-  @@unique([employee_id, category_id, departamento_id, payroll_id, active])
+  @@unique([employee_id, category_id, direccion_id, employee_type_id, active])
 }
 
 model EmployeeLocation {
@@ -292,7 +308,8 @@ model JobScheduleEmployee {
 
 model Day {
   id                           Int                   @id @default(autoincrement())
-  day                          String                @unique
+  name                         String                @unique
+  display_name                 String
   active                       Boolean               @default(true)
   job_schedule_employees_start JobScheduleEmployee[] @relation("StartDay")
   job_schedule_employees_end   JobScheduleEmployee[] @relation("EndDay")
@@ -300,7 +317,8 @@ model Day {
 
 model Hour {
   id                           Int                   @id @default(autoincrement())
-  hour                         String                @unique
+  name                         String                @unique
+  display_name                 String
   active                       Boolean               @default(true)
   job_schedule_employees_start JobScheduleEmployee[] @relation("StartHour")
   job_schedule_employees_end   JobScheduleEmployee[] @relation("EndHour")
@@ -387,14 +405,6 @@ model Category {
   employees    EmployeeHiring[]
 }
 
-model Payroll {
-  id           Int              @id @default(autoincrement())
-  name         String           @unique
-  display_name String
-  active       Boolean          @default(true)
-  employees    EmployeeHiring[]
-}
-
 model Location {
   id                      Int                     @id @default(autoincrement())
   name                    String                  @unique
@@ -405,25 +415,15 @@ model Location {
   employee_request_detail EmployeeRequestDetail[]
 }
 
-model Departamento {
-  id           Int              @id @default(autoincrement())
-  name         String           @unique
-  display_name String
-  active       Boolean          @default(true)
-  employees    EmployeeHiring[]
-  direccion    Direccion        @relation(fields: [direccion_id], references: [id])
-  direccion_id Int
-}
-
 model Direccion {
-  id            Int            @id @default(autoincrement())
-  name          String         @unique
+  id            Int              @id @default(autoincrement())
+  name          String           @unique
   display_name  String
-  active        Boolean        @default(true)
-  departamentos Departamento[]
-  secretaria    Secretaria     @relation(fields: [secretaria_id], references: [id])
+  active        Boolean          @default(true)
+  secretaria    Secretaria       @relation(fields: [secretaria_id], references: [id])
   secretaria_id Int
   directors     Director[]
+  employees     EmployeeHiring[]
 }
 
 model Secretaria {
@@ -432,4 +432,33 @@ model Secretaria {
   display_name String
   active       Boolean     @default(true)
   direcciones  Direccion[]
+}
+
+model Municipality {
+  id                Int               @id @default(autoincrement())
+  name              String
+  display_name      String
+  active            Boolean           @default(true)
+  state             State             @relation(fields: [state_id], references: [id])
+  state_id          Int
+  employees_address EmployeeAddress[]
+}
+
+model State {
+  id             Int            @id @default(autoincrement())
+  name           String         @unique
+  display_name   String
+  active         Boolean        @default(true)
+  municipalities Municipality[]
+  country        Country        @relation(fields: [country_id], references: [id])
+  country_id     Int
+}
+
+model Country {
+  id           Int     @id @default(autoincrement())
+  name         String  @unique
+  display_name String
+  active       Boolean @default(true)
+  states       State[]
+  state_id     Int?
 }

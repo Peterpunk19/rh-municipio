@@ -16,9 +16,6 @@ const initialState: IEmployeeState = {
     employeeTypeId: '0',
     secretariaId: '0',
     direccionId: '0',
-    departamentoId: '0',
-    payrollId: '0',
-    locationId: '0',
   },
   errors: {
     name: '',
@@ -34,9 +31,6 @@ const initialState: IEmployeeState = {
     employeeTypeId: '',
     secretariaId: '',
     direccionId: '',
-    departamentoId: '',
-    payrollId: '',
-    locationId: '',
   },
 };
 
