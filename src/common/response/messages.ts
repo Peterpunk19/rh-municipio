@@ -7,6 +7,7 @@ export const HttpMessages = {
     createdSuccess: "Empleado creado correctamente",
     notFound: "No se hencontraron empleados con los filtros proporcionados",
     getSuccess: "Empleados encontrados correctamente",
+    invalidEmployeeType: "No fue encontrado el tipo de empleado.",
   },
   error: {
     internalServerError: "Internal server error",

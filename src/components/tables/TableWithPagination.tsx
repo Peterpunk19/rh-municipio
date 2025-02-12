@@ -34,6 +34,7 @@ import { RootState } from "@/store/store";
 import { useDebouncedCallback } from "use-debounce";
 import { FiltersConfig } from "@/interfaces/FiltersConfig";
 import { useDynamicFilters } from "../customHooks/useDinamycFilters";
+import ParentCard from "@/app/components/shared/ParentCard";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -72,6 +73,7 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
 }
 
 interface TableProps<T> {
+  title: string;
   headCells: readonly HeadCell[];
   items: T[];
   columnTypeConfig: Record<string, ColumnTypeConfig>;
@@ -79,6 +81,7 @@ interface TableProps<T> {
   filtersConfig: () => FiltersConfig[];
 }
 const TableWithPagination = <T,>({
+  title,
   headCells,
   items,
   columnTypeConfig,
@@ -235,68 +238,66 @@ const TableWithPagination = <T,>({
   };
 
   return (
-    <Box>
-      <Box>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          search={search}
-          handleSearch={(event: any) => handleSearchInput(event)}
-          filters={filters.map((filter) => ({
-            key: filter.key,
-            label: filter.label,
-            type: filter.type,
-            options: filter.options || [],
-            value: selectedValues[filter.key],
-            onChange: (value: any) => handleFilterChange(filter.key, value),
-          }))}
+    <ParentCard title={title}>
+      <EnhancedTableToolbar
+        numSelected={selected.length}
+        search={search}
+        handleSearch={(event: any) => handleSearchInput(event)}
+        filters={filters.map((filter) => ({
+          key: filter.key,
+          label: filter.label,
+          type: filter.type,
+          options: filter.options || [],
+          value: selectedValues[filter.key],
+          onChange: (value: any) => handleFilterChange(filter.key, value),
+        }))}
+      />
+      <Paper variant="outlined" sx={{ mx: 2, mt: 1, border: `1px solid ${borderColor}` }}>
+        <TableContainer>
+          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={total}
+              headCells={headCells}
+            />
+            <TableBody>
+              {stableSort(items, getComparator(order, orderBy))?.map((row: any, index) => {
+                const isItemSelected = isSelected(row.title);
+                const labelId = `enhanced-table-checkbox-${index}`;
+                return (
+                  <TableRow hover tabIndex={-1} key={row.id}>
+                    {headCells.map((headCell) => (
+                      <TableCell
+                        key={headCell.id}
+                        align={headCell.numeric ? "right" : "left"}
+                        padding={headCell.disablePadding ? "none" : "normal"}
+                      >
+                        <DynamicCell row={row} headCell={headCell} />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={total}
+          rowsPerPage={limit}
+          page={page - 1}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="Registros por página"
+          labelDisplayedRows={() => labelDisplayedRows(page === 1 ? 1 : page - 1 + limit, page * limit, total)}
         />
-        <Paper variant="outlined" sx={{ mx: 2, mt: 1, border: `1px solid ${borderColor}` }}>
-          <TableContainer>
-            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
-              <EnhancedTableHead
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={total}
-                headCells={headCells}
-              />
-              <TableBody>
-                {stableSort(items, getComparator(order, orderBy))?.map((row: any, index) => {
-                  const isItemSelected = isSelected(row.title);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow hover tabIndex={-1} key={row.id}>
-                      {headCells.map((headCell) => (
-                        <TableCell
-                          key={headCell.id}
-                          align={headCell.numeric ? "right" : "left"}
-                          padding={headCell.disablePadding ? "none" : "normal"}
-                        >
-                          <DynamicCell row={row} headCell={headCell} />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={total}
-            rowsPerPage={limit}
-            page={page - 1}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            labelRowsPerPage="Registros por página"
-            labelDisplayedRows={() => labelDisplayedRows(page === 1 ? 1 : page - 1 + limit, page * limit, total)}
-          />
-        </Paper>
-      </Box>
-    </Box>
+      </Paper>
+    </ParentCard>
   );
 };
 

@@ -17,6 +17,12 @@ const secretaria = require("./seeds/secretaria");
 const country = require("./seeds/country");
 const state = require("./seeds/state");
 const municipality = require("./seeds/municipality");
+const identificationType = require("./seeds/identification-type");
+const maritalStatus = require("./seeds/marital-status");
+const occupation = require("./seeds/occupation");
+const profession = require("./seeds/profession");
+const schooling = require("./seeds/schooling");
+const tradeUnion = require("./seeds/trade-union");
 
 const prisma = new PrismaClient();
 
@@ -41,6 +47,12 @@ async function main() {
   await prisma.country.createMany({ data: country });
   await prisma.state.createMany({ data: state });
   await prisma.municipality.createMany({ data: municipality });
+  await prisma.identificationType.createMany({ data: identificationType });
+  await prisma.maritalStatus.createMany({ data: maritalStatus });
+  await prisma.occupation.createMany({ data: occupation });
+  await prisma.profession.createMany({ data: profession });
+  await prisma.schooling.createMany({ data: schooling });
+  await prisma.tradeUnion.createMany({ data: tradeUnion });
 
   console.log("Seeding finished.");
 }

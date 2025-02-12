@@ -6,6 +6,7 @@ import { validateRequest } from "@/common/request/validateRequest";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
 import { IEmployee } from "@/app/api/employees/interface";
+import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployee>(request, EmployeePostSchema);
@@ -20,6 +21,7 @@ export async function POST(request: NextRequest) {
 
   try {
     body.numberEmployee = await EmployeeService.getNumberEmployee();
+
     const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(body.rfc, body.curp);
 
     if (existingEmployee) {
@@ -30,6 +32,19 @@ export async function POST(request: NextRequest) {
 
       return handleHttpResponse(response);
     }
+
+    const employeeType = await EmployeeTypeService.getEmployeeTypeByName(body.employeeTypeName);
+
+    if (!employeeType) {
+      const response = HttpResponse.failure(HttpMessages.employee.invalidEmployeeType, {
+        employeeTypeName: {
+          messages: [body.employeeTypeName],
+        },
+      });
+
+      return handleHttpResponse(response);
+    }
+    body.employeeTypeId = employeeType.id;
 
     const [employee] = await EmployeeService.createEmployee(body);
     const response = HttpResponse.success(HttpMessages.employee.createdSuccess, {

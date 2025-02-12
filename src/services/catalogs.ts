@@ -1,5 +1,5 @@
 import http from "@/lib/http";
-import type { IResponseObject } from "@/utils/types";
+import { IResponseObject } from "@/utils/types";
 
 export const fetchGenderData = async (): Promise<IResponseObject | null> => {
   try {
@@ -31,8 +31,8 @@ export const fetchSecretariasData = async (): Promise<IResponseObject | null> =>
   }
 };
 
-export const fetchDireccionesData = async (secretariaId: number): Promise<IResponseObject | null> => {
-  if (!secretariaId || secretariaId == 0) return null;
+export const fetchDireccionesData = async (secretariaId: string): Promise<IResponseObject | null> => {
+  if (!secretariaId || secretariaId == "0") return null;
 
   try {
     const response = await http.get<IResponseObject>(`/api/catalogs/direcciones?id=${secretariaId}`);
@@ -45,7 +45,7 @@ export const fetchDireccionesData = async (secretariaId: number): Promise<IRespo
 
 export const fetchEmployeeTypesData = async (): Promise<IResponseObject | null> => {
   try {
-    const response = await http.get<IResponseObject>("/api/catalogs/employeeType");
+    const response = await http.get<IResponseObject>("/api/catalogs/employee-type");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch employeeType:", error);
@@ -93,14 +93,24 @@ export const fetchStatesData = async (): Promise<IResponseObject | null> => {
   }
 };
 
-export const fetchMunicipalitiesData = async (stateId: number): Promise<IResponseObject | null> => {
-  if (!stateId || stateId == 0) return null;
+export const fetchMunicipalitiesData = async (stateId: string): Promise<IResponseObject | null> => {
+  if (!stateId || stateId == "0") return null;
 
   try {
     const response = await http.get<IResponseObject>(`/api/catalogs/municipality?id=${stateId}`);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch municipalities:", error);
+    return null;
+  }
+};
+
+export const fetchCatalogData = async (name: any): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>(`/api/catalogs/${name}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch ${name}:`, error);
     return null;
   }
 };

@@ -1,4 +1,4 @@
-import { createTestCase } from "@/utils/utils";
+import { createTestCase } from "../../../common/utils";
 
 export const dataProvider = {
   invalidRequest: createTestCase("emptyParams"),
@@ -27,7 +27,9 @@ export const dataProvider = {
   emptyStartJobDate: createTestCase("emptyStartJobDate"),
   emptyEndJobDate: createTestCase("emptyEndJobDate"),
   emptyCategoryId: createTestCase("emptyCategoryId"),
-  emptyEmployeeTypeId: createTestCase("emptyEmployeeTypeId"),
+  emptyEmployeeTypeName: createTestCase("emptyEmployeeTypeName"),
+  invalidEmployeeTypeName: createTestCase("invalidEmployeeTypeName"),
+  emptyEmployeeTypeBaseSindicalizado: createTestCase("emptyEmployeeTypeBaseSindicalizado"),
   emptyDireccionId: createTestCase("emptyDireccionId"),
   validData: createTestCase("validData", 200),
 };

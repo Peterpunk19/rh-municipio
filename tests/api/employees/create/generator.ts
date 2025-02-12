@@ -22,7 +22,7 @@ export const generator = {
     startJobDate: overrides?.startJobDate ?? "2025-01-22",
     endJobDate: overrides?.endJobDate ?? "2025-11-22",
     categoryId: overrides?.categoryId !== undefined ? overrides?.categoryId : 1,
-    employeeTypeId: overrides?.employeeTypeId !== undefined ? overrides?.employeeTypeId : 1,
+    employeeTypeName: overrides?.employeeTypeName !== undefined ? overrides?.employeeTypeName : "base_no_sindicalizado",
     direccionId: overrides?.direccionId !== undefined ? overrides?.direccionId : 1,
   }),
   response: (overrides?: Partial<IResponse>): IResponse => ({

@@ -213,7 +213,7 @@ export const EmployeeService = {
     }
 
     if (employeeFilters.location) {
-      whereClause.locations = {
+      whereClause.employee_location = {
         some: {
           location_id: employeeFilters.location,
           active: true,
@@ -304,7 +304,7 @@ export const EmployeeService = {
             },
           },
         },
-        locations: {
+        employee_location: {
           select: {
             id: true,
             location_id: true,
@@ -333,7 +333,7 @@ export const EmployeeService = {
       (employee as any).employee_hiring_active = employee.employee_hiring.find((hiring: any) => hiring.active) || null;
     });
     data.forEach((employee) => {
-      (employee as any).location_active = employee.locations.find((location: any) => location.active) || null;
+      (employee as any).location_active = employee.employee_location.find((location: any) => location.active) || null;
     });
     const response = {
       data,

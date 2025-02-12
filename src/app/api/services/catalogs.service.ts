@@ -70,6 +70,54 @@ export const CatalogsService = {
       },
     });
   },
+
+  async getMaritalStatus() {
+    return prisma.maritalStatus.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
+  },
+
+  async getProfession() {
+    return prisma.profession.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
+  },
+
+  async getSchooling() {
+    return prisma.schooling.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
+  },
+
+  async getOccupation() {
+    return prisma.occupation.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
+  },
+
+  async getIdentificationType() {
+    return prisma.identificationType.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
+  },
+
+  async getTradeUnion() {
+    return prisma.tradeUnion.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
+  },
   async getEmployeeStatus() {
     return prisma.statusEmployee.findMany(
       {

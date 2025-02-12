@@ -3,13 +3,11 @@
 import React from "react";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import { Box, Grid2 as Grid } from "@mui/material";
-import { fetchGenderData } from "@/services/catalogs";
 import { useDispatch } from "react-redux";
 import { useSelector } from "@/store/hooks";
 import { updateValues, updateErrors } from "@/store/employees/EmployeeSlice";
 import { stepFormFields } from "./formConfig";
-import {useFetchOptions} from "@/components/customHooks/useFetchOptions";
-import {useRenderInputFields} from "@/components/customHooks/useRenderInputFields";
+import { useRenderInputFields } from "@/components/customHooks/useRenderInputFields";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 
 export const FormPersonalData = () => {
@@ -23,7 +21,6 @@ export const FormPersonalData = () => {
     dispatch(updateErrors({ [name as string]: "" }));
   };
 
-  const { options: gender, isLoading, error } = useFetchOptions(fetchGenderData);
   const { renderField } = useRenderInputFields(formValues, handleChange);
 
   return (
@@ -32,7 +29,7 @@ export const FormPersonalData = () => {
         {stepFormFields.personalDataConfig.map((field) => (
           <Grid key={field.id} size={field.gridSize}>
             <CustomFormLabel htmlFor={field.id}>{field.label}</CustomFormLabel>
-            {renderField(field, gender, isLoading, error, errors[field.name])}
+            {renderField(field)}
             <CustomLabelError field={errors[field.name]} />
           </Grid>
         ))}

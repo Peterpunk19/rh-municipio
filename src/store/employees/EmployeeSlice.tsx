@@ -21,7 +21,8 @@ const initialState: IEmployeeState = {
     startJobDate: "",
     endJobDate: "",
     categoryId: "0",
-    employeeTypeId: "0",
+    employeeTypeName: "",
+    tradeUnionId: "",
     secretariaId: "0",
     direccionId: "0",
   },
@@ -43,12 +44,18 @@ const initialState: IEmployeeState = {
     startJobDate: "",
     endJobDate: "",
     categoryId: "",
-    employeeTypeId: "",
+    employeeTypeName: "",
+    tradeUnionId: "",
     secretariaId: "",
     direccionId: "",
   },
   helperText: {
-    salary: "",
+    categoryId: "",
+  },
+  catalogs: {
+    municipalities: null,
+    direcciones: null,
+    categories: null,
   },
 };
 
@@ -56,10 +63,13 @@ export const employeeSlice = createSlice({
   name: "employee",
   initialState,
   reducers: {
+    updateCatalogs: (state, action: PayloadAction<Partial<IEmployeeState["catalogs"]>>) => {
+      state.catalogs = { ...state.catalogs, ...action.payload };
+    },
     updateValues: (state, action: PayloadAction<Partial<IEmployeeState["values"]>>) => {
       state.values = { ...state.values, ...action.payload };
     },
-    updateHelperText: (state, action: PayloadAction<Partial<IEmployeeState["values"]>>) => {
+    updateHelperText: (state, action: PayloadAction<Partial<IEmployeeState["helperText"]>>) => {
       state.helperText = { ...state.helperText, ...action.payload };
     },
     updateErrors: (state, action: PayloadAction<Partial<IEmployeeState["errors"]>>) => {
@@ -71,6 +81,6 @@ export const employeeSlice = createSlice({
   },
 });
 
-export const { updateValues, updateErrors, resetFormValues, updateHelperText } = employeeSlice.actions;
+export const { updateValues, updateErrors, resetFormValues, updateHelperText, updateCatalogs } = employeeSlice.actions;
 
 export default employeeSlice.reducer;
