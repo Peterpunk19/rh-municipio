@@ -6,25 +6,44 @@ export const CatalogsService = {
   },
 
   async getCategory() {
-    return prisma.category.findMany();
+    return prisma.category.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
   },
 
   async getSecretarias() {
-    return prisma.secretaria.findMany();
+    return prisma.secretaria.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
   },
 
   async getDirecciones(secretariaId: number) {
     return prisma.direccion.findMany({
       where: { secretaria_id: secretariaId },
+      orderBy: {
+        display_name: "asc",
+      },
     });
   },
 
   async getEmployeeTypes() {
-    return prisma.employeeType.findMany();
+    return prisma.employeeType.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
   },
 
   async getLocations() {
-    return prisma.location.findMany();
+    return prisma.location.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
   },
 
   async getDays() {
@@ -36,12 +55,19 @@ export const CatalogsService = {
   },
 
   async getState() {
-    return prisma.state.findMany();
+    return prisma.state.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
   },
 
   async getMunicipalities(stateId: number) {
     return prisma.municipality.findMany({
       where: { state_id: stateId },
+      orderBy: {
+        display_name: "asc",
+      },
     });
   },
   async getEmployeeStatus() {

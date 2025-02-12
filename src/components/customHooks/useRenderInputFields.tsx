@@ -2,13 +2,9 @@ import React from "react";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import MenuItem from "@mui/material/MenuItem";
+import {formatToNumbersOnly, formatToUpperAlphaNum} from "@/common/utils";
 
 export const useRenderInputFields = (formData: any, handleChange: (e: any) => void) => {
-  const formatToUpperAlphaNum = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.target.value = e.target.value.toUpperCase().replace(/[^a-zA-Z0-9 ]/g, '').slice(0, 18);
-    return e;
-  };
-
   const renderField = (field: any, options: any[] = [], isLoading?: boolean, error?: string | null, errorField?: string | null) => {
     switch (field.type) {
       case "text":
@@ -23,11 +19,13 @@ export const useRenderInputFields = (formData: any, handleChange: (e: any) => vo
               onChange={(e: any) => {
                 if (field.format === "upperAlphaNum") {
                   handleChange(formatToUpperAlphaNum(e));
+                } else if (field.format === "numbersOnly") {
+                  handleChange(formatToNumbersOnly(e));
                 } else {
                   handleChange(e);
                 }
               }}
-              inputProps={{ maxLength: 255, autoComplete: 'off' }}
+              inputProps={field.inputProps || { maxLength: 255, autoComplete: 'off' }}
               variant="outlined"
               fullWidth
             />
@@ -56,6 +54,20 @@ export const useRenderInputFields = (formData: any, handleChange: (e: any) => vo
                   <MenuItem key={option.id} value={option.id}>{option.display_name}</MenuItem>
                 )
               )
+            }
+          </CustomSelect>
+        );
+      case "selectCategory":
+        return (
+          <CustomSelect id={field.id} name={field.name} fullWidth value={formData[field.name] || "0"} onChange={handleChange}>
+            <MenuItem key="default" value="0">{field.placeholder ?? 'Seleccione una opción'}</MenuItem>
+            {isLoading ?
+              <MenuItem disabled>Loading...</MenuItem> : error ?
+                <MenuItem disabled>{error}</MenuItem> :
+                options.map((option) => (
+                    <MenuItem key={option.id} value={option.id} data-salary={option.salary}>{option.display_name}</MenuItem>
+                  )
+                )
             }
           </CustomSelect>
         );

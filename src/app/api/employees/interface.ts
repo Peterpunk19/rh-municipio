@@ -10,6 +10,7 @@ export interface IEmployee {
   addressLine1: string;
   addressLine2: string;
   addressLine3: string | null;
+  addressLine4: string | null;
   postalCode: string;
   postalCodeSat: string;
   municipalityId: number | null;

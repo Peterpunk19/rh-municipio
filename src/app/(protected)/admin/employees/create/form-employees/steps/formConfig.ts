@@ -4,6 +4,7 @@ export interface IFieldConfig {
   type: string;
   name: string;
   placeholder?: string;
+  inputProps?: object;
   gridSize: { xs: number; sm: number; lg: number };
   options?: any[];
   format?: string;
@@ -84,7 +85,7 @@ const hiringConfig: IFieldConfig[] = [
     id: "categoryId",
     label: "Categoría",
     placeholder: "Seleccione una Categoría",
-    type: "select",
+    type: "selectCategory",
     name: "categoryId",
     gridSize: { xs: 12, sm: 12, lg: 4 },
   },
@@ -128,45 +129,53 @@ const locationConfig: IFieldConfig[] = [
 
 const addressConfig: IFieldConfig[] = [
   {
-    id: "address",
+    id: "addressLine1",
     label: "Calle",
     type: "text",
-    name: "address",
+    name: "addressLine1",
     gridSize: { xs: 12, sm: 12, lg: 4 },
   },
   {
-    id: "homeNumber",
+    id: "addressLine2",
     label: "Número de Casa",
     type: "text",
-    name: "name",
+    format: "numbersOnly",
+    inputProps: { maxLength: 7, autoComplete: "off" },
+    name: "addressLine2",
     gridSize: { xs: 12, sm: 12, lg: 4 },
   },
   {
-    id: "homeNumber",
+    id: "addressLine3",
     label: "Número de Departamento",
     type: "text",
-    name: "name",
+    format: "numbersOnly",
+    inputProps: { maxLength: 7, autoComplete: "off" },
+    name: "addressLine3",
     gridSize: { xs: 12, sm: 12, lg: 4 },
   },
   {
     id: "postalCode",
     label: "Código Postal",
     type: "text",
-    name: "name",
+    format: "numbersOnly",
+    inputProps: { maxLength: 7, autoComplete: "off" },
+    name: "postalCode",
     gridSize: { xs: 12, sm: 12, lg: 4 },
   },
   {
     id: "postalCodeSat",
     label: "Código Postal SAT",
     type: "text",
-    name: "name",
+    format: "numbersOnly",
+    inputProps: { maxLength: 7, autoComplete: "off" },
+    name: "postalCodeSat",
     gridSize: { xs: 12, sm: 12, lg: 4 },
   },
   {
-    id: "colonia",
+    id: "addressLine4",
     label: "Colonia",
     type: "text",
-    name: "name",
+    name: "addressLine4",
     gridSize: { xs: 12, sm: 12, lg: 4 },
   },
   {

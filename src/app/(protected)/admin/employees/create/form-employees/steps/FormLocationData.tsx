@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
 import React from "react";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import { Box, Grid2 as Grid } from "@mui/material";
-import {fetchLocationsData} from "@/services/catalogs";
+import { fetchLocationsData } from "@/services/catalogs";
 import { useDispatch } from "react-redux";
 import { useSelector } from "@/store/hooks";
 import { updateValues, updateErrors } from "@/store/employees/EmployeeSlice";
 import { stepFormFields } from "./formConfig";
-import {useFetchOptions} from "@/components/customHooks/useFetchOptions";
-import {useRenderInputFields} from "@/components/customHooks/useRenderInputFields";
+import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
+import { useRenderInputFields } from "@/components/customHooks/useRenderInputFields";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 
 export const FormLocationData = () => {
@@ -20,7 +20,7 @@ export const FormLocationData = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     dispatch(updateValues({ [name as string]: value }));
-    dispatch(updateErrors({ [name as string]: '' }));
+    dispatch(updateErrors({ [name as string]: "" }));
   };
 
   const { options: location, isLoading, error } = useFetchOptions(fetchLocationsData);

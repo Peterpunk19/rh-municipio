@@ -80,6 +80,7 @@ export const EmployeeService = {
           address_line_1: employee.addressLine1,
           address_line_2: employee.addressLine2,
           address_line_3: employee.addressLine3,
+          address_line_4: employee.addressLine4,
           postal_code: employee.postalCode,
           postal_code_sat: employee.postalCodeSat,
           municipality_id: employee.municipalityId,

@@ -32,7 +32,7 @@ export const fetchSecretariasData = async (): Promise<IResponseObject | null> =>
 };
 
 export const fetchDireccionesData = async (secretariaId: number): Promise<IResponseObject | null> => {
-  if (!secretariaId || secretariaId === 0) return null;
+  if (!secretariaId || secretariaId == 0) return null;
 
   try {
     const response = await http.get<IResponseObject>(`/api/catalogs/direcciones?id=${secretariaId}`);
@@ -79,6 +79,28 @@ export const fetchHoursData = async (): Promise<IResponseObject | null> => {
     return response.data;
   } catch (error) {
     console.error("Failed to fetch hour:", error);
+    return null;
+  }
+};
+
+export const fetchStatesData = async (): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>("/api/catalogs/state");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch states:", error);
+    return null;
+  }
+};
+
+export const fetchMunicipalitiesData = async (stateId: number): Promise<IResponseObject | null> => {
+  if (!stateId || stateId == 0) return null;
+
+  try {
+    const response = await http.get<IResponseObject>(`/api/catalogs/municipality?id=${stateId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch municipalities:", error);
     return null;
   }
 };

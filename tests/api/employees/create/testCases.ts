@@ -99,10 +99,34 @@ export const testCases = [
     expectedResponse: dataProvider.emptyAddressLine1.response,
   },
   {
+    description: "should return error for long address line 1",
+    requestData: dataProvider.longAddressLine1.request as IEmployee,
+    expectedStatus: dataProvider.longAddressLine1.status,
+    expectedResponse: dataProvider.longAddressLine1.response,
+  },
+  {
     description: "should return error for empty address line 2",
     requestData: dataProvider.emptyAddressLine2.request as IEmployee,
     expectedStatus: dataProvider.emptyAddressLine2.status,
     expectedResponse: dataProvider.emptyAddressLine2.response,
+  },
+  {
+    description: "should return error for long address line 2",
+    requestData: dataProvider.longAddressLine2.request as IEmployee,
+    expectedStatus: dataProvider.longAddressLine2.status,
+    expectedResponse: dataProvider.longAddressLine2.response,
+  },
+  {
+    description: "should return error for empty address line 4",
+    requestData: dataProvider.emptyAddressLine4.request as IEmployee,
+    expectedStatus: dataProvider.emptyAddressLine4.status,
+    expectedResponse: dataProvider.emptyAddressLine4.response,
+  },
+  {
+    description: "should return error for long address line 4",
+    requestData: dataProvider.longAddressLine4.request as IEmployee,
+    expectedStatus: dataProvider.longAddressLine4.status,
+    expectedResponse: dataProvider.longAddressLine4.response,
   },
   {
     description: "should return error for empty postal code",

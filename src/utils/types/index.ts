@@ -2,6 +2,7 @@ export interface ICatalog {
   id: string;
   name: string;
   display_name: string;
+  salary?: string;
 }
 
 export interface IResponseObject {
@@ -9,6 +10,10 @@ export interface IResponseObject {
 }
 
 export interface ILabelError {
+  field?: string;
+}
+
+export interface IHelperText {
   field?: string;
 }
 
