@@ -1,9 +1,7 @@
-import { HttpMessages } from "@/common/response/messages";
+import { generator } from "./generator";
 
 export const response = {
-  invalidRequest: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  emptyParams: generator.response({
     responseObject: {
       name: {
         messages: ["Nombre(s) es requerido"],
@@ -35,6 +33,9 @@ export const response = {
       addressLine3: {
         messages: ["Número de Departamento es requerido"],
       },
+      addressLine4: {
+        messages: ["Colonia es requerido"],
+      },
       postalCode: {
         messages: ["Código postal es requerido"],
       },
@@ -60,251 +61,207 @@ export const response = {
         messages: ["Organo administrativo es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyNumberEmployee: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyNumberEmployee: generator.response({
     responseObject: {
       numberEmployee: {
         messages: ["Número de empleado es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyName: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyName: generator.response({
     responseObject: {
       name: {
         messages: ["Nombre(s) es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyPaternalLastName: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyPaternalLastName: generator.response({
     responseObject: {
       paternalLastName: {
         messages: ["Apellido paterno es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyMaternalLastName: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyMaternalLastName: generator.response({
     responseObject: {
       maternalLastName: {
         messages: ["Apellido materno es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyBirthday: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyBirthday: generator.response({
     responseObject: {
       birthday: {
         messages: ["Formato de Fecha de nacimiento inválida"],
       },
     },
-    statusCode: 400,
-  },
-  emptyGenderId: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyGenderId: generator.response({
     responseObject: {
       genderId: {
         messages: ["Género es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyRfc: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyRfc: generator.response({
     responseObject: {
       rfc: {
         messages: ["RFC es requerido", "Formato de RFC inválido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyCurp: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyCurp: generator.response({
     responseObject: {
       curp: {
         messages: ["CURP es requerido", "Formato de CURP inválido"],
       },
     },
-    statusCode: 400,
-  },
-  longNumberEmployee: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  longNumberEmployee: generator.response({
     responseObject: {
       numberEmployee: {
         messages: ["Número de empleado no puede exceder de 6 caracteres"],
       },
     },
-    statusCode: 400,
-  },
-  longName: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  longName: generator.response({
     responseObject: {
       name: {
         messages: ["Nombre(s) no puede exceder de 255 caracteres"],
       },
     },
-    statusCode: 400,
-  },
-  longFirstName: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  longFirstName: generator.response({
     responseObject: {
       name: {
         messages: ["Nombre(s) no puede exceder de 255 caracteres"],
       },
     },
-    statusCode: 400,
-  },
-  longPaternalLastName: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  longPaternalLastName: generator.response({
     responseObject: {
       paternalLastName: {
         messages: ["Apellido paterno no puede exceder de 255 caracteres"],
       },
     },
-    statusCode: 400,
-  },
-  longMaternalLastName: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  longMaternalLastName: generator.response({
     responseObject: {
       maternalLastName: {
         messages: ["Apellido materno no puede exceder de 255 caracteres"],
       },
     },
-    statusCode: 400,
-  },
-  validData: {
+  }),
+  validData: generator.response({
     success: true,
     message: "Empleado creado correctamente",
     responseObject: {},
     statusCode: 200,
-  },
-  duplicatedRfcCurp: {
-    success: false,
+  }),
+  duplicatedRfcCurp: generator.response({
     message: "RFC or CURP ya existen",
     responseObject: {
       rfc: "DIBP921019Q12",
       curp: "DIBP921019HDFZLD12",
     },
-    statusCode: 400,
-  },
-  emptyAddressLine1: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyAddressLine1: generator.response({
     responseObject: {
       addressLine1: {
         messages: ["Calle es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyAddressLine2: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  longAddressLine1: generator.response({
+    responseObject: {
+      addressLine1: {
+        messages: ["Calle no puede exceder de 255 caracteres"],
+      },
+    },
+  }),
+  emptyAddressLine2: generator.response({
     responseObject: {
       addressLine2: {
         messages: ["Número de casa es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyPostalCode: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  longAddressLine2: generator.response({
+    responseObject: {
+      addressLine2: {
+        messages: ["Número de casa no puede exceder de 255 caracteres"],
+      },
+    },
+  }),
+  emptyAddressLine4: generator.response({
+    responseObject: {
+      addressLine4: {
+        messages: ["Colonia es requerido"],
+      },
+    },
+  }),
+  longAddressLine4: generator.response({
+    responseObject: {
+      addressLine4: {
+        messages: ["Colonia no puede exceder de 255 caracteres"],
+      },
+    },
+  }),
+  emptyPostalCode: generator.response({
     responseObject: {
       postalCode: {
         messages: ["Código postal es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyPostalCodeSat: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyPostalCodeSat: generator.response({
     responseObject: {
       postalCodeSat: {
         messages: ["Código postal SAT es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyMunicipalityId: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyMunicipalityId: generator.response({
     responseObject: {
       municipalityId: {
         messages: ["Municipio es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyStartJobDate: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyStartJobDate: generator.response({
     responseObject: {
       startJobDate: {
         messages: ["Formato de Fecha de inicio inválida"],
       },
     },
-    statusCode: 400,
-  },
-  emptyEndJobDate: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyEndJobDate: generator.response({
     responseObject: {
       endJobDate: {
         messages: ["Formato de Fecha de terminación inválida"],
       },
     },
-    statusCode: 400,
-  },
-  emptyCategoryId: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyCategoryId: generator.response({
     responseObject: {
       categoryId: {
         messages: ["Categoria es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyEmployeeTypeId: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyEmployeeTypeId: generator.response({
     responseObject: {
       employeeTypeId: {
         messages: ["Tipo de empleado es requerido"],
       },
     },
-    statusCode: 400,
-  },
-  emptyDireccionId: {
-    success: false,
-    message: HttpMessages.error.validationFields,
+  }),
+  emptyDireccionId: generator.response({
     responseObject: {
       direccionId: {
         messages: ["Organo administrativo es requerido"],
       },
     },
-    statusCode: 400,
-  },
+  }),
 };

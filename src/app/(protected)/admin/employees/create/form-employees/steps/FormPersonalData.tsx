@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
 import React from "react";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import { Box, Grid2 as Grid } from "@mui/material";
-import {fetchGenderData} from "@/services/catalogs";
+import { fetchGenderData } from "@/services/catalogs";
 import { useDispatch } from "react-redux";
 import { useSelector } from "@/store/hooks";
 import { updateValues, updateErrors } from "@/store/employees/EmployeeSlice";
@@ -20,7 +20,7 @@ export const FormPersonalData = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     dispatch(updateValues({ [name as string]: value }));
-    dispatch(updateErrors({ [name as string]: '' }));
+    dispatch(updateErrors({ [name as string]: "" }));
   };
 
   const { options: gender, isLoading, error } = useFetchOptions(fetchGenderData);

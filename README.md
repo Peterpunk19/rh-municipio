@@ -87,3 +87,9 @@ Next.js: Visit http://localhost:3001 to see your Next.js app.
 Adminer: Visit http://localhost:8081 to interact with the MySQL database.
 
 MySQL: Connect to MySQL on port 3307 using the credentials specified in your .env file.
+
+## Import employees for testing
+
+```bash
+Call as POST request http://localhost:3001/api/employees/import (check body insomnia)
+```

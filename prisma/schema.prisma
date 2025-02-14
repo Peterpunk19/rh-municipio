@@ -77,6 +77,7 @@ model EmployeeAddress {
   address_line_1  String
   address_line_2  String
   address_line_3  String
+  address_line_4  String
   postal_code         String
   postal_code_sat     String
   municipality_id Int
@@ -401,6 +402,7 @@ model Category {
   id           Int              @id @default(autoincrement())
   name         String           @unique
   display_name String
+  salary       Decimal          @default(0)
   active       Boolean          @default(true)
   employees    EmployeeHiring[]
 }

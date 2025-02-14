@@ -74,6 +74,10 @@ export const EmployeePostSchema = z.object({
     .min(1, { message: validationMessages.required("Número de casa") })
     .max(255, { message: validationMessages.maxLength("Número de casa", 255) }),
   addressLine3: z.string({ message: validationMessages.required("Número de Departamento") }),
+  addressLine4: z
+    .string({ message: validationMessages.required("Colonia") })
+    .min(1, { message: validationMessages.required("Colonia") })
+    .max(255, { message: validationMessages.maxLength("Colonia", 255) }),
   postalCode: z
     .string({ message: validationMessages.required("Código postal") })
     .min(1, { message: validationMessages.required("Código postal") })
