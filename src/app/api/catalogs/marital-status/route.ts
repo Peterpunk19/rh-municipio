@@ -5,12 +5,7 @@ import { CatalogsService } from "@/app/api/services/catalogs.service";
 
 export async function GET() {
   try {
-    const data = await CatalogsService.getEmployeeTypes();
-
-    if (!data.length) {
-      const response = HttpResponse.failure(HttpMessages.error.notFound, {});
-      return handleHttpResponse(response);
-    }
+    const data = await CatalogsService.getMaritalStatus();
 
     const response = HttpResponse.success(HttpMessages.catalog.success, data);
 

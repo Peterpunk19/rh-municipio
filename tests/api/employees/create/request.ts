@@ -1,4 +1,5 @@
 import { generator } from "./generator";
+import { EmployeeTypeName } from "@/app/api/catalogs/employee-type/route";
 
 export const request = {
   emptyParams: {},
@@ -28,6 +29,10 @@ export const request = {
   emptyStartJobDate: generator.request({ startJobDate: "" }),
   emptyEndJobDate: generator.request({ endJobDate: "" }),
   emptyCategoryId: generator.request({ categoryId: null }),
-  emptyEmployeeTypeId: generator.request({ employeeTypeId: null }),
+  emptyEmployeeTypeName: generator.request({ employeeTypeName: "" }),
+  invalidEmployeeTypeName: generator.request({ employeeTypeName: "base" }),
+  emptyEmployeeTypeBaseSindicalizado: generator.request({
+    employeeTypeName: EmployeeTypeName.BASE_SINDICALIZADO,
+  }),
   emptyDireccionId: generator.request({ direccionId: null }),
 };

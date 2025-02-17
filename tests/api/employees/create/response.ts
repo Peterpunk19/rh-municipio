@@ -54,7 +54,7 @@ export const response = {
       categoryId: {
         messages: ["Categoria es requerido"],
       },
-      employeeTypeId: {
+      employeeTypeName: {
         messages: ["Tipo de empleado es requerido"],
       },
       direccionId: {
@@ -250,10 +250,26 @@ export const response = {
       },
     },
   }),
-  emptyEmployeeTypeId: generator.response({
+  emptyEmployeeTypeName: generator.response({
     responseObject: {
-      employeeTypeId: {
+      employeeTypeName: {
         messages: ["Tipo de empleado es requerido"],
+      },
+    },
+  }),
+  invalidEmployeeTypeName: generator.response({
+    success: false,
+    message: "No fue encontrado el tipo de empleado.",
+    responseObject: {
+      employeeTypeName: {
+        messages: ["base"],
+      },
+    },
+  }),
+  emptyEmployeeTypeBaseSindicalizado: generator.response({
+    responseObject: {
+      tradeUnionId: {
+        messages: ["Sindicato es requerido si el Tipo de empleado es BASE SINDICALIZADO"],
       },
     },
   }),

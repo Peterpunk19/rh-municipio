@@ -1,12 +1,19 @@
 import { POST } from "@/app/api/employees/create/route";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { testCases } from "./testCases";
+import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
 
 jest.mock("@/app/api/services/employee.service", () => ({
   EmployeeService: {
     getNumberEmployee: jest.fn(),
     getEmployeeByRfcCurp: jest.fn(),
     createEmployee: jest.fn(),
+  },
+}));
+
+jest.mock("@/app/api/services/employeeType.service", () => ({
+  EmployeeTypeService: {
+    getEmployeeTypeByName: jest.fn(),
   },
 }));
 
@@ -26,6 +33,7 @@ describe("API: /employees", () => {
 
       if (description === "should successfully send message with valid data") {
         (EmployeeService.getEmployeeByRfcCurp as jest.Mock).mockResolvedValueOnce(null);
+        (EmployeeTypeService.getEmployeeTypeByName as jest.Mock).mockResolvedValueOnce({});
         (EmployeeService.createEmployee as jest.Mock).mockResolvedValueOnce([{}, {}]);
       }
 

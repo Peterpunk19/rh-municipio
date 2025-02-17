@@ -1,113 +1,65 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import { Box, Grid2 as Grid } from "@mui/material";
-import {
-  fetchSecretariasData,
-  fetchCategoryData,
-  fetchDireccionesData,
-  fetchEmployeeTypesData,
-} from "@/services/catalogs";
+import { fetchDireccionesData } from "@/services/catalogs";
 import { useDispatch } from "react-redux";
 import { useSelector } from "@/store/hooks";
-import { updateValues, updateErrors, updateHelperText } from "@/store/employees/EmployeeSlice";
-import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
+import { updateValues, updateErrors, updateHelperText, updateCatalogs } from "@/store/employees/EmployeeSlice";
 import { useRenderInputFields } from "@/components/customHooks/useRenderInputFields";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import { stepFormFields, IFieldConfig } from "@/app/(protected)/admin/employees/create/form-employees/steps/formConfig";
-import CircularProgress from "@mui/material/CircularProgress";
 import CustomHelperText from "@/components/theme-elements/CustomHelperText";
 import { currencyFormatter } from "@/common/utils";
 
 export const FormHiringData = () => {
   const dispatch = useDispatch();
   const formValues = useSelector((state: any) => state.employeesReducer.values);
+  const catalogsValues = useSelector((state: any) => state.employeesReducer.catalogs);
   const errors = useSelector((state: any) => state.employeesReducer.errors);
   const helperText = useSelector((state: any) => state.employeesReducer.helperText);
-  const [selectedSecretaria, setSelectedSecretaria] = useState<number | null>(formValues.secretariaId);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+  const employeeTypeName = formValues.employeeTypeName;
+
+  const modifiedHiringConfig = stepFormFields.hiringConfig.map((field) => {
+    if (field.name === "tradeUnionId") {
+      return { ...field, display: employeeTypeName === "base_sindicalizado" };
+    }
+    return field;
+  });
+
+  const fieldsToRender = modifiedHiringConfig.filter((field) => field.display !== false);
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
 
     dispatch(updateValues({ [name as string]: value }));
     dispatch(updateErrors({ [name as string]: "" }));
 
-    if (name === "secretariaId") {
-      setSelectedSecretaria(value ? Number(value) : null);
-      dispatch(updateValues({ direccionId: "0" }));
-    }
-
     if (name === "categoryId") {
-      const selectedCategory = categoryOptions.find((cat) => cat.id === value);
+      const selectedCategory = catalogsValues.categories.find((cat: any) => cat.id === value);
       const valueHelperText =
         selectedCategory !== undefined ? `Salario: ${currencyFormatter.format(selectedCategory.salary)}` : "";
       dispatch(updateHelperText({ categoryId: valueHelperText }));
+    }
+
+    if (name === "secretariaId") {
+      const municipalities = await fetchDireccionesData(value as string);
+      dispatch(updateCatalogs({ direcciones: municipalities }));
     }
   };
 
   const { renderField } = useRenderInputFields(formValues, handleChange);
 
-  const {
-    options: categoryOptions,
-    isLoading: categoryLoading,
-    error: categoryError,
-  } = useFetchOptions(fetchCategoryData);
-  const {
-    options: employeeTypeOptions,
-    isLoading: employeeTypeLoading,
-    error: employeeTypeError,
-  } = useFetchOptions(fetchEmployeeTypesData);
-  const {
-    options: secretariaOptions,
-    isLoading: secretariaLoading,
-    error: secretariaError,
-  } = useFetchOptions(fetchSecretariasData);
-  const {
-    options: direccionOptions,
-    isLoading: direccionLoading,
-    error: direccionError,
-  } = useFetchOptions(fetchDireccionesData, selectedSecretaria);
-
   return (
     <Box>
       <Grid container spacing={3}>
-        {stepFormFields.hiringConfig.map((field: IFieldConfig) => {
-          let selectOptions: any[] | undefined = [];
-          let isLoading = false;
-          let errorMessage = "";
-
-          switch (field.name) {
-            case "categoryId":
-              selectOptions = categoryOptions;
-              isLoading = categoryLoading;
-              errorMessage = categoryError ?? "";
-              break;
-            case "employeeTypeId":
-              selectOptions = employeeTypeOptions;
-              isLoading = employeeTypeLoading;
-              errorMessage = employeeTypeError ?? "";
-              break;
-            case "secretariaId":
-              selectOptions = secretariaOptions;
-              isLoading = secretariaLoading;
-              errorMessage = secretariaError ?? "";
-              break;
-            case "direccionId":
-              selectOptions = direccionOptions;
-              isLoading = direccionLoading;
-              errorMessage = direccionError ?? "";
-              break;
-          }
-
+        {fieldsToRender.map((field: IFieldConfig) => {
           return (
             <Grid key={field.id} size={field.gridSize}>
               <CustomFormLabel htmlFor={field.id}>{field.label}</CustomFormLabel>
-              {isLoading ? (
-                <CircularProgress size={24} />
-              ) : (
-                renderField(field, selectOptions, isLoading, errorMessage, errors[field.name])
-              )}
+              {renderField(field)}
               <CustomHelperText field={helperText[field.name]} />
               <CustomLabelError field={errors[field.name]} />
             </Grid>

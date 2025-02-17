@@ -166,15 +166,21 @@ export const testCases = [
   },
   {
     description: "should return error for empty employee type id",
-    requestData: dataProvider.emptyEmployeeTypeId.request as IEmployee,
-    expectedStatus: dataProvider.emptyEmployeeTypeId.status,
-    expectedResponse: dataProvider.emptyEmployeeTypeId.response,
+    requestData: dataProvider.emptyEmployeeTypeName.request as IEmployee,
+    expectedStatus: dataProvider.emptyEmployeeTypeName.status,
+    expectedResponse: dataProvider.emptyEmployeeTypeName.response,
   },
   {
-    description: "should return error for empty employee type id",
-    requestData: dataProvider.emptyEmployeeTypeId.request as IEmployee,
-    expectedStatus: dataProvider.emptyEmployeeTypeId.status,
-    expectedResponse: dataProvider.emptyEmployeeTypeId.response,
+    description: "should return error for invalid employee type name",
+    requestData: dataProvider.invalidEmployeeTypeName.request as IEmployee,
+    expectedStatus: dataProvider.invalidEmployeeTypeName.status,
+    expectedResponse: dataProvider.invalidEmployeeTypeName.response,
+  },
+  {
+    description: "should return error for empty employee type 'base_sindicalizado'",
+    requestData: dataProvider.emptyEmployeeTypeBaseSindicalizado.request as IEmployee,
+    expectedStatus: dataProvider.emptyEmployeeTypeBaseSindicalizado.status,
+    expectedResponse: dataProvider.emptyEmployeeTypeBaseSindicalizado.response,
   },
   {
     description: "should return error for empty direccion id",

@@ -1,3 +1,5 @@
+import { IResponseObject } from "@/utils/types";
+
 export interface IEmployeeState {
   values: {
     name: string;
@@ -18,7 +20,8 @@ export interface IEmployeeState {
     startJobDate: string;
     endJobDate: string;
     categoryId: string;
-    employeeTypeId: string;
+    employeeTypeName: string;
+    tradeUnionId: string;
     secretariaId: string;
     direccionId: string;
   };
@@ -40,11 +43,17 @@ export interface IEmployeeState {
     startJobDate: string;
     endJobDate: string;
     categoryId: string;
-    employeeTypeId: string;
+    employeeTypeName: string;
+    tradeUnionId: string;
     secretariaId: string;
     direccionId: string;
   };
   helperText: {
-    salary: string;
+    categoryId: string;
+  };
+  catalogs: {
+    municipalities: IResponseObject | null;
+    direcciones: IResponseObject | null;
+    categories: any | null;
   };
 }

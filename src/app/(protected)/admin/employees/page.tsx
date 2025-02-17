@@ -11,6 +11,7 @@ import { updateSearch } from "@/store/tables/FiltersSlice";
 import { AppDispatch } from "@/store/store";
 import { header } from "./(list)/Header";
 import { RootState } from "@/store/store";
+import PageContainer from "@/app/components/container/PageContainer";
 
 export default function Employees() {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,15 +40,15 @@ export default function Employees() {
   };
 
   return (
-    <div>
-      <h1>Empleados</h1>
+    <PageContainer title="Basic Table" description="this is Basic Table">
       <TableWithPagination
+        title="Empleados"
         headCells={header}
         items={items}
         columnTypeConfig={columnTypeConfig}
         handleSearch={handleSearch}
         filtersConfig={getFiltersConfig}
       />
-    </div>
+    </PageContainer>
   );
 }

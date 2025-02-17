@@ -1,5 +1,7 @@
 export const validationMessages = {
   required: (field: string) => `${field} es requerido`,
+  requiredIf: (targetField: string, conditionField: string, expectedValue: string) =>
+    `${targetField} es requerido si el ${conditionField} es ${expectedValue}`,
   maxLength: (field: string, max: number) => `${field} no puede exceder de ${max} caracteres`,
   minLength: (field: string, min: number) => `${field} debe contener al menos ${min} caracteres`,
   invalidFormat: (field: string) => `Formato de ${field} inválido`,

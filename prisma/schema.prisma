@@ -26,7 +26,7 @@ model User {
   employee               Employee?
   employee_id            Int?                 @unique
   role_id                Int
-  role                   Role                 @relation(fields: [role_id], references: [id]) 
+  role                   Role                 @relation(fields: [role_id], references: [id])
   user_module_actions    UserModuleActions[]
   attendances_created_by EmployeeAttendance[]
   employee_incidents     EmployeeIncidents[]
@@ -55,7 +55,7 @@ model Employee {
   gender_id                     Int
   employee_hiring_id            Int?                @unique
   employee_hiring               EmployeeHiring[]
-  locations                     EmployeeLocation[]
+  employee_location                     EmployeeLocation[]
   director_id                   Int?                @unique
   director                      Director?           @relation("Director", fields: [director_id], references: [id])
   sustitute_id                  Int?                @unique
@@ -68,7 +68,19 @@ model Employee {
   employee_requests_by          EmployeeRequest[]   @relation("requestedBy")
   employee_requests_resolved_by EmployeeRequest[]   @relation("resolvedBy")
   employee_created_by           EmployeeHiring[]    @relation("EmployeeCreatedBy")
-  EmployeeAddress               EmployeeAddress[]
+  employee_address              EmployeeAddress[]
+  marital_status                MaritalStatus?      @relation(fields: [marital_status_id], references: [id])
+  marital_status_id             Int?
+  schooling                     Schooling?          @relation(fields: [schooling_id], references: [id])
+  schooling_id                  Int?
+  profession                    Profession?         @relation(fields: [profession_id], references: [id])
+  profession_id                 Int?
+  occupation                    Occupation?         @relation(fields: [occupation_id], references: [id])
+  occupation_id                 Int?
+  identification_type           IdentificationType? @relation(fields: [identification_type_id], references: [id])
+  identification_type_id        Int?
+  employee_trade_union          EmployeeTradeUnion[]
+  trade_union_id                Int?
 }
 
 model EmployeeAddress {
@@ -78,15 +90,15 @@ model EmployeeAddress {
   address_line_2  String
   address_line_3  String
   address_line_4  String
-  postal_code         String
-  postal_code_sat     String
+  postal_code     String
+  postal_code_sat String
   municipality_id Int
   active          Boolean       @default(true)
   created_by      Int?
   created_at      DateTime?     @default(now())
   updated_at      DateTime?     @updatedAt
   employee        Employee?     @relation(fields: [employee_id], references: [id])
-  Municipality    Municipality? @relation(fields: [municipality_id], references: [id])
+  municipality    Municipality? @relation(fields: [municipality_id], references: [id])
 }
 
 model EmployeeHiring {
@@ -109,6 +121,22 @@ model EmployeeHiring {
   employee_attendance EmployeeAttendance[]
 
   @@unique([employee_id, category_id, direccion_id, employee_type_id, active])
+}
+
+model EmployeeTradeUnion {
+  id             Int          @id @default(autoincrement())
+  trade_union_id Int
+  employee_id    Int
+  start          DateTime?
+  end            DateTime?
+  active         Boolean      @default(true)
+  created_by     Int?
+  created_at     DateTime?    @default(now())
+  updated_at     DateTime?    @updatedAt
+  trade_union    TradeUnion? @relation(fields: [trade_union_id], references: [id])
+  employee    Employee? @relation(fields: [employee_id], references: [id])
+
+  @@unique([employee_id, trade_union_id, active])
 }
 
 model EmployeeLocation {
@@ -390,6 +418,54 @@ model Gender {
   employees    Employee[]
 }
 
+model MaritalStatus {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  display_name String
+  active       Boolean    @default(true)
+  employees    Employee[]
+}
+
+model Schooling {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  display_name String
+  active       Boolean    @default(true)
+  employees    Employee[]
+}
+
+model Profession {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  display_name String
+  active       Boolean    @default(true)
+  employees    Employee[]
+}
+
+model Occupation {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  display_name String
+  active       Boolean    @default(true)
+  employees    Employee[]
+}
+
+model IdentificationType {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  display_name String
+  active       Boolean    @default(true)
+  employees    Employee[]
+}
+
+model TradeUnion {
+  id                   Int                  @id @default(autoincrement())
+  name                 String               @unique
+  display_name         String
+  active               Boolean              @default(true)
+  employee_trade_union EmployeeTradeUnion[]
+}
+
 model EmployeeType {
   id           Int              @id @default(autoincrement())
   name         String           @unique
@@ -412,7 +488,7 @@ model Location {
   name                    String                  @unique
   display_name            String
   active                  Boolean                 @default(true)
-  employees               EmployeeLocation[]
+  employee_location               EmployeeLocation[]
   employee_attendance     EmployeeAttendance[]
   employee_request_detail EmployeeRequestDetail[]
 }

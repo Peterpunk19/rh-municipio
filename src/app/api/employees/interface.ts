@@ -17,7 +17,9 @@ export interface IEmployee {
   startJobDate: string;
   endJobDate: string;
   categoryId: number | null;
-  employeeTypeId: number | null;
+  employeeTypeName: string;
+  tradeUnionId?: number | null;
+  employeeTypeId?: number | null;
   direccionId: number | null;
 }
 
