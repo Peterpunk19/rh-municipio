@@ -17,7 +17,6 @@ export default function Employees() {
   const dispatch = useDispatch<AppDispatch>();
   const { page, limit } = useSelector((state: RootState) => state.pagination);
   const { search } = useSelector((state: RootState) => state.filters);
-
   const { values } = useSelector((state: RootState) => state.filters);
 
   useEffect(() => {
@@ -38,6 +37,7 @@ export default function Employees() {
   const handleSearch = (searchQuery: string) => {
     dispatch(updateSearch(searchQuery));
   };
+  const emptyMessage = useSelector((state) => state.filterEmployeesSlice.emptyMessage);
 
   return (
     <PageContainer title="Basic Table" description="this is Basic Table">
@@ -48,6 +48,7 @@ export default function Employees() {
         columnTypeConfig={columnTypeConfig}
         handleSearch={handleSearch}
         filtersConfig={getFiltersConfig}
+        emptyMessage={emptyMessage}
       />
     </PageContainer>
   );
