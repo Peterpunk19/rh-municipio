@@ -35,3 +35,11 @@ export const endOfDay = (date: Date | string) => {
   d.setHours(23, 59, 59, 999);
   return d;
 };
+
+export const getPaginationData = (total: number, limit: number, page: number) => {
+  return {
+    total,
+    totalPages: Math.ceil(total / limit),
+    currentPage: page,
+  };
+};

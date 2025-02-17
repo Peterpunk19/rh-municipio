@@ -20,6 +20,8 @@ export const HttpMessages = {
     uuidAlreadyExists: "El UUID ya existe",
     employeeIdAlreadyExists: "El ID de empleado ya está vinculado con otro usuario",
     createdSuccess: "Usuario creado correctamente",
+    notFound: "No se encontraron usuarios con los filtros proporcionados",
+    getSuccess: "Usuarios encontrados correctamente",
   },
   role: {
     notFound: "El rol no existe",

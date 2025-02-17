@@ -29,3 +29,27 @@ export const UserSchema = z.object({
   role_id: z.number({ message: validationMessages.required("Rol") }).nullable(),
   created_by_id: z.number().int().positive().optional().nullable(),
 });
+
+export const UserGetByFilterSchema = z.object({
+  limit: z
+    .number({ message: validationMessages.number("El limite") })
+    .min(1, { message: validationMessages.minNumber("El limite", 1) })
+    .nullable(),
+  page: z
+    .number({ message: validationMessages.number("El número de página") })
+    .min(1, { message: validationMessages.minNumber("El número de página", 1) })
+    .nullable(),
+  role_id: z
+    .number({ message: validationMessages.number("El ID del rol de usuario") })
+    .min(1, { message: validationMessages.minNumber("El ID del rol de usuario", 1) })
+    .nullable(),
+  active: z.preprocess((val) => {
+    if (typeof val === "string" || val instanceof String) {
+      const stringValue = val.toString().toLowerCase();
+      if (stringValue === "true") return true;
+      if (stringValue === "false") return false;
+      return undefined;
+    }
+    return val;
+  }, z.boolean({ message: validationMessages.invalidBoolean("Activo") }).nullable()),
+});
