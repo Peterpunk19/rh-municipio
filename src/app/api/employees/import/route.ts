@@ -4,6 +4,15 @@ import { HttpResponse } from "@/common/response/model";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
 import { IEmployee } from "@/app/api/employees/interface";
+import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
+
+function getRandomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function getRandomDate(start, end) {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString();
+}
 
 function mapToIEmployee(data: any): IEmployee {
   const validateOrGenerateDate = (dateString: string): string => {
@@ -22,14 +31,15 @@ function mapToIEmployee(data: any): IEmployee {
     addressLine1: "Calle",
     addressLine2: "250",
     addressLine3: "",
+    addressLine4: "Teran",
     postalCode: "29000",
     postalCodeSat: "29000",
-    municipalityId: 81,
-    genderId: data.gender_id ? Number(data.gender_id) : null,
-    startJobDate: new Date().toISOString(),
-    endJobDate: new Date().toISOString(),
-    categoryId: 1,
-    employeeTypeId: 1,
+    municipalityId: getRandomNumber(81, 198),
+    genderId: data.gender_id ? Number(data.gender_id) : getRandomNumber(1, 3),
+    startJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
+    endJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
+    categoryId: getRandomNumber(1, 193),
+    employeeTypeName: getRandomNumber(2, 7),
     direccionId: 1,
   };
 }
@@ -47,13 +57,19 @@ export async function POST(request: NextRequest) {
         const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(employeeMapped.rfc, employeeMapped.curp);
 
         if (!existingEmployee) {
-          console.log(employeeMapped);
-          if (employeeMapped.numberEmployee == null)
+          if (employeeMapped.numberEmployee == null) {
             employeeMapped.numberEmployee = await EmployeeService.getNumberEmployee();
+          }
           if (employeeMapped.curp == "") employeeMapped.curp = employeeMapped.rfc;
 
-          const [employee] = await EmployeeService.createEmployee(employeeMapped);
-          createdEmployees.push(employee);
+          const employeeType = await EmployeeTypeService.getEmployeeTypeByName(body.employeeTypeName);
+
+          if (employeeType) {
+            employeeMapped.employeeTypeId = employeeType.id;
+
+            const [employee] = await EmployeeService.createEmployee(employeeMapped);
+            createdEmployees.push(employee);
+          }
         }
       }),
     );
