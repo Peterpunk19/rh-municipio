@@ -1,8 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { AppDispatch } from '../store';
-import { getEmployees as fetchEmployeesAPI } from '@/services/employees';
+import { createSlice } from "@reduxjs/toolkit";
+import { AppDispatch } from "../store";
+import { getEmployees as fetchEmployeesAPI } from "@/services/employees";
 import { updateTotal } from "@/store/tables/PaginationSlice";
-
 
 interface StateType {
   employees: any[];
@@ -18,13 +17,14 @@ interface StateType {
     startDate: string;
     endDate: string;
   };
+  emptyMessage: string;
   error: string;
 }
 
 const initialState = {
   employees: [],
-  search: '',
-  sortBy: 'id',
+  search: "",
+  sortBy: "id",
   total: 0,
   page: 1,
   limit: 10,
@@ -32,17 +32,17 @@ const initialState = {
     active: true,
     statusEmployeeId: 1,
     locationId: 1,
-    startDate: '',
-    endDate: '',
+    startDate: "",
+    endDate: "",
   },
-  error: '',
+  emptyMessage: "",
+  error: "",
 };
 
 export const EmployeesFiltersSlice = createSlice({
-    name: 'employees',
-    initialState,
-    reducers: {
-
+  name: "employees",
+  initialState,
+  reducers: {
     hasError(state: StateType, action) {
       state.error = action.payload;
     },
@@ -69,27 +69,27 @@ export const EmployeesFiltersSlice = createSlice({
     filterReset(state) {
       state.filters.active = true;
       state.filters.statusEmployeeId = 1;
-      state.filters.locationId =1;
-      state.filters.startDate = '';
-      state.filters.endDate = '';
-      state.sortBy = 'id';
+      state.filters.locationId = 1;
+      state.filters.startDate = "";
+      state.filters.endDate = "";
+      state.sortBy = "id";
+    },
+    emptyMessage: (state, action) => {
+      state.emptyMessage = action.payload;
     },
   },
 });
-export const {
-  hasError,
-  getEmployees,
-  searchEmployee,
-  sortById,
-  filterEmployees,
-  filterReset,
-} = EmployeesFiltersSlice.actions;
+export const { hasError, getEmployees, searchEmployee, sortById, filterEmployees, filterReset, emptyMessage } =
+  EmployeesFiltersSlice.actions;
 
-export const fetchEmployees = (filters:string) => async (dispatch: AppDispatch) => {
+export const fetchEmployees = (filters: string) => async (dispatch: AppDispatch) => {
   try {
     const response = await fetchEmployeesAPI(filters);
     dispatch(getEmployees(response.responseObject.data));
     dispatch(updateTotal(response.responseObject.total));
+    if (response.responseObject.total === 0) {
+      dispatch(emptyMessage(response.message));
+    }
   } catch (error) {
     dispatch(hasError(error));
   }

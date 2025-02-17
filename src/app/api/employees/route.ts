@@ -73,6 +73,7 @@ export async function GET(request: Request) {
     const response = HttpResponse.success(HttpMessages.employee.getSuccess, existingEmployees);
     return handleHttpResponse(response);
   } catch (error) {
+    console.error(`An error occurred detail: ${error}`);
     const response = HttpResponse.failure(HttpMessages.error.internalServerError, error);
     return handleHttpResponse(response);
   }

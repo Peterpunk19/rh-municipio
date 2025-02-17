@@ -5,7 +5,7 @@ export const HttpMessages = {
   employee: {
     alreadyExists: "RFC or CURP ya existen",
     createdSuccess: "Empleado creado correctamente",
-    notFound: "No se hencontraron empleados con los filtros proporcionados",
+    notFound: "No se encontraron empleados con los filtros proporcionados",
     getSuccess: "Empleados encontrados correctamente",
     invalidEmployeeType: "No fue encontrado el tipo de empleado.",
   },

@@ -79,6 +79,7 @@ interface TableProps<T> {
   columnTypeConfig: Record<string, ColumnTypeConfig>;
   handleSearch: (searchQuery: string) => void;
   filtersConfig: () => FiltersConfig[];
+  emptyMessage: string;
 }
 const TableWithPagination = <T,>({
   title,
@@ -87,10 +88,27 @@ const TableWithPagination = <T,>({
   columnTypeConfig,
   handleSearch,
   filtersConfig,
+  emptyMessage,
 }: TableProps<T>) => {
   const dispatch = useDispatch();
 
   const { page, limit, total } = useSelector((state: RootState) => state.pagination);
+
+  React.useEffect(() => {
+    const maxPage = Math.ceil(total / limit);
+    if (page > maxPage) {
+      dispatch(updatePage(1));
+    }
+  }, [total, limit, page, dispatch]);
+
+  const labelDisplayedRows = ({ from, to, count }: { from: number; to: number; count: number }) => {
+    if (count === 0) return "0-0 de 0";
+
+    const adjustedFrom = (page - 1) * limit + 1;
+    const adjustedTo = Math.min(page * limit, count);
+
+    return `${adjustedFrom}–${adjustedTo} de ${count}`;
+  };
 
   const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig());
 
@@ -125,34 +143,10 @@ const TableWithPagination = <T,>({
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    dispatch(updatePage(newPage + 1));
-  };
-
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateLimit(parseInt(event.target.value, 10)));
+    const newLimit = parseInt(event.target.value, 10);
+    dispatch(updateLimit(newLimit));
     dispatch(updatePage(1));
-  };
-
-  const labelDisplayedRows = (from: number, to: number, count: number) => {
-    return `${from}–${to > count ? count : to} de ${count !== -1 ? count : `más de ${to}`}`;
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
@@ -282,6 +276,16 @@ const TableWithPagination = <T,>({
                   </TableRow>
                 );
               })}
+
+              {emptyMessage && items.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={headCells.length} style={{ width: "100%" }}>
+                    <div className="w-full min-h-[200px] flex justify-center items-center">
+                      <h3>{emptyMessage}</h3>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -290,11 +294,13 @@ const TableWithPagination = <T,>({
           component="div"
           count={total}
           rowsPerPage={limit}
-          page={page - 1}
-          onPageChange={handleChangePage}
+          page={total === 0 ? 0 : Math.min(page - 1, Math.ceil(total / limit) - 1)}
+          onPageChange={(event, newPage) => {
+            dispatch(updatePage(newPage + 1));
+          }}
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="Registros por página"
-          labelDisplayedRows={() => labelDisplayedRows(page === 1 ? 1 : page - 1 + limit, page * limit, total)}
+          labelDisplayedRows={labelDisplayedRows}
         />
       </Paper>
     </ParentCard>

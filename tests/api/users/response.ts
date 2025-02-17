@@ -68,7 +68,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       employee_id: {
-        messages: ["No se hencontraron empleados con los filtros proporcionados"],
+        messages: ["No se encontraron empleados con los filtros proporcionados"],
       },
     },
     statusCode: 400,
