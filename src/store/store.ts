@@ -32,6 +32,7 @@ export const store = configureStore({
     emailReducer: EmailReducer,
     notesReducer: NotesReducer,
     contactsReducer: ContactsReducer,
+    employeesReducer: EmployeesReducer,
     ticketReducer: TicketReducer,
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
