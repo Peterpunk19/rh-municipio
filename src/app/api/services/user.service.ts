@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { encryptPassword } from "@/common/utils";
-import { IUser } from "@/app/api/user/interface";
+import { encryptPassword, getPaginationData } from "@/common/utils";
+import { IUser, IUserFilters } from "@/app/api/user/interface";
 
 export const UserService = {
   async getUserByUsername(username: string) {
@@ -29,7 +29,7 @@ export const UserService = {
   },
 
   async createUser(user: IUser) {
-    const create = await prisma.user.create({
+    return await prisma.user.create({
       data: {
         uuid: user.uuid ?? uuidv4(),
         username: user.username,
@@ -49,6 +49,56 @@ export const UserService = {
         created_at: true,
       },
     });
-    return create;
+  },
+
+  async getUsersByParams(userFilters: IUserFilters) {
+    const limit = userFilters.limit;
+    const page = userFilters.page;
+    const offset = (page - 1) * limit;
+
+    const whereClause: any = {
+      active: userFilters.active,
+    };
+
+    if (userFilters.role_id) {
+      whereClause.role_id = userFilters.role_id;
+    }
+
+    const data = await prisma.user.findMany({
+      where: whereClause,
+      skip: offset,
+      take: limit,
+      select: {
+        id: true,
+        username: true,
+        role_id: true,
+        role: {
+          select: {
+            display_name: true,
+          },
+        },
+        active: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+
+    const total = await prisma.user.count({ where: whereClause });
+    const pagination = await getPaginationData(total, limit, page);
+
+    const users = data.map((user) => ({
+      id: user.id,
+      username: user.username,
+      role_id: user.role_id,
+      role_display_name: user.role.display_name,
+      active: user.active,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    }));
+
+    return {
+      ...pagination,
+      users,
+    };
   },
 };

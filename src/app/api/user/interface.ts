@@ -5,3 +5,10 @@ export interface IUser {
   password: string;
   role_id: number;
 }
+
+export interface IUserFilters {
+  limit: number;
+  page: number;
+  role_id: number | null | undefined;
+  active: string | boolean | null | undefined;
+}
