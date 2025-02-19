@@ -1,5 +1,5 @@
 import http from "@/lib/http";
-import { IResponseObject } from "@/utils/types";
+import type { IResponseObject } from "@/utils/types";
 
 export const fetchGenderData = async (): Promise<IResponseObject | null> => {
   try {
@@ -11,9 +11,11 @@ export const fetchGenderData = async (): Promise<IResponseObject | null> => {
   }
 };
 
-export const fetchCategoryData = async (): Promise<IResponseObject | null> => {
+export const fetchCategoryData = async (options?: { signal?: AbortSignal }): Promise<IResponseObject | null> => {
   try {
-    const response = await http.get<IResponseObject>("/api/catalogs/category");
+    const response = await http.get<IResponseObject>("/api/catalogs/category", {
+      signal: options?.signal,
+    });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch category:", error);
@@ -32,7 +34,7 @@ export const fetchSecretariasData = async (): Promise<IResponseObject | null> =>
 };
 
 export const fetchDireccionesData = async (secretariaId: string): Promise<IResponseObject | null> => {
-  if (!secretariaId || secretariaId == "0") return null;
+  if (!secretariaId || secretariaId === "0") return null;
 
   try {
     const response = await http.get<IResponseObject>(`/api/catalogs/direcciones?id=${secretariaId}`);
@@ -94,7 +96,7 @@ export const fetchStatesData = async (): Promise<IResponseObject | null> => {
 };
 
 export const fetchMunicipalitiesData = async (stateId: string): Promise<IResponseObject | null> => {
-  if (!stateId || stateId == "0") return null;
+  if (!stateId || stateId === "0") return null;
 
   try {
     const response = await http.get<IResponseObject>(`/api/catalogs/municipality?id=${stateId}`);

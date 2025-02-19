@@ -3,9 +3,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
-import CustomCheckbox from "../theme-elements/CustomCheckbox";
-import { EnhancedTableProps } from "../../interfaces/EnhancedTableProps";
-import { HeadCell } from "@/interfaces/HeadCell";
+import type { EnhancedTableProps } from "../../interfaces/EnhancedTableProps";
 import { visuallyHidden } from "@mui/utils";
 
 function EnhancedTableHead(props: EnhancedTableProps) {

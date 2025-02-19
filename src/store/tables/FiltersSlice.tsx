@@ -3,13 +3,13 @@ import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 interface FiltersState {
   sortBy: string;
   values: Record<string, any>;
-  search: string;
+  searchTerm: string;
 }
 
 const initialState: FiltersState = {
   sortBy: "id",
   values: {},
-  search: "",
+  searchTerm: "",
 };
 
 export const filtersSlice = createSlice({
@@ -23,7 +23,7 @@ export const filtersSlice = createSlice({
       state.sortBy = action.payload;
     },
     updateSearch(state, action) {
-      state.search = action.payload;
+      state.searchTerm = action.payload;
     },
     resetFilters: (state) => {
       state.values = {};

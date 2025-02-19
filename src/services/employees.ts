@@ -23,3 +23,9 @@ export const getEmployees = async (data: string): Promise<IResponse> => {
     return error;
   }
 };
+
+export const getEmployeeById = async (id: string): Promise<IResponse> => {
+  const url = `/api/employees/${id}`;
+  const response = await http.get<IResponse>(url);
+  return response.data;
+};

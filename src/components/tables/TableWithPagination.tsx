@@ -1,30 +1,18 @@
 "use client";
 import * as React from "react";
-import { alpha, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { format } from "date-fns";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import TextField from "@mui/material/TextField";
-import Toolbar from "@mui/material/Toolbar";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { visuallyHidden } from "@mui/utils";
 import { useSelector, useDispatch } from "@/store/hooks";
-import CustomCheckbox from "../theme-elements/CustomCheckbox";
-import CustomSwitch from "../theme-elements/CustomSwitch";
-import { IconDotsVertical } from "@tabler/icons-react";
 import { HeadCell } from "@/interfaces/HeadCell";
 import EnhancedTableHead from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
@@ -35,6 +23,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { FiltersConfig } from "@/interfaces/FiltersConfig";
 import { useDynamicFilters } from "../customHooks/useDinamycFilters";
 import ParentCard from "@/app/components/shared/ParentCard";
+import RowMenu from "./RowMenu";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -91,7 +80,6 @@ const TableWithPagination = <T,>({
   emptyMessage,
 }: TableProps<T>) => {
   const dispatch = useDispatch();
-
   const { page, limit, total } = useSelector((state: RootState) => state.pagination);
 
   React.useEffect(() => {
@@ -109,13 +97,12 @@ const TableWithPagination = <T,>({
 
     return `${adjustedFrom}–${adjustedTo} de ${count}`;
   };
-
-  const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig());
+  const { values: initialValuesFromRedux } = useSelector((state: RootState) => state.filters);
+  const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
 
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<any>("id");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
-
   const [search, setSearch] = React.useState("");
 
   const debounced = useDebouncedCallback((searchTerm: string) => {
@@ -149,7 +136,6 @@ const TableWithPagination = <T,>({
     dispatch(updatePage(1));
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const theme = useTheme();
   const borderColor = theme.palette.divider;
 
@@ -163,6 +149,7 @@ const TableWithPagination = <T,>({
     const value = getNestedValue(row, headCell.id);
     const config = columnTypeConfig[headCell.id] || {};
     const empty_text = headCell.empty_text;
+    const redirectPath = config.redirectPath;
 
     if (config.format) {
       return <>{config.format(value, row)}</>;
@@ -212,13 +199,7 @@ const TableWithPagination = <T,>({
         );
 
       case "action":
-        return (
-          <Tooltip title="Editar">
-            <IconButton size="small">
-              <IconDotsVertical size="1.1rem" />
-            </IconButton>
-          </Tooltip>
-        );
+        return <RowMenu row={row} redirectPath={redirectPath} />;
 
       default:
         return headCell.numeric ? (
@@ -236,6 +217,7 @@ const TableWithPagination = <T,>({
       <EnhancedTableToolbar
         numSelected={selected.length}
         search={search}
+        setSearch={setSearch}
         handleSearch={(event: any) => handleSearchInput(event)}
         filters={filters.map((filter) => ({
           key: filter.key,
@@ -260,8 +242,6 @@ const TableWithPagination = <T,>({
             />
             <TableBody>
               {stableSort(items, getComparator(order, orderBy))?.map((row: any, index) => {
-                const isItemSelected = isSelected(row.title);
-                const labelId = `enhanced-table-checkbox-${index}`;
                 return (
                   <TableRow hover tabIndex={-1} key={row.id}>
                     {headCells.map((headCell) => (
