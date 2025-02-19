@@ -55,7 +55,7 @@ model Employee {
   gender_id                     Int
   employee_hiring_id            Int?                @unique
   employee_hiring               EmployeeHiring[]
-  employee_location                     EmployeeLocation[]
+  employee_location             EmployeeLocation[]
   director_id                   Int?                @unique
   director                      Director?           @relation("Director", fields: [director_id], references: [id])
   sustitute_id                  Int?                @unique

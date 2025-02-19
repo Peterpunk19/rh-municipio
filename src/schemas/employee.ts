@@ -273,3 +273,11 @@ export const EmployeeSchema = z.object({
   employee_requests_resolved_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
   employee_created_by: z.array(z.object({ id: z.number().int().positive() })).optional(),
 });
+
+export const EmployeeGetByIdSchema = z.object({
+  id: z
+    .number({ message: validationMessages.number("ID") })
+    .min(1, { message: validationMessages.minNumber("ID", 1) })
+    .max(999999999999999, { message: validationMessages.maxNumber("ID", 999999999999999) })
+    .nullable(),
+});
