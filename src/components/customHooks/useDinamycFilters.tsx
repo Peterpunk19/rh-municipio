@@ -1,57 +1,91 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { FiltersConfig } from "@/interfaces/FiltersConfig";
+import { useSelector, useDispatch } from "@/store/hooks";
+import { setCatalog } from "@/store/tables/CatalogsSlice";
+import { fetchWithRetry } from "@/utils/api/fetchUtils";
 
-export const useDynamicFilters = (filtersConfig: FiltersConfig[]) => {
-  const [selectedValues, setSelectedValues] = useState<Record<string, any>>({});
-  const [optionsState, setOptionsState] = useState<Record<string, Array<{ value: any; label: string }>>>({});
+export const useDynamicFilters = (filtersConfig: FiltersConfig[], initialValues: Record<string, any>) => {
+  const dispatch = useDispatch();
+  const catalogs = useSelector((state) => state.catalogs);
+  const [selectedValues, setSelectedValues] = useState(initialValues);
+  const pendingRequests = useRef<Record<string, boolean>>({});
+
+  const getCatalogKey = useCallback(
+    (filter: FiltersConfig) => {
+      return filter.dependsOn ? `${filter.key}_${selectedValues[filter.dependsOn]}` : filter.key;
+    },
+    [selectedValues],
+  );
+
+  const fetchAndCacheCatalog = useCallback(
+    async (filter: FiltersConfig) => {
+      if (!filter.fetchOptions) return;
+      const catalogKey = getCatalogKey(filter);
+      if (pendingRequests.current[catalogKey]) return;
+      pendingRequests.current[catalogKey] = true;
+      try {
+        const catalogData = await fetchWithRetry(async () => {
+          const params = filter.dependsOn ? selectedValues[filter.dependsOn] : undefined;
+          const response = await filter.fetchOptions!(params);
+          return (
+            response?.responseObject?.map((item: any) => ({
+              value: item.id,
+              label: item.display_name || item.name,
+            })) || []
+          );
+        });
+
+        dispatch(setCatalog({ key: catalogKey, data: catalogData }));
+      } catch (error) {
+        console.error(`Error fetching catalog ${filter.key}:`, error);
+      } finally {
+        delete pendingRequests.current[catalogKey];
+      }
+    },
+    [dispatch, getCatalogKey, selectedValues],
+  );
 
   useEffect(() => {
-    const fetchOptionsForFilters = async () => {
-      const newOptions: Record<string, Array<{ value: any; label: string }>> = {};
+    const abortController = new AbortController();
 
-      for (const filter of filtersConfig) {
-        if (filter.fetchOptions) {
-          try {
-            const params = filter.dependsOn ? selectedValues[filter.dependsOn] : undefined;
-            const response = await filter.fetchOptions(params);
-            if (response?.responseObject) {
-              newOptions[filter.key] = response.responseObject.map((item) => ({
-                value: item.id,
-                label: item.display_name || item.name,
-              }));
-            } else {
-              newOptions[filter.key] = [];
-            }
-          } catch (error) {
-            console.error(`Error cargando opciones para ${filter.key}:`, error);
-            newOptions[filter.key] = [];
-          }
-        }
-      }
+    const loadCatalogs = async () => {
+      const fetchPromises = filtersConfig
+        .filter((filter) => {
+          if (!filter.fetchOptions) return false;
+          const catalogKey = getCatalogKey(filter);
+          return !catalogs[catalogKey] && !pendingRequests.current[catalogKey];
+        })
+        .map((filter) => fetchAndCacheCatalog(filter));
 
-      setOptionsState((prev) => ({ ...prev, ...newOptions }));
+      await Promise.all(fetchPromises);
     };
 
-    fetchOptionsForFilters();
-  }, [selectedValues]);
+    if (!abortController.signal.aborted) {
+      loadCatalogs();
+    }
+
+    return () => {
+      abortController.abort();
+    };
+  }, [filtersConfig, catalogs, fetchAndCacheCatalog, getCatalogKey]);
 
   const handleFilterChange = (key: string, value: any) => {
-    setSelectedValues((prev) => ({
-      ...prev,
-      [key]: value,
-      ...(filtersConfig.find((f) => f.dependsOn === key)?.key && {
-        [filtersConfig.find((f) => f.dependsOn === key)!.key]: null,
-      }),
-    }));
+    const newValues = { ...selectedValues, [key]: value };
+    filtersConfig.filter((f) => f.dependsOn === key).forEach((f) => (newValues[f.key] = null));
+    setSelectedValues(newValues);
   };
 
-  const filtersWithData = filtersConfig.map((filter) => ({
-    ...filter,
-    options: optionsState[filter.key] || filter.options || [],
-  }));
+  const getCatalogOptions = (filter: FiltersConfig) => {
+    const catalogKey = getCatalogKey(filter);
+    return catalogs[catalogKey] || filter.options || [];
+  };
 
   return {
-    filters: filtersWithData,
+    filters: filtersConfig.map((filter) => ({
+      ...filter,
+      options: getCatalogOptions(filter),
+      value: selectedValues[filter.key],
+    })),
     selectedValues,
     handleFilterChange,
   };

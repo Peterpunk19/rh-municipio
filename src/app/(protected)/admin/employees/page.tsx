@@ -16,21 +16,21 @@ import PageContainer from "@/app/components/container/PageContainer";
 export default function Employees() {
   const dispatch = useDispatch<AppDispatch>();
   const { page, limit } = useSelector((state: RootState) => state.pagination);
-  const { search } = useSelector((state: RootState) => state.filters);
+  const { searchTerm } = useSelector((state: RootState) => state.filters);
   const { values } = useSelector((state: RootState) => state.filters);
 
   useEffect(() => {
     const queryParams = [];
     if (page) queryParams.push(`page=${page}`);
     if (limit) queryParams.push(`limit=${limit}`);
-    if (search) queryParams.push(`search=${search}`);
+    if (searchTerm) queryParams.push(`search=${searchTerm}`);
 
     Object.keys(values).forEach((key) => {
       if (values[key]) queryParams.push(`${key}=${values[key]}`);
     });
 
     dispatch(fetchEmployees(queryParams.join("&")));
-  }, [dispatch, page, limit, search, values]);
+  }, [dispatch, page, limit, searchTerm, values]);
 
   const items: EmployeeType[] = useSelector((state) => state.filterEmployeesSlice.employees);
 
@@ -40,7 +40,7 @@ export default function Employees() {
   const emptyMessage = useSelector((state) => state.filterEmployeesSlice.emptyMessage);
 
   return (
-    <PageContainer title="Basic Table" description="this is Basic Table">
+    <PageContainer title="Empleados" description="Listado de empleados">
       <TableWithPagination
         title="Empleados"
         headCells={header}

@@ -1,0 +1,3 @@
+interface EmployeePageProps {
+  employeeData: any;
+}

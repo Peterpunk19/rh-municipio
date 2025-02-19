@@ -33,8 +33,42 @@ export const EmployeeService = {
   async getEmployeeById(id: number) {
     return prisma.employee.findFirst({
       include: {
-        employee_hiring: true,
-        employee_location: true,
+        employee_hiring: {
+          include: {
+            category: true,
+            employee_type: true,
+            direccion: {
+              include: {
+                secretaria: true,
+              },
+            },
+          },
+        },
+        employee_location: {
+          include: {
+            location: true,
+          },
+        },
+        gender: true,
+        status_employee: true,
+        profession: true,
+        occupation: true,
+        marital_status: true,
+        schooling: true,
+        employee_trade_union: {
+          include: {
+            trade_union: true,
+          },
+        },
+        employee_address: {
+          include: {
+            municipality: {
+              include: {
+                state: true,
+              },
+            },
+          },
+        },
       },
       where: {
         id,

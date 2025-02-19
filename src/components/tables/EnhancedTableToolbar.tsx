@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Toolbar, MenuItem } from "@mui/material";
 import { alpha } from "@mui/material/styles";
@@ -16,19 +16,29 @@ import InputLabel from "@mui/material/InputLabel";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
 import { EnhancedTableToolbarProps } from "@/interfaces/EnhancedTableToolbarProps";
 import { FiltersConfig } from "@/interfaces/FiltersConfig";
 import { updateFilter } from "@/store/tables/FiltersSlice";
+import { useSelector, useDispatch } from "@/store/hooks";
+import { RootState } from "@/store/store";
+
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, handleSearch, search, filters = [] } = props;
-  const dispatch = useDispatch<AppDispatch>();
+  const { values, searchTerm } = useSelector((state: RootState) => state.filters);
+  const { numSelected, handleSearch, search, setSearch, filters = [] } = props;
+  const [localState, setLocalState] = useState<Record<string, any>>(() => ({}));
+  const dispatch = useDispatch();
 
-  const [localState, setLocalState] = useState<Record<string, any>>({});
+  useEffect(() => {
+    if (searchTerm && setSearch) {
+      setSearch(searchTerm);
+    }
+    if (values) {
+      setLocalState(values);
+    }
+  }, [filters]);
 
   const handleFilterChange = (filterKey: string, value: any) => {
     const isDateFilter = filters.some(

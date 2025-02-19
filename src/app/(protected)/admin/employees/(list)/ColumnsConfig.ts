@@ -7,5 +7,5 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   number_employee: { renderType: "text" },
   "employee_hiring_active.start_job_date": { renderType: "date" },
   birthday: { renderType: "date" },
-  actions: { renderType: "action" },
+  actions: { renderType: "action", redirectPath: "/admin/employees/" },
 };

@@ -6,7 +6,7 @@ export interface FiltersConfig {
   label: string;
   type: FilterType;
   options?: Array<{ value: string; label: string }>;
-  fetchOptions?: (params?: any) => Promise<IResponseObject | null>;
+  fetchOptions?: (params?: any, options?: { signal?: AbortSignal }) => Promise<IResponseObject | null>;
   dependsOn?: string;
   startKey?: string;
   endKey?: string;
