@@ -6,21 +6,21 @@ export interface IEmployee {
   birthday: string;
   rfc: string;
   curp: string;
-  genderId: number | null;
+  genderId: number | string;
   addressLine1: string;
   addressLine2: string;
   addressLine3: string | null;
-  addressLine4: string | null;
+  addressLine4: string;
   postalCode: string;
   postalCodeSat: string;
-  municipalityId: number | null;
+  municipalityId: number | string;
   startJobDate: string;
   endJobDate: string;
-  categoryId: number | null;
+  categoryId: number | string;
   employeeTypeName: string;
   tradeUnionId?: number | null;
-  employeeTypeId?: number | null;
-  direccionId: number | null;
+  employeeTypeId?: number | string;
+  direccionId: number | string;
 }
 
 export interface IEmployeeFilters {

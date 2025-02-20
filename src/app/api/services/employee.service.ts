@@ -68,7 +68,7 @@ export const EmployeeService = {
             connect: { name: "alta" },
           },
           gender: {
-            connect: { id: employee.genderId },
+            connect: { id: Number(employee.genderId) },
           },
           user: {
             connect: {
@@ -83,11 +83,11 @@ export const EmployeeService = {
           employee_id: createEmployee.id,
           address_line_1: employee.addressLine1,
           address_line_2: employee.addressLine2,
-          address_line_3: employee.addressLine3,
+          address_line_3: employee.addressLine3 ?? "",
           address_line_4: employee.addressLine4,
           postal_code: employee.postalCode,
           postal_code_sat: employee.postalCodeSat,
-          municipality_id: employee.municipalityId,
+          municipality_id: Number(employee.municipalityId),
           created_at: new Date(),
         },
       });
@@ -97,9 +97,9 @@ export const EmployeeService = {
           employee_id: createEmployee.id,
           start_job_date: employee.startJobDate,
           end_job_date: employee.endJobDate,
-          category_id: employee.categoryId,
-          employee_type_id: employee.employeeTypeId,
-          direccion_id: employee.direccionId,
+          category_id: Number(employee.categoryId),
+          employee_type_id: Number(employee.employeeTypeId),
+          direccion_id: Number(employee.direccionId),
           created_at: new Date(),
         },
       });

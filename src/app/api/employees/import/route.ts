@@ -35,7 +35,7 @@ function mapToIEmployee(data: any): IEmployee {
     postalCode: "29000",
     postalCodeSat: "29000",
     municipalityId: getRandomNumber(81, 198),
-    genderId: data.gender_id ? Number(data.gender_id) : getRandomNumber(1, 3),
+    genderId: getRandomNumber(1, 3),
     startJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     endJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     categoryId: getRandomNumber(1, 193),
@@ -46,7 +46,6 @@ function mapToIEmployee(data: any): IEmployee {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-
   try {
     const createdEmployees: IEmployee[] = [];
 
@@ -57,7 +56,7 @@ export async function POST(request: NextRequest) {
         const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(employeeMapped.rfc, employeeMapped.curp);
 
         if (!existingEmployee) {
-          if (employeeMapped.numberEmployee == null) {
+          if (employeeMapped.numberEmployee == null || employeeMapped.numberEmployee === "") {
             employeeMapped.numberEmployee = await EmployeeService.getNumberEmployee();
           }
           if (employeeMapped.curp == "") employeeMapped.curp = employeeMapped.rfc;
@@ -69,7 +68,13 @@ export async function POST(request: NextRequest) {
 
             const [employee] = await EmployeeService.createEmployee(employeeMapped);
             createdEmployees.push(employee);
+          } else {
+            console.log("employeeType");
+            console.log(employeeMapped);
           }
+        } else {
+          console.log("existingEmployee");
+          console.log(employeeMapped);
         }
       }),
     );

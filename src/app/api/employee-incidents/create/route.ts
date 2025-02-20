@@ -1,0 +1,44 @@
+import { NextRequest } from "next/server";
+import { handleHttpResponse } from "@/common/response/handler";
+import { HttpResponse } from "@/common/response/model";
+import { validateRequest } from "@/common/request/validateRequest";
+import { HttpMessages } from "@/common/response/messages";
+import type { IEmployeeIncident } from "@/app/api/employee-incidents/types";
+import { EmployeeIncidentsPostSchema } from "@/schemas/employee-incidents";
+import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
+import {
+  getFolio,
+  getIncidentStatus,
+  validateEmployee,
+  validateEmployeeIncident,
+} from "@/app/api/common/utils.service";
+
+export async function POST(request: NextRequest) {
+  const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
+  if (validationRequest.response) return validationRequest.response;
+
+  const body = validationRequest.data;
+
+  if (!body) {
+    const response = HttpResponse.failure(HttpMessages.error.invalidRequest, {});
+    return handleHttpResponse(response);
+  }
+
+  try {
+    for (const validation of [getFolio, getIncidentStatus, validateEmployee, validateEmployeeIncident]) {
+      const validationResponse = await validation(body);
+      if (validationResponse) return handleHttpResponse(validationResponse);
+    }
+
+    const [employee] = await EmployeeIncidentsService.createEmployeeIncidents(body);
+    const response = HttpResponse.success(HttpMessages.employeeIncidents.createdSuccess, employee);
+
+    return handleHttpResponse(response);
+  } catch (error: any) {
+    console.error(error.message);
+
+    const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message });
+
+    return handleHttpResponse(response);
+  }
+}

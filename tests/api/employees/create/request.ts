@@ -1,5 +1,5 @@
 import { generator } from "./generator";
-import { EmployeeTypeName } from "@/app/api/catalogs/employee-type/route";
+import { EmployeeTypeName } from "@/common/constants/EmployeeType";
 
 export const request = {
   emptyParams: {},
@@ -8,7 +8,7 @@ export const request = {
   emptyPaternalLastName: generator.request({ paternalLastName: "" }),
   emptyMaternalLastName: generator.request({ maternalLastName: "" }),
   emptyBirthday: generator.request({ birthday: "" }),
-  emptyGenderId: generator.request({ genderId: null }),
+  emptyGenderId: generator.request({ genderId: "0" }),
   emptyRfc: generator.request({ rfc: "" }),
   emptyCurp: generator.request({ curp: "" }),
   longNumberEmployee: generator.request({ numberEmployee: "1001931" }),
@@ -25,14 +25,14 @@ export const request = {
   longAddressLine4: generator.request({ addressLine4: "a".repeat(256) }),
   emptyPostalCode: generator.request({ postalCode: "" }),
   emptyPostalCodeSat: generator.request({ postalCodeSat: "" }),
-  emptyMunicipalityId: generator.request({ municipalityId: null }),
+  emptyMunicipalityId: generator.request({ municipalityId: "0" }),
   emptyStartJobDate: generator.request({ startJobDate: "" }),
   emptyEndJobDate: generator.request({ endJobDate: "" }),
-  emptyCategoryId: generator.request({ categoryId: null }),
+  emptyCategoryId: generator.request({ categoryId: "0" }),
   emptyEmployeeTypeName: generator.request({ employeeTypeName: "" }),
   invalidEmployeeTypeName: generator.request({ employeeTypeName: "base" }),
   emptyEmployeeTypeBaseSindicalizado: generator.request({
     employeeTypeName: EmployeeTypeName.BASE_SINDICALIZADO,
   }),
-  emptyDireccionId: generator.request({ direccionId: null }),
+  emptyDireccionId: generator.request({ direccionId: "0" }),
 };
