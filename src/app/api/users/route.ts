@@ -1,6 +1,6 @@
 import { handleHttpResponse } from "@/common/response/handler";
 import { UserGetByFilterSchema } from "@/schemas/user";
-import type { IUserFilters } from "@/app/api/user/interface";
+import type { IUserFilters } from "@/app/api/users/interface";
 import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";

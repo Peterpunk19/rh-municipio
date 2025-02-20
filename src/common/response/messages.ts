@@ -25,6 +25,8 @@ export const HttpMessages = {
     createdSuccess: "Usuario creado correctamente",
     notFound: "No se encontraron usuarios con los filtros proporcionados",
     getSuccess: "Usuarios encontrados correctamente",
+    notFoundById: "No se encontró al usuario con el ID proporcionado",
+    foundById: "Usuario encontrado correctamente",
   },
   role: {
     notFound: "El rol no existe",

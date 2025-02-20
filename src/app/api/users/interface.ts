@@ -12,3 +12,7 @@ export interface IUserFilters {
   role_id: number | null | undefined;
   active: string | boolean | null | undefined;
 }
+
+export interface IUserById {
+  id: number;
+}

@@ -1,115 +1,118 @@
+import { validationMessages } from "@/common/validation/messages";
+import { HttpMessages } from "@/common/response/messages";
+
 export const response = {
   limitNotnumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
-      limit: { messages: ["El limite debe ser un número"] },
+      limit: { messages: [validationMessages.number("El limite")] },
     },
     statusCode: 400,
   },
   limitZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       limit: {
-        messages: ["El limite debe ser un número igual o mayor a 1"],
+        messages: [validationMessages.minNumber("El limite", 1)],
       },
     },
     statusCode: 400,
   },
   limitNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       limit: {
-        messages: ["El limite debe ser un número igual o mayor a 1"],
+        messages: [validationMessages.minNumber("El limite", 1)],
       },
     },
     statusCode: 400,
   },
   pageNotnumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       page: {
-        messages: ["El número de página debe ser un número"],
+        messages: [validationMessages.number("El número de página")],
       },
     },
     statusCode: 400,
   },
   pageZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       page: {
-        messages: ["El número de página debe ser un número igual o mayor a 1"],
+        messages: [validationMessages.minNumber("El número de página", 1)],
       },
     },
     statusCode: 400,
   },
   pageNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       page: {
-        messages: ["El número de página debe ser un número igual o mayor a 1"],
+        messages: [validationMessages.minNumber("El número de página", 1)],
       },
     },
     statusCode: 400,
   },
   roleIdNotNumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       role_id: {
-        messages: ["El ID del rol de usuario debe ser un número"],
+        messages: [validationMessages.number("El ID del rol de usuario")],
       },
     },
     statusCode: 400,
   },
   roleIdZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       role_id: {
-        messages: ["El ID del rol de usuario debe ser un número igual o mayor a 1"],
+        messages: [validationMessages.minNumber("El ID del rol de usuario", 1)],
       },
     },
     statusCode: 400,
   },
   roleIdNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       role_id: {
-        messages: ["El ID del rol de usuario debe ser un número igual o mayor a 1"],
+        messages: [validationMessages.minNumber("El ID del rol de usuario", 1)],
       },
     },
     statusCode: 400,
   },
   activeNotBoolean: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       active: {
-        messages: ["Activo debe ser un valor booleano"],
+        messages: [validationMessages.invalidBoolean("Activo")],
       },
     },
     statusCode: 400,
   },
   activeAsNumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.invalidRequest,
     responseObject: {
       active: {
-        messages: ["Activo debe ser un valor booleano"],
+        messages: [validationMessages.invalidBoolean("Activo")],
       },
     },
     statusCode: 400,
   },
   validData: {
     success: true,
-    message: "Usuarios encontrados correctamente",
+    message: HttpMessages.user.getSuccess,
     responseObject: {
       total: 100,
       totalPages: 10,

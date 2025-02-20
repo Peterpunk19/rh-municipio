@@ -7,7 +7,7 @@ import { UserService } from "@/app/api/services/user.service";
 import { RoleService } from "@/app/api/services/role.service";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
-import { IUser } from "@/app/api/user/interface";
+import { IUser } from "@/app/api/users/interface";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IUser>(request, UserSchema);
