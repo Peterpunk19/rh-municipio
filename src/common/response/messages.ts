@@ -8,6 +8,9 @@ export const HttpMessages = {
     notFound: "No se encontraron empleados con los filtros proporcionados",
     getSuccess: "Empleados encontrados correctamente",
     invalidEmployeeType: "No fue encontrado el tipo de empleado.",
+    notFoundById: "No se encontró empleado con el ID proporcionado",
+    foundById: "Empleado encontrado correctamente",
+    inactive: "El empleado está deshabilitado",
   },
   error: {
     internalServerError: "Internal server error",

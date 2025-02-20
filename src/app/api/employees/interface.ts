@@ -49,3 +49,7 @@ export interface IEmployeeHiring {
   employeeTypeId: number;
   direccionId: number;
 }
+
+export interface IEmployeeById {
+  id: number;
+}

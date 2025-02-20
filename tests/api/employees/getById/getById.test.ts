@@ -1,0 +1,74 @@
+import { GET } from "@/app/api/employees/[id]/route";
+import { EmployeeService } from "@/app/api/services/employee.service";
+import { testCases } from "./testCases";
+
+jest.mock("@/app/api/services/employee.service", () => ({
+  EmployeeService: {
+    getEmployeeById: jest.fn(),
+  },
+}));
+
+describe("API: GET /employees/:id", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
+    it(`GET /employees/:id ${description}`, async () => {
+      if (description === "should successfully send message with valid data") {
+        (EmployeeService.getEmployeeById as jest.Mock).mockResolvedValueOnce({
+          id: 349,
+          number_employee: "",
+          name: "UBELMAR",
+          paternal_last_name: "ABARCA",
+          maternal_last_name: "ORANTES",
+          birthday: "1981-09-24T00:00:00.000Z",
+          rfc: "AAOU-810924",
+          curp: "AAOU-810924",
+          active: true,
+          created_at: "2025-02-17T17:42:16.209Z",
+          updated_at: "2025-02-17T17:42:16.396Z",
+          user_id: 359,
+          status_employee_id: 2,
+          gender_id: 1,
+          employee_hiring_id: 14,
+          director_id: null,
+          sustitute_id: null,
+          marital_status_id: null,
+          schooling_id: null,
+          profession_id: null,
+          occupation_id: null,
+          identification_type_id: null,
+          trade_union_id: null,
+          employee_hiring: [
+            {
+              id: 14,
+              employee_id: 349,
+              start_job_date: "2010-02-15T21:11:55.658Z",
+              end_job_date: "2005-11-09T09:35:53.585Z",
+              category_id: 44,
+              employee_type_id: 1,
+              direccion_id: 1,
+              active: true,
+              created_by: null,
+              created_at: "2025-02-17T17:42:16.353Z",
+              updated_at: "2025-02-17T17:42:16.354Z",
+            },
+          ],
+          employee_location: [],
+        });
+      }
+      const id = requestData.id;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/employees/${id}`;
+      const requestObj = {
+        url,
+        method: "GET",
+      } as any;
+
+      const response = await GET(requestObj, { params: { id: id.toString() } } as any);
+      const body = await response.json();
+      expect(response.status).toBe(expectedStatus);
+      expect(body).toEqual(expectedResponse);
+    });
+  });
+});
