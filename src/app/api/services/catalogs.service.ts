@@ -119,10 +119,13 @@ export const CatalogsService = {
     });
   },
   async getEmployeeStatus() {
-    return prisma.statusEmployee.findMany(
-      {
-        orderBy: { display_name: 'asc' }
-      }
-    );
+    return prisma.statusEmployee.findMany({
+      orderBy: { display_name: "asc" },
+    });
+  },
+  async getRoles() {
+    return prisma.role.findMany({
+      orderBy: { display_name: "asc" },
+    });
   },
 };
