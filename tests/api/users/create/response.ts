@@ -1,9 +1,10 @@
 import { HttpMessages } from "@/common/response/messages";
+import { validationMessages } from "@/common/validation/messages";
 
 export const response = {
   validData: {
     success: true,
-    message: "Usuario creado correctamente",
+    message: HttpMessages.user.createdSuccess,
     responseObject: {},
     statusCode: 200,
   },
@@ -12,7 +13,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       username: {
-        messages: ["Usuario es requerido"],
+        messages: [validationMessages.required("Usuario")],
       },
     },
     statusCode: 400,
@@ -22,14 +23,14 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       username: {
-        messages: ["Usuario no puede exceder de 30 caracteres"],
+        messages: [validationMessages.maxLength("Usuario", 30)],
       },
     },
     statusCode: 400,
   },
   duplicatedUsername: {
     success: false,
-    message: "El nombre de usuario ya existe",
+    message: HttpMessages.user.usernameAlreadyExists,
     responseObject: {
       username: "DUPLICATED",
     },
@@ -40,14 +41,14 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       uuid: {
-        messages: ["Formato de UUID inválido"],
+        messages: [validationMessages.invalidFormat("UUID")],
       },
     },
     statusCode: 400,
   },
   duplicatedUuid: {
     success: false,
-    message: "El UUID ya existe",
+    message: HttpMessages.user.uuidAlreadyExists,
     responseObject: {
       uuid: "62ae6298-dd74-4fab-9952-96e44d97fad1",
     },
@@ -58,7 +59,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       employee_id: {
-        messages: ["Empleado debe ser un número"],
+        messages: [validationMessages.number("Empleado")],
       },
     },
     statusCode: 400,
@@ -68,14 +69,14 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       employee_id: {
-        messages: ["No se encontraron empleados con los filtros proporcionados"],
+        messages: [HttpMessages.employee.notFound],
       },
     },
     statusCode: 400,
   },
   duplicatedEmployeeId: {
     success: false,
-    message: "El ID de empleado ya está vinculado con otro usuario",
+    message: HttpMessages.user.employeeIdAlreadyExists,
     responseObject: {
       employee_id: 6,
     },
@@ -87,11 +88,11 @@ export const response = {
     responseObject: {
       password: {
         messages: [
-          "Contraseña debe contener al menos 8 caracteres",
-          "Contraseña debe contener al menos una letra mayúscula",
-          "Contraseña debe contener al menos una letra minúscula",
-          "Contraseña debe contener al menos un número",
-          "Contraseña debe contener al menos alguno de los siguientes simbolos [!@#$%^&*,._-=?]",
+          validationMessages.minLength("Contraseña", 8),
+          validationMessages.oneUppercaseLetter("Contraseña"),
+          validationMessages.oneLowercaseLetter("Contraseña"),
+          validationMessages.oneNumber("Contraseña"),
+          validationMessages.oneSymbol("Contraseña"),
         ],
       },
     },
@@ -102,7 +103,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       password: {
-        messages: ["Contraseña debe contener al menos 8 caracteres"],
+        messages: [validationMessages.minLength("Contraseña", 8)],
       },
     },
     statusCode: 400,
@@ -112,7 +113,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       password: {
-        messages: ["Contraseña no puede exceder de 30 caracteres"],
+        messages: [validationMessages.maxLength("Contraseña", 30)],
       },
     },
     statusCode: 400,
@@ -122,7 +123,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       password: {
-        messages: ["Contraseña debe contener al menos una letra mayúscula"],
+        messages: [validationMessages.oneUppercaseLetter("Contraseña")],
       },
     },
     statusCode: 400,
@@ -132,7 +133,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       password: {
-        messages: ["Contraseña debe contener al menos una letra minúscula"],
+        messages: [validationMessages.oneLowercaseLetter("Contraseña")],
       },
     },
     statusCode: 400,
@@ -142,7 +143,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       password: {
-        messages: ["Contraseña debe contener al menos un número"],
+        messages: [validationMessages.oneNumber("Contraseña")],
       },
     },
     statusCode: 400,
@@ -152,7 +153,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       password: {
-        messages: ["Contraseña debe contener al menos alguno de los siguientes simbolos [!@#$%^&*,._-=?]"],
+        messages: [validationMessages.oneSymbol("Contraseña")],
       },
     },
     statusCode: 400,
@@ -162,14 +163,14 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       role_id: {
-        messages: ["Rol es requerido"],
+        messages: [validationMessages.required("Rol")],
       },
     },
     statusCode: 400,
   },
   notFoundRole: {
     success: false,
-    message: "El rol no existe",
+    message: HttpMessages.role.notFound,
     responseObject: {
       role_id: 999,
     },

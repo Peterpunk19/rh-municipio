@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { encryptPassword, getPaginationData } from "@/common/utils";
-import { IUser, IUserFilters } from "@/app/api/user/interface";
+import { IUser, IUserFilters } from "@/app/api/users/interface";
 
 export const UserService = {
   async getUserByUsername(username: string) {
@@ -26,6 +26,41 @@ export const UserService = {
         employee_id,
       },
     });
+  },
+
+  async getUserById(id: number) {
+    const data = await prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        username: true,
+        role_id: true,
+        role: {
+          select: {
+            display_name: true,
+          },
+        },
+        active: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+
+    if (data) {
+      return {
+        id: data.id,
+        username: data.username,
+        role_id: data.role_id,
+        role_display_name: data.role.display_name,
+        active: data.active,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      };
+    }
+
+    return null;
   },
 
   async createUser(user: IUser) {
