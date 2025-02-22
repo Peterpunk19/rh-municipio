@@ -129,10 +129,8 @@ export const CatalogsService = {
     return prisma.incidentStatus.findFirst({
       where: { name },
     });
-    return prisma.statusEmployee.findMany({
-      orderBy: { display_name: "asc" },
-    });
   },
+
   async getRoles() {
     return prisma.role.findMany({
       orderBy: { display_name: "asc" },
