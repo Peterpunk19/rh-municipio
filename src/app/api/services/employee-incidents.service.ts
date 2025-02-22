@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import type { IEmployeeIncident } from "@/app/api/employee-incidents/types";
+import type { IEmployeeIncident, IEmployeeIncidentFilters } from "@/app/api/employee-incidents/types";
+import { buildWhereClause, getPaginationData } from "@/common/utils";
 
 export const EmployeeIncidentsService = {
   async getFolio() {
@@ -71,5 +72,76 @@ export const EmployeeIncidentsService = {
 
       return [createEmployeeIncidents, createEmployeeIncidentsStatus];
     });
+  },
+
+  async getEmployeesIncidentsByParams(employeeIncidentsFilters: IEmployeeIncidentFilters) {
+    const { limit, page } = employeeIncidentsFilters;
+    const offset = (Number(page) - 1) * Number(limit);
+
+    const filterMappings = {
+      incident_id: "incident_id",
+      incident_status_id: "incident_status_id",
+      start_date: "start_date",
+      end_date: "end_date",
+    };
+
+    const whereClause: any = await buildWhereClause(filterMappings, employeeIncidentsFilters);
+
+    if (employeeIncidentsFilters.search) {
+      whereClause.OR = [
+        { oficio: { contains: employeeIncidentsFilters.search } },
+        { folio: { contains: employeeIncidentsFilters.search } },
+        {
+          employee: {
+            OR: [
+              { name: { contains: employeeIncidentsFilters.search } },
+              { paternal_last_name: { contains: employeeIncidentsFilters.search } },
+              { maternal_last_name: { contains: employeeIncidentsFilters.search } },
+              { rfc: { contains: employeeIncidentsFilters.search } },
+              { curp: { contains: employeeIncidentsFilters.search } },
+              { number_employee: { contains: employeeIncidentsFilters.search } },
+            ],
+          },
+        },
+      ];
+    }
+
+    const data = await prisma.employeeIncidents.findMany({
+      where: whereClause,
+      skip: offset,
+      take: Number(limit),
+      orderBy: {
+        id: "desc",
+      },
+      select: {
+        id: true,
+        folio: true,
+        oficio: true,
+        employee_id: true,
+        employee: {
+          select: {
+            id: true,
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+            number_employee: true,
+            birthday: true,
+            rfc: true,
+            curp: true,
+          },
+        },
+        incident_id: true,
+        incident: true,
+        incident_status_id: true,
+        start_date: true,
+        end_date: true,
+        created_at: true,
+      },
+    });
+
+    const total = await prisma.employeeIncidents.count({ where: whereClause });
+    const pagination = await getPaginationData(total, Number(limit), Number(page));
+
+    return { ...pagination, data };
   },
 };

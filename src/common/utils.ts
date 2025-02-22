@@ -36,10 +36,37 @@ export const endOfDay = (date: Date | string) => {
   return d;
 };
 
-export const getPaginationData = (total: number, limit: number, page: number) => {
+export const getPaginationData = async (total: number, limit: number, page: number) => {
   return {
     total,
     totalPages: Math.ceil(total / limit),
     currentPage: page,
   };
+};
+
+export const buildWhereClause = async (filterMappings: any, filters: any) => {
+  const whereClause: any = {};
+
+  Object.entries(filterMappings).forEach(([filterKey, whereKey]) => {
+    if (filters[filterKey]) {
+      // @ts-ignore
+      whereClause[whereKey] = filters[filterKey];
+    }
+  });
+
+  return whereClause;
+};
+
+export const getParamsFromUrl = async (request: any, requestParams: any) => {
+  const { searchParams } = new URL(request.url);
+  const updatedParams = { ...requestParams };
+
+  Object.keys(updatedParams).forEach((key) => {
+    if (searchParams.has(key) && searchParams.get(key) !== "") {
+      const value = searchParams.get(key);
+      updatedParams[key] = value === null ? null : isNaN(Number(value)) ? value : Number(value);
+    }
+  });
+
+  return updatedParams;
 };

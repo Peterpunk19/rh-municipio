@@ -56,7 +56,7 @@ export async function GET(request: Request) {
     const validRequestData = validationRequest.data;
 
     if (!validRequestData) {
-      const response = HttpResponse.failure(HttpMessages.error.invalidRequest, {});
+      const response = HttpResponse.failure(HttpMessages.error.validationFields, {});
       return handleHttpResponse(response);
     }
     const existingEmployees = await EmployeeService.getEmployeesByParams(validRequestData);
