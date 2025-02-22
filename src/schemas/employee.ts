@@ -2,7 +2,7 @@ import { validationMessages } from "@/common/validation/messages";
 import { UserSchema } from "./user";
 import { GenderSchema, StatusEmployeeSchema } from "./catalogs";
 import { z } from "zod";
-import { EmployeeTypeDisplayName, EmployeeTypeName } from "@/app/api/catalogs/employee-type/route";
+import { EmployeeTypeDisplayName, EmployeeTypeName } from "@/common/constants/EmployeeType";
 
 const rfcRegex = /^([A-ZÑ&]{3}|[A-Z][AEIOU][A-Z]{2})\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[A-Z0-9]{3}$/;
 const curpRegex =

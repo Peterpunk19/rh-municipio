@@ -118,7 +118,17 @@ export const CatalogsService = {
       },
     });
   },
+
   async getEmployeeStatus() {
+    return prisma.statusEmployee.findMany({
+      orderBy: { display_name: "asc" },
+    });
+  },
+
+  async getIncidentStatusByName(name: string) {
+    return prisma.incidentStatus.findFirst({
+      where: { name },
+    });
     return prisma.statusEmployee.findMany({
       orderBy: { display_name: "asc" },
     });

@@ -6,11 +6,23 @@ export const HttpMessages = {
     alreadyExists: "RFC or CURP ya existen",
     createdSuccess: "Empleado creado correctamente",
     notFound: "No se encontraron empleados con los filtros proporcionados",
+    idNotFound: "Empleado no encontrado",
     getSuccess: "Empleados encontrados correctamente",
     invalidEmployeeType: "No fue encontrado el tipo de empleado.",
     notFoundById: "No se encontró empleado con el ID proporcionado",
     foundById: "Empleado encontrado correctamente",
     inactive: "El empleado está deshabilitado",
+  },
+  employeeIncidents: {
+    invalidData: "Ya existe una incidencia con estos datos",
+    createdSuccess: "Incidencia creada correctamente",
+    notFound: "No se encontraron empleados con los filtros proporcionados",
+    getSuccess: "Empleados encontrados correctamente",
+    invalidEmployeeType: "No fue encontrado el tipo de empleado.",
+    folioError: "Folio no creado.",
+  },
+  incidentStatus: {
+    notFound: "Estatus de incidencia no encontrado",
   },
   error: {
     internalServerError: "Internal server error",

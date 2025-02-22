@@ -16,4 +16,5 @@ export const validationMessages = {
   minNumber: (field: string, minNumber: number) => `${field} debe ser un número igual o mayor a ${minNumber}`,
   maxNumber: (field: string, maxNumber: number) => `${field} debe ser un número igual o menor a ${maxNumber}`,
   invalidBoolean: (field: string) => `${field} debe ser un valor booleano`,
+  invalidDateRange: (to: string, from: string) => `${to} debe ser mayor o igual a ${from} `,
 };
