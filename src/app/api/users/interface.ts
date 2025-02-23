@@ -16,3 +16,7 @@ export interface IUserFilters {
 export interface IUserById {
   id: number;
 }
+
+export interface IUserDeactivate {
+  user_id: number;
+}

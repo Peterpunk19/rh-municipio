@@ -39,6 +39,8 @@ export const HttpMessages = {
     getSuccess: "Usuarios encontrados correctamente",
     notFoundById: "No se encontró al usuario con el ID proporcionado",
     foundById: "Usuario encontrado correctamente",
+    alreadyDeactivated: "El usuario ya está desactivado",
+    deactivatedSuccess: "Usuario desactivado correctamente",
   },
   role: {
     notFound: "El rol no existe",
