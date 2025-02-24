@@ -24,7 +24,7 @@ export const getUserById = async (id: number) => {
 
 export const createUser = async (data: object): Promise<IResponse> => {
   try {
-    const response = await http.post<IResponse>("/api/user/create", data);
+    const response = await http.post<IResponse>("/api/users/create", data);
     return response.data;
   } catch (error: any) {
     return error;
