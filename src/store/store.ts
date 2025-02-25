@@ -12,9 +12,11 @@ import EmailReducer from "./apps/email/EmailSlice";
 import TicketReducer from "./apps/tickets/TicketSlice";
 import ContactsReducer from "./apps/contacts/ContactSlice";
 import EmployeesReducer from "@/store/employees/EmployeeSlice";
+import UsersReducer from "@/store/users/UserSlice";
 import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
 import BlogReducer from "./apps/blog/BlogSlice";
 import EmployeesFiltersReducer from "./employees/EmployeesFiltersSlice";
+import UsersFiltersReducer from "./users/UsersFiltersSlice";
 import FiltersReducer from "./tables/FiltersSlice";
 import PaginationReducer from "./tables/PaginationSlice";
 import catalogsReducer from "./tables/CatalogsSlice";
@@ -38,6 +40,8 @@ export const store = configureStore({
     blogReducer: BlogReducer,
     employeesReducer: EmployeesReducer,
     filterEmployeesSlice: EmployeesFiltersReducer,
+    usersReducer: UsersReducer,
+    filterUsersSlice: UsersFiltersReducer,
     filters: FiltersReducer,
     pagination: PaginationReducer,
     catalogs: catalogsReducer,

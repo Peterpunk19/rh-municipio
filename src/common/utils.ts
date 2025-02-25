@@ -44,15 +44,30 @@ export const getPaginationData = async (total: number, limit: number, page: numb
   };
 };
 
-export const buildWhereClause = async (filterMappings: any, filters: any) => {
+export const buildWhereClause = async (
+  filterMappings: any,
+  filters: any,
+  searchMappings?: { path: string[]; operators?: string[] }[],
+) => {
   const whereClause: any = {};
-
   Object.entries(filterMappings).forEach(([filterKey, whereKey]) => {
-    if (filters[filterKey]) {
+    if (filters[filterKey] !== undefined && filters[filterKey] !== null) {
       // @ts-ignore
       whereClause[whereKey] = filters[filterKey];
     }
   });
+
+  if (filters.search && searchMappings && searchMappings.length > 0) {
+    whereClause.OR = searchMappings.map(({ path, operators = ["contains"] }) => {
+      return path.reduceRight((acc, key, index) => {
+        const currentOperator = operators[index] || operators[operators.length - 1];
+        if (index === path.length - 1) {
+          return { [key]: { [currentOperator]: filters.search } };
+        }
+        return { [key]: { [currentOperator]: acc } };
+      }, {});
+    });
+  }
 
   return whereClause;
 };

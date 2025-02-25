@@ -5,23 +5,21 @@ import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
 import { UserService } from "@/app/api/services/user.service";
+import { getParamsFromUrl } from "@/common/utils";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_PAGE = 0;
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const limit = Number.parseInt(searchParams.get("limit") || (DEFAULT_LIMIT.toString() as string), 10);
-    const page = Number.parseInt(searchParams.get("page") || (DEFAULT_PAGE.toString() as string), 10);
-    const active = searchParams.has("active") ? searchParams.get("active") : true;
-    const role_id = searchParams.has("role_id") ? Number.parseInt(searchParams.get("role_id")!, 10) : null;
-    const requestParams = {
-      limit,
-      page,
-      active,
-      role_id,
+    const params = {
+      limit: DEFAULT_LIMIT,
+      page: DEFAULT_PAGE,
+      active: null,
+      role_id: null,
+      search: null,
     };
+    const requestParams = await getParamsFromUrl(request, params);
     const validationRequest = await validateRequestByUrlParams<IUserFilters>(requestParams, UserGetByFilterSchema);
     if (validationRequest.response) return validationRequest.response;
 
