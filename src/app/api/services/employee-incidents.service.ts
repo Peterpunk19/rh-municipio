@@ -128,6 +128,29 @@ export const EmployeeIncidentsService = {
             birthday: true,
             rfc: true,
             curp: true,
+            employee_hiring_id: true,
+            employee_hiring: {
+              where: {
+                active: true,
+              },
+              take: 1,
+              select: {
+                id: true,
+                category: true,
+                active: true,
+                start_job_date: true,
+                end_job_date: true,
+                employee_type_id: true,
+                direccion: {
+                  select: {
+                    id: true,
+                    display_name: true,
+                    secretaria: true,
+                    secretaria_id: true,
+                  },
+                },
+              },
+            },
           },
         },
         incident_id: true,
