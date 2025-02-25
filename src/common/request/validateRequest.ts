@@ -45,7 +45,7 @@ export async function validateRequestByUrlParams<T>(urlParams: T, schema?: any):
       const validatedRequest = schema.safeParse(urlParams);
       if (!validatedRequest.success) {
         const errors = mapValidationErrors(validatedRequest.error.issues);
-        const response = HttpResponse.failure("Invalid request", errors);
+        const response = HttpResponse.failure(HttpMessages.error.validationFields, errors);
         return { data: null, response: handleHttpResponse(response) };
       }
 

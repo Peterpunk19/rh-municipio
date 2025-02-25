@@ -4,7 +4,7 @@ import { HttpMessages } from "@/common/response/messages";
 export const response = {
   limitNotnumber: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       limit: { messages: [validationMessages.number("El limite")] },
     },
@@ -12,7 +12,7 @@ export const response = {
   },
   limitZero: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
         messages: [validationMessages.minNumber("El limite", 1)],
@@ -22,7 +22,7 @@ export const response = {
   },
   limitNegative: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
         messages: [validationMessages.minNumber("El limite", 1)],
@@ -32,7 +32,7 @@ export const response = {
   },
   pageNotnumber: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
         messages: [validationMessages.number("El número de página")],
@@ -42,7 +42,7 @@ export const response = {
   },
   pageZero: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
         messages: [validationMessages.minNumber("El número de página", 1)],
@@ -52,7 +52,7 @@ export const response = {
   },
   pageNegative: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
         messages: [validationMessages.minNumber("El número de página", 1)],
@@ -62,7 +62,7 @@ export const response = {
   },
   roleIdNotNumber: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       role_id: {
         messages: [validationMessages.number("El ID del rol de usuario")],
@@ -72,7 +72,7 @@ export const response = {
   },
   roleIdZero: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       role_id: {
         messages: [validationMessages.minNumber("El ID del rol de usuario", 1)],
@@ -82,7 +82,7 @@ export const response = {
   },
   roleIdNegative: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       role_id: {
         messages: [validationMessages.minNumber("El ID del rol de usuario", 1)],
@@ -92,7 +92,7 @@ export const response = {
   },
   activeNotBoolean: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       active: {
         messages: [validationMessages.invalidBoolean("Activo")],
@@ -102,7 +102,7 @@ export const response = {
   },
   activeAsNumber: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       active: {
         messages: [validationMessages.invalidBoolean("Activo")],

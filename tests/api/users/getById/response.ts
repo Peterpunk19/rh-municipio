@@ -4,7 +4,7 @@ import { HttpMessages } from "@/common/response/messages";
 export const response = {
   idNotnumber: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: { messages: [validationMessages.number("El ID")] },
     },
@@ -12,7 +12,7 @@ export const response = {
   },
   idZero: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: {
         messages: [validationMessages.minNumber("El ID", 1)],
@@ -22,7 +22,7 @@ export const response = {
   },
   idNegative: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: {
         messages: [validationMessages.minNumber("El ID", 1)],
@@ -32,7 +32,7 @@ export const response = {
   },
   idLong: {
     success: false,
-    message: HttpMessages.error.invalidRequest,
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: {
         messages: [validationMessages.maxNumber("El ID", 999999999999999)],

@@ -1,9 +1,6 @@
 import { z } from "zod";
-import { IncidentsSchema, IncidentStatusSchema } from "./catalogs";
-import { EmployeeSchema } from "./employee";
-import { EmployeeAttendanceSchema } from "./employee-attendance";
-import { UserSchema } from "./user";
 import { validationMessages } from "@/common/validation/messages";
+import { validateDate } from "@/schemas/utils";
 
 export const EmployeeIncidentsPostSchema = z
   .object({
@@ -26,23 +23,11 @@ export const EmployeeIncidentsPostSchema = z
       .optional()
       .nullable(),
     startDate: z.preprocess(
-      (val) => {
-        if (typeof val === "string" || val instanceof String) {
-          const parsedDate = new Date(val as string);
-          return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
-        }
-        return val;
-      },
+      (val) => validateDate(val),
       z.date({ message: validationMessages.invalidaFormat("Fecha de Inicio") }),
     ),
     endDate: z.preprocess(
-      (val) => {
-        if (typeof val === "string" || val instanceof String) {
-          const parsedDate = new Date(val as string);
-          return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
-        }
-        return val;
-      },
+      (val) => validateDate(val),
       z.date({ message: validationMessages.invalidaFormat("Fecha de Terminación") }),
     ),
     description: z
@@ -59,28 +44,42 @@ export const EmployeeIncidentsPostSchema = z
     path: ["endDate"],
   });
 
-export const EmployeeIncidentsSchema = z.object({
-  id: z.number().int().positive(),
-  folio: z.number().int().positive(),
-  oficio: z.string().min(1),
-  start_date: z.date().optional(),
-  end_date: z.date().optional(),
-  description: z.string().min(1),
-  incident_status_id: z.number().int().positive(),
-  incident_id: z.number().int().positive(),
-  employee_id: z.number().int().positive(),
-  employee_attendance_id: z.number().int().positive(),
-  created_by_id: z.number().int().positive(),
-  validated_by: z.number().int().optional(),
-  user_id: z.number().int().optional(),
-  incident_status: IncidentStatusSchema,
-  incident: IncidentsSchema,
-  employee: EmployeeSchema,
-  employee_attendance: EmployeeAttendanceSchema,
-  created_by: EmployeeSchema,
-  user: UserSchema.optional(),
-  employee_vacations: z.array(z.object({ id: z.number().int().positive() })).optional(),
-  created_at: z.date().optional(),
-  recived_at: z.date().optional(),
-  validated_at: z.date().optional(),
+export const EmployeeIncidentsGetFilterSchema = z.object({
+  page: z
+    .number({ message: validationMessages.number("Página") })
+    .min(1, { message: validationMessages.minNumber("Página", 1) })
+    .nullable(),
+  limit: z
+    .number({ message: validationMessages.number("Limite") })
+    .min(1, { message: validationMessages.minNumber("Limite", 1) })
+    .nullable(),
+  incident_id: z
+    .number({ message: validationMessages.number("Tipo de incidencia") })
+    .optional()
+    .nullable(),
+  incident_status_id: z
+    .number({ message: validationMessages.number("Estatus de incidencia") })
+    .optional()
+    .nullable(),
+  start_date: z
+    .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de Inicio") }))
+    .optional()
+    .nullable(),
+  end_date: z
+    .preprocess(
+      (val) => validateDate(val),
+      z.date({ message: validationMessages.invalidaFormat("Fecha de terminacion") }),
+    )
+    .optional()
+    .nullable(),
+  search: z
+    .union([
+      z
+        .string()
+        .min(1, { message: validationMessages.required("Búsqueda") })
+        .max(255, { message: validationMessages.maxLength("Búsqueda", 255) }),
+      z.number().transform((num) => num.toString()),
+    ])
+    .optional()
+    .nullable(),
 });

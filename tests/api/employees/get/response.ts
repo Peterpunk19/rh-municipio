@@ -1,7 +1,9 @@
+import { HttpMessages } from "@/common/response/messages";
+
 export const response = {
   pageNotnumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       page: { messages: ["Página debe ser un número"] },
     },
@@ -9,7 +11,7 @@ export const response = {
   },
   pageZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
         messages: ["Página debe ser un número igual o mayor a 1"],
@@ -19,7 +21,7 @@ export const response = {
   },
   pageNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
         messages: ["Página debe ser un número igual o mayor a 1"],
@@ -29,7 +31,7 @@ export const response = {
   },
   limitNotnumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
         messages: ["Limite debe ser un número"],
@@ -39,7 +41,7 @@ export const response = {
   },
   limitZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
         messages: ["Limite debe ser un número igual o mayor a 1"],
@@ -49,7 +51,7 @@ export const response = {
   },
   limitNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
         messages: ["Limite debe ser un número igual o mayor a 1"],
@@ -59,7 +61,7 @@ export const response = {
   },
   activeNotBoolean: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       active: {
         messages: ["Activo debe ser un valor booleano"],
@@ -69,7 +71,7 @@ export const response = {
   },
   activeAsNumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       active: {
         messages: ["Activo debe ser un valor booleano"],
@@ -79,7 +81,7 @@ export const response = {
   },
   statusEmployeeIdNotNumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       employee_status: {
         messages: ["Id estatus del empleado debe ser un número"],
@@ -89,7 +91,7 @@ export const response = {
   },
   statusEmployeeIdZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       employee_status: {
         messages: ["Id estatus del empleado debe ser un número igual o mayor a 1"],
@@ -99,7 +101,7 @@ export const response = {
   },
   statusEmployeeIdNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       employee_status: {
         messages: ["Id estatus del empleado debe ser un número igual o mayor a 1"],
@@ -109,7 +111,7 @@ export const response = {
   },
   locationIdNotNumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       location: {
         messages: ["Id de ubicación debe ser un número"],
@@ -119,7 +121,7 @@ export const response = {
   },
   locationIdZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       location: {
         messages: ["Id de ubicación debe ser un número igual o mayor a 1"],
@@ -129,7 +131,7 @@ export const response = {
   },
   locationIdNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       location: {
         messages: ["Id de ubicación debe ser un número igual o mayor a 1"],
@@ -139,7 +141,7 @@ export const response = {
   },
   invalidStartDate: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       start_job_date_end: {
         messages: ["Formato de Fecha fin en rango de inicio inválida"],
@@ -152,7 +154,7 @@ export const response = {
   },
   invalidEndDate: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       end_job_date_end: {
         messages: ["Formato de Fecha fin en rango final inválida"],
@@ -165,7 +167,7 @@ export const response = {
   },
   emptySearch: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       search: {
         messages: ["Búsqueda es requerido"],
@@ -175,7 +177,7 @@ export const response = {
   },
   longSearch: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       search: {
         messages: ["Búsqueda no puede exceder de 255 caracteres"],

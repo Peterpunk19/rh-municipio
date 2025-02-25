@@ -1,8 +1,9 @@
 import { validationMessages } from "@/common/validation/messages";
+import { HttpMessages } from "@/common/response/messages";
 export const response = {
   idNotnumber: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: { messages: [validationMessages.number("ID")] },
     },
@@ -10,7 +11,7 @@ export const response = {
   },
   idZero: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: {
         messages: [validationMessages.minNumber("ID", 1)],
@@ -20,7 +21,7 @@ export const response = {
   },
   idNegative: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: {
         messages: [validationMessages.minNumber("ID", 1)],
@@ -30,7 +31,7 @@ export const response = {
   },
   idLong: {
     success: false,
-    message: "Invalid request",
+    message: HttpMessages.error.validationFields,
     responseObject: {
       id: {
         messages: [validationMessages.maxNumber("ID", 999999999999999)],
