@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { encryptPassword, startOfDay, endOfDay } from "@/common/utils";
+import { encryptPassword, endOfDay, startOfDay } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters } from "@/app/api/employees/interface";
 
 export const EmployeeService = {
@@ -346,5 +346,70 @@ export const EmployeeService = {
       currentPage: pageNumber,
     };
     return response;
+  },
+
+  async getEmployeesAutocomplete(search: string | null) {
+    let baseQuery = `
+        SELECT e.id,
+               e.name,
+               e.paternal_last_name,
+               e.maternal_last_name,
+               e.number_employee,
+               e.birthday,
+               e.rfc,
+               e.curp,
+               d.display_name  AS direccion_display_name,
+               s.display_name  AS secretaria_display_name,
+               c.display_name  AS category_display_name,
+               et.display_name AS employee_type_display_name,
+               tu.display_name AS trade_union_display_name
+        FROM Employee AS e
+                 JOIN EmployeeHiring AS eh ON eh.employee_id = e.id AND eh.active = 1
+                 JOIN Direccion AS d ON eh.direccion_id = d.id
+                 JOIN Secretaria AS s ON d.secretaria_id = s.id
+                 JOIN Category AS c ON eh.category_id = c.id
+                 JOIN EmployeeType AS et ON eh.employee_type_id = et.id
+                 LEFT JOIN EmployeeTradeUnion AS etu ON e.id = etu.employee_id
+                 LEFT JOIN TradeUnion AS tu ON etu.trade_union_id = tu.id
+    `;
+
+    let employees;
+
+    if (search) {
+      baseQuery += `
+            WHERE LOWER(e.name) LIKE LOWER(CONCAT('%', ?, '%'))
+               OR LOWER(e.paternal_last_name) LIKE LOWER(CONCAT('%', ?, '%'))
+               OR LOWER(e.maternal_last_name) LIKE LOWER(CONCAT('%', ?, '%'))
+               OR LOWER(e.number_employee) LIKE LOWER(CONCAT('%', ?, '%'))
+               OR LOWER(e.rfc) LIKE LOWER(CONCAT('%', ?, '%'))
+               OR LOWER(e.curp) LIKE LOWER(CONCAT('%', ?, '%'))
+        `;
+
+      employees = await prisma.$queryRawUnsafe(
+        baseQuery + " ORDER BY e.id DESC",
+        search,
+        search,
+        search,
+        search,
+        search,
+        search,
+      );
+    } else {
+      employees = await prisma.$queryRawUnsafe(baseQuery + " ORDER BY e.id DESC");
+    }
+
+    return employees.map((emp) => ({
+      id: emp.id,
+      label: `${emp.name} ${emp.paternal_last_name} ${emp.maternal_last_name} - ${emp.number_employee}`,
+      number_employee: emp.number_employee,
+      birthday: emp.birthday,
+      rfc: emp.rfc,
+      curp: emp.curp,
+      direccion_display_name: emp.direccion_display_name,
+      secretaria_display_name: emp.secretaria_display_name,
+      category_display_name: emp.category_display_name,
+      employee_type_display_name: emp.employee_type_display_name,
+      trade_union_display_name: emp.trade_union_display_name,
+    }));
   },
 };
