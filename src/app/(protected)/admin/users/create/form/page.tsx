@@ -8,9 +8,13 @@ import {
   Alert,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   FormControl,
-  FormHelperText,
   Grid2,
   IconButton,
   InputAdornment,
@@ -24,11 +28,15 @@ import { fetchRolesData } from "@/services/catalogs";
 import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
 import { createUser } from "@/services/user";
 import { FormErrors, initialFormData } from "./dataConfig";
+import CustomLabelError from "@/components/theme-elements/CustomLabelError";
+import Link from "next/link";
 const UserCreateForm = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
@@ -52,6 +60,11 @@ const UserCreateForm = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+    setOpenDialog(true);
+  };
+
+  const handleConfirm = async () => {
+    setIsSubmitting(true);
     setErrors({});
     try {
       const response = await createUser(formData);
@@ -80,8 +93,21 @@ const UserCreateForm = () => {
         }, 3000);
       }
     } catch (err) {
-      console.log(err);
+      setResponseMessage("Hubo un error inesperado.");
+    } finally {
+      setIsSubmitting(false);
+      setOpenDialog(false);
     }
+  };
+
+  const handlePreventClose = (reason: string) => {
+    if (reason === "backdropClick" || reason === "escapeKeyDown") {
+      return;
+    }
+  };
+
+  const handleCancel = () => {
+    setOpenDialog(false);
   };
 
   return (
@@ -92,7 +118,7 @@ const UserCreateForm = () => {
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid2 container spacing={2}>
-            <Grid2 size={6}>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <CustomFormLabel>Usuario</CustomFormLabel>
                 <CustomTextField
@@ -100,11 +126,12 @@ const UserCreateForm = () => {
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
+                  inputProps={{ maxLength: 255, autoComplete: "off" }}
                 ></CustomTextField>
-                <FormHelperText error> {errors.username && errors.username}</FormHelperText>
+                <CustomLabelError field={errors.username && errors.username} />
               </FormControl>
             </Grid2>
-            <Grid2 size={6}>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <CustomFormLabel htmlFor="fs-pwd">Contraseña</CustomFormLabel>
                 <CustomOutlinedInput
@@ -127,8 +154,9 @@ const UserCreateForm = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
+                  inputProps={{ maxLength: 255, autoComplete: "off" }}
                 />
-                <FormHelperText error>{errors.password}</FormHelperText>
+                <CustomLabelError field={errors.password} />
               </FormControl>
             </Grid2>
             <Grid2 mt={2} size={12}>
@@ -137,7 +165,7 @@ const UserCreateForm = () => {
                 Detalles de Usuario
               </Typography>
             </Grid2>
-            <Grid2 size={6}>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <CustomFormLabel>Rol</CustomFormLabel>
                 <CustomSelect
@@ -162,23 +190,48 @@ const UserCreateForm = () => {
                     ))
                   )}
                 </CustomSelect>
-                <FormHelperText error>{errors.role_id}</FormHelperText>
+                <CustomLabelError field={errors.role_id} />
               </FormControl>
             </Grid2>
             <Grid2 size={12}>
               <Stack direction="row" spacing={2}>
-                <Button type="submit" variant="contained" color="primary">
+                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
                   Guardar
                 </Button>
-                <Button variant="text" color="error">
-                  Salir
-                </Button>
+                <Link href={"/admin/users"} passHref>
+                  <Button variant="text" color="error" sx={{ display: "flex" }}>
+                    Salir
+                  </Button>
+                </Link>
               </Stack>
             </Grid2>
-            {responseMessage && <Alert severity={isSuccess ? "success" : "error"}>{responseMessage}</Alert>}
+            <Grid2 size={12}>
+              {responseMessage && (
+                <Alert severity={isSuccess ? "success" : "error"}>
+                  <Typography variant="body1" fontWeight={600}>{responseMessage}</Typography>
+                </Alert>
+              )}
+            </Grid2>
           </Grid2>
         </form>
       </Box>
+
+      <Dialog open={openDialog} onClose={handlePreventClose} maxWidth="sm" disableEscapeKeyDown>
+        <DialogTitle id="alert-dialog-title" variant="h5">
+          {"Creación de nuevo usuario"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">¿Desea continuar?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleConfirm} color="primary" autoFocus disabled={isSubmitting}>
+            Continuar
+          </Button>
+          <Button onClick={handleCancel} color="error" disabled={isSubmitting}>
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </ParentCard>
   );
 };
