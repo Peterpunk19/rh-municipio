@@ -218,6 +218,7 @@ model EmployeeIncidents {
   created_at              DateTime?                 @default(now())
   validated_at            DateTime?                 @updatedAt
   EmployeeIncidentsStatus EmployeeIncidentsStatus[]
+  active                  Boolean                   @default(true)
 
   @@unique([employee_id, start_date, end_date, incident_status_id, incident_id])
 }
