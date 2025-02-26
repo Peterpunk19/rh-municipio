@@ -20,6 +20,8 @@ export const HttpMessages = {
     getSuccess: "Incidencias encontradas correctamente",
     invalidEmployeeType: "No fue encontrado el tipo de empleado.",
     folioError: "Folio no creado.",
+    notFoundById: "Incidencia no encontrada.",
+    foundById: "Incidencia encontrada correctamente",
   },
   incidentStatus: {
     notFound: "Estatus de incidencia no encontrado",

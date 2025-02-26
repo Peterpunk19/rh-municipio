@@ -167,4 +167,15 @@ export const EmployeeIncidentsService = {
 
     return { ...pagination, data };
   },
+
+  async getEmployeeIncidentById(id: number) {
+    return prisma.employeeIncidents.findFirst({
+      include: {
+        employee: true,
+      },
+      where: {
+        id,
+      },
+    });
+  },
 };
