@@ -61,3 +61,11 @@ export const UserGetByIdSchema = z.object({
     .max(999999999999999, { message: validationMessages.maxNumber("El ID", 999999999999999) })
     .nullable(),
 });
+
+export const UserDeactivateSchema = z.object({
+  user_id: z
+    .number({ message: validationMessages.number("El ID") })
+    .min(1, { message: validationMessages.minNumber("El ID", 1) })
+    .max(999999999999999, { message: validationMessages.maxNumber("El ID", 999999999999999) })
+    .nullable(),
+});
