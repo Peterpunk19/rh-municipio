@@ -143,7 +143,7 @@ export const CatalogsService = {
     });
   },
 
-  async getIncidentsStatus(params) {
+  async getIncidentsStatus(params: any) {
     const {
       employee_attendance_id,
       area_id,
@@ -161,18 +161,16 @@ export const CatalogsService = {
                          IFNULL(child.total, 0) AS total,
                          parent.name,
                          parent.display_name       as label,
-                         parent.display_name,
-                         parent.active
+                         parent.display_name
                      FROM IncidentStatus parent
                               LEFT JOIN (SELECT incidents_status.id,
                                                 IFNULL(employee_incidents.total, 0) as total
                  FROM IncidentStatus incidents_status
                           LEFT JOIN (SELECT employee_incidents.incident_status_id,
-                                            count(incident_status_id) AS total,
-                                            employee.active
+                                            count(incident_status_id) AS total
                                      FROM EmployeeIncidents employee_incidents
                                               INNER JOIN Employee employee ON employee_incidents.employee_id = employee.id
-                                     WHERE employee_incidents.active = 1
+                                     WHERE 1 
                                      `;
 
     if (employee_attendance_id) {
@@ -209,7 +207,7 @@ export const CatalogsService = {
     baseQuery += ` GROUP BY incident_status_id
                  ) AS employee_incidents
                                     ON employee_incidents.incident_status_id = incidents_status.id
-                 WHERE employee_incidents.active = 1 ) AS child ON child.id = parent.id
+                 ) AS child ON child.id = parent.id
 ORDER BY parent.id `;
 
     const incidentsStatus = await prisma.$queryRawUnsafe(baseQuery);
