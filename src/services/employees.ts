@@ -1,5 +1,5 @@
 import http from "@/lib/http";
-import type { IResponse } from "@/utils/types";
+import type { IResponse, IResponseObject } from "@/utils/types";
 
 export const createEmployee = async (data: object): Promise<IResponse> => {
   try {
