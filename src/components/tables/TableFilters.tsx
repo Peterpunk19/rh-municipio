@@ -16,18 +16,20 @@ import InputLabel from "@mui/material/InputLabel";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { EnhancedTableToolbarProps } from "@/interfaces/EnhancedTableToolbarProps";
-import { FiltersConfig } from "@/interfaces/FiltersConfig";
+import type { EnhancedTableToolbarProps } from "@/interfaces/EnhancedTableToolbarProps";
+import type { FiltersConfig } from "@/interfaces/FiltersConfig";
 import { updateFilter } from "@/store/tables/FiltersSlice";
 import { useSelector, useDispatch } from "@/store/hooks";
-import { RootState } from "@/store/store";
+import type { RootState } from "@/store/store";
 
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
-const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { values, searchTerm } = useSelector((state: RootState) => state.filters);
-  const { numSelected, handleSearch, search, setSearch, filters = [] } = props;
+const TableFilters = (props: EnhancedTableToolbarProps) => {
+  const { numSelected, handleSearch, search, setSearch, filters = [], entity } = props;
+  const { values, searchTerm } = useSelector(
+    (state: RootState) => state.filters[entity] || { values: {}, searchTerm: "" },
+  );
   const [localState, setLocalState] = useState<Record<string, any>>(() => ({}));
   const dispatch = useDispatch();
 
@@ -38,7 +40,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     if (values) {
       setLocalState(values);
     }
-  }, [filters]);
+  }, []);
 
   const handleFilterChange = (filterKey: string, value: any) => {
     const isDateFilter = filters.some(
@@ -52,7 +54,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     }
 
     setLocalState((prev) => ({ ...prev, [filterKey]: formattedValue }));
-    dispatch(updateFilter({ key: filterKey, value: formattedValue }));
+    dispatch(
+      updateFilter({
+        entity,
+        key: filterKey,
+        value: formattedValue,
+      }),
+    );
 
     const filterConfig = filters.find((f) => f.key === filterKey);
     if (filterConfig?.onChange) {
@@ -239,7 +247,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               <TextField
                 placeholder="Buscar"
                 size="medium"
-                value={search}
+                value={search || ""}
                 onChange={handleSearch}
                 fullWidth
                 InputProps={{
@@ -292,4 +300,4 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   );
 };
 
-export default EnhancedTableToolbar;
+export default TableFilters;
