@@ -136,3 +136,13 @@ export const fetchRolesData = async (): Promise<IResponseObject | null> => {
     return null;
   }
 };
+
+export const fetchIncidentTypesData = async (): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>("/api/catalogs/incidents");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch role:", error);
+    return null;
+  }
+};
