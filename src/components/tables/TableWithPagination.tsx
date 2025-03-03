@@ -14,13 +14,14 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useSelector, useDispatch } from "@/store/hooks";
 import { HeadCell } from "@/interfaces/HeadCell";
-import EnhancedTableHead from "./EnhancedTableHead";
-import EnhancedTableToolbar from "./EnhancedTableToolbar";
+import EnhancedTableHead from "./TableHeaders";
+import EnhancedTableToolbar from "./TableFilters";
 import { ColumnTypeConfig } from "@/interfaces/ColumnTypeConfig";
 import { updatePage, updateLimit } from "@/store/tables/PaginationSlice";
 import { RootState } from "@/store/store";
 import { useDebouncedCallback } from "use-debounce";
 import { FiltersConfig } from "@/interfaces/FiltersConfig";
+import { updateFilter } from "@/store/tables/FiltersSlice";
 import { useDynamicFilters } from "../customHooks/useDinamycFilters";
 import ParentCard from "@/app/components/shared/ParentCard";
 import RowMenu from "./RowMenu";
@@ -68,6 +69,7 @@ interface TableProps<T> {
   columnTypeConfig: Record<string, ColumnTypeConfig>;
   handleSearch: (searchQuery: string) => void;
   filtersConfig: () => FiltersConfig[];
+  entity: string;
   emptyMessage: string;
 }
 const TableWithPagination = <T,>({
@@ -77,6 +79,7 @@ const TableWithPagination = <T,>({
   columnTypeConfig,
   handleSearch,
   filtersConfig,
+  entity,
   emptyMessage,
 }: TableProps<T>) => {
   const dispatch = useDispatch();
@@ -97,9 +100,9 @@ const TableWithPagination = <T,>({
 
     return `${adjustedFrom}–${adjustedTo} de ${count}`;
   };
-  const { values: initialValuesFromRedux } = useSelector((state: RootState) => state.filters);
-  const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
+  const { values: initialValuesFromRedux } = useSelector((state: RootState) => state.filters[entity]);
 
+  const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<any>("id");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -107,7 +110,7 @@ const TableWithPagination = <T,>({
 
   const debounced = useDebouncedCallback((searchTerm: string) => {
     handleSearch(searchTerm);
-  }, 450);
+  }, 400);
 
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -225,8 +228,18 @@ const TableWithPagination = <T,>({
           type: filter.type,
           options: filter.options || [],
           value: selectedValues[filter.key],
-          onChange: (value: any) => handleFilterChange(filter.key, value),
+          onChange: (value: any) => {
+            dispatch(
+              updateFilter({
+                entity: entity,
+                key: filter.key,
+                value: value,
+              }),
+            );
+            handleFilterChange(filter.key, value);
+          },
         }))}
+        entity={entity}
       />
       <Paper variant="outlined" sx={{ mx: 2, mt: 1, border: `1px solid ${borderColor}` }}>
         <TableContainer>

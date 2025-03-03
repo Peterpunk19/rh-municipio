@@ -3,10 +3,10 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
-import type { EnhancedTableProps } from "../../interfaces/EnhancedTableProps";
+import type { EnhancedTableProps } from "@/interfaces/EnhancedTableProps";
 import { visuallyHidden } from "@mui/utils";
 
-function EnhancedTableHead(props: EnhancedTableProps) {
+function TableHeaders(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort, headCells } = props;
   const createSortHandler = (property: any) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
@@ -41,4 +41,4 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-export default EnhancedTableHead;
+export default TableHeaders;

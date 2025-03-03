@@ -9,7 +9,7 @@ import {
   fetchDireccionesData,
 } from "@/services/catalogs";
 
-export const getFiltersConfig = (): FiltersConfig[] => [
+export const tableFiltersConfig = (): FiltersConfig[] => [
   {
     key: "employee_type",
     label: "Tipo de empleado",

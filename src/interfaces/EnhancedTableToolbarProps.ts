@@ -6,4 +6,5 @@ export interface EnhancedTableToolbarProps {
   setSearch?: (search: string) => void;
   handleSearch?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   filters?: FiltersConfig[];
+  entity: string;
 }

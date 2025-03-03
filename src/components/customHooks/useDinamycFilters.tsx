@@ -56,7 +56,6 @@ export const useDynamicFilters = (filtersConfig: FiltersConfig[], initialValues:
           return !catalogs[catalogKey] && !pendingRequests.current[catalogKey];
         })
         .map((filter) => fetchAndCacheCatalog(filter));
-
       await Promise.all(fetchPromises);
     };
 
@@ -70,9 +69,13 @@ export const useDynamicFilters = (filtersConfig: FiltersConfig[], initialValues:
   }, [filtersConfig, catalogs, fetchAndCacheCatalog, getCatalogKey]);
 
   const handleFilterChange = (key: string, value: any) => {
-    const newValues = { ...selectedValues, [key]: value };
-    filtersConfig.filter((f) => f.dependsOn === key).forEach((f) => (newValues[f.key] = null));
-    setSelectedValues(newValues);
+    setSelectedValues((prev) => ({ ...prev, [key]: value }));
+
+    filtersConfig
+      .filter((f) => f.dependsOn === key)
+      .forEach((f) => {
+        setSelectedValues((prev) => ({ ...prev, [f.key]: null }));
+      });
   };
 
   const getCatalogOptions = (filter: FiltersConfig) => {
@@ -84,7 +87,7 @@ export const useDynamicFilters = (filtersConfig: FiltersConfig[], initialValues:
     filters: filtersConfig.map((filter) => ({
       ...filter,
       options: getCatalogOptions(filter),
-      value: selectedValues[filter.key],
+      value: selectedValues[filter?.key],
     })),
     selectedValues,
     handleFilterChange,

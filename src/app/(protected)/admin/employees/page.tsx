@@ -1,23 +1,24 @@
 "use client";
 import React, { useEffect } from "react";
 import TableWithPagination from "@/components/tables/TableWithPagination";
-import { EmployeeType } from "@/types/EmployeeType";
+import type { EmployeeType } from "@/types/EmployeeType";
 import { useSelector } from "@/store/hooks";
-import { getFiltersConfig } from "./(list)/FiltersConfig";
+import { tableFiltersConfig } from "./(list)/FiltersConfig";
 import { columnTypeConfig } from "./(list)/ColumnsConfig";
 import { useDispatch } from "react-redux";
 import { fetchEmployees } from "@/store/employees/EmployeesFiltersSlice";
 import { updateSearch } from "@/store/tables/FiltersSlice";
-import { AppDispatch } from "@/store/store";
+import type { AppDispatch } from "@/store/store";
 import { header } from "./(list)/Header";
-import { RootState } from "@/store/store";
+import type { RootState } from "@/store/store";
 import PageContainer from "@/app/components/container/PageContainer";
 
 export default function Employees() {
   const dispatch = useDispatch<AppDispatch>();
   const { page, limit } = useSelector((state: RootState) => state.pagination);
-  const { searchTerm } = useSelector((state: RootState) => state.filters);
-  const { values } = useSelector((state: RootState) => state.filters);
+  const { searchTerm, values } = useSelector(
+    (state: RootState) => state.filters.employee || { searchTerm: "", values: {} },
+  );
 
   useEffect(() => {
     const queryParams = [];
@@ -35,7 +36,7 @@ export default function Employees() {
   const items: EmployeeType[] = useSelector((state) => state.filterEmployeesSlice.employees);
 
   const handleSearch = (searchQuery: string) => {
-    dispatch(updateSearch(searchQuery));
+    dispatch(updateSearch({ entity: "employee", searchTerm: searchQuery }));
   };
   const emptyMessage = useSelector((state) => state.filterEmployeesSlice.emptyMessage);
 
@@ -47,7 +48,8 @@ export default function Employees() {
         items={items}
         columnTypeConfig={columnTypeConfig}
         handleSearch={handleSearch}
-        filtersConfig={getFiltersConfig}
+        filtersConfig={tableFiltersConfig}
+        entity="employee"
         emptyMessage={emptyMessage}
       />
     </PageContainer>

@@ -1,4 +1,4 @@
-import { HeadCell } from "@/interfaces/HeadCell";
+import type { HeadCell } from "@/interfaces/HeadCell";
 
 type Order = "asc" | "desc";
 
