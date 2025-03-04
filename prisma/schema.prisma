@@ -52,7 +52,6 @@ model Employee {
   status_employee_id                   Int
   gender                               Gender                    @relation(fields: [gender_id], references: [id])
   gender_id                            Int
-  employee_hiring_id                   Int?                      @unique
   employee_hiring                      EmployeeHiring[]
   employee_location                    EmployeeLocation[]
   director_id                          Int?                      @unique
@@ -139,15 +138,18 @@ model EmployeeTradeUnion {
 }
 
 model EmployeeLocation {
-  id          Int       @id @default(autoincrement())
-  employee_id Int
-  location_id Int
-  active      Boolean   @default(true)
-  created_by  Int?
-  created_at  DateTime? @default(now())
-  updated_at  DateTime? @updatedAt
-  location    Location? @relation(fields: [location_id], references: [id])
-  employee    Employee? @relation(fields: [employee_id], references: [id])
+  id                  Int                  @id @default(autoincrement())
+  employee_id         Int
+  location_id         Int
+  attendance_id       Int
+  active              Boolean              @default(true)
+  created_by          Int?
+  created_at          DateTime?            @default(now())
+  updated_at          DateTime?            @updatedAt
+  attendance          Attendance?          @relation(fields: [attendance_id], references: [id])
+  location            Location?            @relation(fields: [location_id], references: [id])
+  employee            Employee?            @relation(fields: [employee_id], references: [id])
+  employee_attendance EmployeeAttendance[]
 
   @@unique([employee_id, location_id, active])
 }
@@ -177,26 +179,27 @@ model Attendance {
   active                  Boolean                 @default(true)
   created_at              DateTime?               @default(now())
   updated_at              DateTime?               @updatedAt
-  employee_attendance     EmployeeAttendance[]
   employee_request_detail EmployeeRequestDetail[]
+
+  employee_location EmployeeLocation[]
 }
 
 model EmployeeAttendance {
-  id                 Int                 @id @default(autoincrement())
-  check_in           DateTime
-  check_out          DateTime
-  active             Boolean             @default(true)
-  created_by_id      Int
-  location_id        Int
-  employee_hiring_id Int
-  attendance_id      Int
-  attendance         Attendance          @relation(fields: [attendance_id], references: [id])
-  created_by         User                @relation(fields: [created_by_id], references: [id])
-  location           Location            @relation(fields: [location_id], references: [id])
-  employee_hiring    EmployeeHiring      @relation(fields: [employee_hiring_id], references: [id])
-  created_at         DateTime?           @default(now())
-  udpated_at         DateTime?           @updatedAt
-  employee_incidents EmployeeIncidents[]
+  id                   Int                 @id @default(autoincrement())
+  check_in             DateTime
+  check_out            DateTime
+  active               Boolean             @default(true)
+  created_by_id        Int
+  employee_hiring_id   Int
+  created_by           User                @relation(fields: [created_by_id], references: [id])
+  employee_location_id Int
+  employee_location    EmployeeLocation    @relation(fields: [employee_location_id], references: [id])
+  employee_hiring      EmployeeHiring      @relation(fields: [employee_hiring_id], references: [id])
+  created_at           DateTime?           @default(now())
+  udpated_at           DateTime?           @updatedAt
+  employee_incidents   EmployeeIncidents[]
+
+  @@unique([check_in, check_out, employee_hiring_id, employee_location_id])
 }
 
 model EmployeeIncidents {
@@ -500,7 +503,6 @@ model Location {
   display_name            String
   active                  Boolean                 @default(true)
   employee_location       EmployeeLocation[]
-  employee_attendance     EmployeeAttendance[]
   employee_request_detail EmployeeRequestDetail[]
 }
 

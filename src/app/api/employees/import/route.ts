@@ -5,14 +5,7 @@ import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
 import { IEmployee } from "@/app/api/employees/interface";
 import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
-
-function getRandomNumber(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-function getRandomDate(start, end) {
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString();
-}
+import { formatFolio, getRandomDate, getRandomNumber } from "@/common/utils";
 
 function mapToIEmployee(data: any): IEmployee {
   const validateOrGenerateDate = (dateString: string): string => {
@@ -39,7 +32,7 @@ function mapToIEmployee(data: any): IEmployee {
     startJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     endJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     categoryId: getRandomNumber(1, 193),
-    employeeTypeName: getRandomNumber(2, 7),
+    employeeTypeName: "base_no_sindizalizado",
     direccionId: 1,
   };
 }
@@ -59,6 +52,9 @@ export async function POST(request: NextRequest) {
           if (employeeMapped.numberEmployee == null || employeeMapped.numberEmployee === "") {
             employeeMapped.numberEmployee = await EmployeeService.getNumberEmployee();
           }
+
+          employeeMapped.numberEmployee = formatFolio(Number(employeeMapped.numberEmployee));
+
           if (employeeMapped.curp == "") employeeMapped.curp = employeeMapped.rfc;
 
           const employeeType = await EmployeeTypeService.getEmployeeTypeByName(body.employeeTypeName);
@@ -66,8 +62,9 @@ export async function POST(request: NextRequest) {
           if (employeeType) {
             employeeMapped.employeeTypeId = employeeType.id;
 
-            const [employee] = await EmployeeService.createEmployee(employeeMapped);
-            createdEmployees.push(employee);
+            await EmployeeService.createEmployee(employeeMapped);
+
+            createdEmployees.push(employeeMapped);
           } else {
             console.log("employeeType");
             console.log(employeeMapped);

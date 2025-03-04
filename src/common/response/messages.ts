@@ -23,11 +23,21 @@ export const HttpMessages = {
     notFoundById: "Incidencia no encontrada.",
     foundById: "Incidencia encontrada correctamente",
   },
+  employeeAttendance: {
+    invalidData: "Ya existe un dia registrado con estos datos",
+    createdSuccess: "Asistencia creada correctamente",
+  },
+  employeeHiring: {
+    notFound: "No se encontraron datos de contratacion para el empleado",
+  },
+  employeeLocation: {
+    notFound: "No se encontraron datos de ubicación para el empleado",
+  },
   incidentStatus: {
     notFound: "Estatus de incidencia no encontrado",
   },
   error: {
-    internalServerError: "Internal server error",
+    internalServerError: "Ocurrio un error en el servidor",
     invalidRequest: "Invalid request",
     notFound: "Datos no encontrados",
     validationFields: "Datos incorrectos, por favor revise de nuevo el formulario.",

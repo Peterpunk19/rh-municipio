@@ -11,9 +11,6 @@
     "fix": "biome format --fix",
     "test": "jest"
   },
-  "prisma": {
-    "seed": "node prisma/seed.js"
-  },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@casl/ability": "^6.3.3",

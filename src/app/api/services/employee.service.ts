@@ -143,13 +143,6 @@ export const EmployeeService = {
         data: { employee_id: createEmployee.id },
       });
 
-      await tx.employee.update({
-        where: { id: createEmployee.id },
-        data: {
-          employee_hiring_id: createEmployeeHiring.id,
-        },
-      });
-
       return [createUser, createEmployee, createEmployeeHiring, createEmployeeAddress];
     });
   },
@@ -319,7 +312,6 @@ export const EmployeeService = {
         user: false,
         user_id: false,
         gender: true,
-        employee_hiring_id: true,
         employee_hiring: {
           where: {
             active: true,
@@ -407,7 +399,21 @@ export const EmployeeService = {
                  LEFT JOIN TradeUnion AS tu ON etu.trade_union_id = tu.id
     `;
 
-    let employees;
+    let employees: {
+      id: number;
+      name: string;
+      paternal_last_name: string;
+      maternal_last_name: string;
+      number_employee: string;
+      birthday: string;
+      rfc: string;
+      curp: string;
+      direccion_display_name: string;
+      secretaria_display_name: string;
+      category_display_name: string;
+      employee_type_display_name: string;
+      trade_union_display_name: string | null;
+    }[];
 
     if (search) {
       baseQuery += `
@@ -432,7 +438,7 @@ export const EmployeeService = {
       employees = await prisma.$queryRawUnsafe(baseQuery + " ORDER BY e.id DESC");
     }
 
-    return employees.map((emp) => ({
+    return employees.map((emp: any) => ({
       id: emp.id,
       label: `${emp.name} ${emp.paternal_last_name} ${emp.maternal_last_name} - ${emp.number_employee}`,
       number_employee: emp.number_employee,
@@ -445,5 +451,21 @@ export const EmployeeService = {
       employee_type_display_name: emp.employee_type_display_name,
       trade_union_display_name: emp.trade_union_display_name,
     }));
+  },
+
+  async getEmployeeByIdTest(): Promise<{ id: number } | null> {
+    return await prisma.employee.findFirst({
+      select: {
+        id: true,
+      },
+      where: {
+        employee_hiring: {
+          some: { active: true },
+        },
+        employee_location: {
+          some: { active: true },
+        },
+      },
+    });
   },
 };
