@@ -30,3 +30,17 @@ export const createUser = async (data: object): Promise<IResponse> => {
     return error;
   }
 };
+
+export const getUsers = async (data: string): Promise<IResponse> => {
+  try {
+    const urlParams = new URLSearchParams(data).toString();
+    let url = "/api/users";
+    if (urlParams.length > 0) {
+      url = `${url}?${urlParams}`;
+    }
+    const response = await http.get<IResponse>(url);
+    return response.data;
+  } catch (error: any) {
+    return error;
+  }
+};

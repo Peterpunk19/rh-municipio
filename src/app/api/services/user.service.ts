@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { encryptPassword, getPaginationData } from "@/common/utils";
+import { buildWhereClause, encryptPassword, getPaginationData } from "@/common/utils";
 import { IUser, IUserFilters } from "@/app/api/users/interface";
 
 export const UserService = {
@@ -90,14 +90,18 @@ export const UserService = {
     const limit = userFilters.limit;
     const page = userFilters.page;
     const offset = (page - 1) * limit;
-
-    const whereClause: any = {
-      active: userFilters.active,
+    const filterMappings = {
+      active: "active",
+      role_id: "role_id",
     };
 
-    if (userFilters.role_id) {
-      whereClause.role_id = userFilters.role_id;
-    }
+    const searchMappings = [
+      { path: ["username"], operators: ["contains"] },
+      { path: ["employee", "name"], operators: ["is", "contains"] },
+      { path: ["employee", "paternal_last_name"], operators: ["is", "contains"] },
+      { path: ["employee", "maternal_last_name"], operators: ["is", "contains"] },
+    ];
+    const whereClause = await buildWhereClause(filterMappings, userFilters, searchMappings);
 
     const data = await prisma.user.findMany({
       where: whereClause,
@@ -106,6 +110,14 @@ export const UserService = {
       select: {
         id: true,
         username: true,
+        employee_id: true,
+        employee: {
+          select: {
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+          },
+        },
         role_id: true,
         role: {
           select: {
@@ -124,9 +136,13 @@ export const UserService = {
     const users = data.map((user) => ({
       id: user.id,
       username: user.username,
+      name: user.employee?.name,
+      paternal_last_name: user.employee?.paternal_last_name,
+      maternal_last_name: user.employee?.maternal_last_name,
       role_id: user.role_id,
       role_display_name: user.role.display_name,
       active: user.active,
+      active_display_name: user.active ? "Activo" : "Inactivo",
       created_at: user.created_at,
       updated_at: user.updated_at,
     }));

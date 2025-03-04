@@ -52,6 +52,12 @@ export const UserGetByFilterSchema = z.object({
     }
     return val;
   }, z.boolean({ message: validationMessages.invalidBoolean("Activo") }).nullable()),
+  search: z
+    .string({ message: validationMessages.required("Búsqueda") })
+    .min(1, { message: validationMessages.required("Búsqueda") })
+    .max(255, { message: validationMessages.maxLength("Búsqueda", 255) })
+    .optional()
+    .nullable(),
 });
 
 export const UserGetByIdSchema = z.object({

@@ -11,6 +11,7 @@ export interface IUserFilters {
   page: number;
   role_id: number | null | undefined;
   active: string | boolean | null | undefined;
+  search: string | null | undefined;
 }
 
 export interface IUserById {
