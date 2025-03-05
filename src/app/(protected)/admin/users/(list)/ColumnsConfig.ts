@@ -7,5 +7,5 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   maternal_last_name: { renderType: "text" },
   role_display_name: { renderType: "text" },
   active_display_name: { renderType: "text" },
-  actions: { renderType: "action" },
+  actions: { renderType: "action", redirectPath: "/admin/users/" },
 };
