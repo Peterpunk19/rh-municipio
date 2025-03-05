@@ -1,10 +1,10 @@
 "use client";
-import React, { use, useState, useEffect } from "react";
+import React, { useState } from "react";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import { useDebouncedCallback } from "use-debounce";
+import CustomAutocompleteSearchField from "@/components/customFields/CustomAutocompleteSearchField";
 import {
   Alert,
   Box,
@@ -16,10 +16,6 @@ import {
   DialogTitle,
   FormControl,
   Grid2,
-  TextField, 
-  Autocomplete, 
-  Paper, 
-  CircularProgress,
   MenuItem,
   Stack,
   Typography,
@@ -38,37 +34,13 @@ const IncidentCreateForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [employees, setEmployees] = useState<{ id: number; label: string }[]>([]);
-  const [loading, setLoading] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
-
-  // Debounced function to fetch API data
-  const fetchOptions = useDebouncedCallback(async (query: string) => {
-    if (!query) return;
-
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/employees/autocomplete?search=${query}`);
-      const data = await response.json();
-      console.log(data.responseObject)
-      setEmployees(data.responseObject);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-    setLoading(false);
-  }, 800); // Debounce delay (800ms)
-
-  // Trigger debounced API call when input changes
-  useEffect(() => {
-    fetchOptions(inputValue);
-  }, [inputValue, fetchOptions]);
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: "", 
+      [name]: "",
     }));
     setFormData({
       ...formData,
@@ -76,14 +48,14 @@ const IncidentCreateForm = () => {
     });
   };
 
-  const handleSelectEmployee = async (_: any, newValue: { id: string; label: string } | null) => {
-    if (newValue) {
+  const handleSelectEmployee = async (_: any, employeeId: string | null) => {
+    if (employeeId) {
       try {
-        const employeeData = await getEmployeeById(newValue.id);
+        const employeeData = await getEmployeeById(employeeId);
         setSelectedEmployee(employeeData.responseObject);
         setFormData((prevFormData) => ({
-            ...prevFormData,
-            employeeId: newValue.id,
+          ...prevFormData,
+          employeeId: employeeId,
         }));
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -164,132 +136,98 @@ const IncidentCreateForm = () => {
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
                 <CustomFormLabel>Empleado</CustomFormLabel>
-                <Autocomplete
-                    freeSolo
-                    options={employees}
-                    getOptionLabel={(employee) => employee.label}
-                    inputValue={inputValue}
-                    onInputChange={(_, value) => setInputValue(value)}
-                    onChange={handleSelectEmployee}
-                    loading={loading}
-                    renderInput={(params) => (
-                        <TextField
-                        {...params}
-                        label="Ingresa RFC, CURP, Nombre o Número de empleado"
-                        variant="outlined"
-                        fullWidth
-                        InputProps={{
-                            ...params.InputProps,
-                            endAdornment: loading ? <CircularProgress color="inherit" size={20} /> : null,
-                        }}
-                        />
-                    )}
-                    renderOption={(props, employee) => (
-                        <MenuItem {...props} key={employee.id}>
-                        {employee.label}
-                        </MenuItem>
-                    )}
-                    PaperComponent={(props) => <Paper {...props} elevation={3} />}
-                    />
+                <CustomAutocompleteSearchField
+                  field={{
+                    url: "/api/employees/autocomplete",
+                    label: "Ingresa RFC, CURP, Nombre o Número de empleados",
+                    value: "",
+                  }}
+                  handleChange={(_, value) => handleSelectEmployee(_, value)}
+                />
                 <CustomLabelError field={errors.employeeId && errors.employeeId} />
               </FormControl>
             </Grid2>
             {selectedEmployee && (
-                <>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>Número de Empleado</CustomFormLabel>
-                        <CustomTextField
-                            value={selectedEmployee.number_employee}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>Nombre</CustomFormLabel>
-                        <CustomTextField
-                            value={`${selectedEmployee.name} ${selectedEmployee.paternal_last_name} ${selectedEmployee.maternal_last_name}`}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>RFC</CustomFormLabel>
-                        <CustomTextField
-                            value={selectedEmployee.rfc}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>CURP</CustomFormLabel>
-                        <CustomTextField
-                            value={selectedEmployee.curp}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>Organismo público</CustomFormLabel>
-                        <CustomTextField
-                            value={selectedEmployee.employee_hiring?.[0]?.direccion?.secretaria?.display_name}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>Organismo administrativo</CustomFormLabel>
-                        <CustomTextField
-                            value={selectedEmployee.employee_hiring?.[0]?.direccion?.display_name}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>Sindicato</CustomFormLabel>
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>Tipo de empleado</CustomFormLabel>
-                        <CustomTextField
-                            value={selectedEmployee.employee_hiring?.[0]?.employe_type?.display_name}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                    <Grid2 size={{ xs: 12, md: 4 }}>
-                        <FormControl fullWidth>
-                        <CustomFormLabel>Categoría</CustomFormLabel>
-                        <CustomTextField
-                            value={selectedEmployee.employee_hiring?.[0]?.category?.display_name}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                        />
-                        </FormControl>
-                    </Grid2>
-                </>
+              <>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>Número de Empleado</CustomFormLabel>
+                    <CustomTextField value={selectedEmployee.number_employee} variant="outlined" fullWidth disabled />
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>Nombre</CustomFormLabel>
+                    <CustomTextField
+                      value={`${selectedEmployee.name} ${selectedEmployee.paternal_last_name} ${selectedEmployee.maternal_last_name}`}
+                      variant="outlined"
+                      fullWidth
+                      disabled
+                    />
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>RFC</CustomFormLabel>
+                    <CustomTextField value={selectedEmployee.rfc} variant="outlined" fullWidth disabled />
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>CURP</CustomFormLabel>
+                    <CustomTextField value={selectedEmployee.curp} variant="outlined" fullWidth disabled />
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>Organismo público</CustomFormLabel>
+                    <CustomTextField
+                      value={selectedEmployee.employee_hiring?.[0]?.direccion?.secretaria?.display_name}
+                      variant="outlined"
+                      fullWidth
+                      disabled
+                    />
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>Organismo administrativo</CustomFormLabel>
+                    <CustomTextField
+                      value={selectedEmployee.employee_hiring?.[0]?.direccion?.display_name}
+                      variant="outlined"
+                      fullWidth
+                      disabled
+                    />
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>Sindicato</CustomFormLabel>
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>Tipo de empleado</CustomFormLabel>
+                    <CustomTextField
+                      value={selectedEmployee.employee_hiring?.[0]?.employe_type?.display_name}
+                      variant="outlined"
+                      fullWidth
+                      disabled
+                    />
+                  </FormControl>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <FormControl fullWidth>
+                    <CustomFormLabel>Categoría</CustomFormLabel>
+                    <CustomTextField
+                      value={selectedEmployee.employee_hiring?.[0]?.category?.display_name}
+                      variant="outlined"
+                      fullWidth
+                      disabled
+                    />
+                  </FormControl>
+                </Grid2>
+              </>
             )}
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
@@ -323,13 +261,13 @@ const IncidentCreateForm = () => {
               <FormControl fullWidth>
                 <CustomFormLabel>Fecha de inicio</CustomFormLabel>
                 <CustomTextField
-                    id="startDate"
-                    name="startDate"
-                    type="date"
-                    value={formData.startDate}
-                    onChange={handleChange}
-                    variant="outlined"
-                    fullWidth
+                  id="startDate"
+                  name="startDate"
+                  type="date"
+                  value={formData.startDate}
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth
                 />
                 <CustomLabelError field={errors.startDate && errors.startDate} />
               </FormControl>
@@ -338,13 +276,13 @@ const IncidentCreateForm = () => {
               <FormControl fullWidth>
                 <CustomFormLabel>Fecha de terminacion</CustomFormLabel>
                 <CustomTextField
-                    id="endDate"
-                    name="endDate"
-                    type="date"
-                    value={formData.endDate}
-                    onChange={handleChange}
-                    variant="outlined"
-                    fullWidth
+                  id="endDate"
+                  name="endDate"
+                  type="date"
+                  value={formData.endDate}
+                  onChange={handleChange}
+                  variant="outlined"
+                  fullWidth
                 />
                 <CustomLabelError field={errors.endDate && errors.endDate} />
               </FormControl>
@@ -353,20 +291,26 @@ const IncidentCreateForm = () => {
               <FormControl fullWidth>
                 <CustomFormLabel>Justificación</CustomFormLabel>
                 <CustomTextField
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    multiline
-                    fullWidth
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  multiline
+                  fullWidth
                 />
                 <CustomLabelError field={errors.description && errors.description} />
               </FormControl>
             </Grid2>
-            
+
             <Grid2 size={12}>
               <Stack direction="row" spacing={2} justifyContent="flex-end">
-                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} sx={{ display: "flex" }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={isSubmitting}
+                  sx={{ display: "flex" }}
+                >
                   Guardar
                 </Button>
                 <Link href={"/admin/incidents"} passHref>
@@ -379,7 +323,9 @@ const IncidentCreateForm = () => {
             <Grid2 size={12}>
               {responseMessage && (
                 <Alert severity={isSuccess ? "success" : "error"}>
-                  <Typography variant="body1" fontWeight={600}>{responseMessage}</Typography>
+                  <Typography variant="body1" fontWeight={600}>
+                    {responseMessage}
+                  </Typography>
                 </Alert>
               )}
             </Grid2>

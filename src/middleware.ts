@@ -6,7 +6,6 @@ import { publicRoutes, authRoutes, apiAuthPrefix, apiPrefix, DEFAULT_LOGIN_REDIR
 const { auth } = NextAuth(authConfig);
 // @ts-ignore
 export default auth((req) => {
-  return null;
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const isRoot = nextUrl.pathname === "/";
