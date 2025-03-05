@@ -66,6 +66,10 @@ const IncidentCreateForm = () => {
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "", 
+    }));
     setFormData({
       ...formData,
       [name]: value,
@@ -153,11 +157,8 @@ const IncidentCreateForm = () => {
   };
 
   return (
-    <ParentCard title="Rellena los datos">
+    <ParentCard title="Ingrese los datos de la incidencia">
       <Box>
-        <Typography variant="h6" mb={1}>
-          Ingrese los datos de la incidencia
-        </Typography>
         <form onSubmit={handleSubmit}>
           <Grid2 container spacing={2}>
             <Grid2 size={{ lg: 12 }}>
@@ -364,12 +365,12 @@ const IncidentCreateForm = () => {
             </Grid2>
             
             <Grid2 size={12}>
-              <Stack direction="row" spacing={2}>
-                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+              <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} sx={{ display: "flex" }}>
                   Guardar
                 </Button>
-                <Link href={"/admin/users"} passHref>
-                  <Button variant="text" color="error" sx={{ display: "flex" }}>
+                <Link href={"/admin/incidents"} passHref>
+                  <Button variant="contained" color="error" sx={{ display: "flex" }}>
                     Salir
                   </Button>
                 </Link>
@@ -387,20 +388,22 @@ const IncidentCreateForm = () => {
       </Box>
 
       <Dialog open={openDialog} onClose={handlePreventClose} maxWidth="sm" disableEscapeKeyDown>
-        <DialogTitle id="alert-dialog-title" variant="h5">
-          {"Creación de nueva incidencia"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">¿Desea continuar?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleConfirm} color="primary" autoFocus disabled={isSubmitting}>
-            Continuar
-          </Button>
-          <Button onClick={handleCancel} color="error" disabled={isSubmitting}>
-            Cancelar
-          </Button>
-        </DialogActions>
+        <Box sx={{ p: 3 }}>
+          <DialogTitle id="alert-dialog-title" variant="h5">
+            {"Creación de nueva incidencia"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">¿Desea continuar?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleConfirm} color="primary" autoFocus disabled={isSubmitting}>
+              Continuar
+            </Button>
+            <Button onClick={handleCancel} color="error" disabled={isSubmitting}>
+              Cancelar
+            </Button>
+          </DialogActions>
+        </Box>
       </Dialog>
     </ParentCard>
   );

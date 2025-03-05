@@ -4,6 +4,13 @@ import { styled } from '@mui/material/styles';
 import { TextField } from '@mui/material';
 
 const CustomTextField = styled((props: any) => <TextField {...props} />)(({ theme }) => ({
+  '& .MuiOutlinedInput-input': {
+    color: 'inherit',
+  },
+  '& .MuiOutlinedInput-input.Mui-disabled': {
+    WebkitTextFillColor: '#464c55',
+    color: '#464c55',
+  },
   '& .MuiOutlinedInput-input::-webkit-input-placeholder': {
     color: theme.palette.text.secondary,
     opacity: '0.8',
