@@ -161,10 +161,7 @@ export const response = {
   }),
   duplicatedRfcCurp: generator.response({
     message: "RFC or CURP ya existen",
-    responseObject: {
-      rfc: "DIBP921019Q12",
-      curp: "DIBP921019HDFZLD12",
-    },
+    responseObject: {},
   }),
   emptyAddressLine1: generator.response({
     responseObject: {
@@ -247,6 +244,41 @@ export const response = {
     responseObject: {
       categoryId: {
         messages: ["Categoria es requerido"],
+      },
+    },
+  }),
+  emptyMaritalStatusId: generator.response({
+    responseObject: {
+      maritalStatusId: {
+        messages: ["Estado Civil es requerido"],
+      },
+    },
+  }),
+  emptySchoolingId: generator.response({
+    responseObject: {
+      schoolingId: {
+        messages: ["Escolaridad es requerido"],
+      },
+    },
+  }),
+  emptyOccupationId: generator.response({
+    responseObject: {
+      occupationId: {
+        messages: ["Ocupación es requerido"],
+      },
+    },
+  }),
+  emptyProfessionId: generator.response({
+    responseObject: {
+      professionId: {
+        messages: ["Profesión es requerido"],
+      },
+    },
+  }),
+  emptyIdentificationTypeId: generator.response({
+    responseObject: {
+      identificationTypeId: {
+        messages: ["Tipo de identificacion es requerido"],
       },
     },
   }),

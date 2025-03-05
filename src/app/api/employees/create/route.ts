@@ -25,10 +25,7 @@ export async function POST(request: NextRequest) {
     const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(body.rfc, body.curp);
 
     if (existingEmployee) {
-      const response = HttpResponse.failure(HttpMessages.employee.alreadyExists, {
-        rfc: body.rfc,
-        curp: body.curp,
-      });
+      const response = HttpResponse.failure(HttpMessages.employee.alreadyExists, {});
 
       return handleHttpResponse(response);
     }
@@ -45,7 +42,6 @@ export async function POST(request: NextRequest) {
       return handleHttpResponse(response);
     }
     body.employeeTypeId = employeeType.id;
-
     const [employee] = await EmployeeService.createEmployee(body);
     const response = HttpResponse.success(HttpMessages.employee.createdSuccess, {
       employeeId: employee.id,

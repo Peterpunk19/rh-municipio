@@ -94,8 +94,32 @@ export const EmployeePostSchema = z
       .string({ message: validationMessages.required("Tipo de empleado") })
       .min(1, { message: validationMessages.required("Tipo de empleado") }),
     direccionId: z.number({ message: validationMessages.required("Organo administrativo") }),
+    maritalStatusId: z
+      .number({ message: validationMessages.required("Estado Civil") })
+      .optional()
+      .nullable(),
+    schoolingId: z
+      .number({ message: validationMessages.required("Escolaridad") })
+      .optional()
+      .nullable(),
+    occupationId: z
+      .number({ message: validationMessages.required("Ocupación") })
+      .optional()
+      .nullable(),
+    professionId: z
+      .number({ message: validationMessages.required("Profesión") })
+      .optional()
+      .nullable(),
+    identificationTypeId: z
+      .number({ message: validationMessages.required("Tipo de identificacion") })
+      .optional()
+      .nullable(),
+    identificationFolio: z
+      .string({ message: validationMessages.required("Folio de identificación") })
+      .optional()
+      .nullable(),
     tradeUnionId: z
-      .number({ message: validationMessages.required("Sindicato") })
+      .string({ message: validationMessages.required("Sindicato") })
       .optional()
       .nullable(),
   })

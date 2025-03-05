@@ -165,6 +165,36 @@ export const testCases = [
     expectedResponse: dataProvider.emptyCategoryId.response,
   },
   {
+    description: "should return error for empty marital status id",
+    requestData: dataProvider.emptyMaritalStatusId.request as IEmployee,
+    expectedStatus: dataProvider.emptyMaritalStatusId.status,
+    expectedResponse: dataProvider.emptyMaritalStatusId.response,
+  },
+  {
+    description: "should return error for empty schooling id",
+    requestData: dataProvider.emptySchoolingId.request as IEmployee,
+    expectedStatus: dataProvider.emptySchoolingId.status,
+    expectedResponse: dataProvider.emptySchoolingId.response,
+  },
+  {
+    description: "should return error for empty occupation id",
+    requestData: dataProvider.emptyOccupationId.request as IEmployee,
+    expectedStatus: dataProvider.emptyOccupationId.status,
+    expectedResponse: dataProvider.emptyOccupationId.response,
+  },
+  {
+    description: "should return error for empty profession id",
+    requestData: dataProvider.emptyProfessionId.request as IEmployee,
+    expectedStatus: dataProvider.emptyProfessionId.status,
+    expectedResponse: dataProvider.emptyProfessionId.response,
+  },
+  {
+    description: "should return error for empty identification type id",
+    requestData: dataProvider.emptyIdentificationTypeId.request as IEmployee,
+    expectedStatus: dataProvider.emptyIdentificationTypeId.status,
+    expectedResponse: dataProvider.emptyIdentificationTypeId.response,
+  },
+  {
     description: "should return error for empty employee type id",
     requestData: dataProvider.emptyEmployeeTypeName.request as IEmployee,
     expectedStatus: dataProvider.emptyEmployeeTypeName.status,

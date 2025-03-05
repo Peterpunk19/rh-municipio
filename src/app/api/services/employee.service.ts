@@ -109,6 +109,22 @@ export const EmployeeService = {
               id: createUser.id,
             },
           },
+          marital_status: {
+            connect: { id: Number(employee.maritalStatusId) },
+          },
+          schooling: {
+            connect: { id: Number(employee.schoolingId) },
+          },
+          profession: {
+            connect: { id: Number(employee.professionId) },
+          },
+          occupation: {
+            connect: { id: Number(employee.occupationId) },
+          },
+          identification_type: {
+            connect: { id: Number(employee.identificationTypeId) },
+          },
+          identification_folio: employee.identificationFolio,
         },
       });
 

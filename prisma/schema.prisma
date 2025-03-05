@@ -79,6 +79,7 @@ model Employee {
   identification_type_id               Int?
   employee_trade_union                 EmployeeTradeUnion[]
   trade_union_id                       Int?
+  identification_folio                 String?
 }
 
 model EmployeeAddress {

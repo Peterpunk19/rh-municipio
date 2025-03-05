@@ -25,10 +25,7 @@ describe("API: /employees", () => {
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`POST /employees ${description}`, async () => {
       if (description === "should return error for existing employee by RFC or CURP") {
-        (EmployeeService.getEmployeeByRfcCurp as jest.Mock).mockResolvedValueOnce({
-          rfc: requestData.rfc,
-          curp: requestData.curp,
-        });
+        (EmployeeService.getEmployeeByRfcCurp as jest.Mock).mockResolvedValueOnce({});
       }
 
       if (description === "should successfully send message with valid data") {

@@ -24,6 +24,13 @@ export const generator = {
     categoryId: overrides?.categoryId !== undefined ? overrides?.categoryId : 1,
     employeeTypeName: overrides?.employeeTypeName !== undefined ? overrides?.employeeTypeName : "base_no_sindicalizado",
     direccionId: overrides?.direccionId !== undefined ? overrides?.direccionId : 1,
+    maritalStatusId: overrides?.maritalStatusId !== undefined ? overrides?.maritalStatusId : 1,
+    schoolingId: overrides?.schoolingId !== undefined ? overrides?.schoolingId : 1,
+    professionId: overrides?.professionId !== undefined ? overrides?.professionId : 1,
+    occupationId: overrides?.occupationId !== undefined ? overrides?.occupationId : 1,
+    identificationTypeId: overrides?.identificationTypeId !== undefined ? overrides?.identificationTypeId : 1,
+    identificationFolio:
+      overrides?.identificationFolio !== undefined ? overrides?.identificationFolio : "0100230123123",
   }),
   response: (overrides?: Partial<IResponse>): IResponse => ({
     success: overrides?.success ?? false,

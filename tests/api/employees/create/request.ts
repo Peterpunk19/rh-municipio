@@ -29,6 +29,11 @@ export const request = {
   emptyStartJobDate: generator.request({ startJobDate: "" }),
   emptyEndJobDate: generator.request({ endJobDate: "" }),
   emptyCategoryId: generator.request({ categoryId: "0" }),
+  emptyMaritalStatusId: generator.request({ maritalStatusId: "0" }),
+  emptySchoolingId: generator.request({ schoolingId: "0" }),
+  emptyOccupationId: generator.request({ occupationId: "0" }),
+  emptyProfessionId: generator.request({ professionId: "0" }),
+  emptyIdentificationTypeId: generator.request({ identificationTypeId: "0" }),
   emptyEmployeeTypeName: generator.request({ employeeTypeName: "" }),
   invalidEmployeeTypeName: generator.request({ employeeTypeName: "base" }),
   emptyEmployeeTypeBaseSindicalizado: generator.request({

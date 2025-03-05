@@ -21,6 +21,12 @@ export interface IEmployee {
   tradeUnionId?: number | null;
   employeeTypeId?: number | string;
   direccionId: number | string;
+  maritalStatusId: number | string;
+  schoolingId: number | string;
+  professionId: number | string;
+  occupationId: number | string;
+  identificationTypeId: number | string;
+  identificationFolio: string | null;
 }
 
 export interface IEmployeeFilters {
