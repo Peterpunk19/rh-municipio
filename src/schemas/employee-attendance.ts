@@ -1,22 +1,24 @@
 import { z } from "zod";
-import { EmployeeHiringSchema } from "./employee-hiring";
-import { LocationSchema, AttendanceSchema } from "./catalogs";
-import { UserSchema } from "./user";
+import { validationMessages } from "@/common/validation/messages";
+import { validateDate } from "@/schemas/utils";
 
-export const EmployeeAttendanceSchema = z.object({
-  id: z.number().int().positive(),
-  check_in: z.date(),
-  check_out: z.date(),
-  active: z.boolean(),
-  created_by_id: z.number().int(),
-  location_id: z.number().int(),
-  employee_hiring_id: z.number().int(),
-  attendance_id: z.number().int(),
-  created_at: z.date().optional(),
-  updated_at: z.date().optional(),
-  created_by: UserSchema,
-  location: LocationSchema,
-  employee_hiring: EmployeeHiringSchema,
-  attendance: AttendanceSchema,
-  employee_incidents: z.array(z.object({ id: z.number().int().positive() })).optional(),
-});
+export const EmployeeAttendancePostSchema = z
+  .object({
+    employeeId: z.number({ message: validationMessages.required("Empleado") }),
+    checkIn: z.preprocess(
+      (val) => validateDate(val),
+      z.date({ message: validationMessages.invalidaFormat("Entrada") }),
+    ),
+    checkOut: z.preprocess(
+      (val) => validateDate(val),
+      z.date({ message: validationMessages.invalidaFormat("Salida") }),
+    ),
+    description: z
+      .string({ message: validationMessages.required("Descripción") })
+      .min(1, { message: validationMessages.required("Descripción") })
+      .max(255, { message: validationMessages.maxLength("Descripción", 255) }),
+  })
+  .refine((data) => data.checkOut >= data.checkIn, {
+    message: validationMessages.invalidDateRange("Salida", "Entrada"),
+    path: ["checkOut"],
+  });

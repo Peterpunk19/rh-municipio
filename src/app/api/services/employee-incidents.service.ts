@@ -64,7 +64,7 @@ export const EmployeeIncidentsService = {
             connect: { id: Number(employeeIncident.incidentStatusId) },
           },
           created_by: {
-            connect: { id: 1 },
+            connect: { id: Number(employeeIncident.employeeId) },
           },
           created_at: new Date(),
         },
@@ -128,7 +128,6 @@ export const EmployeeIncidentsService = {
             birthday: true,
             rfc: true,
             curp: true,
-            employee_hiring_id: true,
             employee_hiring: {
               where: {
                 active: true,

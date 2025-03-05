@@ -85,3 +85,15 @@ export const getParamsFromUrl = async (request: any, requestParams: any) => {
 
   return updatedParams;
 };
+
+export const getRandomNumber = (min: any, max: any) => {
+  return Math.random() * (max - min) + min;
+};
+
+export const getRandomDate = (start: any, end: any) => {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString();
+};
+
+export const formatFolio = (folio: number) => {
+  return String(folio).padStart(6, "0");
+};
