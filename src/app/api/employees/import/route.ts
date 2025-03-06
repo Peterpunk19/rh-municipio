@@ -1,16 +1,16 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
-import { IEmployee } from "@/app/api/employees/interface";
+import type { IEmployee } from "@/app/api/employees/interface";
 import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
 import { formatFolio, getRandomDate, getRandomNumber } from "@/common/utils";
 
 function mapToIEmployee(data: any): IEmployee {
   const validateOrGenerateDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+    return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
   };
 
   return {
@@ -34,6 +34,12 @@ function mapToIEmployee(data: any): IEmployee {
     categoryId: getRandomNumber(1, 193),
     employeeTypeName: "base_no_sindizalizado",
     direccionId: 1,
+    maritalStatusId: 1,
+    schoolingId: 1,
+    professionId: 1,
+    occupationId: 1,
+    identificationTypeId:1,
+    identificationFolio: data.identification_folio || null
   };
 }
 
@@ -55,7 +61,7 @@ export async function POST(request: NextRequest) {
 
           employeeMapped.numberEmployee = formatFolio(Number(employeeMapped.numberEmployee));
 
-          if (employeeMapped.curp == "") employeeMapped.curp = employeeMapped.rfc;
+          if (employeeMapped.curp === "") employeeMapped.curp = employeeMapped.rfc;
 
           const employeeType = await EmployeeTypeService.getEmployeeTypeByName(body.employeeTypeName);
 

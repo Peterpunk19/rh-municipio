@@ -4,10 +4,14 @@ import { encryptPassword, endOfDay, startOfDay } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters } from "@/app/api/employees/interface";
 
 export const EmployeeService = {
-  async getEmployeeByRfcCurp(rfc: string, curp: string) {
+  async getEmployeeByRfcCurp(rfc: string, curp: string, employeeId?: number) {
     return prisma.employee.findFirst({
       where: {
-        OR: [{ rfc }, { curp }],
+        OR: [
+          { rfc },
+          { curp },
+        ],
+        NOT: employeeId ? { id: employeeId } : undefined,
       },
     });
   },
@@ -34,6 +38,13 @@ export const EmployeeService = {
     return prisma.employee.findFirst({
       include: {
         employee_hiring: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: 'desc',
+          },
           include: {
             category: true,
             employee_type: true,
@@ -484,4 +495,91 @@ export const EmployeeService = {
       },
     });
   },
+  async updateEmployee(employee: IEmployee, currentEmployee: any) {
+
+    return prisma.$transaction(async (tx) => {
+      const updatedUser = await tx.user.update({
+        data: {
+          username: employee.rfc,
+        },
+        where: {
+          id: currentEmployee?.user_id,
+        },
+      });
+
+      const updatedEmployee = await tx.employee.update({
+        data: {
+          number_employee: employee.numberEmployee,
+          name: employee.name,
+          paternal_last_name: employee.paternalLastName,
+          maternal_last_name: employee.maternalLastName,
+          birthday: employee.birthday,
+          rfc: employee.rfc,
+          curp: employee.curp,
+          status_employee: {
+            connect: { name: "alta" },
+          },
+          gender: {
+            connect: { id: Number(employee.genderId) },
+          },
+          user: {
+            connect: {
+              id: updatedUser.id,
+            },
+          },
+          marital_status: {
+            connect: { id: Number(employee.maritalStatusId) },
+          },
+          schooling: {
+            connect: { id: Number(employee.schoolingId) },
+          },
+          profession: {
+            connect: { id: Number(employee.professionId) },
+          },
+          occupation: {
+            connect: { id: Number(employee.occupationId) },
+          },
+          identification_type: {
+            connect: { id: Number(employee.identificationTypeId) },
+          },
+          identification_folio: employee.identificationFolio,
+        },
+      where: {
+        id: currentEmployee?.id,
+      },
+    });
+
+      const updatedEmployeeAddress = await tx.employeeAddress.update({
+        data: {
+          address_line_1: employee.addressLine1,
+          address_line_2: employee.addressLine2,
+          address_line_3: employee.addressLine3 ?? "",
+          address_line_4: employee.addressLine4,
+          postal_code: employee.postalCode,
+          postal_code_sat: employee.postalCodeSat,
+          municipality_id: Number(employee.municipalityId),
+          created_at: new Date(),
+        },
+        where: {
+          id: currentEmployee?.employee_address[0]?.id,
+        },
+      });
+
+      const updatedEmployeeHiring = await tx.employeeHiring.update({
+        data: {
+          start_job_date: employee.startJobDate,
+          end_job_date: employee.endJobDate,
+          category_id: Number(employee.categoryId),
+          employee_type_id: Number(employee.employeeTypeId),
+          direccion_id: Number(employee.direccionId),
+          created_at: new Date(),
+        },
+        where: {
+          id: currentEmployee?.employee_hiring[0]?.id,
+        },
+      });
+
+      return [updatedUser, updatedEmployee, updatedEmployeeHiring, updatedEmployeeAddress];
+    });
+  }
 };
