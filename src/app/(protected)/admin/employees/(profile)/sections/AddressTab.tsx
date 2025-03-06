@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Grid2 as Grid } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import Tab from "@/components/shared/Tab";
+import Tab from "@/components/shared/tabs/Tab";
 
 const AddressTab = ({ employeeData }: EmployeePageProps) => {
   const displayData = [

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Tab from "@/components/shared/Tab";
+import Tab from "@/components/shared/tabs/Tab";
 import { formatDate } from "@/utils/formatter";
 
 const HiringTab = ({ employeeData }: EmployeePageProps) => {

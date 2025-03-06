@@ -36,6 +36,15 @@ export const UserService = {
       select: {
         id: true,
         username: true,
+        employee_id: true,
+        employee: {
+          select: {
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+            gender_id: true,
+          },
+        },
         role_id: true,
         role: {
           select: {
@@ -52,6 +61,11 @@ export const UserService = {
       return {
         id: data.id,
         username: data.username,
+        employee_id: data.employee_id,
+        name: data.employee?.name,
+        paternal_last_name: data.employee?.paternal_last_name,
+        maternal_last_name: data.employee?.maternal_last_name,
+        gender_id: data.employee?.gender_id,
         role_id: data.role_id,
         role_display_name: data.role.display_name,
         active: data.active,

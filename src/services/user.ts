@@ -1,7 +1,7 @@
 import http from "@/lib/http";
 import { IResponse } from "@/utils/types";
 
-export const getUserById = async (id: number) => {
+export const getUserById = async (id: string): Promise<IResponse> => {
   try {
     const response = await http.get<IResponse>(`/api/users/${id}`);
     return response.data;
