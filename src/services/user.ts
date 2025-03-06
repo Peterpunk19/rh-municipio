@@ -32,3 +32,12 @@ export const getUsers = async (data: string): Promise<IResponse> => {
     return error;
   }
 };
+
+export const changeStatusUser = async (data: object): Promise<IResponse> => {
+  try {
+    const response = await http.post<IResponse>("/api/users/deactivate", data);
+    return response.data;
+  } catch (error: any) {
+    return error;
+  }
+};

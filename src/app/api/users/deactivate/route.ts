@@ -33,20 +33,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!existingUser.active) {
-      return handleHttpResponse(
-        HttpResponse.failure(
-          HttpMessages.user.alreadyDeactivated,
-          {
-            user_id: body.user_id,
-          },
-          400,
-        ),
-      );
-    }
-
-    const data = await UserService.deactivateUser(body.user_id);
-    const response = HttpResponse.success(HttpMessages.user.deactivatedSuccess, {
+    const data = await UserService.changeStatusUser(body.user_id, !existingUser.active);
+    const message = existingUser.active ? HttpMessages.user.deactivatedSuccess : HttpMessages.user.activatedSuccess;
+    const response = HttpResponse.success(message, {
       user: {
         id: data.id,
         uuid: data.uuid,

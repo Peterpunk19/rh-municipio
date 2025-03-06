@@ -48,6 +48,14 @@ export const response = {
     },
     statusCode: 400,
   },
+  userActivate: {
+    success: true,
+    message: HttpMessages.user.activatedSuccess,
+    responseObject: {
+      user: {},
+    },
+    statusCode: 200,
+  },
   userIdNotFound: {
     success: false,
     message: HttpMessages.user.notFoundById,
