@@ -12,6 +12,8 @@ import type { AppDispatch } from "@/store/store";
 import { header } from "./(list)/Header";
 import type { RootState } from "@/store/store";
 import PageContainer from "@/app/components/container/PageContainer";
+import {  Button } from '@mui/material';
+
 
 export default function Employees() {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,8 +42,10 @@ export default function Employees() {
   };
   const emptyMessage = useSelector((state) => state.filterEmployeesSlice.emptyMessage);
 
+  const createLink = <Button href='/admin/employees/create' variant="contained" color="primary">Crear Empleado</Button>;
+
   return (
-    <PageContainer title="Empleados" description="Listado de empleados">
+    <PageContainer title="Empleados" description="Listado de empleados" >
       <TableWithPagination
         title="Empleados"
         headCells={header}
@@ -51,6 +55,7 @@ export default function Employees() {
         filtersConfig={tableFiltersConfig}
         entity="employee"
         emptyMessage={emptyMessage}
+        createLink={createLink}
       />
     </PageContainer>
   );

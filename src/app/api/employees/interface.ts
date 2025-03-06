@@ -27,6 +27,10 @@ export interface IEmployee {
   occupationId: number | string;
   identificationTypeId: number | string;
   identificationFolio: string | null;
+  employeeHiringId?: number | string;
+  employeeAddressId?: number | string;
+  userId?: number;
+  employeeId?: number;
 }
 
 export interface IEmployeeFilters {

@@ -6,13 +6,14 @@ import BlankCard from "@/components/shared/BlankCard";
 import { IconArticle, IconBell, IconUserCircle } from "@tabler/icons-react";
 import { StatusCodes } from "http-status-codes";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
-
+import { logger } from "@/lib/logger";
 import PersonalTab from "../(profile)/sections/PersonalTab";
 import AddressTab from "../(profile)/sections/AddressTab";
 import HiringTab from "../(profile)/sections/HiringTab";
 import EmployeeProfileCard from "../(profile)/sections/EmployeeProfileCard";
 import { useParams } from "next/navigation";
 import { getEmployeeById } from "@/services/employees";
+import { redirect } from "next/navigation";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -59,22 +60,29 @@ const Profile = () => {
   const { id } = useParams();
 
   React.useEffect(() => {
-    try {
-      if (id) {
-        setLoading(true);
-        getEmployeeById(id as string).then((data) => {
-          if (data.statusCode === StatusCodes.OK) {
-            setEmployeeData(data.responseObject);
+    async function fetchEmployee() {
+      try {
+        if (id) {
+          setLoading(true);
+          const response = await getEmployeeById(id as string);
+          if (response.statusCode === StatusCodes.OK) {
+            setEmployeeData(response.responseObject);
           } else {
             setEmployeeData(null);
+            redirect("/admin/employees");
           }
           setLoading(false);
-        });
+        } else {
+          logger.error({ error: "No employee id provided" });
+          redirect("/admin/employees");
+        }
+      } catch (error: any) {
+        logger.error({ error: error.message, stack: error.stack });
+        setLoading(false);
+        redirect("/admin/employees");
       }
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
     }
+    fetchEmployee();
   }, [id]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

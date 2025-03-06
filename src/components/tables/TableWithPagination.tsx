@@ -71,6 +71,7 @@ interface TableProps<T> {
   filtersConfig: () => FiltersConfig[];
   entity: string;
   emptyMessage: string;
+  createLink?: JSX.Element | JSX.Element[];
 }
 const TableWithPagination = <T,>({
   title,
@@ -81,6 +82,7 @@ const TableWithPagination = <T,>({
   filtersConfig,
   entity,
   emptyMessage,
+  createLink
 }: TableProps<T>) => {
   const dispatch = useDispatch();
   const { page, limit, total } = useSelector((state: RootState) => state.pagination);
@@ -216,7 +218,7 @@ const TableWithPagination = <T,>({
   };
 
   return (
-    <ParentCard title={title}>
+    <ParentCard title={title} codeModel={createLink}>
       <EnhancedTableToolbar
         numSelected={selected.length}
         search={search}

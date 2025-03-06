@@ -12,6 +12,7 @@ export const HttpMessages = {
     notFoundById: "No se encontró empleado con el ID proporcionado",
     foundById: "Empleado encontrado correctamente",
     inactive: "El empleado está deshabilitado",
+    updatedSuccess: "Empleado actualizado correctamente",
   },
   employeeIncidents: {
     invalidData: "Ya existe una incidencia con estos datos",

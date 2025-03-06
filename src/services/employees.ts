@@ -29,3 +29,12 @@ export const getEmployeeById = async (id: string): Promise<IResponse> => {
   const response = await http.get<IResponse>(url);
   return response.data;
 };
+
+export const updateEmployee = async (employeeId: number, data: object): Promise<IResponse> => {
+  try {
+    const response = await http.put<IResponse>(`/api/employees/${employeeId}`, data);
+    return response.data;
+  } catch (error: any) {
+    return error;
+  }
+};

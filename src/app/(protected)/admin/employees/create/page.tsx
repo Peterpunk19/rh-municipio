@@ -10,7 +10,7 @@ const BCrumb = [
     title: "Empleados",
   },
   {
-    title: "Crear empleado",
+    title: "Crear Empleado",
   },
 ];
 

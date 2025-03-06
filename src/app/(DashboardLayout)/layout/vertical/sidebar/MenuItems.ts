@@ -105,7 +105,21 @@ const Menuitems: MenuitemsType[] = [
     id: uniqueId(),
     title: "Empleados",
     icon: IconUsers,
-    href: "/admin/employees",
+    href: "/employees/",
+    children: [
+      {
+        id: uniqueId(),
+        title: "Ver Empleados",
+        icon: IconPoint,
+        href: "/admin/employees",
+      },
+      {
+        id: uniqueId(),
+        title: "Crear Empleado",
+        icon: IconPoint,
+        href: "/admin/employees/create",
+      },
+    ],
   },
   {
     id: uniqueId(),

@@ -119,7 +119,7 @@ export const EmployeePostSchema = z
       .optional()
       .nullable(),
     tradeUnionId: z
-      .string({ message: validationMessages.required("Sindicato") })
+      .number({ message: validationMessages.required("Sindicato") })
       .optional()
       .nullable(),
   })

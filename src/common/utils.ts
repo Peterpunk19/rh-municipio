@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import React from "react";
+import { formatDateStringTS } from  "@/utils/formatter";
 
 export const encryptPassword = async (password: string): Promise<string> => {
   return await bcryptjs.hash(password, 10);
@@ -79,7 +80,7 @@ export const getParamsFromUrl = async (request: any, requestParams: any) => {
   Object.keys(updatedParams).forEach((key) => {
     if (searchParams.has(key) && searchParams.get(key) !== "") {
       const value = searchParams.get(key);
-      updatedParams[key] = value === null ? null : isNaN(Number(value)) ? value : Number(value);
+      updatedParams[key] = value === null ? null : Number.isNaN(Number(value)) ? value : Number(value);
     }
   });
 
@@ -96,4 +97,41 @@ export const getRandomDate = (start: any, end: any) => {
 
 export const formatFolio = (folio: number) => {
   return String(folio).padStart(6, "0");
+};
+
+export const  snakeToCamel = (str: string)  => {
+  return str.replace(/_([a-zA-Z0-9])/g, (_, match) => match.toUpperCase());
+}
+
+export const flattenObject = (obj: any, result: Record<string, any> = {}, parentKeys: string[] = []): Record<string, any> => {
+  for (const key in obj) {
+    if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+    const value = obj[key];
+    const camelKey = snakeToCamel(key);
+    const currentPath = [...parentKeys, camelKey];
+    let uniqueKey = camelKey;
+    let i = currentPath.length - 1;
+    while (Object.prototype.hasOwnProperty.call(result, uniqueKey) && i >= 0) {
+      uniqueKey = currentPath
+        .slice(i)
+        .map((k, idx) => (idx === 0 ? k : k.charAt(0).toUpperCase() + k.slice(1)))
+        .join('');
+      i--;
+    }
+
+    const finalKey = uniqueKey;
+
+    if (typeof value === 'object' && value !== null) {
+      if (Array.isArray(value)) {
+        if (value.length > 0 && typeof value[0] === 'object') {
+          flattenObject(value[0], result, parentKeys);
+        }
+      } else {
+        flattenObject(value, result, currentPath);
+      }
+    } else {
+      result[finalKey] = formatDateStringTS(value);
+    }
+  }
+  return result;
 };
