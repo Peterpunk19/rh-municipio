@@ -15,6 +15,5 @@ const incident = [
   { id: 8, name: "permiso_economico", display_name: "PERMISOS ECONOMICOS", type: 1, active: true },
   { id: 9, name: "permiso_sin_goce", display_name: "PERMISOS SIN GOCE", type: 1, active: true },
   { id: 10, name: "vacacion", display_name: "VACACIONES", type: 1, active: true },
-  { id: 11, name: "other", display_name: "Otro", type: 1, active: true },
 ];
 module.exports = incident;

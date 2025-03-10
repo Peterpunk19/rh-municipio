@@ -65,6 +65,16 @@ export const fetchLocationsData = async (): Promise<IResponseObject | null> => {
   }
 };
 
+export const fetchAttendanceData = async (): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>("/api/catalogs/attendance");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch location:", error);
+    return null;
+  }
+};
+
 export const fetchDayData = async (): Promise<IResponseObject | null> => {
   try {
     const response = await http.get<IResponseObject>("/api/catalogs/day");
@@ -113,6 +123,19 @@ export const fetchCatalogData = async (name: any): Promise<IResponseObject | nul
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch ${name}:`, error);
+    return null;
+  }
+};
+
+export const fetchStatusIncidentsData = async (data: any): Promise<IResponseObject | null> => {
+  try {
+    const urlParams = new URLSearchParams(data).toString();
+    const url = urlParams ? `/api/catalogs/incidents-status?${urlParams}` : "/api/catalogs/incidents-status";
+
+    const response = await http.get<IResponseObject>(url);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch status incidents:`, error);
     return null;
   }
 };

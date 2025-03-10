@@ -12,6 +12,14 @@ import type { AppDispatch } from "@/store/store";
 import { header } from "./(list)/Headers";
 import type { RootState } from "@/store/store";
 import PageContainer from "@/app/components/container/PageContainer";
+import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
+import { Button } from "@mui/material";
+
+const BCrumb = [
+  {
+    title: "Listado de usuarios",
+  },
+];
 
 export default function Users() {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,8 +48,15 @@ export default function Users() {
   };
   const emptyMessage = useSelector((state) => state.filterUsersSlice.emptyMessage);
 
+  const createLink = (
+    <Button href="/admin/users/create" fullWidth variant="contained" color="primary">
+      Crear usuario
+    </Button>
+  );
+
   return (
     <PageContainer title="Lista de usuarios" description="Tabla de usuarios">
+      <Breadcrumb title="Listado de usuarios" items={BCrumb} />
       <TableWithPagination
         title="Usuarios"
         headCells={header}
@@ -51,6 +66,7 @@ export default function Users() {
         filtersConfig={getFiltersConfig}
         entity="user"
         emptyMessage={emptyMessage}
+        createLink={createLink}
       />
     </PageContainer>
   );

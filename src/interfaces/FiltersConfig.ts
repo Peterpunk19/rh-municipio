@@ -14,4 +14,5 @@ export interface FiltersConfig {
   loading?: boolean;
   error?: Error | null;
   onChange?: (value: any) => void;
+  gridSize?: { xs: number; sm: number; lg: number };
 }

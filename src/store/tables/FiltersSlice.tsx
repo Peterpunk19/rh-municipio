@@ -4,6 +4,7 @@ interface EntityFiltersState {
   sortBy: string;
   values: Record<string, any>;
   searchTerm: string;
+  filterOpen: boolean;
 }
 
 interface EntityConfig {
@@ -20,6 +21,7 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
       sortBy: config.initialSortBy || "id",
       searchTerm: config.initialSearchTerm || "",
       values: {},
+      filterOpen: true,
     };
   });
 
@@ -46,6 +48,12 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
           state[entity].searchTerm = searchTerm;
         }
       },
+      updateFilterOpen: (state, action: PayloadAction<{ entity: string; filterOpen: boolean }>) => {
+        const { entity, filterOpen } = action.payload;
+        if (state[entity]) {
+          state[entity].filterOpen = filterOpen;
+        }
+      },
       sortBy: (state, action: PayloadAction<{ entity: string; sortBy: string }>) => {
         const { entity, sortBy } = action.payload;
         if (state[entity]) {
@@ -69,12 +77,17 @@ const employeeConfig: EntityConfig = {
   initialSortBy: "name",
 };
 
+const employeesIncidentsConfig: EntityConfig = {
+  name: "employeesIncidents",
+  initialSortBy: "name",
+};
+
 const userConfig: EntityConfig = {
   name: "user",
   initialSortBy: "email",
 };
 
-export const filtersSlice = createFiltersSlice([employeeConfig, userConfig]);
+export const filtersSlice = createFiltersSlice([employeeConfig, userConfig, employeesIncidentsConfig]);
 
-export const { updateFilter, updateSearch, sortBy, resetFilters } = filtersSlice.actions;
+export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen } = filtersSlice.actions;
 export default filtersSlice.reducer;

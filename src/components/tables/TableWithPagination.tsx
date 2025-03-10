@@ -19,48 +19,13 @@ import EnhancedTableToolbar from "./TableFilters";
 import { ColumnTypeConfig } from "@/interfaces/ColumnTypeConfig";
 import { updatePage, updateLimit } from "@/store/tables/PaginationSlice";
 import { RootState } from "@/store/store";
-import { useDebouncedCallback } from "use-debounce";
 import { FiltersConfig } from "@/interfaces/FiltersConfig";
 import { updateFilter } from "@/store/tables/FiltersSlice";
 import { useDynamicFilters } from "../customHooks/useDinamycFilters";
-import ParentCard from "@/app/components/shared/ParentCard";
+import ParentCard from "@/components/shared/cards/ParentCard";
 import RowMenu from "./RowMenu";
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-
-  return 0;
-}
-
-type Order = "asc" | "desc";
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key,
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
-  const stabilizedThis = array?.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis?.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-
-    return a[1] - b[1];
-  });
-
-  return stabilizedThis?.map((el) => el[0]);
-}
+import TableRenderCell from "./TableRenderCell";
+import { getNestedValue } from "@/common/utils";
 
 interface TableProps<T> {
   title: string;
@@ -72,17 +37,18 @@ interface TableProps<T> {
   entity: string;
   emptyMessage: string;
   createLink?: JSX.Element | JSX.Element[];
+  children?: React.ReactNode;
 }
+
 const TableWithPagination = <T,>({
-  title,
   headCells,
   items,
   columnTypeConfig,
-  handleSearch,
   filtersConfig,
   entity,
   emptyMessage,
-  createLink
+  createLink,
+  children,
 }: TableProps<T>) => {
   const dispatch = useDispatch();
   const { page, limit, total } = useSelector((state: RootState) => state.pagination);
@@ -105,35 +71,6 @@ const TableWithPagination = <T,>({
   const { values: initialValuesFromRedux } = useSelector((state: RootState) => state.filters[entity]);
 
   const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<any>("id");
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [search, setSearch] = React.useState("");
-
-  const debounced = useDebouncedCallback((searchTerm: string) => {
-    handleSearch(searchTerm);
-  }, 400);
-
-  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setSearch(value);
-    debounced(value);
-  };
-
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: any) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelecteds = items.map((n: any) => n.title);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newLimit = parseInt(event.target.value, 10);
@@ -143,12 +80,6 @@ const TableWithPagination = <T,>({
 
   const theme = useTheme();
   const borderColor = theme.palette.divider;
-
-  const getNestedValue = (obj: any, path: string): any => {
-    return path.split(".").reduce((acc, key) => {
-      return acc && acc[key] !== undefined ? acc[key] : undefined;
-    }, obj);
-  };
 
   const DynamicCell = ({ row, headCell }: { row: T; headCell: HeadCell }) => {
     const value = getNestedValue(row, headCell.id);
@@ -210,95 +141,92 @@ const TableWithPagination = <T,>({
         return headCell.numeric ? (
           <Typography align="right">{value as number}</Typography>
         ) : (
-          <Typography>
-            {value === null || value === undefined ? (empty_text ? empty_text : (value as string)) : (value as string)}
-          </Typography>
+          <TableRenderCell row={row} headCell={headCell} emptyText={empty_text} />
         );
     }
   };
 
   return (
-    <ParentCard title={title} codeModel={createLink}>
-      <EnhancedTableToolbar
-        numSelected={selected.length}
-        search={search}
-        setSearch={setSearch}
-        handleSearch={(event: any) => handleSearchInput(event)}
-        filters={filters.map((filter) => ({
-          key: filter.key,
-          label: filter.label,
-          type: filter.type,
-          options: filter.options || [],
-          value: selectedValues[filter.key],
-          onChange: (value: any) => {
-            dispatch(
-              updateFilter({
-                entity: entity,
-                key: filter.key,
-                value: value,
-              }),
-            );
-            handleFilterChange(filter.key, value);
-          },
-        }))}
-        entity={entity}
-      />
-      <Paper variant="outlined" sx={{ mx: 2, mt: 1, border: `1px solid ${borderColor}` }}>
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={total}
-              headCells={headCells}
-            />
-            <TableBody>
-              {stableSort(items, getComparator(order, orderBy))?.map((row: any, index) => {
-                return (
-                  <TableRow hover tabIndex={-1} key={row.id}>
-                    {headCells.map((headCell) => (
-                      <TableCell
-                        key={headCell.id}
-                        align={headCell.numeric ? "right" : "left"}
-                        padding={headCell.disablePadding ? "none" : "normal"}
-                      >
-                        <DynamicCell row={row} headCell={headCell} />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })}
-
-              {emptyMessage && items.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={headCells.length} style={{ width: "100%" }}>
-                    <div className="w-full min-h-[200px] flex justify-center items-center">
-                      <h3>{emptyMessage}</h3>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={total}
-          rowsPerPage={limit}
-          page={total === 0 ? 0 : Math.min(page - 1, Math.ceil(total / limit) - 1)}
-          onPageChange={(event, newPage) => {
-            dispatch(updatePage(newPage + 1));
-          }}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="Registros por página"
-          labelDisplayedRows={labelDisplayedRows}
+    <Box>
+      <ParentCard codeModel={createLink} entity={entity}>
+        <EnhancedTableToolbar
+          filters={filters.map((filter) => ({
+            key: filter.key,
+            label: filter.label,
+            type: filter.type,
+            gridSize: filter.gridSize,
+            options: filter.options || [],
+            value: selectedValues[filter.key],
+            onChange: (value: any) => {
+              dispatch(
+                updateFilter({
+                  entity: entity,
+                  key: filter.key,
+                  value: value,
+                }),
+              );
+              handleFilterChange(filter.key, value);
+            },
+          }))}
+          entity={entity}
         />
-      </Paper>
-    </ParentCard>
+        {children}
+        <Paper variant="outlined" sx={{ mt: 1, border: `1px solid ${borderColor}` }}>
+          <TableContainer>
+            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
+              <EnhancedTableHead headCells={headCells} />
+              <TableBody>
+                {items.map((row: any) => {
+                  return (
+                    <TableRow hover tabIndex={-1} key={row.id}>
+                      {headCells.map((headCell) => (
+                        <TableCell
+                          key={headCell.id}
+                          align={headCell.numeric ? "right" : "left"}
+                          padding={headCell.disablePadding ? "none" : "normal"}
+                        >
+                          <DynamicCell row={row} headCell={headCell} />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })}
+
+                {emptyMessage && items.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={headCells.length} style={{ width: "100%" }}>
+                      <div className="w-full min-h-[200px] flex justify-center items-center">
+                        <h3>{emptyMessage}</h3>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Box p={2} sx={{ width: "50%" }}>
+              Total: {total}
+            </Box>
+            <Box p={2} sx={{ width: "50%" }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={total}
+                rowsPerPage={limit}
+                page={total === 0 ? 0 : Math.min(page - 1, Math.ceil(total / limit) - 1)}
+                onPageChange={(event, newPage) => {
+                  dispatch(updatePage(newPage + 1));
+                }}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                labelRowsPerPage="Registros por página"
+                labelDisplayedRows={labelDisplayedRows}
+              />
+            </Box>
+          </Box>
+        </Paper>
+      </ParentCard>
+    </Box>
   );
 };
 

@@ -8,7 +8,6 @@ export const useFetchOptions = (fetchFunction: (param?: any) => Promise<any>, pa
 
   useEffect(() => {
     const fetchData = async () => {
-
       setIsLoading(true);
       setError(null);
       try {

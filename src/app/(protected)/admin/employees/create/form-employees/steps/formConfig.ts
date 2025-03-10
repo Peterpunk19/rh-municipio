@@ -158,7 +158,7 @@ const hiringConfig: IFieldConfig[] = [
   },
   {
     id: "direccionId",
-    label: "Organo administrativo",
+    label: "Órgano administrativo",
     type: "select",
     catalog: "direcciones",
     name: "direccionId",

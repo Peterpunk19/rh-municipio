@@ -93,7 +93,7 @@ export const EmployeePostSchema = z
     employeeTypeName: z
       .string({ message: validationMessages.required("Tipo de empleado") })
       .min(1, { message: validationMessages.required("Tipo de empleado") }),
-    direccionId: z.number({ message: validationMessages.required("Organo administrativo") }),
+    direccionId: z.number({ message: validationMessages.required("Órgano administrativo") }),
     maritalStatusId: z
       .number({ message: validationMessages.required("Estado Civil") })
       .optional()

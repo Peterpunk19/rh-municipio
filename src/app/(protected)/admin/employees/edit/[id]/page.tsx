@@ -52,7 +52,7 @@ const EditEmployee = () => {
   const BCrumb = [
     {
       to: "/admin/employees",
-      title: "Empleados",
+      title: "Listado de empleados",
     },
     {
       title: employeeName ? employeeName : "Empleado",

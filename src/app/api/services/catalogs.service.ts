@@ -161,7 +161,10 @@ export const CatalogsService = {
                          IFNULL(child.total, 0) AS total,
                          parent.name,
                          parent.display_name       as label,
-                         parent.display_name
+                         parent.display_name,
+                         parent.btn_display_name,
+                         parent.btn_icon,
+                         parent.btn_color
                      FROM IncidentStatus parent
                               LEFT JOIN (SELECT incidents_status.id,
                                                 IFNULL(employee_incidents.total, 0) as total
@@ -198,10 +201,9 @@ export const CatalogsService = {
     }
 
     if (search) {
-      baseQuery +=
-        `AND LOCATE(REPLACE('` +
-        search +
-        `', ' ', ''), REPLACE(CONCAT_WS('', employee.name, employee.paternal_last_name, employee.maternal_last_name, employee.rfc, employee.curp), ' ', '')) > 0`;
+      baseQuery += ` AND (employee_incidents.oficio LIKE "%${search}%" OR employee_incidents.folio LIKE "%${search}%" OR
+                                               ((name LIKE "%${search}%" OR paternal_last_name LIKE "%${search}%" OR maternal_last_name LIKE "%${search}%" OR
+                                                 rfc LIKE "%${search}%" OR curp LIKE "%${search}%" OR number_employee LIKE "%${search}%")))`;
     }
 
     baseQuery += ` GROUP BY incident_status_id
@@ -214,7 +216,11 @@ ORDER BY parent.id `;
 
     return incidentsStatus.map((status) => ({
       ...status,
-      total: Number(status.total), // Convert BigInt to Number
+      total: Number(status.total),
     }));
+  },
+
+  async getAttendance() {
+    return prisma.attendance.findMany();
   },
 };

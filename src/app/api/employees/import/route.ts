@@ -38,8 +38,8 @@ function mapToIEmployee(data: any): IEmployee {
     schoolingId: 1,
     professionId: 1,
     occupationId: 1,
-    identificationTypeId:1,
-    identificationFolio: data.identification_folio || null
+    identificationTypeId: 1,
+    identificationFolio: data.identification_folio || null,
   };
 }
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
           employeeMapped.numberEmployee = formatFolio(Number(employeeMapped.numberEmployee));
 
-          if (employeeMapped.curp === "") employeeMapped.curp = employeeMapped.rfc;
+          if (employeeMapped.curp == "") employeeMapped.curp = employeeMapped.rfc;
 
           const employeeType = await EmployeeTypeService.getEmployeeTypeByName(body.employeeTypeName);
 

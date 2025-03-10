@@ -58,7 +58,7 @@ export const response = {
         messages: ["Tipo de empleado es requerido"],
       },
       direccionId: {
-        messages: ["Organo administrativo es requerido"],
+        messages: ["Órgano administrativo es requerido"],
       },
     },
   }),
@@ -308,7 +308,7 @@ export const response = {
   emptyDireccionId: generator.response({
     responseObject: {
       direccionId: {
-        messages: ["Organo administrativo es requerido"],
+        messages: ["Órgano administrativo es requerido"],
       },
     },
   }),

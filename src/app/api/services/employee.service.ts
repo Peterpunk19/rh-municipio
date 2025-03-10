@@ -7,10 +7,7 @@ export const EmployeeService = {
   async getEmployeeByRfcCurp(rfc: string, curp: string, employeeId?: number) {
     return prisma.employee.findFirst({
       where: {
-        OR: [
-          { rfc },
-          { curp },
-        ],
+        OR: [{ rfc }, { curp }],
         NOT: employeeId ? { id: employeeId } : undefined,
       },
     });
@@ -43,7 +40,7 @@ export const EmployeeService = {
           },
           take: 1,
           orderBy: {
-            created_at: 'desc',
+            created_at: "desc",
           },
           include: {
             category: true,
@@ -374,6 +371,12 @@ export const EmployeeService = {
                 display_name: true,
               },
             },
+            attendance: {
+              select: {
+                id: true,
+                display_name: true,
+              },
+            },
           },
         },
         director_id: true,
@@ -386,19 +389,13 @@ export const EmployeeService = {
 
     const total = await prisma.employee.count({ where: whereClause });
     const totalPages = Math.ceil(total / pageSize);
-    data.forEach((employee) => {
-      (employee as any).employee_hiring_active = employee.employee_hiring.find((hiring: any) => hiring.active) || null;
-    });
-    data.forEach((employee) => {
-      (employee as any).location_active = employee.employee_location.find((location: any) => location.active) || null;
-    });
-    const response = {
+
+    return {
       data,
       total,
       totalPages,
       currentPage: pageNumber,
     };
-    return response;
   },
 
   async getEmployeesAutocomplete(search: string | null) {
@@ -496,7 +493,6 @@ export const EmployeeService = {
     });
   },
   async updateEmployee(employee: IEmployee, currentEmployee: any) {
-
     return prisma.$transaction(async (tx) => {
       const updatedUser = await tx.user.update({
         data: {
@@ -544,10 +540,10 @@ export const EmployeeService = {
           },
           identification_folio: employee.identificationFolio,
         },
-      where: {
-        id: currentEmployee?.id,
-      },
-    });
+        where: {
+          id: currentEmployee?.id,
+        },
+      });
 
       const updatedEmployeeAddress = await tx.employeeAddress.update({
         data: {
@@ -581,5 +577,5 @@ export const EmployeeService = {
 
       return [updatedUser, updatedEmployee, updatedEmployeeHiring, updatedEmployeeAddress];
     });
-  }
+  },
 };

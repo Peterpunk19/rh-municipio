@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
 import React from "react";
-import { formatDateStringTS } from  "@/utils/formatter";
+import { formatDateStringTS } from "@/utils/formatter";
 
 export const encryptPassword = async (password: string): Promise<string> => {
   return await bcryptjs.hash(password, 10);
@@ -99,11 +99,15 @@ export const formatFolio = (folio: number) => {
   return String(folio).padStart(6, "0");
 };
 
-export const  snakeToCamel = (str: string)  => {
+export const snakeToCamel = (str: string) => {
   return str.replace(/_([a-zA-Z0-9])/g, (_, match) => match.toUpperCase());
-}
+};
 
-export const flattenObject = (obj: any, result: Record<string, any> = {}, parentKeys: string[] = []): Record<string, any> => {
+export const flattenObject = (
+  obj: any,
+  result: Record<string, any> = {},
+  parentKeys: string[] = [],
+): Record<string, any> => {
   for (const key in obj) {
     if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
     const value = obj[key];
@@ -115,15 +119,15 @@ export const flattenObject = (obj: any, result: Record<string, any> = {}, parent
       uniqueKey = currentPath
         .slice(i)
         .map((k, idx) => (idx === 0 ? k : k.charAt(0).toUpperCase() + k.slice(1)))
-        .join('');
+        .join("");
       i--;
     }
 
     const finalKey = uniqueKey;
 
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === "object" && value !== null) {
       if (Array.isArray(value)) {
-        if (value.length > 0 && typeof value[0] === 'object') {
+        if (value.length > 0 && typeof value[0] === "object") {
           flattenObject(value[0], result, parentKeys);
         }
       } else {
@@ -134,4 +138,32 @@ export const flattenObject = (obj: any, result: Record<string, any> = {}, parent
     }
   }
   return result;
+};
+
+export const getNestedValue = (obj: any, key: string): any => {
+  const keys = key.split(".");
+  let result = obj;
+
+  for (const k of keys) {
+    if (k.includes("[") && k.includes("]")) {
+      // Handle array index access
+      const arrayKey = k.split("[")[0];
+      const index = parseInt(k.split("[")[1].split("]")[0], 10);
+      result = result[arrayKey]?.[index];
+    } else {
+      result = result?.[k];
+    }
+
+    if (result === undefined) {
+      return undefined;
+    }
+  }
+  return result;
+};
+
+export const a11yProps = (tab: string, index: any) => {
+  return {
+    id: `${tab}-tab-${index}`,
+    "aria-controls": `${tab}-tabpanel-${index}`,
+  };
 };
