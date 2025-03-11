@@ -1,9 +1,9 @@
 import { format } from "date-fns";
 
-export const formatDate = (date: string) => {
+export const formatDate = (date: string, dateFormat: string = "dd/MM/yyyy") => {
   try {
     const d = new Date(date);
-    return format(d, "dd/MM/yyyy");
+    return format(d, dateFormat);
   } catch (e) {
     console.error("Invalid date format", e);
     return date;

@@ -171,7 +171,23 @@ export const EmployeeIncidentsService = {
   async getEmployeeIncidentById(id: number) {
     return prisma.employeeIncidents.findFirst({
       include: {
-        employee: true,
+        employee: {
+          include: {
+            employee_hiring: {
+              include: {
+                category: true,
+                employee_type: true,
+                direccion: {
+                  include: {
+                    secretaria: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        incident_status: true,
+        incident: true,
       },
       where: {
         id,
