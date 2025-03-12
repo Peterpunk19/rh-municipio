@@ -167,11 +167,11 @@ export const UserService = {
     };
   },
 
-  async deactivateUser(id: number) {
+  async changeStatusUser(id: number, active?: boolean) {
     return await prisma.user.update({
       where: { id: id },
       data: {
-        active: false,
+        active: active,
         updated_at: new Date(),
       },
       select: {

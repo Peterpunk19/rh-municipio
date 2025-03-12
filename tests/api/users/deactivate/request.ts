@@ -14,6 +14,9 @@ export const request = {
   userAlreadyDeactivate: {
     user_id: 1,
   },
+  userActivate: {
+    user_id: 3,
+  },
   userIdNotFound: {
     user_id: 100000,
   },

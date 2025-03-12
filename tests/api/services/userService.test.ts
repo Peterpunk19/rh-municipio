@@ -28,7 +28,7 @@ describe("UserService", () => {
 
       (prisma.user.update as jest.Mock).mockResolvedValue(mockDeactivatedUser);
 
-      const result = await UserService.deactivateUser(mockUserId);
+      const result = await UserService.changeStatusUser(mockUserId);
       expect(result).toEqual(mockDeactivatedUser);
     });
   });

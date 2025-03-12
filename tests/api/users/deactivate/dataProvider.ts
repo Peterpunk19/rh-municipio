@@ -27,6 +27,11 @@ export const dataProvider = {
     request: request.userAlreadyDeactivate,
     response: response.userAlreadyDeactivate,
   },
+  userActivate: {
+    status: 200,
+    request: request.userActivate,
+    response: response.userActivate,
+  },
   userIdNotFound: {
     status: 404,
     request: request.userIdNotFound,

@@ -27,12 +27,6 @@ export const testCases = [
     expectedResponse: dataProvider.userIdLong.response,
   },
   {
-    description: "should return error for user already deactivated",
-    requestData: dataProvider.userAlreadyDeactivate.request,
-    expectedStatus: dataProvider.userAlreadyDeactivate.status,
-    expectedResponse: dataProvider.userAlreadyDeactivate.response,
-  },
-  {
     description: "should return error for id not found",
     requestData: dataProvider.userIdNotFound.request,
     expectedStatus: dataProvider.userIdNotFound.status,
@@ -43,5 +37,11 @@ export const testCases = [
     requestData: dataProvider.validData.request,
     expectedStatus: dataProvider.validData.status,
     expectedResponse: dataProvider.validData.response,
+  },
+  {
+    description: "should successfully activate a user",
+    requestData: dataProvider.userActivate.request,
+    expectedStatus: dataProvider.userActivate.status,
+    expectedResponse: dataProvider.userActivate.response,
   },
 ];
