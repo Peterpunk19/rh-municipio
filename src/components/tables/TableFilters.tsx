@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { Toolbar, MenuItem } from "@mui/material";
-import { alpha } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
+import { MenuItem, Grid2 as Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import { IconSearch, IconTrash } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import CustomTextField from "../theme-elements/CustomTextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CustomSelect from "../theme-elements/CustomSelect";
@@ -26,17 +22,13 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 
 const TableFilters = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, handleSearch, search, setSearch, filters = [], entity } = props;
-  const { values, searchTerm } = useSelector(
-    (state: RootState) => state.filters[entity] || { values: {}, searchTerm: "" },
-  );
+  const { filters = [], entity } = props;
+  const { values } = useSelector((state: RootState) => state.filters[entity] || { values: {}, searchTerm: "" });
   const [localState, setLocalState] = useState<Record<string, any>>(() => ({}));
   const dispatch = useDispatch();
+  const { filterOpen } = useSelector((state: RootState) => state.filters[entity] || { filterOpen: false });
 
   useEffect(() => {
-    if (searchTerm && setSearch) {
-      setSearch(searchTerm);
-    }
     if (values) {
       setLocalState(values);
     }
@@ -132,6 +124,9 @@ const TableFilters = (props: EnhancedTableToolbarProps) => {
               slotProps={{
                 textField: {
                   fullWidth: true,
+                  inputProps: {
+                    placeholder: filter.label, // Add placeholder here
+                  },
                   sx: {
                     "& .MuiSvgIcon-root": { width: "18px", height: "18px" },
                     "& .MuiFormHelperText-root": { display: "none" },
@@ -149,7 +144,6 @@ const TableFilters = (props: EnhancedTableToolbarProps) => {
             <FormControl
               fullWidth
               sx={{
-                marginTop: 1,
                 "& .MuiFormLabel-root": {
                   transform: "translate(14px, 8px) scale(1)",
                 },
@@ -215,89 +209,34 @@ const TableFilters = (props: EnhancedTableToolbarProps) => {
     }
   };
 
-  return (
-    <Toolbar
+  return filterOpen ? (
+    <Box
       sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
+        pb: 2,
       }}
     >
-      {numSelected > 0 ? (
-        <Typography>{numSelected} selected</Typography>
-      ) : (
-        <Box
-          sx={{
-            flex: "1 1 100%",
-            display: "flex",
-            gap: 2,
-            flexWrap: "wrap",
-            alignItems: "flex-start",
-          }}
-        >
-          {handleSearch && (
+      <Grid container spacing={2}>
+        {filters.map((filter) =>
+          filter.type === "date-range" ? (
             <Box
+              key={filter.key}
               sx={{
-                minWidth: 150,
-                flex: "1 1 auto",
+                width: 500,
+                flex: "0 0 auto",
+                minWidth: 400,
               }}
             >
-              <TextField
-                placeholder="Buscar"
-                size="medium"
-                value={search || ""}
-                onChange={handleSearch}
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconSearch size="1.1rem" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              {renderFilter(filter)}
             </Box>
-          )}
-
-          {filters.map((filter) =>
-            filter.type === "date-range" ? (
-              <Box
-                key={filter.key}
-                sx={{
-                  width: 500,
-                  flex: "0 0 auto",
-                  minWidth: 400,
-                }}
-              >
-                {renderFilter(filter)}
-              </Box>
-            ) : (
-              <Box
-                key={filter.key}
-                sx={{
-                  width: 250,
-                  flex: "0 0 auto",
-                  minWidth: 200,
-                }}
-              >
-                {renderFilter(filter)}
-              </Box>
-            ),
-          )}
-        </Box>
-      )}
-
-      {numSelected > 0 && (
-        <Tooltip title="Delete">
-          <IconButton>
-            <IconTrash width="18" />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
+          ) : (
+            <Grid key={filter.key} size={filter.gridSize}>
+              {renderFilter(filter)}
+            </Grid>
+          ),
+        )}
+      </Grid>
+    </Box>
+  ) : null;
 };
 
 export default TableFilters;

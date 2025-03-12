@@ -7,17 +7,17 @@ import FormWizardSteps from "@/app/(protected)/admin/employees/create/form-emplo
 const BCrumb = [
   {
     to: "/admin/employees",
-    title: "Empleados",
+    title: "Listado de empleados",
   },
   {
-    title: "Crear Empleado",
+    title: "Crear nuevo empleado",
   },
 ];
 
 const CreateEmployee = () => {
   return (
     <PageContainer title="Crear nuevo empleado">
-      <Breadcrumb title="Crear nuevo empleado" items={BCrumb}/>
+      <Breadcrumb title="Crear nuevo empleado" items={BCrumb} />
       <FormWizardSteps />
     </PageContainer>
   );

@@ -253,6 +253,9 @@ model IncidentStatus {
   id                        Int                       @id @default(autoincrement())
   name                      String                    @unique
   display_name              String
+  btn_display_name          String
+  btn_icon                  String
+  btn_color                 String
   type                      Int
   active                    Boolean
   employee_incidents_status EmployeeIncidentsStatus[]

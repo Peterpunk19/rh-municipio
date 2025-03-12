@@ -1,6 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { AppDispatch } from "../store";
-import { getEmployees as fetchEmployeesAPI } from "@/services/employees";
 
 interface StateType {
   total: number;

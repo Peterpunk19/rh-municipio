@@ -155,6 +155,7 @@ export const EmployeeIncidentsService = {
         incident_id: true,
         incident: true,
         incident_status_id: true,
+        incident_status: true,
         start_date: true,
         end_date: true,
         created_at: true,

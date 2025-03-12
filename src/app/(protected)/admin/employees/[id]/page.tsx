@@ -47,7 +47,7 @@ function a11yProps(index: number) {
 const BCrumb = [
   {
     to: "/admin/employees",
-    title: "Empleados",
+    title: "Listado de empleados",
   },
   {
     title: "Perfil del empleado",

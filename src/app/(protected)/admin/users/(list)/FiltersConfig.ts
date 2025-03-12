@@ -10,11 +10,13 @@ export const getFiltersConfig = (): FiltersConfig[] => [
       { value: "true", label: "Activo" },
       { value: "false", label: "Inactivo" },
     ],
+    gridSize: { xs: 12, sm: 4, lg: 4 },
   },
   {
     key: "role_id",
     label: "Rol",
     type: "select",
     fetchOptions: fetchRolesData,
+    gridSize: { xs: 12, sm: 4, lg: 4 },
   },
 ];

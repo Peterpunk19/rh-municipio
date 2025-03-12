@@ -6,26 +6,29 @@ import { useSelector } from "@/store/hooks";
 import { tableFiltersConfig } from "./(list)/FiltersConfig";
 import { columnTypeConfig } from "./(list)/ColumnsConfig";
 import { useDispatch } from "react-redux";
-import { fetchEmployees } from "@/store/employees/EmployeesFiltersSlice";
+import { fetchEmployees } from "@/store/employees-incidents/EmployeesIncidentsSlice";
 import { updateSearch } from "@/store/tables/FiltersSlice";
 import type { AppDispatch } from "@/store/store";
 import { header } from "./(list)/Header";
 import type { RootState } from "@/store/store";
 import PageContainer from "@/app/components/container/PageContainer";
+import CustomIncidentStatusComponent from "@/components/customComponents/CustomIncidentStatusComponent";
 import { Button } from "@mui/material";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 
 const BCrumb = [
   {
-    title: "Listado de empleados",
+    to: "/admin/employees-incidents",
+    title: "Incidencias de empleados",
   },
 ];
 
-export default function Employees() {
+export default function EmployeesIncidents() {
+  const ENTITY = "employeesIncidents";
   const dispatch = useDispatch<AppDispatch>();
   const { page, limit } = useSelector((state: RootState) => state.pagination);
   const { searchTerm, values } = useSelector(
-    (state: RootState) => state.filters.employee || { searchTerm: "", values: {} },
+    (state: RootState) => state.filters.employeesIncidents || { searchTerm: "", values: {} },
   );
 
   useEffect(() => {
@@ -41,33 +44,36 @@ export default function Employees() {
     dispatch(fetchEmployees(queryParams.join("&")));
   }, [dispatch, page, limit, searchTerm, values]);
 
-  const items: EmployeeType[] = useSelector((state) => state.filterEmployeesSlice.employees);
+  const items: EmployeeType[] = useSelector((state) => state.employeesIncidentsSlice.employeesIncidents);
 
   const handleSearch = (searchQuery: string) => {
-    dispatch(updateSearch({ entity: "employee", searchTerm: searchQuery }));
+    dispatch(updateSearch({ entity: ENTITY, searchTerm: searchQuery }));
   };
-  const emptyMessage = useSelector((state) => state.filterEmployeesSlice.emptyMessage);
+
+  const emptyMessage = useSelector((state) => state.employeesIncidentsSlice.emptyMessage);
 
   const createLink = (
-    <Button href="/admin/employees/create" fullWidth variant="contained" color="primary">
-      Crear Empleado
+    <Button href="/admin/employees-incidents/create" fullWidth variant="contained" color="primary">
+      Crear Incidencia
     </Button>
   );
 
   return (
-    <PageContainer title="Listado de empleados" description="Listado de empleados">
-      <Breadcrumb title="Listado de empleados" items={BCrumb} />
+    <PageContainer title="Incidencias de empleados" description="Incidencias de empleados">
+      <Breadcrumb title="Incidencias de empleados" items={BCrumb} />
       <TableWithPagination
-        title="Empleados"
+        title=""
         headCells={header}
         items={items}
         columnTypeConfig={columnTypeConfig}
         handleSearch={handleSearch}
         filtersConfig={tableFiltersConfig}
-        entity="employee"
+        entity={ENTITY}
         emptyMessage={emptyMessage}
         createLink={createLink}
-      />
+      >
+        <CustomIncidentStatusComponent />
+      </TableWithPagination>
     </PageContainer>
   );
 }

@@ -20,6 +20,7 @@ import UsersFiltersReducer from "./users/UsersFiltersSlice";
 import FiltersReducer from "./tables/FiltersSlice";
 import PaginationReducer from "./tables/PaginationSlice";
 import catalogsReducer from "./tables/CatalogsSlice";
+import EmployeesIncidentsSlice from "@/store/employees-incidents/EmployeesIncidentsSlice";
 
 const persistConfig = {
   key: "root",
@@ -40,6 +41,7 @@ export const store = configureStore({
     blogReducer: BlogReducer,
     employeesReducer: EmployeesReducer,
     filterEmployeesSlice: EmployeesFiltersReducer,
+    employeesIncidentsSlice: EmployeesIncidentsSlice,
     usersReducer: UsersReducer,
     filterUsersSlice: UsersFiltersReducer,
     filters: FiltersReducer,

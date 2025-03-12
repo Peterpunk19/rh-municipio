@@ -11,11 +11,11 @@ export const formatDate = (date: string) => {
 };
 
 export const formatDateStringTS = (value: string) => {
-  if (typeof value === 'string') {
-    const dateParts = value.split('T');
+  if (typeof value === "string") {
+    const dateParts = value.split("T");
     if (dateParts.length === 2 && dateParts[0].match(/^\d{4}-\d{2}-\d{2}$/)) {
       return dateParts[0];
     }
   }
   return value;
-}
+};

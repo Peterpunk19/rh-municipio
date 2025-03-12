@@ -16,13 +16,13 @@ const roles = [
   {
     id: 5,
     name: "capturista",
-    display_name: "Empleado",
+    display_name: "Capturista",
     description: "Capturista es el usuario que validar las incidencias",
   },
   {
     id: 6,
     name: "analista",
-    display_name: "Empleado",
+    display_name: "Analista",
     description: "Analista es el usuario que puede ver datos de empleados, incidencias y asistencias",
   },
   {

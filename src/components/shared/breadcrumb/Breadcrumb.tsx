@@ -3,7 +3,7 @@ import React from "react";
 import { Grid2 as Grid, Typography, Box, Breadcrumbs, Theme } from "@mui/material";
 import Link from "next/link";
 
-import { IconCircle } from "@tabler/icons-react";
+import { IconChevronRight } from "@tabler/icons-react";
 
 interface BreadCrumbType {
   subtitle?: string;
@@ -29,12 +29,8 @@ const Breadcrumb = ({ subtitle, items, title }: BreadCrumbType) => (
         lg: 8,
       }}
     >
-      <Typography variant="h4">{title}</Typography>
-      <Typography color="textSecondary" variant="h6" fontWeight={400} mt={0.8} mb={0}>
-        {subtitle}
-      </Typography>
       <Breadcrumbs
-        separator={<IconCircle size="5" fill="textSecondary" fillOpacity={"0.6"} style={{ margin: "0 5px" }} />}
+        separator={<IconChevronRight size="10" style={{ margin: "0 5px" }} />}
         sx={{ alignItems: "center", mt: items ? "10px" : "" }}
         aria-label="breadcrumb"
       >
@@ -43,7 +39,7 @@ const Breadcrumb = ({ subtitle, items, title }: BreadCrumbType) => (
               <div key={item.title}>
                 {item.to ? (
                   <Link href={item.to} passHref>
-                    <Typography color="textSecondary">{item.title}</Typography>
+                    <Typography color="textDisabled">{item.title}</Typography>
                   </Link>
                 ) : (
                   <Typography color="textPrimary">{item.title}</Typography>
@@ -52,6 +48,12 @@ const Breadcrumb = ({ subtitle, items, title }: BreadCrumbType) => (
             ))
           : ""}
       </Breadcrumbs>
+      <Typography variant="h3" mt={1}>
+        {title}
+      </Typography>
+      <Typography color="textSecondary" variant="h6" fontWeight={400} mt={0.8} mb={0}>
+        {subtitle}
+      </Typography>
     </Grid>
   </Grid>
 );

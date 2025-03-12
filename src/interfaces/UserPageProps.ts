@@ -1,3 +1,3 @@
 interface UserPageProps {
-    userData: any;
+  userData: any;
 }

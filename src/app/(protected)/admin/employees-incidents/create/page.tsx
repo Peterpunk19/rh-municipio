@@ -6,7 +6,7 @@ import IncidentCreateForm from "./form/page";
 const BCrumb = [
   {
     to: "/admin/employees-incidents",
-    title: "Incidencias de Empleados",
+    title: "Incidencias de empleados",
   },
   {
     title: "Crear nueva incidencia",

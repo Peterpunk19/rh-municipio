@@ -307,7 +307,7 @@ const IncidentCreateForm = () => {
                 >
                   Guardar
                 </Button>
-                <Link href={"/admin/incidents"} passHref>
+                <Link href={"/admin/employees-incidents"} passHref>
                   <Button variant="contained" color="error" sx={{ display: "flex" }}>
                     Salir
                   </Button>
