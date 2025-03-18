@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { fetchCatalogData } from "@/services/catalogs";
 import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
-import { createIncident } from "@/services/incidents";
+import { createEmployeeIncident } from "@/services/employees-incidents";
 import { FormErrors, initialFormData } from "./dataConfig";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import Link from "next/link";
@@ -57,10 +57,7 @@ const IncidentCreateForm = () => {
   };
 
   const catalogName = "incidents";
-  const fetchData = useCallback(async () => {
-    const data = await fetchCatalogData(catalogName);
-    return data;
-  }, [catalogName]);
+  const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
   const { options: incidentTypes, isLoading, error } = useFetchOptions(fetchData);
 
   const resetFormValues = () => {
@@ -76,7 +73,7 @@ const IncidentCreateForm = () => {
     setIsSubmitting(true);
     setErrors({});
     try {
-      const response = await createIncident(formData);
+      const response = await createEmployeeIncident(formData);
       if (!response.success) {
         if (response && response.responseObject) {
           const newErrors: FormErrors = {};
