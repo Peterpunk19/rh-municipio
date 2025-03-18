@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { buildWhereClause, encryptPassword, getPaginationData } from "@/common/utils";
-import { IUser, IUserFilters } from "@/app/api/users/interface";
+import type { IUser, IUserFilters } from "@/app/api/users/interface";
 
 export const UserService = {
   async getUserByUsername(username: string) {
@@ -43,6 +43,7 @@ export const UserService = {
             paternal_last_name: true,
             maternal_last_name: true,
             gender_id: true,
+            number_employee: true,
           },
         },
         role_id: true,
@@ -68,6 +69,7 @@ export const UserService = {
         gender_id: data.employee?.gender_id,
         role_id: data.role_id,
         role_display_name: data.role.display_name,
+        number_employee: data.employee?.number_employee,
         active: data.active,
         created_at: data.created_at,
         updated_at: data.updated_at,
@@ -76,7 +78,47 @@ export const UserService = {
 
     return null;
   },
+  async getUserInfoAuthById(id: number) {
+    const data = await prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        username: true,
+        employee: {
+          select: {
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+            gender_id: true,
+            number_employee: true,
+          },
+        },
+        role_id: true,
+        role: {
+          select: {
+            display_name: true,
+          },
+        },
+      },
+    });
 
+    if (data) {
+      return {
+        id: data.id,
+        username: data.username,
+        name: data.employee?.name,
+        paternal_last_name: data.employee?.paternal_last_name,
+        maternal_last_name: data.employee?.maternal_last_name,
+        role_id: data.role_id,
+        role_display_name: data.role.display_name,
+        number_employee: data.employee?.number_employee,
+      };
+    }
+
+    return null;
+  },
   async createUser(user: IUser) {
     return await prisma.user.create({
       data: {

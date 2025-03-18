@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { LoginSchema } from "@/schemas/authentication";
-import { UserSchema } from "@/schemas/user";
+import { UserGetSchema } from "@/schemas/user";
 import bcryptjs from "bcryptjs";
 
 export async function POST(request: Request) {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     if (!isPasswordValid) {
       return NextResponse.json({ error: "User password wrong" }, { status: 401 });
     }
-    const validatedUser = UserSchema.parse(user);
+    const validatedUser = UserGetSchema.parse(user);
     return NextResponse.json({ payload: validatedUser }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: "Server Login failed", errorDetail: error }, { status: 500 });

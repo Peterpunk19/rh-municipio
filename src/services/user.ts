@@ -1,5 +1,5 @@
 import http from "@/lib/http";
-import { IResponse } from "@/utils/types";
+import type { IResponse } from "@/utils/types";
 
 export const getUserById = async (id: string): Promise<IResponse> => {
   try {

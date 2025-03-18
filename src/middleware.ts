@@ -1,11 +1,16 @@
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
+import { getToken } from "next-auth/jwt";
+import { HttpStatusCode } from "axios";
+import { HttpMessages } from "@/common/response/messages";
 
 import { publicRoutes, authRoutes, apiAuthPrefix, apiPrefix, DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { NextResponse } from "next/server";
+import { HttpResponse } from "./common/response/model";
 
 const { auth } = NextAuth(authConfig);
 // @ts-ignore
-export default auth((req) => {
+export default auth(async (req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const isRoot = nextUrl.pathname === "/";
@@ -16,15 +21,26 @@ export default auth((req) => {
 
   if (isPublicRoute) {
     return null;
-    //return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
   if (isRoot) {
     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
-  if (isApiAuthRoute || isApiRoute) {
+  if (isApiAuthRoute) {
     return null;
+  }
+
+  if (isApiRoute) {
+      const token = await getToken({
+        req,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
+      if (!token) {
+        const response = HttpResponse.unauthorized(HttpMessages.error.notAuthorized, HttpStatusCode.Unauthorized);
+        return NextResponse.json(response, { status: HttpStatusCode.Unauthorized });
+      }
+      return null;
   }
 
   if (isAuthRoute) {

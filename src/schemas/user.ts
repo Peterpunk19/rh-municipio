@@ -75,3 +75,23 @@ export const UserDeactivateSchema = z.object({
     .max(999999999999999, { message: validationMessages.maxNumber("El ID", 999999999999999) })
     .nullable(),
 });
+
+export const UserGetSchema = z.object({
+  id: z.number().int().positive().optional(),
+  uuid: z
+    .string()
+    .uuid({ message: validationMessages.invalidFormat("UUID") })
+    .optional(),
+  username: z
+    .string({ message: validationMessages.required("Usuario") })
+    .min(1, { message: validationMessages.required("Usuario") })
+    .max(30, { message: validationMessages.maxLength("Usuario", 30) }),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+  employee_id: z
+    .number({ message: validationMessages.number("Empleado") })
+    .optional()
+    .nullable(),
+  role_id: z.number({ message: validationMessages.required("Rol") }).nullable(),
+  created_by_id: z.number().int().positive().optional().nullable(),
+});
