@@ -18,18 +18,18 @@ http.interceptors.request.use((config) => {
     const abortHandler = () => {
       source.cancel("Operation canceled by the user");
       if (signal) {
-        signal.removeEventListener("abort", abortHandler);
+        signal?.removeEventListener("abort", abortHandler);
       }
     };
 
     if (signal.aborted) {
       abortHandler();
     } else {
-      signal.addEventListener("abort", abortHandler);
+      signal?.addEventListener("abort", abortHandler);
     }
   }
   config.cancelToken = originalCancelToken || config.cancelToken;
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("authjs.session-token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

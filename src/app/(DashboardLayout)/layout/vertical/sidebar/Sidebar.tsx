@@ -5,12 +5,8 @@ import { useTheme } from "@mui/material/styles";
 import SidebarItems from "./SidebarItems";
 import Logo from "../../shared/logo/Logo";
 import { useSelector, useDispatch } from "@/store/hooks";
-import {
-  hoverSidebar,
-  toggleMobileSidebar,
-} from "@/store/customizer/CustomizerSlice";
+import { hoverSidebar, toggleMobileSidebar } from "@/store/customizer/CustomizerSlice";
 import Scrollbar from "@/app/components/custom-scroll/Scrollbar";
-import { Profile } from "./SidebarProfile/Profile";
 import { AppState } from "@/store/store";
 
 const Sidebar = () => {
@@ -19,9 +15,7 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const toggleWidth =
-    customizer.isCollapse && !customizer.isSidebarHover
-      ? customizer.MiniSidebarWidth
-      : customizer.SidebarWidth;
+    customizer.isCollapse && !customizer.isSidebarHover ? customizer.MiniSidebarWidth : customizer.SidebarWidth;
 
   const onHoverEnter = () => {
     if (customizer.isCollapse) {
@@ -85,7 +79,6 @@ const Sidebar = () => {
                 {/* ------------------------------------------- */}
                 <SidebarItems />
               </Scrollbar>
-              <Profile />
             </Box>
           </Drawer>
         </Box>

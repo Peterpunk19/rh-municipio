@@ -8,16 +8,14 @@ import { styled } from "@mui/material/styles";
 import { useSelector, useDispatch } from "@/store/hooks";
 import {
   toggleSidebar,
-  toggleMobileSidebar, setDarkMode
+  toggleMobileSidebar
 } from "@/store/customizer/CustomizerSlice";
 import { IconMenu2, IconMoon, IconSun } from "@tabler/icons-react";
 import Notifications from "./Notification";
-import Profile from "./Profile";
-import Cart from "./Cart";
+import Profile from "@/components/layout/vertical/header/Profile";
+
 import Search from "./Search";
-import Language from "./Language";
 import { AppState } from "@/store/store";
-import Navigation from "./Navigation";
 import MobileRightSidebar from "./MobileRightSidebar";
 
 const Header = () => {

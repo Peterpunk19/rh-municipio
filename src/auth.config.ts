@@ -3,20 +3,29 @@ import Credentials from "next-auth/providers/credentials";
 import { LoginSchema } from "@/schemas/authentication";
 import { login } from "@/services/authentication";
 
-// Notice this is only an object, not a full Auth.js instance
 export default {
   providers: [
     Credentials({
       // @ts-ignore
       async authorize(credentials) {
-        const validatedFields = LoginSchema.safeParse(credentials);
-        if (validatedFields.success) {
-          const response = await login(validatedFields.data);
-          const user = response.payload;
-          if (!user || !user.id) return null;
-          return user;
+        try {
+          const validatedFields = LoginSchema.safeParse(credentials);
+          if (validatedFields.success) {
+            const response = await login(validatedFields.data);
+            if (!response?.payload) return null;
+
+            return {
+              id: response.payload.id.toString(),
+              name: response.payload.name,
+              email: response.payload.email,
+              role: response.payload.role_id.toString(),
+            };
+          }
+          return null;
+        } catch (err) {
+          console.error("Error in login:", err);
+          return null;
         }
-        return null;
       },
     }),
   ],

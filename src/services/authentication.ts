@@ -3,11 +3,11 @@ import type * as z from "zod";
 
 export const login = async (authCredentials: z.infer<typeof LoginSchema>) => {
   const { username, password } = authCredentials;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  const baseUrl = "http://localhost:3000/api";
   const body = JSON.stringify({ username, password });
 
   try {
-    const response = await fetch(`${baseUrl}/api/authentication/login`, {
+    const response = await fetch(`${baseUrl}/authentication/login`, {
       method: "POST",
       body: body,
       headers: {

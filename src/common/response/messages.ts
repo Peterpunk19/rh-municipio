@@ -42,6 +42,7 @@ export const HttpMessages = {
     invalidRequest: "Invalid request",
     notFound: "Datos no encontrados",
     validationFields: "Datos incorrectos, por favor revise de nuevo el formulario.",
+    notAuthorized: "No autorizado: JWT inválido o ausente",
   },
   user: {
     usernameAlreadyExists: "El nombre de usuario ya existe",
