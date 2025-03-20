@@ -39,6 +39,9 @@ export const HttpMessages = {
   incidentStatus: {
     notFound: "Estatus de incidencia no encontrado",
   },
+  requestStatus: {
+    notFound: "Estatus de solicitud no encontrado",
+  },
   error: {
     internalServerError: "Ocurrio un error en el servidor",
     invalidRequest: "Invalid request",
@@ -66,5 +69,25 @@ export const HttpMessages = {
   },
   role: {
     notFound: "El rol no existe",
+  },
+  request: {
+    notFoundById: "No se encontró solicitud con el ID proporcionado",
+  },
+  day: {
+    notFoundById: "No se encontró el día con el ID proporcionado",
+  },
+  hour: {
+    notFoundById: "No se encontró la hora con el ID proporcionado",
+  },
+  location: {
+    notFoundById: "No se encontró la ubicación con el ID proporcionado",
+  },
+  attendance: {
+    notFoundById: "No se encontró la asistencia con el ID proporcionado",
+  },
+  employeeRequests: {
+    folioError: "Folio no creado.",
+    invalidData: "Ya existe una solicitud con estos datos",
+    createdSuccess: "Solicitud creada correctamente",
   },
 };

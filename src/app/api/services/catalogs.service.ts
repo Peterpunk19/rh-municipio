@@ -223,4 +223,10 @@ ORDER BY parent.id `;
   async getAttendance() {
     return prisma.attendance.findMany();
   },
+
+  async getRequestStatusByName(name: string) {
+    return prisma.requestStatus.findFirst({
+      where: { name },
+    });
+  },
 };
