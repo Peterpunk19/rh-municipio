@@ -1,157 +1,159 @@
 import { generator } from "./generator";
+import { HttpMessages } from "@/common/response/messages";
+import { validationMessages } from "@/common/validation/messages";
 
 export const response = {
   emptyParams: generator.response({
     responseObject: {
       name: {
-        messages: ["Nombre(s) es requerido"],
+        messages: [validationMessages.required("Nombre(s)")],
       },
       paternalLastName: {
-        messages: ["Apellido paterno es requerido"],
+        messages: [validationMessages.required("Apellido paterno")],
       },
       maternalLastName: {
-        messages: ["Required"],
+        messages: [validationMessages.required("Apellido materno")],
       },
       birthday: {
-        messages: ["Formato de Fecha de nacimiento inválida"],
+        messages: [validationMessages.invalidaFormat("Fecha de nacimiento")],
       },
       genderId: {
-        messages: ["Género es requerido"],
+        messages: [validationMessages.required("Género")],
       },
       rfc: {
-        messages: ["Required"],
+        messages: [validationMessages.required("RFC")],
       },
       curp: {
-        messages: ["Required"],
+        messages: [validationMessages.required("CURP")],
       },
       addressLine1: {
-        messages: ["Calle es requerido"],
+        messages: [validationMessages.required("Calle")],
       },
       addressLine2: {
-        messages: ["Número de casa es requerido"],
+        messages: [validationMessages.required("Número de casa")],
       },
       addressLine3: {
-        messages: ["Número de Departamento es requerido"],
+        messages: [validationMessages.required("Número de Departamento")],
       },
       addressLine4: {
-        messages: ["Colonia es requerido"],
+        messages: [validationMessages.required("Colonia")],
       },
       postalCode: {
-        messages: ["Código postal es requerido"],
+        messages: [validationMessages.required("Código postal")],
       },
       postalCodeSat: {
-        messages: ["Código postal SAT es requerido"],
+        messages: [validationMessages.required("Código postal SAT")],
       },
       municipalityId: {
-        messages: ["Municipio es requerido"],
+        messages: [validationMessages.required("Municipio")],
       },
       startJobDate: {
-        messages: ["Formato de Fecha de inicio inválida"],
+        messages: [validationMessages.invalidaFormat("Fecha de inicio")],
       },
       endJobDate: {
-        messages: ["Formato de Fecha de terminación inválida"],
+        messages: [validationMessages.invalidaFormat("Fecha de terminación")],
       },
       categoryId: {
-        messages: ["Categoria es requerido"],
+        messages: [validationMessages.required("Categoria")],
       },
       employeeTypeName: {
-        messages: ["Tipo de empleado es requerido"],
+        messages: [validationMessages.required("Tipo de empleado")],
       },
       direccionId: {
-        messages: ["Órgano administrativo es requerido"],
+        messages: [validationMessages.required("Órgano administrativo")],
+      },
+      tradeUnionId: {
+        messages: [validationMessages.required("Sindicato")],
       },
     },
   }),
   emptyNumberEmployee: generator.response({
     responseObject: {
       numberEmployee: {
-        messages: ["Número de empleado es requerido"],
+        messages: [validationMessages.required("Número de empleado")],
       },
     },
   }),
   emptyName: generator.response({
     responseObject: {
       name: {
-        messages: ["Nombre(s) es requerido"],
+        messages: [validationMessages.required("Nombre(s)")],
       },
     },
   }),
   emptyPaternalLastName: generator.response({
     responseObject: {
       paternalLastName: {
-        messages: ["Apellido paterno es requerido"],
+        messages: [validationMessages.required("Apellido paterno")],
       },
     },
   }),
   emptyMaternalLastName: generator.response({
     responseObject: {
       maternalLastName: {
-        messages: ["Apellido materno es requerido"],
+        messages: [validationMessages.required("Apellido materno")],
       },
     },
   }),
   emptyBirthday: generator.response({
     responseObject: {
       birthday: {
-        messages: ["Formato de Fecha de nacimiento inválida"],
+        messages: [validationMessages.invalidaFormat("Fecha de nacimiento")],
       },
     },
   }),
   emptyGenderId: generator.response({
     responseObject: {
       genderId: {
-        messages: ["Género es requerido"],
+        messages: [validationMessages.required("Género")],
       },
     },
   }),
   emptyRfc: generator.response({
     responseObject: {
       rfc: {
-        messages: ["RFC es requerido", "Formato de RFC inválido"],
+        messages: [validationMessages.required("RFC"), validationMessages.invalidFormat("RFC")],
       },
     },
   }),
   emptyCurp: generator.response({
     responseObject: {
       curp: {
-        messages: ["CURP es requerido", "Formato de CURP inválido"],
+        messages: [validationMessages.required("CURP"), validationMessages.invalidFormat("CURP")],
       },
     },
   }),
   longNumberEmployee: generator.response({
     responseObject: {
       numberEmployee: {
-        messages: ["Número de empleado no puede exceder de 6 caracteres"],
+        messages: [validationMessages.maxLength("Número de empleado", 6)],
       },
     },
   }),
   longName: generator.response({
     responseObject: {
       name: {
-        messages: ["Nombre(s) no puede exceder de 255 caracteres"],
-      },
-    },
-  }),
-  longFirstName: generator.response({
-    responseObject: {
-      name: {
-        messages: ["Nombre(s) no puede exceder de 255 caracteres"],
+        messages: [validationMessages.maxLength("Nombre(s)", 255)],
       },
     },
   }),
   longPaternalLastName: generator.response({
     responseObject: {
       paternalLastName: {
-        messages: ["Apellido paterno no puede exceder de 255 caracteres"],
+        messages: [validationMessages.maxLength("Apellido paterno", 255)],
       },
     },
   }),
   longMaternalLastName: generator.response({
     responseObject: {
       maternalLastName: {
-        messages: ["Apellido materno no puede exceder de 255 caracteres"],
+        messages: [validationMessages.maxLength("Apellido materno", 255)],
       },
     },
+  }),
+  duplicatedRfcCurp: generator.response({
+    message: HttpMessages.employee.alreadyExists,
+    responseObject: {},
   }),
   validData: generator.response({
     success: true,
@@ -159,156 +161,150 @@ export const response = {
     responseObject: {},
     statusCode: 200,
   }),
-  duplicatedRfcCurp: generator.response({
-    message: "RFC or CURP ya existen",
-    responseObject: {},
-  }),
   emptyAddressLine1: generator.response({
     responseObject: {
       addressLine1: {
-        messages: ["Calle es requerido"],
+        messages: [validationMessages.required("Calle")],
       },
     },
   }),
   longAddressLine1: generator.response({
     responseObject: {
       addressLine1: {
-        messages: ["Calle no puede exceder de 255 caracteres"],
+        messages: [validationMessages.maxLength("Calle", 255)],
       },
     },
   }),
   emptyAddressLine2: generator.response({
     responseObject: {
       addressLine2: {
-        messages: ["Número de casa es requerido"],
+        messages: [validationMessages.required("Número de casa")],
       },
     },
   }),
   longAddressLine2: generator.response({
     responseObject: {
       addressLine2: {
-        messages: ["Número de casa no puede exceder de 255 caracteres"],
+        messages: [validationMessages.maxLength("Número de casa", 255)],
       },
     },
   }),
   emptyAddressLine4: generator.response({
     responseObject: {
       addressLine4: {
-        messages: ["Colonia es requerido"],
+        messages: [validationMessages.required("Colonia")],
       },
     },
   }),
   longAddressLine4: generator.response({
     responseObject: {
       addressLine4: {
-        messages: ["Colonia no puede exceder de 255 caracteres"],
+        messages: [validationMessages.maxLength("Colonia", 255)],
       },
     },
   }),
   emptyPostalCode: generator.response({
     responseObject: {
       postalCode: {
-        messages: ["Código postal es requerido"],
+        messages: [validationMessages.required("Código postal")],
       },
     },
   }),
   emptyPostalCodeSat: generator.response({
     responseObject: {
       postalCodeSat: {
-        messages: ["Código postal SAT es requerido"],
+        messages: [validationMessages.required("Código postal SAT")],
       },
     },
   }),
   emptyMunicipalityId: generator.response({
     responseObject: {
       municipalityId: {
-        messages: ["Municipio es requerido"],
+        messages: [validationMessages.required("Municipio")],
       },
     },
   }),
   emptyStartJobDate: generator.response({
     responseObject: {
       startJobDate: {
-        messages: ["Formato de Fecha de inicio inválida"],
+        messages: [validationMessages.invalidaFormat("Fecha de inicio")],
       },
     },
   }),
   emptyEndJobDate: generator.response({
     responseObject: {
       endJobDate: {
-        messages: ["Formato de Fecha de terminación inválida"],
+        messages: [validationMessages.invalidaFormat("Fecha de terminación")],
       },
     },
   }),
   emptyCategoryId: generator.response({
     responseObject: {
       categoryId: {
-        messages: ["Categoria es requerido"],
+        messages: [validationMessages.required("Categoria")],
       },
     },
   }),
   emptyMaritalStatusId: generator.response({
     responseObject: {
       maritalStatusId: {
-        messages: ["Estado Civil es requerido"],
+        messages: [validationMessages.required("Estado Civil")],
       },
     },
   }),
   emptySchoolingId: generator.response({
     responseObject: {
       schoolingId: {
-        messages: ["Escolaridad es requerido"],
+        messages: [validationMessages.required("Escolaridad")],
       },
     },
   }),
   emptyOccupationId: generator.response({
     responseObject: {
       occupationId: {
-        messages: ["Ocupación es requerido"],
+        messages: [validationMessages.required("Ocupación")],
       },
     },
   }),
   emptyProfessionId: generator.response({
     responseObject: {
       professionId: {
-        messages: ["Profesión es requerido"],
+        messages: [validationMessages.required("Profesión")],
       },
     },
   }),
   emptyIdentificationTypeId: generator.response({
     responseObject: {
       identificationTypeId: {
-        messages: ["Tipo de identificacion es requerido"],
+        messages: [validationMessages.required("Tipo de identificacion")],
       },
     },
   }),
   emptyEmployeeTypeName: generator.response({
     responseObject: {
       employeeTypeName: {
-        messages: ["Tipo de empleado es requerido"],
+        messages: [validationMessages.required("Tipo de empleado")],
       },
     },
   }),
   invalidEmployeeTypeName: generator.response({
-    success: false,
-    message: "No fue encontrado el tipo de empleado.",
     responseObject: {
       employeeTypeName: {
-        messages: ["base"],
+        messages: [validationMessages.invalid("Tipo de empleado")],
       },
     },
   }),
   emptyEmployeeTypeBaseSindicalizado: generator.response({
     responseObject: {
       tradeUnionId: {
-        messages: ["Sindicato es requerido si el Tipo de empleado es BASE SINDICALIZADO"],
+        messages: [validationMessages.requiredIf("Sindicato", "Tipo de empleado", "BASE SINDICALIZADO")],
       },
     },
   }),
   emptyDireccionId: generator.response({
     responseObject: {
       direccionId: {
-        messages: ["Órgano administrativo es requerido"],
+        messages: [validationMessages.required("Órgano administrativo")],
       },
     },
   }),

@@ -19,7 +19,7 @@ export default {
               name: response.responseObject.payload.name,
               email: response.responseObject.payload.email,
               role: response.responseObject.payload.role_id.toString(),
-              accessToken: response.responseObject.token
+              accessToken: response.responseObject.token,
             };
           }
           return null;

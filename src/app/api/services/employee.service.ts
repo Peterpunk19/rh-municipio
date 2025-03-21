@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { encryptPassword, endOfDay, startOfDay } from "@/common/utils";
-import type { IEmployee, IEmployeeFilters } from "@/app/api/employees/interface";
+import type { IEmployee, IEmployeeFilters, IEmployeeHiring } from "@/app/api/employees/interface";
 
 export const EmployeeService = {
   async getEmployeeByRfcCurp(rfc: string, curp: string, employeeId?: number) {
@@ -492,6 +492,7 @@ export const EmployeeService = {
       },
     });
   },
+
   async updateEmployee(employee: IEmployee, currentEmployee: any) {
     return prisma.$transaction(async (tx) => {
       const updatedUser = await tx.user.update({
@@ -578,4 +579,17 @@ export const EmployeeService = {
       return [updatedUser, updatedEmployee, updatedEmployeeHiring, updatedEmployeeAddress];
     });
   },
+
+  async createEmployeeHiring(employeeHiring: IEmployeeHiring) {
+    return prisma.employeeHiring.create({
+      data: {
+        employee_id: employeeHiring.employeeId,
+        start_job_date: employeeHiring.startJobDate,
+        end_job_date: employeeHiring.endJobDate,
+        category_id: Number(employeeHiring.categoryId),
+        employee_type_id: Number(employeeHiring.employeeTypeId),
+        direccion_id: Number(employeeHiring.direccionId),
+      },
+    });
+  }
 };

@@ -33,7 +33,7 @@ export const generator = {
       overrides?.identificationFolio !== undefined ? overrides?.identificationFolio : "0100230123123",
     stateId: overrides?.stateId !== undefined ? overrides?.stateId : 1,
     secretariaId: overrides?.secretariaId !== undefined ? overrides?.secretariaId : 1,
-    id: overrides?.id !== undefined ? overrides?.id : 1,
+    tradeUnionId: overrides?.tradeUnionId ?? null,
     active: overrides?.active ?? true,
   }),
   response: (overrides?: Partial<IResponse>): IResponse => ({

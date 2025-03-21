@@ -1,6 +1,6 @@
-import { IEmployee } from "@/app/api/employees/interface";
+import type { IEmployee } from "@/app/api/employees/interface";
 import { HttpMessages } from "@/common/response/messages";
-import { IResponse } from "@/utils/types";
+import type { IResponse } from "@/utils/types";
 
 export const generator = {
   request: (overrides?: Partial<IEmployee>): IEmployee => ({
@@ -17,7 +17,8 @@ export const generator = {
     addressLine3: overrides?.addressLine3 ?? "",
     addressLine4: overrides?.addressLine4 ?? "Terán",
     postalCode: overrides?.postalCode ?? "29050",
-    postalCodeSat: overrides?.postalCodeSat ?? "29000",
+    postalCodeSat: overrides?.postalCodeSat ?? "29050",
+    stateId: overrides?.stateId !== undefined ? overrides?.stateId : 7,
     municipalityId: overrides?.municipalityId !== undefined ? overrides?.municipalityId : 1,
     startJobDate: overrides?.startJobDate ?? "2025-01-22",
     endJobDate: overrides?.endJobDate ?? "2025-11-22",
@@ -29,8 +30,10 @@ export const generator = {
     professionId: overrides?.professionId !== undefined ? overrides?.professionId : 1,
     occupationId: overrides?.occupationId !== undefined ? overrides?.occupationId : 1,
     identificationTypeId: overrides?.identificationTypeId !== undefined ? overrides?.identificationTypeId : 1,
-    identificationFolio:
-      overrides?.identificationFolio !== undefined ? overrides?.identificationFolio : "0100230123123",
+    identificationFolio: overrides?.identificationFolio ?? "INE123456789",
+    secretariaId: overrides?.secretariaId !== undefined ? overrides?.secretariaId : 1,
+    tradeUnionId: overrides?.tradeUnionId !== undefined ? overrides?.tradeUnionId : null,
+    active: overrides?.active ?? true,
   }),
   response: (overrides?: Partial<IResponse>): IResponse => ({
     success: overrides?.success ?? false,

@@ -29,6 +29,9 @@ export const HttpMessages = {
   employeeAttendance: {
     invalidData: "Ya existe un dia registrado con estos datos",
     createdSuccess: "Asistencia creada correctamente",
+    notFound: "No se encontraron asistencias con los filtros proporcionados",
+    getSuccess: "Asistencias encontradas correctamente",
+    notCreated: "Asistencia no creada",
   },
   employeeHiring: {
     notFound: "No se encontraron datos de contratacion para el empleado",
@@ -66,6 +69,7 @@ export const HttpMessages = {
     loginSuccess: "Inicio de sesión exitoso",
     wrongUsername: "Usuario incorrecto",
     wrongPassword: "Contraseña incorrecta",
+    notFoundCreator: "No se encontró ningún creador",
   },
   role: {
     notFound: "El rol no existe",

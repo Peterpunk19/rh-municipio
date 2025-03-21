@@ -24,7 +24,7 @@ describe("API: /employees/update", () => {
 
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`PUT /employees/update ${description}`, async () => {
-      if (description === "should return error for existing employee by RFC or CURP") {
+      if (description === "should return error for duplicated RFC or CURP") {
         (EmployeeService.getEmployeeByRfcCurp as jest.Mock).mockResolvedValueOnce({});
       }
 
@@ -39,7 +39,9 @@ describe("API: /employees/update", () => {
       }
 
       const requestObj = {
-        json: async () => requestData,
+        json: async () => {
+          return requestData;
+        },
       } as any;
 
       const params = Promise.resolve({ id: "1" });

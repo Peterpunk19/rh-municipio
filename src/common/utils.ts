@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import React from "react";
 import { formatDateStringTS } from "@/utils/formatter";
+import { WhereKey } from "@/interfaces/WhereConfig";
 
 export const encryptPassword = async (password: string): Promise<string> => {
   return await bcryptjs.hash(password, 10);
@@ -46,15 +47,29 @@ export const getPaginationData = async (total: number, limit: number, page: numb
 };
 
 export const buildWhereClause = async (
-  filterMappings: any,
-  filters: any,
+  filterMappings: Record<string, WhereKey>,
+  filters: Record<string, any>,
   searchMappings?: { path: string[]; operators?: string[] }[],
 ) => {
-  const whereClause: any = {};
+  const whereClause: Record<string, any> = {};
+
   Object.entries(filterMappings).forEach(([filterKey, whereKey]) => {
     if (filters[filterKey] !== undefined && filters[filterKey] !== null) {
-      // @ts-ignore
-      whereClause[whereKey] = filters[filterKey];
+      if (typeof whereKey === "object" && "path" in whereKey) {
+        const pathParts = whereKey.path.split(".");
+        let current = whereClause;
+
+        pathParts.forEach((part: string, index: number) => {
+          if (index === pathParts.length - 1) {
+            current[whereKey.field || part] = filters[filterKey];
+          } else {
+            current[part] = current[part] || {};
+            current = current[part];
+          }
+        });
+      } else if (typeof whereKey === "string") {
+        whereClause[whereKey] = filters[filterKey];
+      }
     }
   });
 
