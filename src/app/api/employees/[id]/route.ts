@@ -8,6 +8,7 @@ import { HttpMessages } from "@/common/response/messages";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
 import { StatusCodes } from "http-status-codes";
+import { validationMessages } from "@/common/validation/messages";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -51,6 +52,24 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     if (!body) {
       const response = HttpResponse.failure(HttpMessages.error.validationFields, {});
+      return handleHttpResponse(response);
+    }
+
+    if (!body.municipalityId) {
+      const response = HttpResponse.failure(HttpMessages.error.validationFields, {
+        municipalityId: {
+          messages: [validationMessages.required("Municipio")],
+        },
+      }, StatusCodes.BAD_REQUEST);
+      return handleHttpResponse(response);
+    }
+
+    if (!body.categoryId) {
+      const response = HttpResponse.failure(HttpMessages.error.validationFields, {
+        categoryId: {
+          messages: [validationMessages.required("Categoria")],
+        },
+      }, StatusCodes.BAD_REQUEST);
       return handleHttpResponse(response);
     }
 

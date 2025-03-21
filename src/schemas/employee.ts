@@ -51,7 +51,7 @@ export const EmployeePostSchema = z
       (val) => {
         if (typeof val === "string" || val instanceof String) {
           const parsedDate = new Date(val as string);
-          return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+          return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
         }
         return val;
       },
@@ -61,7 +61,7 @@ export const EmployeePostSchema = z
       (val) => {
         if (typeof val === "string" || val instanceof String) {
           const parsedDate = new Date(val as string);
-          return isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+          return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
         }
         return val;
       },
