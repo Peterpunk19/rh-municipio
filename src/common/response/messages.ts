@@ -33,6 +33,8 @@ export const HttpMessages = {
     notFound: "No se encontraron asistencias con los filtros proporcionados",
     getSuccess: "Asistencias encontradas correctamente",
     notCreated: "Asistencia no creada",
+    notFoundById: "Asistencia no encontrada",
+    foundById: "Asistencia encontrada correctamente",
   },
   employeeHiring: {
     notFound: "No se encontraron datos de contratacion para el empleado",
@@ -70,7 +72,7 @@ export const HttpMessages = {
     loginSuccess: "Inicio de sesión exitoso",
     wrongUsername: "Usuario incorrecto",
     wrongPassword: "Contraseña incorrecta",
-    notFoundCreator: "No se encontró ningún creador",
+    notFoundCreator: "No se encontró por lo menos un usuario creador",
   },
   role: {
     notFound: "El rol no existe",

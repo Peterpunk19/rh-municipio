@@ -61,3 +61,11 @@ export const EmployeeAttendanceGetFilterSchema = z.object({
     .optional()
     .nullable(),
 });
+
+export const EmployeeAttendanceGetByIdSchema = z.object({
+  id: z
+    .number({ message: validationMessages.number("ID") })
+    .min(1, { message: validationMessages.minNumber("ID", 1) })
+    .max(999999999999999, { message: validationMessages.maxNumber("ID", 999999999999999) })
+    .nullable(),
+});

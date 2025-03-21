@@ -145,6 +145,8 @@ export const EmployeeAttendanceService = {
       check_in: item.check_in,
       check_out: item.check_out,
       active: item.active,
+      description: item.description,
+      created_at: item.created_at,
       location: {
         id: item.employee_location.location_id,
         active: item.employee_location.active,
@@ -178,5 +180,104 @@ export const EmployeeAttendanceService = {
     const pagination = await getPaginationData(total, limit, page);
 
     return { ...pagination, attendances };
+  },
+
+  async getEmployeeAttendanceById(id: number) {
+    const employeeAttendance = await prisma.employeeAttendance.findUnique({
+      where: { id: id },
+      include: {
+        employee_location: {
+          select: {
+            location_id: true,
+            active: true,
+            attendance: {
+              select: {
+                id: true,
+                display_name: true,
+              },
+            },
+            location: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+          },
+        },
+        employee_hiring: {
+          select: {
+            employee: {
+              select: {
+                id: true,
+                number_employee: true,
+                name: true,
+                paternal_last_name: true,
+                maternal_last_name: true,
+                rfc: true,
+                curp: true,
+              },
+            },
+            direccion: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                secretaria: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        created_by: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    if (!employeeAttendance) return null;
+    return {
+      id: employeeAttendance.id,
+      check_in: employeeAttendance.check_in,
+      check_out: employeeAttendance.check_out,
+      active: employeeAttendance.active,
+      description: employeeAttendance.description,
+      created_at: employeeAttendance.created_at,
+      location: {
+        id: employeeAttendance.employee_location.location_id,
+        active: employeeAttendance.employee_location.active,
+        name: employeeAttendance.employee_location.location?.name,
+        display_name: employeeAttendance.employee_location.location?.display_name,
+      },
+      type_attendance: employeeAttendance.employee_location.attendance,
+      employee: {
+        id: employeeAttendance.employee_hiring.employee?.id,
+        number_employee: employeeAttendance.employee_hiring.employee?.number_employee,
+        name: employeeAttendance.employee_hiring.employee?.name,
+        paternal_last_name: employeeAttendance.employee_hiring.employee?.paternal_last_name,
+        maternal_last_name: employeeAttendance.employee_hiring.employee?.maternal_last_name,
+        fullName: `${employeeAttendance.employee_hiring.employee?.name} ${employeeAttendance.employee_hiring.employee?.paternal_last_name} ${employeeAttendance.employee_hiring.employee?.maternal_last_name}`,
+        rfc: employeeAttendance.employee_hiring.employee?.rfc,
+        curp: employeeAttendance.employee_hiring.employee?.curp,
+      },
+      organism_public: employeeAttendance.employee_hiring.direccion.secretaria,
+      organism_administrative: {
+        id: employeeAttendance.employee_hiring.direccion.id,
+        name: employeeAttendance.employee_hiring.direccion.name,
+        display_name: employeeAttendance.employee_hiring.direccion.display_name,
+      },
+      created_by: {
+        id: employeeAttendance.created_by.id,
+        username: employeeAttendance.created_by.username,
+      },
+    };
   },
 };
