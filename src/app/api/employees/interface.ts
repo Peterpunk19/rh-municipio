@@ -31,6 +31,19 @@ export interface IEmployee {
   employeeAddressId?: number | string;
   userId?: number;
   employeeId?: number;
+  stateId: number | string;
+  secretariaId?: number | null;
+  id?: number;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  statusEmployeeId?: number;
+  directorId?: number | null;
+  sustituteId?: number | null;
+  salary?: string;
+  direccionSecretariaId?: number | null;
+  municipalityStateId?: number | null;
+  countryId?: number | null;
 }
 
 export interface IEmployeeFilters {
