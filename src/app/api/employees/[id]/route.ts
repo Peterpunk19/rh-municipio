@@ -56,20 +56,28 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     if (!body.municipalityId) {
-      const response = HttpResponse.failure(HttpMessages.error.validationFields, {
-        municipalityId: {
-          messages: [validationMessages.required("Municipio")],
+      const response = HttpResponse.failure(
+        HttpMessages.error.validationFields,
+        {
+          municipalityId: {
+            messages: [validationMessages.required("Municipio")],
+          },
         },
-      }, StatusCodes.BAD_REQUEST);
+        StatusCodes.BAD_REQUEST,
+      );
       return handleHttpResponse(response);
     }
 
     if (!body.categoryId) {
-      const response = HttpResponse.failure(HttpMessages.error.validationFields, {
-        categoryId: {
-          messages: [validationMessages.required("Categoria")],
+      const response = HttpResponse.failure(
+        HttpMessages.error.validationFields,
+        {
+          categoryId: {
+            messages: [validationMessages.required("Categoria")],
+          },
         },
-      }, StatusCodes.BAD_REQUEST);
+        StatusCodes.BAD_REQUEST,
+      );
       return handleHttpResponse(response);
     }
 

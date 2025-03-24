@@ -7,7 +7,6 @@ import { tableFiltersConfig } from "./(list)/FiltersConfig";
 import { columnTypeConfig } from "./(list)/ColumnsConfig";
 import { useDispatch } from "react-redux";
 import { fetchEmployees } from "@/store/employees/EmployeesFiltersSlice";
-import { updateSearch } from "@/store/tables/FiltersSlice";
 import type { AppDispatch } from "@/store/store";
 import { header } from "./(list)/Header";
 import type { RootState } from "@/store/store";
@@ -43,9 +42,6 @@ export default function Employees() {
 
   const items: EmployeeType[] = useSelector((state) => state.filterEmployeesSlice.employees);
 
-  const handleSearch = (searchQuery: string) => {
-    dispatch(updateSearch({ entity: "employee", searchTerm: searchQuery }));
-  };
   const emptyMessage = useSelector((state) => state.filterEmployeesSlice.emptyMessage);
 
   const createLink = (
@@ -62,7 +58,6 @@ export default function Employees() {
         headCells={header}
         items={items}
         columnTypeConfig={columnTypeConfig}
-        handleSearch={handleSearch}
         filtersConfig={tableFiltersConfig}
         entity="employee"
         emptyMessage={emptyMessage}

@@ -30,7 +30,7 @@ export const generator = {
     occupationId: overrides?.occupationId !== undefined ? overrides?.occupationId : 1,
     identificationTypeId: overrides?.identificationTypeId !== undefined ? overrides?.identificationTypeId : 1,
     identificationFolio:
-    overrides?.identificationFolio !== undefined ? overrides?.identificationFolio : "0100230123123",
+      overrides?.identificationFolio !== undefined ? overrides?.identificationFolio : "0100230123123",
     stateId: overrides?.stateId !== undefined ? overrides?.stateId : 1,
     secretariaId: overrides?.secretariaId !== undefined ? overrides?.secretariaId : 1,
     id: overrides?.id !== undefined ? overrides?.id : 1,

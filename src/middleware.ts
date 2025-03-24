@@ -32,15 +32,15 @@ export default auth(async (req) => {
   }
 
   if (isApiRoute) {
-      const token = await getToken({
-        req,
-        secret: process.env.NEXTAUTH_SECRET,
-      });
-      if (!token) {
-        const response = HttpResponse.unauthorized(HttpMessages.error.notAuthorized, HttpStatusCode.Unauthorized);
-        return NextResponse.json(response, { status: HttpStatusCode.Unauthorized });
-      }
-      return null;
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    if (!token) {
+      const response = HttpResponse.unauthorized(HttpMessages.error.notAuthorized, HttpStatusCode.Unauthorized);
+      return NextResponse.json(response, { status: HttpStatusCode.Unauthorized });
+    }
+    return null;
   }
 
   if (isAuthRoute) {

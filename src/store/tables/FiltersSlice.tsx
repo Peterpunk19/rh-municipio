@@ -21,7 +21,7 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
       sortBy: config.initialSortBy || "id",
       searchTerm: config.initialSearchTerm || "",
       values: {},
-      filterOpen: true,
+      filterOpen: false,
     };
   });
 

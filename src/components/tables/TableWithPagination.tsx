@@ -32,7 +32,6 @@ interface TableProps<T> {
   headCells: readonly HeadCell[];
   items: T[];
   columnTypeConfig: Record<string, ColumnTypeConfig>;
-  handleSearch: (searchQuery: string) => void;
   filtersConfig: () => FiltersConfig[];
   entity: string;
   emptyMessage: string;

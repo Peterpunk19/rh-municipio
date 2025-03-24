@@ -17,7 +17,7 @@ function TableHeaders(props: EnhancedTableProps) {
             align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "normal"}
           >
-            <Typography align="center" variant="subtitle1" fontWeight={600}>
+            <Typography variant="subtitle1" fontWeight={600}>
               {headCell.label}
             </Typography>
           </TableCell>

@@ -7,7 +7,6 @@ import { getFiltersConfig } from "./(list)/FiltersConfig";
 import { columnTypeConfig } from "./(list)/ColumnsConfig";
 import { useDispatch } from "react-redux";
 import { fetchUsers } from "@/store/users/UsersFiltersSlice";
-import { updateSearch } from "@/store/tables/FiltersSlice";
 import type { AppDispatch } from "@/store/store";
 import { header } from "./(list)/Headers";
 import type { RootState } from "@/store/store";
@@ -43,9 +42,6 @@ export default function Users() {
 
   const items: UserType[] = useSelector((state) => state.filterUsersSlice.users);
 
-  const handleSearch = (searchQuery: string) => {
-    dispatch(updateSearch({ entity: "user", searchTerm: searchQuery }));
-  };
   const emptyMessage = useSelector((state) => state.filterUsersSlice.emptyMessage);
 
   const createLink = (
@@ -62,7 +58,6 @@ export default function Users() {
         headCells={header}
         items={items}
         columnTypeConfig={columnTypeConfig}
-        handleSearch={handleSearch}
         filtersConfig={getFiltersConfig}
         entity="user"
         emptyMessage={emptyMessage}

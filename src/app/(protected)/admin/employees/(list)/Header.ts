@@ -56,13 +56,13 @@ export const header: readonly HeadCell[] = [
     id: "employee_hiring[0].start_job_date",
     numeric: false,
     disablePadding: false,
-    label: "Fecha de contratación",
+    label: "Fecha de alta",
   },
   {
     id: "employee_location[0].location.display_name",
     numeric: false,
     disablePadding: false,
-    label: "Ubicación y Checado",
+    label: "Ubicación y Tipo de checado",
     empty_text: "No hay ubicación",
     children: [
       {

@@ -32,13 +32,13 @@ const Menuitems: MenuitemsType[] = [
     children: [
       {
         id: uniqueId(),
-        title: "Ver Incidencias",
+        title: "Ver incidencias",
         icon: IconPoint,
         href: "/admin/employees-incidents",
       },
       {
         id: uniqueId(),
-        title: "Crear Incidencia",
+        title: "Crear incidencia",
         icon: IconPoint,
         href: "/admin/employees-incidents/create",
       },
@@ -58,13 +58,13 @@ const Menuitems: MenuitemsType[] = [
     children: [
       {
         id: uniqueId(),
-        title: "Ver Empleados",
+        title: "Ver empleados",
         icon: IconPoint,
         href: "/admin/employees",
       },
       {
         id: uniqueId(),
-        title: "Crear Empleado",
+        title: "Crear empleado",
         icon: IconPoint,
         href: "/admin/employees/create",
       },

@@ -35,9 +35,9 @@ function mapToIEmployee(data: any): IEmployee {
     employeeTypeName: "base_no_sindizalizado",
     direccionId: 1,
     maritalStatusId: 1,
-    schoolingId: 1,
-    professionId: 1,
-    occupationId: 1,
+    schoolingId: getRandomNumber(1, 10),
+    professionId: 110,
+    occupationId: getRandomNumber(1, 100),
     identificationTypeId: 1,
     identificationFolio: data.identification_folio || null,
   };
