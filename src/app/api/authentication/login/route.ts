@@ -1,25 +1,57 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { LoginSchema } from "@/schemas/authentication";
 import { UserGetSchema } from "@/schemas/user";
+import type { IUser } from "@/app/api/users/interface";
+import { HttpMessages } from "@/common/response/messages";
+import { HttpResponse } from "@/common/response/model";
+import { handleHttpResponse } from "@/common/response/handler";
+import { StatusCodes } from "http-status-codes";
+import { UserService } from "@/app/api/services/user.service";
+import { validateRequest } from "@/common/request/validateRequest";
 import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import type { NextRequest } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const validatedRequest = LoginSchema.parse(await request.json());
-    const { username, password } = validatedRequest;
+    const validatedRequest = await validateRequest<IUser>(request, LoginSchema);
 
-    const user = await prisma.user.findUnique({ where: { username } });
+    if (validatedRequest.response) return validatedRequest.response;
+    const body = validatedRequest.data;
+
+    if (!body) {
+      const response = HttpResponse.failure(HttpMessages.error.invalidRequest, {});
+      return handleHttpResponse(response);
+    }
+
+    const { username, password } = body;
+    const user = await UserService.getUserByUsername(username);
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      const response = HttpResponse.failure(HttpMessages.user.wrongUsername, {}, StatusCodes.NOT_FOUND);
+      return handleHttpResponse(response);
     }
     const isPasswordValid = await bcryptjs.compare(password, user.password);
     if (!isPasswordValid) {
-      return NextResponse.json({ error: "User password wrong" }, { status: 401 });
+      const response = HttpResponse.failure(HttpMessages.user.wrongPassword, {}, StatusCodes.UNAUTHORIZED);
+      return handleHttpResponse(response);
     }
     const validatedUser = UserGetSchema.parse(user);
-    return NextResponse.json({ payload: validatedUser }, { status: 200 });
+    const token = jwt.sign(
+      {
+        id: validatedUser.id,
+        username: validatedUser.username,
+        role_id: validatedUser.role_id,
+      },
+      process.env.NEXTAUTH_SECRET!,
+      { expiresIn: Number.parseInt(process.env.JWT_ACCESS_EXPIRES_IN!, 10) },
+    );
+
+    const response = HttpResponse.success(HttpMessages.user.loginSuccess, {
+      payload: validatedUser,
+      token,
+    });
+    return handleHttpResponse(response);
   } catch (error) {
-    return NextResponse.json({ message: "Server Login failed", errorDetail: error }, { status: 500 });
+    const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error });
+    return handleHttpResponse(response);
   }
 }

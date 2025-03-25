@@ -6,6 +6,7 @@ declare module "next-auth" {
     role?: string;
     role_name?: string;
     number_employee?: string;
+    accessToken?: string;
   }
 
   interface Session {
@@ -15,6 +16,7 @@ declare module "next-auth" {
       role?: string;
       role_name?: string;
       number_employee?: string;
+      accessToken?: string;
     };
   }
 }
@@ -26,6 +28,6 @@ declare module "@auth/core/jwt" {
     role?: string;
     role_name?: string;
     number_employee?: string;
-
+    accessToken?: string;
   }
 }

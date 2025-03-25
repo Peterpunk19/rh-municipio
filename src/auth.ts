@@ -31,6 +31,7 @@ export const {
                 role: userData.responseObject.role_id.toString(),
                 role_name: userData.responseObject.role_display_name.toString(),
                 number_employee: userData.responseObject.number_employee.toString(),
+                accessToken: token.accessToken,
               };
             }
           }
@@ -45,6 +46,7 @@ export const {
         token.role = user.role || "";
         token.role_name = user.role_name || "";
         token.number_employee = user.number_employee || "";
+        token.accessToken = user.accessToken;
       }
 
       return token;
@@ -56,6 +58,7 @@ export const {
         session.user.role = token.role as string;
         session.user.role_name = token.role_name as string;
         session.user.number_employee = token.number_employee as string;
+        session.accessToken = token.accessToken;
       }
       return session;
     },
