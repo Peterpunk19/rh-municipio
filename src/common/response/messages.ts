@@ -1,3 +1,5 @@
+import { login } from "@/services/authentication";
+
 export const HttpMessages = {
   catalog: {
     success: "Datos encontrados",
@@ -56,6 +58,11 @@ export const HttpMessages = {
     alreadyDeactivated: "El usuario ya está desactivado",
     deactivatedSuccess: "Usuario desactivado correctamente",
     activatedSuccess: "Usuario activado correctamente",
+    missingParamsLogin: "Faltan parámetros para iniciar sesión",
+    invalidLogin: "Usuario o contraseña incorrectos",
+    loginSuccess: "Inicio de sesión exitoso",
+    wrongUsername: "Usuario incorrecto",
+    wrongPassword: "Contraseña incorrecta",
   },
   role: {
     notFound: "El rol no existe",

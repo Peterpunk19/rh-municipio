@@ -12,13 +12,14 @@ export default {
           const validatedFields = LoginSchema.safeParse(credentials);
           if (validatedFields.success) {
             const response = await login(validatedFields.data);
-            if (!response?.payload) return null;
+            if (!response?.responseObject?.payload) return null;
 
             return {
-              id: response.payload.id.toString(),
-              name: response.payload.name,
-              email: response.payload.email,
-              role: response.payload.role_id.toString(),
+              id: response.responseObject.payload.id.toString(),
+              name: response.responseObject.payload.name,
+              email: response.responseObject.payload.email,
+              role: response.responseObject.payload.role_id.toString(),
+              accessToken: response.responseObject.token
             };
           }
           return null;
