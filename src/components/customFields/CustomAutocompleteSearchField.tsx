@@ -25,6 +25,9 @@ const CustomAutocompleteSearchField: React.FC<CustomAutocompleteProps> = ({ fiel
   }, 800);
 
   useEffect(() => {
+    if(inputValue === "") {
+      setOptions([]);
+    }
     fetchOptions(inputValue);
   }, [inputValue, fetchOptions]);
 
@@ -32,6 +35,7 @@ const CustomAutocompleteSearchField: React.FC<CustomAutocompleteProps> = ({ fiel
     <Autocomplete
       freeSolo
       options={options}
+      filterOptions={(x) => x}
       getOptionLabel={(option) => option.label}
       inputValue={inputValue}
       onInputChange={(_, option) => setInputValue(option)}

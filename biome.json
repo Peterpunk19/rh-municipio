@@ -1,7 +1,7 @@
 {
   "$schema": "schema.json",
   "files": {
-    "include": ["src/**/*.ts", "./tools/**/*.ts", "./tests/**/*.ts", "prisma/**/*.ts", "prisma/seeds/**/*.js"]
+    "include": ["src/**/*.ts", "src/app/(protected)/**/*.tsx", "./tools/**/*.ts", "./tests/**/*.ts", "prisma/**/*.ts", "prisma/seeds/**/*.js"]
   },
   "formatter": {
     "indentStyle": "space",

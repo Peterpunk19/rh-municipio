@@ -3,11 +3,10 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { styled, useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
-import Header from "../../(DashboardLayout)/layout/vertical/header/Header";
-import Sidebar from "../../(DashboardLayout)/layout/vertical/sidebar/Sidebar";
-import Customizer from "../../(DashboardLayout)/layout/shared/customizer/Customizer";
-import Navigation from "../../(DashboardLayout)/layout/horizontal/navbar/Navigation";
-import HorizontalHeader from "../../(DashboardLayout)/layout/horizontal/header/Header";
+import Header from "@/components/layout/vertical/header/Header";
+import Sidebar from "@/components/layout/vertical/sidebar/Sidebar";
+import Navigation from "@/components/layout/horizontal/navbar/Navigation";
+import HorizontalHeader from "@/components/layout/horizontal/header/Header";
 import { useSelector } from "@/store/hooks";
 import { AppState } from "@/store/store";
 

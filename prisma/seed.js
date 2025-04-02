@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,70 +34,110 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var client_1 = require("@prisma/client");
-var attendance_1 = require("./seeds/attendance");
-var category_1 = require("./seeds/category");
-var day_1 = require("./seeds/day");
-var employee_type_1 = require("./seeds/employee-type");
-var gender_1 = require("./seeds/gender");
-var hour_1 = require("./seeds/hour");
-var incident_1 = require("./seeds/incident");
-var incident_status_1 = require("./seeds/incident-status");
-var location_1 = require("./seeds/location");
-var payroll_1 = require("./seeds/payroll");
-var request_1 = require("./seeds/request");
-var request_status_1 = require("./seeds/request-status");
-var roles_1 = require("./seeds/roles");
-var status_employee_1 = require("./seeds/status-employee");
-var prisma = new client_1.PrismaClient();
+var _this = this;
+var PrismaClient = require("@prisma/client").PrismaClient;
+var attendance = require("./seeds/attendance");
+var category = require("./seeds/category");
+var day = require("./seeds/day");
+var employeeType = require("./seeds/employee-type");
+var gender = require("./seeds/gender");
+var hours = require("./seeds/hour");
+var incident = require("./seeds/incident");
+var incidentStatus = require("./seeds/incident-status");
+var locations = require("./seeds/location");
+var requests = require("./seeds/request");
+var requestStatus = require("./seeds/request-status");
+var roles = require("./seeds/roles");
+var statusEmployee = require("./seeds/status-employee");
+var direccion = require("./seeds/direccion");
+var secretaria = require("./seeds/secretaria");
+var country = require("./seeds/country");
+var state = require("./seeds/state");
+var municipality = require("./seeds/municipality");
+var identificationType = require("./seeds/identification-type");
+var maritalStatus = require("./seeds/marital-status");
+var occupation = require("./seeds/occupation");
+var profession = require("./seeds/profession");
+var schooling = require("./seeds/schooling");
+var tradeUnion = require("./seeds/trade-union");
+var prisma = new PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     console.log("Start seeding...");
-                    return [4 /*yield*/, prisma.attendance.createMany({ data: attendance_1.attendance })];
+                    return [4 /*yield*/, prisma.attendance.createMany({ data: attendance })];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, prisma.category.createMany({ data: category_1.category })];
+                    return [4 /*yield*/, prisma.category.createMany({ data: category })];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, prisma.day.createMany({ data: day_1.day })];
+                    return [4 /*yield*/, prisma.day.createMany({ data: day })];
                 case 3:
                     _a.sent();
-                    return [4 /*yield*/, prisma.employeeType.createMany({ data: employee_type_1.employeeType })];
+                    return [4 /*yield*/, prisma.employeeType.createMany({ data: employeeType })];
                 case 4:
                     _a.sent();
-                    return [4 /*yield*/, prisma.gender.createMany({ data: gender_1.gender })];
+                    return [4 /*yield*/, prisma.gender.createMany({ data: gender })];
                 case 5:
                     _a.sent();
-                    return [4 /*yield*/, prisma.hour.createMany({ data: hour_1.hours })];
+                    return [4 /*yield*/, prisma.hour.createMany({ data: hours })];
                 case 6:
                     _a.sent();
-                    return [4 /*yield*/, prisma.incident.createMany({ data: incident_1.incident })];
+                    return [4 /*yield*/, prisma.incident.createMany({ data: incident })];
                 case 7:
                     _a.sent();
-                    return [4 /*yield*/, prisma.incidentStatus.createMany({ data: incident_status_1.incidentStatus })];
+                    return [4 /*yield*/, prisma.incidentStatus.createMany({ data: incidentStatus })];
                 case 8:
                     _a.sent();
-                    return [4 /*yield*/, prisma.location.createMany({ data: location_1.location })];
+                    return [4 /*yield*/, prisma.location.createMany({ data: locations })];
                 case 9:
                     _a.sent();
-                    return [4 /*yield*/, prisma.payroll.createMany({ data: payroll_1.payroll })];
+                    return [4 /*yield*/, prisma.request.createMany({ data: requests })];
                 case 10:
                     _a.sent();
-                    return [4 /*yield*/, prisma.request.createMany({ data: request_1.requests })];
+                    return [4 /*yield*/, prisma.requestStatus.createMany({ data: requestStatus })];
                 case 11:
                     _a.sent();
-                    return [4 /*yield*/, prisma.requestStatus.createMany({ data: request_status_1.requestStatus })];
+                    return [4 /*yield*/, prisma.role.createMany({ data: roles })];
                 case 12:
                     _a.sent();
-                    return [4 /*yield*/, prisma.role.createMany({ data: roles_1.roles })];
+                    return [4 /*yield*/, prisma.statusEmployee.createMany({ data: statusEmployee })];
                 case 13:
                     _a.sent();
-                    return [4 /*yield*/, prisma.statusEmployee.createMany({ data: status_employee_1.statusEmployee })];
+                    return [4 /*yield*/, prisma.secretaria.createMany({ data: secretaria })];
                 case 14:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.direccion.createMany({ data: direccion })];
+                case 15:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.country.createMany({ data: country })];
+                case 16:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.state.createMany({ data: state })];
+                case 17:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.municipality.createMany({ data: municipality })];
+                case 18:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.identificationType.createMany({ data: identificationType })];
+                case 19:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.maritalStatus.createMany({ data: maritalStatus })];
+                case 20:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.occupation.createMany({ data: occupation })];
+                case 21:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.profession.createMany({ data: profession })];
+                case 22:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.schooling.createMany({ data: schooling })];
+                case 23:
+                    _a.sent();
+                    return [4 /*yield*/, prisma.tradeUnion.createMany({ data: tradeUnion })];
+                case 24:
                     _a.sent();
                     console.log("Seeding finished.");
                     return [2 /*return*/];
@@ -111,7 +150,7 @@ main()
     console.error("Error during seeding:", e);
     process.exit(1);
 })
-    .finally(function () { return __awaiter(void 0, void 0, void 0, function () {
+    .finally(function () { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, prisma.$disconnect()];
