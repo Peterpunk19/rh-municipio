@@ -32,6 +32,7 @@ model User {
   created_by             User?                @relation("UserCreatedBy", fields: [created_by_id], references: [id])
   created_by_id          Int?
   users_created          User[]               @relation("UserCreatedBy")
+  employee_requests_by   EmployeeRequest[]    @relation("requestedBy")
 }
 
 model Employee {
@@ -60,10 +61,10 @@ model Employee {
   sustitute                            Director?                 @relation("Substitute", fields: [sustitute_id], references: [id])
   employee_incidents                   EmployeeIncidents[]
   employee_incidents_status_created_by EmployeeIncidentsStatus[] @relation("createdByEmployee")
+  employee_request_status_created_by EmployeeRequestStatus[] @relation("createdByEmployee")
   employee_vacations                   EmployeeVacations[]       @relation("employeeVacations")
   employee_vacations_created_by        EmployeeVacations[]       @relation("employeeVacationsCreators")
   employee_requests                    EmployeeRequest[]
-  employee_requests_by                 EmployeeRequest[]         @relation("requestedBy")
   employee_requests_resolved_by        EmployeeRequest[]         @relation("resolvedBy")
   employee_created_by                  EmployeeHiring[]          @relation("EmployeeCreatedBy")
   employee_address                     EmployeeAddress[]
@@ -301,39 +302,76 @@ model RequestStatus {
   description       String
   active            Boolean           @default(true)
   employee_requests EmployeeRequest[]
+  employee_request_status EmployeeRequestStatus[]
 }
 
 model EmployeeRequest {
-  id                      Int                     @id @default(autoincrement())
+  id                      Int                       @id @default(autoincrement())
+  folio                   String                    @unique
+  oficio                  String?
+  description             String
   employee_id             Int
   request_id              Int
   request_status_id       Int
   request_date            DateTime
   requested_by_id         Int
-  resolved_by_id          Int
-  resolved_at             DateTime
-  created_at              DateTime?               @default(now())
-  updated_at              DateTime?               @updatedAt
-  active                  Boolean                 @default(true)
-  employee                Employee                @relation(fields: [employee_id], references: [id])
-  request                 Request                 @relation(fields: [request_id], references: [id])
-  request_status          RequestStatus           @relation(fields: [request_status_id], references: [id])
-  requested_by            Employee                @relation("requestedBy", fields: [requested_by_id], references: [id])
-  resolved_by             Employee                @relation("resolvedBy", fields: [resolved_by_id], references: [id])
+  resolved_by_id          Int?
+  resolved_at             DateTime?
+  created_at              DateTime?                 @default(now())
+  updated_at              DateTime?                 @updatedAt
+  active                  Boolean                   @default(true)
+  employee                Employee                  @relation(fields: [employee_id], references: [id])
+  request                 Request                   @relation(fields: [request_id], references: [id])
+  request_status          RequestStatus             @relation(fields: [request_status_id], references: [id])
+  requested_by            User                      @relation("requestedBy", fields: [requested_by_id], references: [id])
+  resolved_by             Employee?                 @relation("resolvedBy", fields: [resolved_by_id], references: [id])
   employee_request_detail EmployeeRequestDetail[]
+  EmployeeRequestStatus   EmployeeRequestStatus[]
+  EmployeeRequestSchedule EmployeeRequestSchedule[]
+  @@unique([employee_id, request_id, request_date, active])
 }
 
 model EmployeeRequestDetail {
   id                  Int             @id @default(autoincrement())
-  start_at            DateTime
-  end_at              DateTime
-  attendance_date     DateTime
+  start_date          DateTime?
+  end_date            DateTime?
+  attendance_date     DateTime?
   employee_request_id Int
   employee_request    EmployeeRequest @relation(fields: [employee_request_id], references: [id])
-  location_id         Int
-  location            Location        @relation(fields: [location_id], references: [id])
-  attendance_id       Int
-  attendance          Attendance      @relation(fields: [attendance_id], references: [id])
+  location_id         Int?
+  location            Location?       @relation(fields: [location_id], references: [id])
+  attendance_id       Int?
+  attendance          Attendance?     @relation(fields: [attendance_id], references: [id])
+}
+
+model EmployeeRequestStatus {
+  id                   Int             @id @default(autoincrement())
+  employee_request_id  Int
+  employee_request     EmployeeRequest @relation(fields: [employee_request_id], references: [id])
+  request_status_id    Int
+  request_status       RequestStatus   @relation(fields: [request_status_id], references: [id])
+  active               Boolean         @default(true)
+  created_by_id        Int
+  created_by           Employee        @relation("createdByEmployee", fields: [created_by_id], references: [id])
+  created_at           DateTime?       @default(now())
+  updated_at           DateTime?       @updatedAt
+}
+
+model EmployeeRequestSchedule {
+  id                  Int             @id @default(autoincrement())
+  employee_request_id Int
+  employee_request    EmployeeRequest @relation(fields: [employee_request_id], references: [id])
+  active              Boolean         @default(true)
+  created_at          DateTime?       @default(now())
+  updated_at          DateTime?       @updatedAt
+  start_day_id        Int
+  end_day_id          Int
+  start_day           Day             @relation("StartDay", fields: [start_day_id], references: [id])
+  end_day             Day             @relation("EndDay", fields: [end_day_id], references: [id])
+  start_hour_id       Int
+  end_hour_id         Int
+  start_hour          Hour            @relation("StartHour", fields: [start_hour_id], references: [id])
+  end_hour            Hour            @relation("EndHour", fields: [end_hour_id], references: [id])
 }
 
 model JobScheduleEmployee {
@@ -354,21 +392,25 @@ model JobScheduleEmployee {
 }
 
 model Day {
-  id                           Int                   @id @default(autoincrement())
-  name                         String                @unique
-  display_name                 String
-  active                       Boolean               @default(true)
-  job_schedule_employees_start JobScheduleEmployee[] @relation("StartDay")
-  job_schedule_employees_end   JobScheduleEmployee[] @relation("EndDay")
+  id                              Int                       @id @default(autoincrement())
+  name                            String                    @unique
+  display_name                    String
+  active                          Boolean                   @default(true)
+  job_schedule_employees_start    JobScheduleEmployee[]     @relation("StartDay")
+  job_schedule_employees_end      JobScheduleEmployee[]     @relation("EndDay")
+  employee_request_start_schedule EmployeeRequestSchedule[] @relation("StartDay")
+  employee_request_end_schedule   EmployeeRequestSchedule[] @relation("EndDay")
 }
 
 model Hour {
-  id                           Int                   @id @default(autoincrement())
-  name                         String                @unique
-  display_name                 String
-  active                       Boolean               @default(true)
-  job_schedule_employees_start JobScheduleEmployee[] @relation("StartHour")
-  job_schedule_employees_end   JobScheduleEmployee[] @relation("EndHour")
+  id                              Int                       @id @default(autoincrement())
+  name                            String                    @unique
+  display_name                    String
+  active                          Boolean                   @default(true)
+  job_schedule_employees_start    JobScheduleEmployee[]     @relation("StartHour")
+  job_schedule_employees_end      JobScheduleEmployee[]     @relation("EndHour")
+  employee_request_start_schedule EmployeeRequestSchedule[] @relation("StartHour")
+  employee_request_end_schedule   EmployeeRequestSchedule[] @relation("EndHour")
 }
 
 model Role {

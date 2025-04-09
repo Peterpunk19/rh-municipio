@@ -12,6 +12,7 @@ export const validationMessages = {
   oneUppercaseLetter: (field: string) => `${field} debe contener al menos una letra mayúscula`,
   oneSymbol: (field: string) => `${field} debe contener al menos alguno de los siguientes simbolos [!@#$%^&*,._-=?]`,
   oneNumber: (field: string) => `${field} debe contener al menos un número`,
+  oneItem: (field: string) => `${field} debe contener al menos un elemento`,
   number: (field: string) => `${field} debe ser un número`,
   minNumber: (field: string, minNumber: number) => `${field} debe ser un número igual o mayor a ${minNumber}`,
   maxNumber: (field: string, maxNumber: number) => `${field} debe ser un número igual o menor a ${maxNumber}`,
