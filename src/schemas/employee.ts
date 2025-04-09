@@ -25,7 +25,7 @@ export const EmployeePostSchema = z
       .min(1, { message: validationMessages.required("Apellido paterno") })
       .max(255, { message: validationMessages.maxLength("Apellido paterno", 255) }),
     maternalLastName: z
-      .string()
+      .string({ message: validationMessages.required("Apellido materno") })
       .min(1, { message: validationMessages.required("Apellido materno") })
       .max(255, { message: validationMessages.maxLength("Apellido materno", 255) }),
     birthday: z.preprocess(
@@ -40,11 +40,11 @@ export const EmployeePostSchema = z
     ),
     genderId: z.number({ message: validationMessages.required("Género") }),
     rfc: z
-      .string()
+      .string({ message: validationMessages.required("RFC") })
       .min(1, { message: validationMessages.required("RFC") })
       .regex(rfcRegex, { message: validationMessages.invalidFormat("RFC") }),
     curp: z
-      .string()
+      .string({ message: validationMessages.required("CURP") })
       .min(1, { message: validationMessages.required("CURP") })
       .regex(curpRegex, { message: validationMessages.invalidFormat("CURP") }),
     startJobDate: z.preprocess(
@@ -92,7 +92,15 @@ export const EmployeePostSchema = z
     categoryId: z.number({ message: validationMessages.required("Categoria") }),
     employeeTypeName: z
       .string({ message: validationMessages.required("Tipo de empleado") })
-      .min(1, { message: validationMessages.required("Tipo de empleado") }),
+      .min(1, { message: validationMessages.required("Tipo de empleado") })
+      .refine(
+        (val) =>
+          val === "" ||
+          Object.values(EmployeeTypeName).includes(val as (typeof EmployeeTypeName)[keyof typeof EmployeeTypeName]),
+        {
+          message: validationMessages.invalid("Tipo de empleado"),
+        },
+      ),
     direccionId: z.number({ message: validationMessages.required("Órgano administrativo") }),
     maritalStatusId: z
       .number({ message: validationMessages.required("Estado Civil") })

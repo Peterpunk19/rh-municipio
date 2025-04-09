@@ -18,7 +18,7 @@ export interface IEmployee {
   endJobDate: string;
   categoryId: number | string;
   employeeTypeName: string;
-  tradeUnionId?: number | null;
+  tradeUnionId?: number | string | null;
   employeeTypeId?: number | string;
   direccionId: number | string;
   maritalStatusId: number | string;
@@ -75,4 +75,14 @@ export interface IEmployeeHiring {
 
 export interface IEmployeeById {
   id: number;
+}
+
+export interface IEmployeeLocation {
+  employeeId: number;
+  locationId: number;
+  attendanceId: number;
+  active: boolean;
+  createdBy: number;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -2,28 +2,32 @@ import { handleHttpResponse } from "@/common/response/handler";
 import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
-import { IEmployeeIncidentFilters } from "@/app/api/employee-incidents/types";
-import { EmployeeIncidentsGetFilterSchema } from "@/schemas/employee-incidents";
-import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
+import { IEmployeeAttendanceFilters } from "@/app/api/employee-attendance/types";
+import { EmployeeAttendanceGetFilterSchema } from "@/schemas/employee-attendance";
+import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
 import { getParamsFromUrl } from "@/common/utils";
+import { logger } from "@/lib/logger";
+
+const DEFAULT_LIMIT = 10;
+const DEFAULT_PAGE = 1;
 
 export async function GET(request: Request) {
   try {
     const params = {
-      page: 1,
-      limit: 5,
-      incident_id: null,
-      incident_status_id: null,
-      start_date: null,
-      end_date: null,
+      page: DEFAULT_PAGE,
+      limit: DEFAULT_LIMIT,
+      checkIn: null,
+      checkOut: null,
+      organismPublic: null,
+      organismAdministrative: null,
       search: null,
     };
 
     const requestParams = await getParamsFromUrl(request, params);
 
-    const validationRequest = await validateRequestByUrlParams<IEmployeeIncidentFilters>(
+    const validationRequest = await validateRequestByUrlParams<IEmployeeAttendanceFilters>(
       requestParams,
-      EmployeeIncidentsGetFilterSchema,
+      EmployeeAttendanceGetFilterSchema,
     );
 
     if (validationRequest.response) return validationRequest.response;
@@ -35,10 +39,11 @@ export async function GET(request: Request) {
       return handleHttpResponse(response);
     }
 
-    const existingEmployees = await EmployeeIncidentsService.getEmployeesIncidentsByParams(validRequestData);
+    const existingEmployeesAttendances =
+      await EmployeeAttendanceService.getEmployeesAttendanceByParams(validRequestData);
 
-    if (existingEmployees && existingEmployees.total === 0) {
-      const response = HttpResponse.success(HttpMessages.employeeIncidents.notFound, {
+    if (!existingEmployeesAttendances || existingEmployeesAttendances.total === 0) {
+      const response = HttpResponse.success(HttpMessages.employeeAttendance.notFound, {
         data: [],
         total: 0,
         totalPages: 0,
@@ -48,12 +53,14 @@ export async function GET(request: Request) {
       return handleHttpResponse(response);
     }
 
-    const response = HttpResponse.success(HttpMessages.employeeIncidents.getSuccess, existingEmployees);
+    const response = HttpResponse.success(HttpMessages.employeeAttendance.getSuccess, existingEmployeesAttendances);
 
     return handleHttpResponse(response);
-  } catch (error) {
-    console.error(`An error occurred detail: ${error}`);
-    const response = HttpResponse.failure(HttpMessages.error.internalServerError, error);
+  } catch (error: any) {
+    logger.error({ error: error.message, stack: error.stack });
+    const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, {
+      error: HttpMessages.error.internalServerError,
+    });
     return handleHttpResponse(response);
   }
 }

@@ -193,6 +193,7 @@ model EmployeeAttendance {
   active               Boolean             @default(true)
   created_by_id        Int
   employee_hiring_id   Int
+  description          String
   created_by           User                @relation(fields: [created_by_id], references: [id])
   employee_location_id Int
   employee_location    EmployeeLocation    @relation(fields: [employee_location_id], references: [id])
