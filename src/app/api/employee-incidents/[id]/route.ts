@@ -5,34 +5,28 @@ import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
+import { failureResponse, successResponse } from "@/common/utils";
+import { logger } from "@/lib/logger";
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const id = Number.parseInt((await params).id);
+    if (isNaN(id)) return failureResponse(HttpMessages.error.invalidId);
 
     const validationRequest = await validateRequestByUrlParams<IEmployeeById>({ id }, EmployeeGetByIdSchema);
-
     if (validationRequest.response) return validationRequest.response;
 
-    const validRequestData = validationRequest.data;
+    const existingEmployeeIncident = await EmployeeIncidentsService.getEmployeeIncidentById(id);
+    if (!existingEmployeeIncident) return failureResponse(HttpMessages.employeeIncidents.notFoundById);
 
-    if (!validRequestData) {
-      const response = HttpResponse.failure(HttpMessages.error.validationFields, {});
-      return handleHttpResponse(response);
-    }
+    return successResponse(HttpMessages.employeeIncidents.foundById, existingEmployeeIncident);
+  } catch (error: any) {
+    logger.error({ error: error.message, stack: error.stack });
 
-    const existingEmployeeIncident = await EmployeeIncidentsService.getEmployeeIncidentById(validRequestData.id);
-
-    if (!existingEmployeeIncident) {
-      const response = HttpResponse.failure(HttpMessages.employeeIncidents.notFoundById, {});
-      return handleHttpResponse(response);
-    }
-
-    const response = HttpResponse.success(HttpMessages.employeeIncidents.foundById, existingEmployeeIncident);
-    return handleHttpResponse(response);
-  } catch (error) {
-    console.error(`An error occurred detail: ${error}`);
-    const response = HttpResponse.failure(HttpMessages.error.internalServerError, error);
-    return handleHttpResponse(response);
+    return handleHttpResponse(
+      HttpResponse.internalServerError(HttpMessages.error.internalServerError, {
+        error: HttpMessages.error.internalServerError,
+      }),
+    );
   }
 }

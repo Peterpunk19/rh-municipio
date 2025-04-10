@@ -224,7 +224,7 @@ model EmployeeIncidents {
   employee_vacations      EmployeeVacations[]
   created_at              DateTime?                 @default(now())
   validated_at            DateTime?                 @updatedAt
-  EmployeeIncidentsStatus EmployeeIncidentsStatus[]
+  employee_incidents_status EmployeeIncidentsStatus[]
   active                  Boolean                   @default(true)
 
   @@unique([employee_id, start_date, end_date, incident_status_id, incident_id])
@@ -261,6 +261,7 @@ model IncidentStatus {
   btn_color                 String
   type                      Int
   active                    Boolean
+  allowed_roles_to_update             String
   employee_incidents_status EmployeeIncidentsStatus[]
   employee_incidents        EmployeeIncidents[]
 }

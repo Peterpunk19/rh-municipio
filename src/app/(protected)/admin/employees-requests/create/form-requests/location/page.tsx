@@ -34,7 +34,7 @@ const LocationForm = () => {
       <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12 }} sx={{ mt: 0, pt: 0 }}>
           <FormControl fullWidth sx={{ mt: -1, pt: 0 }}>
-            <CustomFormLabel>Ubicación</CustomFormLabel>
+            <CustomFormLabel sx={{ mt: 0 }}>Ubicación</CustomFormLabel>
             <CustomTextField
               value={employeeData?.location_display_name || "No hay ubicación asignada"}
               disabled
@@ -43,7 +43,7 @@ const LocationForm = () => {
           </FormControl>
         </Grid2>
 
-        <Grid2 size={{ xs: 12, md: 4 }} sx={{ mt: -3, pt: 0 }}>
+        <Grid2 size={{ xs: 12, md: 4 }} sx={{ mt: 0, pt: 0 }}>
           <FormControl fullWidth sx={{ mt: 0, pt: 0 }}>
             <CustomFormLabel>Seleccione la nueva ubicación</CustomFormLabel>
             <CustomSelect

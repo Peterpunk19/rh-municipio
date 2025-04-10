@@ -20,11 +20,16 @@ export const HttpMessages = {
   employeeIncidents: {
     invalidData: "Ya existe una incidencia con estos datos",
     createdSuccess: "Incidencia creada correctamente",
+    updatedSuccess: "Incidencia actualizada correctamente",
     notFound: "No se encontraron incidencias con los filtros proporcionados",
     getSuccess: "Incidencias encontradas correctamente",
     invalidEmployeeType: "No fue encontrado el tipo de empleado.",
     folioError: "Folio no creado.",
     notFoundById: "Incidencia no encontrada.",
+    invalidUpdateData: "La incidencia ya se encuentra en este estatus.",
+    notAllowedToUpdate: "No tienes permisos para actualizar a este estatus.",
+    invalidUserToCancel: "La incidencia puede ser cancelada unicamente por el empleado que la creó.",
+    employeeWithoutHiringOrLocation: "El empleado no tiene una contratación o una ubicación asignada.",
     foundById: "Incidencia encontrada correctamente",
   },
   employeeAttendance: {
@@ -43,14 +48,18 @@ export const HttpMessages = {
     notFound: "No se encontraron datos de ubicación para el empleado",
   },
   incidentStatus: {
+    idNotFound: "El ID de estatus de incidencia no fue encontrado",
     notFound: "Estatus de incidencia no encontrado",
+    invalidIncidentStatusId: "La incidencia ya estuvo anteriormente en este estatus",
   },
   requestStatus: {
     notFound: "Estatus de solicitud no encontrado",
   },
   error: {
     internalServerError: "Ocurrio un error en el servidor",
+    unknownError: "Ocurrio un error desconocido",
     invalidRequest: "Invalid request",
+    invalidId: "ID debe ser un número",
     notFound: "Datos no encontrados",
     validationFields: "Datos incorrectos, por favor revise de nuevo el formulario.",
     notAuthorized: "No autorizado: JWT inválido o ausente",

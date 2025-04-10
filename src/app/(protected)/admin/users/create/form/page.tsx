@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
@@ -208,7 +208,9 @@ const UserCreateForm = () => {
             <Grid2 size={12}>
               {responseMessage && (
                 <Alert severity={isSuccess ? "success" : "error"}>
-                  <Typography variant="body1" fontWeight={600}>{responseMessage}</Typography>
+                  <Typography variant="body1" fontWeight={600}>
+                    {responseMessage}
+                  </Typography>
                 </Alert>
               )}
             </Grid2>

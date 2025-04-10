@@ -4,10 +4,8 @@ import { HttpMessages } from "@/common/response/messages";
 export const response = {
   idNotnumber: {
     success: false,
-    message: HttpMessages.error.validationFields,
-    responseObject: {
-      id: { messages: [validationMessages.number("ID")] },
-    },
+    message: validationMessages.number("ID"),
+    responseObject: {},
     statusCode: 400,
   },
   idZero: {

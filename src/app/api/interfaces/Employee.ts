@@ -21,4 +21,4 @@ export interface Employee {
   identification_type_id?: number;
   trade_union_id?: number;
   identification_folio?: string;
-} 
+}

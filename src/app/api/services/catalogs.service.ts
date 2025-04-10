@@ -210,9 +210,13 @@ export const CatalogsService = {
                  ) AS employee_incidents
                                     ON employee_incidents.incident_status_id = incidents_status.id
                  ) AS child ON child.id = parent.id
-ORDER BY parent.id `;
+WHERE parent.active = 1 ORDER BY parent.id `;
 
     const incidentsStatus = await prisma.$queryRawUnsafe<any[]>(baseQuery);
+
+    if (!Array.isArray(incidentsStatus)) {
+      throw new Error("Query did not return an array");
+    }
 
     return incidentsStatus.map((status: any) => ({
       ...status,
@@ -234,6 +238,20 @@ ORDER BY parent.id `;
     return prisma.request.findMany({
       orderBy: {
         display_name: "asc",
+      },
+    });
+  },
+
+  async getCatalogById(catalogName: string, catalogId: number | string) {
+    const model = (prisma as any)[catalogName];
+
+    if (!model) {
+      throw new Error(`El modelo ${catalogName} no existe en Prisma`);
+    }
+
+    return model.findUnique({
+      where: {
+        id: catalogId,
       },
     });
   },

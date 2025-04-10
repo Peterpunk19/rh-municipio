@@ -1,15 +1,7 @@
 "use client";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Box,
-  FormControl,
-  Grid2,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Typography,
-} from "@mui/material";
+import { Box, FormControl, Grid2, Radio, RadioGroup, FormControlLabel, Typography } from "@mui/material";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
@@ -20,17 +12,11 @@ import type { RootState } from "@/store/store";
 
 const AttendanceTypeForm = () => {
   const dispatch = useDispatch();
-  const { formData, errors, employeeData } = useSelector(
-    (state: RootState) => state.createEmployeeRequest
-  );
+  const { formData, errors, employeeData } = useSelector((state: RootState) => state.createEmployeeRequest);
 
   const catalogName = "attendance";
   const fetchData = React.useCallback(() => fetchCatalogData(catalogName), []);
-  const {
-    options: attendanceTypes,
-    isLoading,
-    error,
-  } = useFetchOptions(fetchData);
+  const { options: attendanceTypes, isLoading, error } = useFetchOptions(fetchData);
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
@@ -41,20 +27,17 @@ const AttendanceTypeForm = () => {
     <Box>
       <Grid2 container spacing={2}>
         <Grid2 size={12}>
-          <CustomFormLabel>Tipo de checado actual</CustomFormLabel>
+          <CustomFormLabel sx={{ mt: 0 }}>Tipo de checado actual</CustomFormLabel>
           <Typography variant="body1" gutterBottom>
-            {employeeData?.attendance_type_display_name
-              ? employeeData?.attendance_type_display_name
-              : "No asignado"}
+            {employeeData?.attendance_type_display_name ? employeeData?.attendance_type_display_name : "No asignado"}
           </Typography>
         </Grid2>
       </Grid2>
       <Grid2 container spacing={1} sx={{ mt: 1 }}>
         <Grid2 size={{ xs: 12, md: 12 }}>
-          <CustomFormLabel> Tipo de Checado</CustomFormLabel>
+          <CustomFormLabel> Nuevo Tipo de Checado</CustomFormLabel>
 
-          {!isLoading &&
-            error ? (
+          {!isLoading && error ? (
             <Typography variant="body1" gutterBottom>
               Error al cargar los tipos de checado
             </Typography>
@@ -81,9 +64,9 @@ const AttendanceTypeForm = () => {
           )}
         </Grid2>
 
-        <Grid2 size={{xs: 12, md: 6}}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <FormControl fullWidth>
-            <CustomFormLabel>Fecha de aplicación</CustomFormLabel>
+            <CustomFormLabel sx={{ mt: 0 }}>Fecha de aplicación</CustomFormLabel>
             <CustomTextField
               type="date"
               name="applicationDate"

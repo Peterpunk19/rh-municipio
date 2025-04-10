@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { encryptPassword, endOfDay, startOfDay } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters, IEmployeeHiring } from "@/app/api/employees/interface";
+import { ROLES } from "@/common/constants/Roles";
+import { STATUS_EMPLOYEE } from "@/common/constants/StatusEmployee";
 
 export const EmployeeService = {
   async getEmployeeByRfcCurp(rfc: string, curp: string, employeeId?: number) {
@@ -84,6 +86,17 @@ export const EmployeeService = {
     });
   },
 
+  async getEmployeeByUserId(id: number) {
+    return prisma.employee.findFirst({
+      select: {
+        id: true,
+      },
+      where: {
+        user_id: id,
+      },
+    });
+  },
+
   async createEmployee(employee: IEmployee) {
     return prisma.$transaction(async (tx) => {
       const createUser = await tx.user.create({
@@ -92,7 +105,7 @@ export const EmployeeService = {
           username: employee.rfc,
           password: await encryptPassword(employee.numberEmployee),
           role: {
-            connect: { name: "empleado" },
+            connect: { name: ROLES.EMPLEADO },
           },
         },
       });
@@ -107,7 +120,7 @@ export const EmployeeService = {
           rfc: employee.rfc,
           curp: employee.curp,
           status_employee: {
-            connect: { name: "activo" },
+            connect: { name: STATUS_EMPLOYEE.ACTIVO },
           },
           gender: {
             connect: { id: Number(employee.genderId) },
@@ -162,12 +175,28 @@ export const EmployeeService = {
         },
       });
 
+      const createdEmployeeLocation = await tx.employeeLocation.create({
+        data: {
+          employee: {
+            connect: { id: Number(createEmployee.id) },
+          },
+          location: {
+            connect: { id: Number(employee.locationId) },
+          },
+          attendance: {
+            connect: { id: Number(employee.attendanceId) },
+          },
+          active: employee.active,
+          created_at: new Date(),
+        },
+      });
+
       await tx.user.update({
         where: { id: createUser.id },
         data: { employee_id: createEmployee.id },
       });
 
-      return [createUser, createEmployee, createEmployeeHiring, createEmployeeAddress];
+      return [createUser, createEmployee, createEmployeeHiring, createEmployeeAddress, createdEmployeeLocation];
     });
   },
 
@@ -523,7 +552,7 @@ export const EmployeeService = {
           rfc: employee.rfc,
           curp: employee.curp,
           status_employee: {
-            connect: { name: "alta" },
+            connect: { name: STATUS_EMPLOYEE.ACTIVO },
           },
           gender: {
             connect: { id: Number(employee.genderId) },

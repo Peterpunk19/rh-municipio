@@ -2,34 +2,36 @@
 
 import React, { useState, useCallback } from "react";
 import {
-  Grid2,
-  Box,
+  Grid2 as Grid,
   Divider,
   Typography,
   Button,
   Stack,
   Chip,
-  FormControl,
-  List,
-  ListItem,
-  ListItemText,
+  Alert,
+  Grid2,
+  Box,
+  MenuItem,
+  Paper,
 } from "@mui/material";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
-import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import BlankCard from "@/components/shared/BlankCard";
 import { StatusCodes } from "http-status-codes";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { useParams, redirect } from "next/navigation";
-import { getEmployeeIncidentById } from "@/services/employees-incidents";
-import CustomFormLabel from "@/components/theme-elements/CustomFormLabel";
-import CustomTextField from "@/components/theme-elements/CustomTextField";
+import { getEmployeeIncidentById, updateEmployeeIncident } from "@/services/employees-incidents";
 import { fetchCatalogData } from "@/services/catalogs";
 import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { formatDate } from "@/utils/formatter";
 import { logger } from "@/lib/logger";
+import CardContent from "@mui/material/CardContent";
+import { generateUniqueKey } from "@/utils";
+import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
+import { IconDownload } from "@tabler/icons-react";
+import EmployeeDetails from "@/components/customComponents/EmployeeDetails";
+import IncidentStatusHistory from "@/components/customComponents/IncidentStatusHistory";
+import IncidentDetails from "@/components/customComponents/IncidentDetails";
+import LoadingComponent from "@/components/customComponents/LoadingComponent";
 
 const BCrumb = [
   {
@@ -41,27 +43,26 @@ const BCrumb = [
   },
 ];
 
-const iconMap = {
-  clock: <AccessTimeOutlinedIcon width={18} />,
-  check: <CheckBoxOutlinedIcon width={18} />,
-  x: <ClearOutlinedIcon width={18} />,
-  trash: <DeleteOutlineOutlinedIcon width={18} />,
-};
-
 const EmployeeIncident = () => {
   const [loading, setLoading] = useState(false);
   const [employeeIncidentData, setEmployeeIncidentData] = useState<any>(null);
   const { id } = useParams();
   const [openDialog, setOpenDialog] = React.useState(false);
   const [idStatus, setIdStatus] = React.useState(0);
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<any>({});
 
-  React.useEffect(() => {
+  const fetchEmployeeIncidentById = (id: any) => {
     try {
       if (id) {
         setLoading(true);
         getEmployeeIncidentById(id as string).then((data) => {
           if (data.statusCode === StatusCodes.OK) {
             setEmployeeIncidentData(data.responseObject);
+            setData({
+              id: data.responseObject.id,
+            });
           } else {
             setEmployeeIncidentData(null);
             redirect("/admin/employees-incidents");
@@ -74,216 +75,192 @@ const EmployeeIncident = () => {
       setLoading(false);
       redirect("/admin/employees-incidents");
     }
+  };
+
+  React.useEffect(() => {
+    fetchEmployeeIncidentById(id);
   }, [id]);
 
   const catalogName = "incidents-status";
   const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
 
-  const { options: incidentStatus, isLoading, error } = useFetchOptions(fetchData);
+  const { options: incidentStatus } = useFetchOptions(fetchData);
 
-  const handleChangeStatus = (id: any) => {
+  const handleChangeStatus = (e: { target: { value: any } }) => {
+    setIdStatus(e.target.value);
+    setData({ ...data, incidentStatusId: e.target.value });
     setOpenDialog(true);
-    setIdStatus(id);
   };
 
   const handleCancel = () => {
+    setData({ ...data, incidentStatusId: 0 });
     setOpenDialog(false);
   };
 
   const handleConfirm = async () => {
     try {
+      const response = await updateEmployeeIncident(data);
+      if (!response.success) {
+        if (response && response.responseObject) {
+          setResponseMessage(response.message);
+          setIsSuccess(false);
+        } else {
+          throw new Error("Failed to submit form. Please try again.");
+        }
+        return;
+      } else {
+        setResponseMessage(response.message);
+        fetchEmployeeIncidentById(id);
+        setIsSuccess(true);
+      }
     } catch (err) {
       console.log(err);
     } finally {
+      setData({ ...data, incidentStatusId: 0 });
       setIdStatus(0);
       setOpenDialog(false);
     }
   };
 
-  if (!employeeIncidentData && !loading) return <div>Incidencia no encontrada</div>;
-  if (loading) return <div>Cargando...</div>;
+  if (!employeeIncidentData && !loading) return <LoadingComponent />;
 
   return (
     !loading && (
-      <Grid2 container spacing={3}>
+      <Grid container spacing={3}>
         <Breadcrumb title="Detalles de incidencia" items={BCrumb} />
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
-          <Button variant="contained" color="info" sx={{ display: "flex" }}>
-            Descargar formato
-          </Button>
-        </Stack>
-        <BlankCard>
-          <Grid2 container spacing={2} p={3} justifyContent="center" alignItems="center">
-            <Grid2 size={{ md: 4 }} display="flex" flexDirection="column" alignItems="center" textAlign="center">
-              <Typography variant="subtitle1" gutterBottom>
-                Tipo de Incidencia
-              </Typography>
-              <Typography variant="h5">{employeeIncidentData.incident.display_name}</Typography>
-            </Grid2>
-
-            <Grid2 size={{ md: 4 }} display="flex" flexDirection="column" alignItems="center" textAlign="center">
-              <Typography variant="subtitle1" gutterBottom>
-                Estatus de Incidencia
-              </Typography>
-              <Chip
-                color={employeeIncidentData.incident_status.btn_color}
-                label={employeeIncidentData.incident_status.btn_display_name}
-                size="medium"
-                sx={{ fontSize: "16px" }}
-              />
-            </Grid2>
-
-            <Grid2 size={{ md: 4 }} display="flex" flexDirection="column" alignItems="center" textAlign="center">
-              <Typography variant="subtitle1" gutterBottom>
-                Fecha de Solicitud
-              </Typography>
-              <Typography variant="h5">{formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}</Typography>
-            </Grid2>
-          </Grid2>
-          <Divider></Divider>
-
-          <Grid2 container spacing={2} p={3}>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Empleado</CustomFormLabel>
-                <CustomTextField
-                  value={`${employeeIncidentData.employee.name} ${employeeIncidentData.employee.paternal_last_name} ${employeeIncidentData.employee.maternal_last_name}`}
-                  variant="outlined"
-                  fullWidth
-                  readOnly
-                />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Folio</CustomFormLabel>
-                <CustomTextField value={employeeIncidentData.folio} variant="outlined" fullWidth readOnly />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Oficio</CustomFormLabel>
-                <CustomTextField value={employeeIncidentData.oficio} variant="outlined" fullWidth readOnly />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Organismo público</CustomFormLabel>
-                <CustomTextField
-                  value={employeeIncidentData.employee.employee_hiring?.[0]?.direccion?.secretaria?.display_name}
-                  variant="outlined"
-                  fullWidth
-                  readOnly
-                />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Organismo administrativo</CustomFormLabel>
-                <CustomTextField
-                  value={employeeIncidentData.employee.employee_hiring?.[0]?.direccion?.display_name}
-                  variant="outlined"
-                  fullWidth
-                  readOnly
-                />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Categoría</CustomFormLabel>
-                <CustomTextField
-                  value={employeeIncidentData.employee.employee_hiring?.[0]?.category?.display_name}
-                  variant="outlined"
-                  fullWidth
-                  readOnly
-                />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Fecha de inicio</CustomFormLabel>
-                <CustomTextField
-                  value={formatDate(employeeIncidentData.start_date)}
-                  variant="outlined"
-                  fullWidth
-                  readOnly
-                />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Fecha de terminación</CustomFormLabel>
-                <CustomTextField
-                  value={formatDate(employeeIncidentData.end_date)}
-                  variant="outlined"
-                  fullWidth
-                  readOnly
-                />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Solicitada por</CustomFormLabel>
-                <CustomTextField value="" variant="outlined" fullWidth readOnly />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Aprobada por</CustomFormLabel>
-                <CustomTextField value="" variant="outlined" fullWidth readOnly />
-              </FormControl>
-            </Grid2>
-            <Grid2 size={{ lg: 12 }}>
-              <FormControl fullWidth>
-                <CustomFormLabel>Justificación</CustomFormLabel>
-                <CustomTextField value={employeeIncidentData.description} multiline fullWidth readOnly />
-              </FormControl>
-            </Grid2>
-          </Grid2>
-
-          <Grid2 size={12} p={3}>
-            <Stack direction="row" spacing={2} justifyContent="center" mt={4}>
-              {!isLoading &&
-                !error &&
-                incidentStatus?.map((status) => (
-                  <Button
-                    key={status.id}
-                    type="button"
-                    variant="contained"
-                    color={status.btn_color}
-                    sx={{ display: "flex" }}
-                    startIcon={iconMap[status.btn_icon]}
-                    onClick={() => handleChangeStatus(status.id)}
-                  >
-                    {status.btn_display_name}
+        <Grid size={12}>
+          <Grid container>
+            <Grid size={{ lg: 6, xs: 12 }}>
+              <Box>
+                <CustomSelect
+                  value={data.incidentStatusId || 0}
+                  onChange={handleChangeStatus}
+                  sx={{
+                    height: "40px",
+                    "& .MuiSelect-select": {
+                      paddingTop: "8px",
+                      paddingBottom: "8px",
+                    },
+                  }}
+                >
+                  <MenuItem key={generateUniqueKey()} value={0}>
+                    Cambiar estatus de incidencia
+                  </MenuItem>
+                  {incidentStatus.map((item) => (
+                    <MenuItem key={generateUniqueKey()} value={item.id}>
+                      {item.display_name}
+                    </MenuItem>
+                  ))}
+                </CustomSelect>
+              </Box>
+            </Grid>
+            <Grid size={{ lg: 6, xs: 12 }}>
+              <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
+                <Box display="flex" gap={1}>
+                  <Button variant="outlined" color="secondary" startIcon={<IconDownload width={18} />}>
+                    Descargar formato
                   </Button>
-                ))}
-            </Stack>
-          </Grid2>
+                </Box>
+              </Stack>
+            </Grid>
+          </Grid>
+        </Grid>
 
-          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-start" p={3}>
-            <Typography variant="h3">Historial de estatus</Typography>
-          </Stack>
-          <Divider></Divider>
-          <Grid2 container spacing={2} p={3}>
-            <Typography variant="body1"></Typography>
-            <List>
-              <ListItem key="1">
-                <ListItemText
-                  secondary={
-                    <Typography variant="body2" color="text.secondary">
-                      Usuario: Juan cambió el estatus de la incidencia a APROBADA fecha: 12/02/2025 13:00
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            </List>
-          </Grid2>
-        </BlankCard>
+        <Grid2 size={12}>
+          {responseMessage && (
+            <Alert severity={isSuccess ? "success" : "error"}>
+              <Typography variant="body1" fontWeight={600}>
+                {responseMessage}
+              </Typography>
+            </Alert>
+          )}
+        </Grid2>
+
+        <Grid size={12}>
+          <BlankCard>
+            <CardContent>
+              <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="space-between" mb={2}>
+                <Box
+                  sx={{
+                    textAlign: {
+                      xs: "center",
+                      sm: "left",
+                    },
+                  }}
+                >
+                  <Typography variant="h5">Oficio: {employeeIncidentData.folio}</Typography>
+                  <Box mt={1}>
+                    <Chip
+                      size="medium"
+                      color="secondary"
+                      variant="outlined"
+                      label={formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}
+                    ></Chip>
+                  </Box>
+                </Box>
+
+                <Box textAlign="right">
+                  <Typography variant="h5">Folio: {employeeIncidentData.oficio || "PM/OM/DRH/1511/2025"}</Typography>
+                  <Box mt={1}>
+                    <Chip
+                      size="medium"
+                      color={employeeIncidentData.incident_status.btn_color}
+                      label={employeeIncidentData.incident_status.display_name}
+                    />
+                  </Box>
+                </Box>
+              </Stack>
+              <Divider></Divider>
+
+              <Grid container>
+                <Grid size={12} sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Tipo de Incidencia:{" "}
+                  </Typography>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    {employeeIncidentData.incident.display_name}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={3} mt={2} mb={4}>
+                <Grid size={6}>
+                  <EmployeeDetails data={employeeIncidentData} />
+                </Grid>
+                <Grid size={6}>
+                  <IncidentDetails data={employeeIncidentData} />
+                </Grid>
+              </Grid>
+
+              <Grid mb={3} size={12}>
+                <Paper variant="outlined" sx={{ height: "100%" }}>
+                  <Box p={3} display="flex" flexDirection="column" gap="4px" height="100%">
+                    <Grid container>
+                      <Grid size={{ lg: 12, xs: 12 }} mb={2}>
+                        <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
+                          JUSTIFICACIÓN
+                        </Typography>
+                        <Divider></Divider>
+                      </Grid>
+                      <Grid size={{ lg: 9, xs: 12 }}>
+                        <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
+                          {employeeIncidentData.description}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Paper>
+              </Grid>
+
+              <Grid size={12}>
+                <IncidentStatusHistory data={employeeIncidentData} />
+              </Grid>
+            </CardContent>
+          </BlankCard>
+        </Grid>
 
         <Dialog open={openDialog} maxWidth="md" disableEscapeKeyDown>
           <DialogTitle id="alert-dialog-title" variant="h5">
-            {"Cambio de estatus de la incidencia"}
+            Cambio de estatus de la incidencia
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
@@ -299,7 +276,7 @@ const EmployeeIncident = () => {
             </Button>
           </DialogActions>
         </Dialog>
-      </Grid2>
+      </Grid>
     )
   );
 };

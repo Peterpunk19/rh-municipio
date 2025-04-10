@@ -51,7 +51,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
       <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, md: 6 }}>
           <FormControl fullWidth>
-            <CustomFormLabel>{startDateLabel}</CustomFormLabel>
+            <CustomFormLabel sx={{ mt: 0 }}>{startDateLabel}</CustomFormLabel>
             <CustomTextField
               type="date"
               value={startDate}
@@ -67,7 +67,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 
         <Grid2 size={{ xs: 12, md: 6 }}>
           <FormControl fullWidth>
-            <CustomFormLabel>{endDateLabel}</CustomFormLabel>
+            <CustomFormLabel sx={{ mt: 0 }}>{endDateLabel}</CustomFormLabel>
             <CustomTextField
               type="date"
               value={endDate}

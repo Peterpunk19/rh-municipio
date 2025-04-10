@@ -1,6 +1,11 @@
 import { prisma } from "@/lib/prisma";
-import type { IEmployeeIncident, IEmployeeIncidentFilters } from "@/app/api/employee-incidents/types";
+import {
+  IEmployeeIncident,
+  IEmployeeIncidentUpdate,
+  IEmployeeIncidentFilters,
+} from "@/app/api/employee-incidents/types";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
+import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
 
 export const EmployeeIncidentsService = {
   async getFolio() {
@@ -170,28 +175,154 @@ export const EmployeeIncidentsService = {
 
   async getEmployeeIncidentById(id: number) {
     return prisma.employeeIncidents.findFirst({
-      include: {
+      where: { id },
+      select: {
+        id: true,
+        folio: true,
+        oficio: true,
+        description: true,
+        employee_id: true,
+        incident_status_id: true,
+        start_date: true,
+        end_date: true,
+        active: true,
+        created_at: true,
+        incident: {
+          select: {
+            id: true,
+            name: true,
+            display_name: true,
+          },
+        },
+        incident_status: {
+          select: {
+            id: true,
+            name: true,
+            display_name: true,
+            btn_color: true,
+            btn_display_name: true,
+            btn_icon: true,
+          },
+        },
         employee: {
-          include: {
+          select: {
+            id: true,
+            user_id: true,
+            name: true,
+            maternal_last_name: true,
+            paternal_last_name: true,
             employee_hiring: {
-              include: {
-                category: true,
-                employee_type: true,
+              select: {
+                id: true,
+                category: {
+                  select: { id: true, name: true, display_name: true },
+                },
+                employee_type: {
+                  select: { id: true, name: true },
+                },
                 direccion: {
-                  include: {
-                    secretaria: true,
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    secretaria: {
+                      select: { id: true, name: true, display_name: true },
+                    },
                   },
                 },
               },
             },
+            employee_location: {
+              where: {
+                active: true,
+              },
+              take: 1,
+              select: {
+                id: true,
+              },
+            },
           },
         },
-        incident_status: true,
-        incident: true,
+        employee_incidents_status: {
+          select: {
+            id: true,
+            created_at: true,
+            incident_status: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                btn_color: true,
+                btn_display_name: true,
+                btn_icon: true,
+              },
+            },
+            created_by: {
+              select: {
+                id: true,
+                name: true,
+                maternal_last_name: true,
+                paternal_last_name: true,
+              },
+            },
+          },
+        },
       },
-      where: {
-        id,
-      },
+    });
+  },
+
+  async updateEmployeeIncidents(employeeIncident: IEmployeeIncidentUpdate) {
+    return prisma.$transaction(async (tx) => {
+      let employeeAttendanceId: number | null = null;
+
+      if (employeeIncident.incidentStatusId === INCIDENT_STATUS_ID.APROBADA) {
+        const attendance = await tx.employeeAttendance.create({
+          data: {
+            check_in: employeeIncident.checkIn,
+            check_out: employeeIncident.checkOut,
+            description: "Asistencia creada por incidencia",
+            employee_hiring: {
+              connect: { id: employeeIncident.employeeHiringId },
+            },
+            employee_location: {
+              connect: { id: employeeIncident.employeeLocationId },
+            },
+            created_by: {
+              connect: { id: employeeIncident.createdById },
+            },
+          },
+        });
+
+        employeeAttendanceId = attendance.id;
+      }
+
+      await tx.employeeIncidents.update({
+        data: {
+          incident_status_id: employeeIncident.incidentStatusId,
+          validated_at: employeeIncident.incidentStatusId === INCIDENT_STATUS_ID.APROBADA ? new Date() : null,
+          employee_attendance_id: employeeAttendanceId,
+        },
+        where: {
+          id: Number(employeeIncident.id),
+        },
+      });
+
+      const createEmployeeIncidentsStatus = await tx.employeeIncidentsStatus.create({
+        data: {
+          employee_incident: {
+            connect: { id: Number(employeeIncident.id) },
+          },
+          incident_status: {
+            connect: { id: Number(employeeIncident.incidentStatusId) },
+          },
+          created_by: {
+            connect: { id: Number(employeeIncident.createdById) },
+          },
+          created_at: new Date(),
+        },
+      });
+
+      return [createEmployeeIncidentsStatus];
     });
   },
 };

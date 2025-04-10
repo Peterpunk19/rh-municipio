@@ -18,16 +18,36 @@ import AddIcon from "@mui/icons-material/Add";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
-import { updateFormData, addSchedule, removeSchedule } from "@/store/employees-requests/CreateEmployeeRequest";
+import { updateFormData, removeSchedule } from "@/store/employees-requests/CreateEmployeeRequest";
 import { RootState } from "@/store/store";
 import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
 import { fetchCatalogData } from "@/services/catalogs";
-import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import { AppDispatch } from "@/store/store";
 import DateRangePicker from "@/components/customFields/DateRangePicker";
 
 interface ScheduleFormProps {
   currentJobSchedule: any;
+}
+
+function hasDuplicateSchedules(schedules: any[]): boolean {
+  return schedules.some((schedule, index) =>
+    schedules.some(
+      (otherSchedule, otherIndex) =>
+        index !== otherIndex &&
+        schedule.startDayId !== 0 &&
+        schedule.endDayId !== 0 &&
+        schedule.startHourId !== 0 &&
+        schedule.endHourId !== 0 &&
+        otherSchedule.startDayId !== 0 &&
+        otherSchedule.endDayId !== 0 &&
+        otherSchedule.startHourId !== 0 &&
+        otherSchedule.endHourId !== 0 &&
+        schedule.startDayId === otherSchedule.startDayId &&
+        schedule.endDayId === otherSchedule.endDayId &&
+        schedule.startHourId === otherSchedule.startHourId &&
+        schedule.endHourId === otherSchedule.endHourId,
+    ),
+  );
 }
 
 const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
@@ -47,14 +67,14 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
   const getAvailableDays = (currentIndex: number) => {
     const selectedDays = formData.scheduleForm.schedules
       .filter((_, idx) => idx !== currentIndex)
-      .flatMap(schedule => [schedule.startDayId, schedule.endDayId]);
+      .flatMap((schedule) => [schedule.startDayId, schedule.endDayId]);
 
-    return days?.filter(day => !selectedDays.includes(day.id)) || [];
+    return days?.filter((day) => !selectedDays.includes(Number(day.id))) || [];
   };
 
   const handleChange = (event: any, index?: number) => {
     const { name, value } = event.target;
-    
+
     if (index !== undefined) {
       const schedules = [...formData.scheduleForm.schedules];
       schedules[index] = {
@@ -63,10 +83,42 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
       };
       dispatch(updateFormData({ field: "scheduleForm.schedules", value: schedules }));
 
-      // Solo validar duplicados si todos los campos tienen valores
-      const hasDuplicates = schedules.some((schedule, i) => 
-        schedules.some((otherSchedule, otherIndex) => 
-          i !== otherIndex &&
+      if (hasDuplicateSchedules(schedules)) {
+        setErrorsLocalValidation((prev) => ({
+          ...prev,
+          schedule: "No pueden haber 2 horarios repetidos",
+        }));
+      } else {
+        setErrorsLocalValidation((prev) => {
+          const { schedule, ...rest } = prev;
+          return rest;
+        });
+      }
+    } else {
+      dispatch(updateFormData({ field: `scheduleForm.${name}`, value }));
+    }
+  };
+
+  const handleAddSchedule = () => {
+    dispatch(
+      updateFormData({
+        field: "scheduleForm.schedules",
+        value: [
+          {
+            startDayId: 0,
+            endDayId: 0,
+            startHourId: 0,
+            endHourId: 0,
+          },
+          ...formData.scheduleForm.schedules,
+        ],
+      }),
+    );
+
+    const hasDuplicates = formData.scheduleForm.schedules.some((schedule, index) =>
+      formData.scheduleForm.schedules.some(
+        (otherSchedule, otherIndex) =>
+          index !== otherIndex &&
           schedule.startDayId !== 0 &&
           schedule.endDayId !== 0 &&
           schedule.startHourId !== 0 &&
@@ -78,62 +130,17 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
           schedule.startDayId === otherSchedule.startDayId &&
           schedule.endDayId === otherSchedule.endDayId &&
           schedule.startHourId === otherSchedule.startHourId &&
-          schedule.endHourId === otherSchedule.endHourId
-        )
-      );
-
-      if (hasDuplicates) {
-        setErrorsLocalValidation(prev => ({
-          ...prev,
-          schedule: "No pueden haber 2 horarios repetidos"
-        }));
-      } else {
-        setErrorsLocalValidation(prev => {
-          const { schedule, ...rest } = prev;
-          return rest;
-        });
-      }
-    } else {
-      dispatch(updateFormData({ field: `scheduleForm.${name}`, value }));
-    }
-  };
-
-  const handleAddSchedule = () => {
-    dispatch(updateFormData({ 
-      field: "scheduleForm.schedules", 
-      value: [{
-        startDayId: 0,
-        endDayId: 0,
-        startHourId: 0,
-        endHourId: 0,
-      }, ...formData.scheduleForm.schedules]
-    }));
-
-    const hasDuplicates = formData.scheduleForm.schedules.some((schedule, index) => 
-      formData.scheduleForm.schedules.some((otherSchedule, otherIndex) => 
-        index !== otherIndex &&
-        schedule.startDayId !== 0 &&
-        schedule.endDayId !== 0 &&
-        schedule.startHourId !== 0 &&
-        schedule.endHourId !== 0 &&
-        otherSchedule.startDayId !== 0 &&
-        otherSchedule.endDayId !== 0 &&
-        otherSchedule.startHourId !== 0 &&
-        otherSchedule.endHourId !== 0 &&
-        schedule.startDayId === otherSchedule.startDayId &&
-        schedule.endDayId === otherSchedule.endDayId &&
-        schedule.startHourId === otherSchedule.startHourId &&
-        schedule.endHourId === otherSchedule.endHourId
-      )
+          schedule.endHourId === otherSchedule.endHourId,
+      ),
     );
 
     if (hasDuplicates) {
-      setErrorsLocalValidation(prev => ({
+      setErrorsLocalValidation((prev) => ({
         ...prev,
-        schedule: "No pueden haber 2 horarios repetidos"
+        schedule: "No pueden haber 2 horarios repetidos",
       }));
     } else {
-      setErrorsLocalValidation(prev => {
+      setErrorsLocalValidation((prev) => {
         const { schedule, ...rest } = prev;
         return rest;
       });
@@ -143,24 +150,6 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
   const handleRemoveSchedule = (index: number) => {
     dispatch(removeSchedule(index));
   };
-
-  const hasDuplicateSchedules = formData.scheduleForm.schedules.some((schedule, index) => 
-    formData.scheduleForm.schedules.some((otherSchedule, otherIndex) => 
-      index !== otherIndex &&
-      schedule.startDayId !== 0 &&
-      schedule.endDayId !== 0 &&
-      schedule.startHourId !== 0 &&
-      schedule.endHourId !== 0 &&
-      otherSchedule.startDayId !== 0 &&
-      otherSchedule.endDayId !== 0 &&
-      otherSchedule.startHourId !== 0 &&
-      otherSchedule.endHourId !== 0 &&
-      schedule.startDayId === otherSchedule.startDayId &&
-      schedule.endDayId === otherSchedule.endDayId &&
-      schedule.startHourId === otherSchedule.startHourId &&
-      schedule.endHourId === otherSchedule.endHourId
-    )
-  );
 
   const handleDateChange = (field: string, value: string) => {
     dispatch(updateFormData({ field: `scheduleForm.${field}`, value }));
@@ -173,8 +162,8 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
           <DateRangePicker
             startDate={formData.scheduleForm.startDate}
             endDate={formData.scheduleForm.endDate}
-            onStartDateChange={(date) => handleDateChange('startDate', date)}
-            onEndDateChange={(date) => handleDateChange('endDate', date)}
+            onStartDateChange={(date) => handleDateChange("startDate", date)}
+            onEndDateChange={(date) => handleDateChange("endDate", date)}
             startDateError={errors.startDate}
             endDateError={errors.endDate}
           />
@@ -193,9 +182,7 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
               </Typography>
             </Paper>
           ) : (
-            <Typography color="text.secondary">
-              No hay horario asignado actualmente
-            </Typography>
+            <Typography color="text.secondary">No hay horario asignado actualmente</Typography>
           )}
         </Grid2>
 
@@ -210,14 +197,14 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
                 color="primary"
                 onClick={handleAddSchedule}
                 disabled={formData.scheduleForm.schedules.length >= 7}
-                sx={{ 
-                  minWidth: 'auto',
-                  width: '40px',
-                  height: '40px',
+                sx={{
+                  minWidth: "auto",
+                  width: "40px",
+                  height: "40px",
                   p: 0,
-                  '&:hover': {
-                    backgroundColor: 'primary.main',
-                  }
+                  "&:hover": {
+                    backgroundColor: "primary.main",
+                  },
                 }}
               >
                 <AddIcon />
@@ -225,21 +212,21 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
             </Tooltip>
           </Stack>
           <CustomLabelError field={errorsLocalValidation.schedule} />
-          {hasDuplicateSchedules && (
+          {hasDuplicateSchedules(formData.scheduleForm.schedules) && (
             <Typography color="error" sx={{ mt: 1 }}>
               No pueden haber 2 horarios repetidos
             </Typography>
           )}
           {formData.scheduleForm.schedules.map((schedule, index) => (
             <Box key={index} sx={{ mb: 2 }}>
-              <Grid2 container spacing={2} style={{ display: 'flex', justifyContent: 'center' }}>
+              <Grid2 container spacing={2} style={{ display: "flex", justifyContent: "center" }}>
                 <Grid2 size={{ xs: 12, md: 3 }}>
                   <FormControl fullWidth>
                     <CustomFormLabel>Día Inicio</CustomFormLabel>
                     <CustomSelect
                       name="startDayId"
                       value={schedule.startDayId}
-                      onChange={(e) => handleChange(e, index)}
+                      onChange={(e: any) => handleChange(e, index)}
                       disabled={isLoadingDays || errorDays}
                     >
                       <MenuItem value={0}>Selecciona el día</MenuItem>
@@ -305,21 +292,21 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
                     </CustomSelect>
                   </FormControl>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 2 }} sx={{ display: 'flex', justifyContent: 'flex-start'}}>
-                <Stack direction="row" spacing={2} alignItems="center" marginTop={5}>
-                  <IconButton
-                    color="error"
-                    onClick={() => handleRemoveSchedule(index)}
-                    disabled={formData.scheduleForm.schedules.length === 1}
-                  >
-                    <DeleteIcon sx={{ fontSize: '1.5rem' }} />
-                  </IconButton>
-                </Stack>
+                <Grid2 size={{ xs: 12, md: 2 }} sx={{ display: "flex", justifyContent: "flex-start" }}>
+                  <Stack direction="row" spacing={2} alignItems="center" marginTop={5}>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleRemoveSchedule(index)}
+                      disabled={formData.scheduleForm.schedules.length === 1}
+                    >
+                      <DeleteIcon sx={{ fontSize: "1.5rem" }} />
+                    </IconButton>
+                  </Stack>
                 </Grid2>
               </Grid2>
             </Box>
           ))}
-           <CustomLabelError field={errors.schedule} />
+          <CustomLabelError field={errors.schedule} />
         </Grid2>
       </Grid2>
     </Box>

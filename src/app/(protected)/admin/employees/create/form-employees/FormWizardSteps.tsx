@@ -11,7 +11,7 @@ import { FormPersonalData } from "@/app/(protected)/admin/employees/create/form-
 import { createEmployee, updateEmployee } from "@/services/employees";
 import { FormHiringData } from "@/app/(protected)/admin/employees/create/form-employees/steps/FormHiringData";
 import { FormAddressData } from "@/app/(protected)/admin/employees/create/form-employees/steps/FormAddressData";
-import type { FormWizarStepsProps }  from "@/interfaces/FormWizardStepsProps";
+import type { FormWizarStepsProps } from "@/interfaces/FormWizardStepsProps";
 
 const steps = ["Datos Personales", "Datos de Domicilio", "Datos de Contratación", "Finalizar"];
 
@@ -67,13 +67,13 @@ const FormWizardSteps = <T,>({ isEdit }: FormWizarStepsProps<T>) => {
 
     try {
       let response: any;
-      if(isEdit){
+      if (isEdit) {
         const employeeId = formValues.employeeId;
-        if(!employeeId){
+        if (!employeeId) {
           throw new Error("No se ha encontrado el id del empleado");
         }
         response = await updateEmployee(employeeId, formValues);
-      }else{
+      } else {
         response = await createEmployee(formValues);
       }
       if (!response.success) {
@@ -146,21 +146,21 @@ const FormWizardSteps = <T,>({ isEdit }: FormWizarStepsProps<T>) => {
                 Regresar
               </Button>
               <Box flex="1 1 auto" />
-                <Button
-                  onClick={handleNext}
-                  variant="contained"
-                  color={activeStep === steps.length - 1 ? "success" : "secondary"}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <CircularProgress size={24} />
-                  ) : activeStep === steps.length - 1 ? (
-                    "Finalizar"
-                  ) : (
-                    "Siguiente"
-                  )}
-                </Button>
-              </Box>
+              <Button
+                onClick={handleNext}
+                variant="contained"
+                color={activeStep === steps.length - 1 ? "success" : "secondary"}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <CircularProgress size={24} />
+                ) : activeStep === steps.length - 1 ? (
+                  "Finalizar"
+                ) : (
+                  "Siguiente"
+                )}
+              </Button>
+            </Box>
 
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>

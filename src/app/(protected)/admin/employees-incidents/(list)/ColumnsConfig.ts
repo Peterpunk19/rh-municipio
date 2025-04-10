@@ -9,5 +9,5 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   start_date: { renderType: "date" },
   end_date: { renderType: "date" },
   created_at: { renderType: "date" },
-  actions: { renderType: "action", redirectPath: "/admin/employees/" },
+  actions: { renderType: "action", redirectPath: "/admin/employees-incidents/" },
 };

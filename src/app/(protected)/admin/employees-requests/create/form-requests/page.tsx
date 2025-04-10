@@ -59,7 +59,12 @@ const CreateRequestForm = () => {
     if (name === "typeRequestId") {
       dispatch(updateFormData({ field: "fingerprintForm", value: { locationId: 0, requestDate: "" } }));
       dispatch(updateFormData({ field: "scheduleForm", value: { schedules: [], startDate: "", endDate: "" } }));
-      dispatch(updateFormData({ field: "locationForm", value: { currentLocationId: 0, newLocationId: 0, startDate: "", endDate: "" } }));
+      dispatch(
+        updateFormData({
+          field: "locationForm",
+          value: { currentLocationId: 0, newLocationId: 0, startDate: "", endDate: "" },
+        }),
+      );
       dispatch(updateFormData({ field: "attendanceTypeForm", value: { attendanceType: "", applicationDate: "" } }));
     }
     dispatch(updateFormData({ field: name, value }));

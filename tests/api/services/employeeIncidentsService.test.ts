@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
 import type { IEmployeeIncident } from "@/app/api/employee-incidents/types";
+import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
 
 jest.mock("@/lib/prisma", () => ({
   prisma: {
@@ -98,6 +99,71 @@ describe("EmployeeIncidentsService", () => {
 
       expect(prisma.$transaction).toHaveBeenCalled();
       expect(result).toEqual([mockCreatedIncident, mockCreatedStatus]);
+    });
+  });
+
+  describe("employeeIncidentsService.updateEmployeeIncidents", () => {
+    const mockEmployeeIncident = {
+      id: 1,
+      incidentStatusId: INCIDENT_STATUS_ID.APROBADA,
+      checkIn: new Date(),
+      checkOut: new Date(),
+      employeeHiringId: 10,
+      employeeLocationId: 20,
+      createdById: 40,
+      employeeId: 40,
+    };
+
+    it("should create attendance, update incident, and create incident status when status is APROBADA", async () => {
+      const mockTx = {
+        employeeAttendance: {
+          create: jest.fn().mockResolvedValue({ id: 99 }),
+        },
+        employeeIncidents: {
+          update: jest.fn(),
+        },
+        employeeIncidentsStatus: {
+          create: jest.fn().mockResolvedValue({ id: 100 }),
+        },
+      };
+
+      (prisma.$transaction as jest.Mock).mockImplementation(async (fn) => {
+        return await fn(mockTx);
+      });
+
+      const result = await EmployeeIncidentsService.updateEmployeeIncidents(mockEmployeeIncident);
+
+      expect(mockTx.employeeAttendance.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            check_in: mockEmployeeIncident.checkIn,
+            check_out: mockEmployeeIncident.checkOut,
+          }),
+        }),
+      );
+
+      expect(mockTx.employeeIncidents.update).toHaveBeenCalledWith({
+        data: {
+          incident_status_id: mockEmployeeIncident.incidentStatusId,
+          validated_at: expect.any(Date),
+          employee_attendance_id: 99,
+        },
+        where: {
+          id: mockEmployeeIncident.id,
+        },
+      });
+
+      expect(mockTx.employeeIncidentsStatus.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            employee_incident: { connect: { id: mockEmployeeIncident.id } },
+            incident_status: { connect: { id: mockEmployeeIncident.incidentStatusId } },
+            created_by: { connect: { id: mockEmployeeIncident.employeeId } },
+          }),
+        }),
+      );
+
+      expect(result).toEqual([{ id: 100 }]);
     });
   });
 });

@@ -33,7 +33,7 @@ export const FormHiringData = () => {
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
-    console.log(name, value)
+    console.log(name, value);
 
     dispatch(updateValues({ [name as string]: value }));
     dispatch(updateErrors({ [name as string]: "" }));

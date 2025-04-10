@@ -83,3 +83,11 @@ export const EmployeeIncidentsGetFilterSchema = z.object({
     .optional()
     .nullable(),
 });
+
+export const EmployeeIncidentsUpdateSchema = z.object({
+  id: z
+    .number({ message: validationMessages.required("ID de Incidencia") })
+    .min(1, { message: validationMessages.minNumber("ID de Incidencia", 1) })
+    .max(999999999999999, { message: validationMessages.maxNumber("ID de Incidencia", 999999999999999) }),
+  incidentStatusId: z.number({ message: validationMessages.required("Estatus") }),
+});

@@ -19,3 +19,27 @@ export interface IEmployeeIncidentFilters {
   end_date: string | null | undefined;
   search: string | null | undefined;
 }
+
+export interface IEmployeeIncidentById {
+  id: number | string;
+  incidentStatusId: number | string;
+  checkIn?: Date | string;
+  checkOut?: Date | string;
+  employee?: {
+    id: number;
+    employee_hiring: { id: number }[];
+    employee_location: { id: number }[];
+  };
+  createdById?: number;
+}
+
+export interface IEmployeeIncidentUpdate {
+  id: number | string;
+  incidentStatusId: number;
+  employeeId: number;
+  employeeHiringId: number;
+  employeeLocationId: number;
+  checkIn: Date | string;
+  checkOut: Date | string;
+  createdById: number;
+}

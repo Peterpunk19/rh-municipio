@@ -86,7 +86,9 @@ export async function POST(request: NextRequest) {
           const failedResponse = responses.find((response) => response);
           if (failedResponse) return handleHttpResponse(failedResponse);
         } catch (error: any) {
-          return handleHttpResponse(HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message }));
+          return handleHttpResponse(
+            HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message }),
+          );
         }
       }
     }
