@@ -229,4 +229,12 @@ ORDER BY parent.id `;
       where: { name },
     });
   },
+
+  async getRequestsTypes() {
+    return prisma.request.findMany({
+      orderBy: {
+        display_name: "asc",
+      },
+    });
+  },
 };

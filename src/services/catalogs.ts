@@ -117,13 +117,14 @@ export const fetchMunicipalitiesData = async (stateId: string): Promise<IRespons
   }
 };
 
-export const fetchCatalogData = async (name: any): Promise<IResponseObject | null> => {
+export const fetchCatalogData = async (catalogName: string) => {
   try {
-    const response = await http.get<IResponseObject>(`/api/catalogs/${name}`);
-    return response.data;
+    const response = await fetch(`/api/catalogs/${catalogName}`);
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error(`Failed to fetch ${name}:`, error);
-    return null;
+    console.error(`Error fetching ${catalogName} catalog:`, error);
+    throw error;
   }
 };
 
@@ -158,4 +159,11 @@ export const fetchRolesData = async (): Promise<IResponseObject | null> => {
     console.error("Failed to fetch role:", error);
     return null;
   }
+};
+
+export const catalogs = {
+  requests: "requests",
+  locations: "locations",
+  days: "days",
+  hours: "hours",
 };

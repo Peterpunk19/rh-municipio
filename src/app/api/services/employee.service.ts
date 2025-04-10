@@ -107,7 +107,7 @@ export const EmployeeService = {
           rfc: employee.rfc,
           curp: employee.curp,
           status_employee: {
-            connect: { name: "alta" },
+            connect: { name: "activo" },
           },
           gender: {
             connect: { id: Number(employee.genderId) },
@@ -412,7 +412,9 @@ export const EmployeeService = {
                s.display_name  AS secretaria_display_name,
                c.display_name  AS category_display_name,
                et.display_name AS employee_type_display_name,
-               tu.display_name AS trade_union_display_name
+               tu.display_name AS trade_union_display_name,
+               l.display_name AS location_display_name,
+               at.display_name AS attendance_type_display_name
         FROM Employee AS e
                  JOIN EmployeeHiring AS eh ON eh.employee_id = e.id AND eh.active = 1
                  JOIN Direccion AS d ON eh.direccion_id = d.id
@@ -421,6 +423,9 @@ export const EmployeeService = {
                  JOIN EmployeeType AS et ON eh.employee_type_id = et.id
                  LEFT JOIN EmployeeTradeUnion AS etu ON e.id = etu.employee_id
                  LEFT JOIN TradeUnion AS tu ON etu.trade_union_id = tu.id
+                 LEFT JOIN EmployeeLocation AS el ON e.id = el.employee_id AND el.active = 1
+                 LEFT JOIN Location AS l ON el.location_id = l.id
+                 LEFT JOIN Attendance AS at ON el.attendance_id = at.id
     `;
 
     let employees: {
@@ -437,6 +442,8 @@ export const EmployeeService = {
       category_display_name: string;
       employee_type_display_name: string;
       trade_union_display_name: string | null;
+      location_display_name: string | null;
+      attendance_type_display_name: string | null;
     }[];
 
     if (search) {
@@ -474,6 +481,8 @@ export const EmployeeService = {
       category_display_name: emp.category_display_name,
       employee_type_display_name: emp.employee_type_display_name,
       trade_union_display_name: emp.trade_union_display_name,
+      location_display_name: emp.location_display_name,
+      attendance_type_display_name: emp.attendance_type_display_name,
     }));
   },
 
@@ -591,5 +600,25 @@ export const EmployeeService = {
         direccion_id: Number(employeeHiring.direccionId),
       },
     });
-  }
+  },
+
+  async getCurrentJobSchedule(employeeId: number) {
+    try {
+      const jobSchedule = await prisma.jobScheduleEmployee.findFirst({
+        where: {
+          employee_id: employeeId,
+          active: true,
+        },
+        include: {
+          start_day: true,
+          end_day: true,
+          start_hour: true,
+          end_hour: true,
+        },
+      });
+      return jobSchedule;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

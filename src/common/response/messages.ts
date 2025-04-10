@@ -15,6 +15,7 @@ export const HttpMessages = {
     foundById: "Empleado encontrado correctamente",
     inactive: "El empleado está deshabilitado",
     updatedSuccess: "Empleado actualizado correctamente",
+    getScheduleSuccess: "Horario encontrado correctamente",
   },
   employeeIncidents: {
     invalidData: "Ya existe una incidencia con estos datos",

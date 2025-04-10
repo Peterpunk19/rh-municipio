@@ -21,6 +21,7 @@ import FiltersReducer from "./tables/FiltersSlice";
 import PaginationReducer from "./tables/PaginationSlice";
 import catalogsReducer from "./tables/CatalogsSlice";
 import EmployeesIncidentsSlice from "@/store/employees-incidents/EmployeesIncidentsSlice";
+import CreateEmployeeRequestReducer from "@/store/employees-requests/CreateEmployeeRequest";
 
 const persistConfig = {
   key: "root",
@@ -47,6 +48,7 @@ export const store = configureStore({
     filters: FiltersReducer,
     pagination: PaginationReducer,
     catalogs: catalogsReducer,
+    createEmployeeRequest: CreateEmployeeRequestReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),

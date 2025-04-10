@@ -38,3 +38,12 @@ export const updateEmployee = async (employeeId: number, data: object): Promise<
     return error;
   }
 };
+
+export const getEmployeeJobSchedule = async (employeeId: number) => {
+  try {
+    const response = await fetch(`/api/employees/${employeeId}/job-schedule`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching employee job schedule:', error);
+  }
+};
