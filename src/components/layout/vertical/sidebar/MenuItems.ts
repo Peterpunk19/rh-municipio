@@ -14,7 +14,15 @@ interface MenuitemsType {
   variant?: string;
   external?: boolean;
 }
-import { IconPoint, IconAlertCircle, IconAppWindow, IconHome2, IconUser, IconUsers, IconFileInvoice } from "@tabler/icons-react";
+import {
+  IconPoint,
+  IconAlertCircle,
+  IconAppWindow,
+  IconHome2,
+  IconUser,
+  IconUsers,
+  IconFileInvoice,
+} from "@tabler/icons-react";
 
 const Menuitems: MenuitemsType[] = [
   {
@@ -98,13 +106,13 @@ const Menuitems: MenuitemsType[] = [
     children: [
       {
         id: uniqueId(),
-        title: "Ver Asistencias",
+        title: "Ver asistencias",
         icon: IconPoint,
-        href: "/frontend-pages/homepage",
+        href: "/admin/employees-attendances",
       },
       {
         id: uniqueId(),
-        title: "Crear Asistencia",
+        title: "Crear asistencia",
         icon: IconPoint,
         href: "/frontend-pages/about",
       },

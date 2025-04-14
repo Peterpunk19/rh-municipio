@@ -87,7 +87,17 @@ const userConfig: EntityConfig = {
   initialSortBy: "email",
 };
 
-export const filtersSlice = createFiltersSlice([employeeConfig, userConfig, employeesIncidentsConfig]);
+const employeesAttendancesConfig: EntityConfig = {
+  name: "employeesAttendances",
+  initialSortBy: "name",
+};
+
+export const filtersSlice = createFiltersSlice([
+  employeeConfig,
+  userConfig,
+  employeesIncidentsConfig,
+  employeesAttendancesConfig,
+]);
 
 export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen } = filtersSlice.actions;
 export default filtersSlice.reducer;

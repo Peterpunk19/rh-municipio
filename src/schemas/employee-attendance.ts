@@ -40,6 +40,16 @@ export const EmployeeAttendanceGetFilterSchema = z.object({
     .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de salida") }))
     .optional()
     .nullable(),
+  typeAttendance: z
+    .number({ message: validationMessages.number("Asistencia") })
+    .min(1, { message: validationMessages.minNumber("Asistencia", 1) })
+    .optional()
+    .nullable(),
+  location: z
+    .number({ message: validationMessages.number("Ubicación") })
+    .min(1, { message: validationMessages.minNumber("Ubicación", 1) })
+    .optional()
+    .nullable(),
   organismPublic: z
     .number({ message: validationMessages.number("Organismo Público") })
     .min(1, { message: validationMessages.minNumber("Organismo Público", 1) })
