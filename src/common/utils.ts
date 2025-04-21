@@ -110,6 +110,10 @@ export const getRandomDate = (start: any, end: any) => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString();
 };
 
+export const getRandomElement = (array: any[]) => {
+  return array[Math.floor(Math.random() * array.length)];
+};
+
 export const formatFolio = (folio: number) => {
   return String(folio).padStart(6, "0");
 };

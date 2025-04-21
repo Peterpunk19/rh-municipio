@@ -18,3 +18,7 @@ export interface IEmployeeAttendanceFilters {
   organismAdministrative: number | string | null | undefined;
   search: string | null | undefined;
 }
+
+export interface IEmployeeAttendanceById {
+  id: number;
+}

@@ -25,7 +25,7 @@ export const response = {
   emptyDescription: generator.response({
     responseObject: {
       description: {
-        messages: [validationMessages.minLength("Descripción", 50)],
+        messages: [validationMessages.minLength("Descripción", 10)],
       },
     },
   }),

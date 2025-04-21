@@ -212,9 +212,9 @@ export const CatalogsService = {
                  ) AS child ON child.id = parent.id
 ORDER BY parent.id `;
 
-    const incidentsStatus = await prisma.$queryRawUnsafe(baseQuery);
+    const incidentsStatus = await prisma.$queryRawUnsafe<any[]>(baseQuery);
 
-    return incidentsStatus.map((status) => ({
+    return incidentsStatus.map((status: any) => ({
       ...status,
       total: Number(status.total),
     }));

@@ -32,7 +32,7 @@ describe("API: /employee-requests", () => {
 
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`POST /employee-requests ${description}`, async () => {
-      (authMiddleware as jest.Mock).mockResolvedValue(null);
+      (authMiddleware as jest.Mock).mockResolvedValue({userId: 1});
 
       if (description === "should successfully send message with valid data") {
         getEmployeeRequestFolio.mockResolvedValue(null);
