@@ -46,46 +46,46 @@ export const response = {
     success: true,
     message: HttpMessages.employeeAttendance.foundById,
     responseObject: {
-      "id": 1,
-      "check_in": "2025-03-26T14:00:00.000Z",
-      "check_out": "2025-03-26T22:00:00.000Z",
-      "active": true,
-      "description": "Asistencia generada automaticamente",
-      "created_at": "2025-04-10T00:43:49.735Z",
-      "location": {
-        "id": 76,
-        "active": true,
-        "name": "el_rastro_pavimento",
-        "display_name": "EL RASTRO PAVIMENTO"
+      id: 1,
+      check_in: "2025-03-26T14:00:00.000Z",
+      check_out: "2025-03-26T22:00:00.000Z",
+      active: true,
+      description: "Asistencia generada automaticamente",
+      created_at: "2025-04-10T00:43:49.735Z",
+      location: {
+        id: 76,
+        active: true,
+        name: "el_rastro_pavimento",
+        display_name: "EL RASTRO PAVIMENTO",
       },
-      "type_attendance": {
-        "id": 1,
-        "display_name": "RELOJ DIGITAL"
+      type_attendance: {
+        id: 1,
+        display_name: "RELOJ DIGITAL",
       },
-      "employee": {
-        "id": 1,
-        "number_employee": "453453",
-        "name": "William",
-        "paternal_last_name": "dsad",
-        "maternal_last_name": "ads",
-        "fullName": "William dsad ads",
-        "rfc": "asda",
-        "curp": "asdd"
+      employee: {
+        id: 1,
+        number_employee: "453453",
+        name: "William",
+        paternal_last_name: "dsad",
+        maternal_last_name: "ads",
+        fullName: "William dsad ads",
+        rfc: "asda",
+        curp: "asdd",
       },
-      "organism_public": {
-        "id": 1,
-        "name": "gobierno",
-        "display_name": "Secretaría de gobernación"
+      organism_public: {
+        id: 1,
+        name: "gobierno",
+        display_name: "Secretaría de gobernación",
       },
-      "organism_administrative": {
-        "id": 4,
-        "name": "medios",
-        "display_name": "Medios"
+      organism_administrative: {
+        id: 4,
+        name: "medios",
+        display_name: "Medios",
       },
-      "created_by": {
-        "id": 44,
-        "username": "carloszh"
-      }
+      created_by: {
+        id: 44,
+        username: "carloszh",
+      },
     },
     statusCode: 200,
   },

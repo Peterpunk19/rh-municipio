@@ -14,7 +14,15 @@ interface MenuitemsType {
   variant?: string;
   external?: boolean;
 }
-import { IconPoint, IconAlertCircle, IconAppWindow, IconHome2, IconUser, IconUsers, IconFileInvoice } from "@tabler/icons-react";
+import {
+  IconPoint,
+  IconAlertCircle,
+  IconAppWindow,
+  IconHome2,
+  IconUser,
+  IconUsers,
+  IconFileInvoice,
+} from "@tabler/icons-react";
 
 const Menuitems: MenuitemsType[] = [
   {

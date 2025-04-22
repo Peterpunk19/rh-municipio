@@ -3,4 +3,4 @@ export interface HttpResponse<T = any> {
   statusCode: number;
   message: string;
   responseObject?: T;
-} 
+}

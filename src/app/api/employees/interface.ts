@@ -44,6 +44,8 @@ export interface IEmployee {
   direccionSecretariaId?: number | null;
   municipalityStateId?: number | null;
   countryId?: number | null;
+  locationId?: number | null;
+  attendanceId?: number | null;
 }
 
 export interface IEmployeeFilters {

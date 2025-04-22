@@ -8,6 +8,7 @@ const incidentStatus = [
     btn_color: "warning",
     type: 1,
     active: true,
+    allowed_roles_to_update: "1,2,3,4,5,6,7",
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ const incidentStatus = [
     btn_color: "success",
     type: 1,
     active: true,
+    allowed_roles_to_update: "1,5,6,7",
   },
   {
     id: 3,
@@ -28,6 +30,7 @@ const incidentStatus = [
     btn_color: "error",
     type: 1,
     active: true,
+    allowed_roles_to_update: "1,5,6,7",
   },
   {
     id: 4,
@@ -38,6 +41,7 @@ const incidentStatus = [
     btn_color: "warning",
     type: 1,
     active: true,
+    allowed_roles_to_update: "1,2,3",
   },
   {
     id: 5,
@@ -48,6 +52,7 @@ const incidentStatus = [
     btn_color: "error",
     type: 1,
     active: true,
+    allowed_roles_to_update: "1,2,3",
   },
 ];
 

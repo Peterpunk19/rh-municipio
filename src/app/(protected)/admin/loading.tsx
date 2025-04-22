@@ -15,5 +15,4 @@ export default function Loading() {
       <CircularProgress />
     </Box>
   );
-};
-
+}

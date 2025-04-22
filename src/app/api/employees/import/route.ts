@@ -37,9 +37,11 @@ function mapToIEmployee(data: any): IEmployee {
     maritalStatusId: 1,
     schoolingId: getRandomNumber(1, 10),
     professionId: 110,
-    occupationId: getRandomNumber(1, 100),
+    occupationId: getRandomNumber(1, 20),
     identificationTypeId: 1,
     identificationFolio: data.identification_folio || null,
+    locationId: getRandomNumber(1, 20),
+    attendanceId: getRandomNumber(1, 2),
   };
 }
 

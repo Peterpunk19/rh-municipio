@@ -5,7 +5,7 @@ export const getDays = async () => {
         active: true,
       },
       orderBy: {
-        id: 'asc',
+        id: "asc",
       },
     });
     return days;
@@ -21,11 +21,11 @@ export const getHours = async () => {
         active: true,
       },
       orderBy: {
-        id: 'asc',
+        id: "asc",
       },
     });
     return hours;
   } catch (error) {
     return error;
   }
-}; 
+};

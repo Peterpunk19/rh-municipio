@@ -2,6 +2,8 @@ import bcryptjs from "bcryptjs";
 import React from "react";
 import { formatDateStringTS } from "@/utils/formatter";
 import { WhereKey } from "@/interfaces/WhereConfig";
+import { handleHttpResponse } from "@/common/response/handler";
+import { HttpResponse } from "@/common/response/model";
 
 export const encryptPassword = async (password: string): Promise<string> => {
   return await bcryptjs.hash(password, 10);
@@ -186,3 +188,8 @@ export const a11yProps = (tab: string, index: any) => {
     "aria-controls": `${tab}-tabpanel-${index}`,
   };
 };
+
+export const failureResponse = (message: string) => handleHttpResponse(HttpResponse.failure(message, {}));
+
+export const successResponse = (message: string, data: object) =>
+  handleHttpResponse(HttpResponse.success(message, data));

@@ -6,7 +6,7 @@ export const response = {
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      page: { messages: [validationMessages.number('Página')] },
+      page: { messages: [validationMessages.number("Página")] },
     },
     statusCode: 400,
   },
@@ -15,7 +15,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
-        messages: [validationMessages.minNumber('Página', 1)],
+        messages: [validationMessages.minNumber("Página", 1)],
       },
     },
     statusCode: 400,
@@ -25,7 +25,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
-        messages: [validationMessages.minNumber('Página', 1)],
+        messages: [validationMessages.minNumber("Página", 1)],
       },
     },
     statusCode: 400,
@@ -35,7 +35,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
-        messages: [validationMessages.number('Límite')],
+        messages: [validationMessages.number("Límite")],
       },
     },
     statusCode: 400,
@@ -45,7 +45,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
-        messages: [validationMessages.minNumber('Límite', 1)],
+        messages: [validationMessages.minNumber("Límite", 1)],
       },
     },
     statusCode: 400,
@@ -55,7 +55,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
-        messages: [validationMessages.minNumber('Límite', 1)],
+        messages: [validationMessages.minNumber("Límite", 1)],
       },
     },
     statusCode: 400,
@@ -65,7 +65,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       search: {
-        messages: [validationMessages.maxLength('Búsqueda', 255)],
+        messages: [validationMessages.maxLength("Búsqueda", 255)],
       },
     },
     statusCode: 400,
@@ -86,7 +86,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       organismPublic: {
-        messages: [validationMessages.number('Organismo Público')],
+        messages: [validationMessages.number("Organismo Público")],
       },
     },
     statusCode: 400,
@@ -96,7 +96,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       organismAdministrative: {
-        messages: [validationMessages.number('Organismo Administrativo')],
+        messages: [validationMessages.number("Organismo Administrativo")],
       },
     },
     statusCode: 400,
@@ -106,7 +106,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       organismPublic: {
-        messages: [validationMessages.minNumber('Organismo Público', 1)],
+        messages: [validationMessages.minNumber("Organismo Público", 1)],
       },
     },
     statusCode: 400,
@@ -116,7 +116,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       organismPublic: {
-        messages: [validationMessages.minNumber('Organismo Público', 1)],
+        messages: [validationMessages.minNumber("Organismo Público", 1)],
       },
     },
     statusCode: 400,
@@ -126,7 +126,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       organismAdministrative: {
-        messages: [validationMessages.minNumber('Organismo Administrativo', 1)],
+        messages: [validationMessages.minNumber("Organismo Administrativo", 1)],
       },
     },
     statusCode: 400,
@@ -136,7 +136,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       organismAdministrative: {
-        messages: [validationMessages.minNumber('Organismo Administrativo', 1)],
+        messages: [validationMessages.minNumber("Organismo Administrativo", 1)],
       },
     },
     statusCode: 400,
@@ -146,7 +146,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       checkIn: {
-        messages: [validationMessages.invalidFormat('Fecha de entrada')],
+        messages: [validationMessages.invalidFormat("Fecha de entrada")],
       },
     },
     statusCode: 400,
@@ -156,7 +156,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       checkOut: {
-        messages: [validationMessages.invalidFormat('Fecha de salida')],
+        messages: [validationMessages.invalidFormat("Fecha de salida")],
       },
     },
     statusCode: 400,

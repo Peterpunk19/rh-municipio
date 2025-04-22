@@ -13,4 +13,4 @@ export async function GET() {
     const response = HttpResponse.failure(HttpMessages.error.internalServerError, error);
     return handleHttpResponse(response);
   }
-} 
+}

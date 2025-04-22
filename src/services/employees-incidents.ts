@@ -22,6 +22,15 @@ export const createEmployeeIncident = async (data: object): Promise<IResponse> =
   }
 };
 
+export const updateEmployeeIncident = async (data: object): Promise<IResponse> => {
+  try {
+    const response = await http.put<IResponse>("/api/employee-incidents/update", data);
+    return response.data;
+  } catch (error: any) {
+    return error;
+  }
+};
+
 export const getEmployeeIncidentById = async (id: string): Promise<IResponse> => {
   try {
     const response = await http.get<IResponse>(`/api/employee-incidents/${id}`);

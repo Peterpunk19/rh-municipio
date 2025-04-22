@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Employee } from '@/app/api/interfaces/Employee';
-import type { JobScheduleEmployee } from '@/app/api/interfaces/JobScheduleEmployee';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { Employee } from "@/app/api/interfaces/Employee";
+import type { JobScheduleEmployee } from "@/app/api/interfaces/JobScheduleEmployee";
 
 interface EmployeeRequestState {
   selectedEmployee: Employee | null;
@@ -15,7 +15,7 @@ const initialState: EmployeeRequestState = {
 };
 
 export const employeeRequestSlice = createSlice({
-  name: 'employeeRequest',
+  name: "employeeRequest",
   initialState,
   reducers: {
     setSelectedEmployee: (state, action: PayloadAction<Employee>) => {
@@ -29,4 +29,4 @@ export const employeeRequestSlice = createSlice({
 });
 
 export const { setSelectedEmployee, setJobSchedule } = employeeRequestSlice.actions;
-export default employeeRequestSlice.reducer; 
+export default employeeRequestSlice.reducer;

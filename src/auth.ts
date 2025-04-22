@@ -74,7 +74,10 @@ export const {
           user.name = `${existingUser.responseObject.name} ${existingUser.responseObject.paternal_last_name}`;
           user.role = existingUser.responseObject.role_id.toString();
           user.role_name = existingUser.responseObject.role_display_name.toString();
-          user.number_employee = existingUser.responseObject.number_employee?.toString();
+          user.number_employee =
+            existingUser.responseObject.number_employee !== undefined
+              ? existingUser.responseObject.number_employee.toString()
+              : "";
           return true;
         }
         return false;

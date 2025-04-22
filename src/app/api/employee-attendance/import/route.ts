@@ -47,13 +47,14 @@ export async function POST() {
       return handleHttpResponse(response);
     }
 
-    const [catalogLocation, catalogAttendance, catalogCategory, catalogEmployeeType, catalogDireccion] = await Promise.all([
-      CatalogsService.getLocations(),
-      CatalogsService.getAttendance(),
-      CatalogsService.getCategory(),
-      CatalogsService.getEmployeeTypes(),
-      CatalogsService.getDirecciones(1),
-    ]);
+    const [catalogLocation, catalogAttendance, catalogCategory, catalogEmployeeType, catalogDireccion] =
+      await Promise.all([
+        CatalogsService.getLocations(),
+        CatalogsService.getAttendance(),
+        CatalogsService.getCategory(),
+        CatalogsService.getEmployeeTypes(),
+        CatalogsService.getDirecciones(1),
+      ]);
 
     const randomLocation = getRandomElement(catalogLocation);
     const randomAttendance = getRandomElement(catalogAttendance);
@@ -115,7 +116,7 @@ export async function POST() {
         employeeLocationId: employeeLocationId,
         createdById: createdById,
         active: true,
-        description: "Asistencia generada automaticamente"
+        description: "Asistencia generada automaticamente",
       });
 
       if (!employee) {

@@ -26,11 +26,11 @@ describe("API: GET /employee-attendance/:id", () => {
             id: 76,
             active: true,
             name: "el_rastro_pavimento",
-            display_name: "EL RASTRO PAVIMENTO"
+            display_name: "EL RASTRO PAVIMENTO",
           },
           type_attendance: {
             id: 1,
-            display_name: "RELOJ DIGITAL"
+            display_name: "RELOJ DIGITAL",
           },
           employee: {
             id: 1,
@@ -40,22 +40,22 @@ describe("API: GET /employee-attendance/:id", () => {
             maternal_last_name: "ads",
             fullName: "William dsad ads",
             rfc: "asda",
-            curp: "asdd"
+            curp: "asdd",
           },
           organism_public: {
             id: 1,
             name: "gobierno",
-            display_name: "Secretaría de gobernación"
+            display_name: "Secretaría de gobernación",
           },
           organism_administrative: {
             id: 4,
             name: "medios",
-            display_name: "Medios"
+            display_name: "Medios",
           },
           created_by: {
             id: 44,
-            username: "carloszh"
-          }
+            username: "carloszh",
+          },
         });
       }
 

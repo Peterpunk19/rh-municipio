@@ -24,4 +24,4 @@ export interface JobScheduleEmployee {
     id: number;
     hour: string;
   };
-} 
+}
