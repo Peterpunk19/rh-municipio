@@ -105,5 +105,7 @@ export const HttpMessages = {
     folioError: "Folio no creado.",
     invalidData: "Ya existe una solicitud con estos datos",
     createdSuccess: "Solicitud creada correctamente",
+    notFound: "No se encontraron solicitudes con los filtros proporcionados",
+    getSuccess: "Solicitudes encontradas correctamente",
   },
 };

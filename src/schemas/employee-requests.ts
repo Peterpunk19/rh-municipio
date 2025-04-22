@@ -2,6 +2,7 @@ import { z } from "zod";
 import { validationMessages } from "@/common/validation/messages";
 import { validateDate } from "@/schemas/utils";
 
+
 const EmployeeScheduleRequestSchema = z.object({
   startDayId: z
     .number({ message: validationMessages.required("Fecha de inicio") })
@@ -95,3 +96,38 @@ export const EmployeeRequestPostSchema = z
       path: ["startDate", "endDate"],
     },
   );
+
+export const EmployeeRequestsGetFilterSchema = z.object({
+  page: z
+    .number({ message: validationMessages.number("Página") })
+    .min(1, { message: validationMessages.minNumber("Página", 1) })
+    .nullable(),
+  limit: z
+    .number({ message: validationMessages.number("Límite") })
+    .min(1, { message: validationMessages.minNumber("Límite", 1) })
+    .nullable(),
+  request_id: z
+    .number({ message: validationMessages.number("ID de solicitud") })
+    .min(1, { message: validationMessages.minNumber("ID de solicitud", 1) })
+    .optional()
+    .nullable(),
+  request_status_id: z
+    .number({ message: validationMessages.number("ID de estatus de solicitud") })
+    .min(1, { message: validationMessages.minNumber("ID de estatus de solicitud", 1) })
+    .optional()
+    .nullable(),
+  created_at: z
+    .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de creación") }))
+    .optional()
+    .nullable(),
+  search: z
+    .union([
+      z
+        .string()
+        .min(1, { message: validationMessages.required("Búsqueda") })
+        .max(255, { message: validationMessages.maxLength("Búsqueda", 255) }),
+      z.number().transform((num) => num.toString()),
+    ])
+    .optional()
+    .nullable(),
+});
