@@ -2,7 +2,6 @@ import { z } from "zod";
 import { validationMessages } from "@/common/validation/messages";
 import { validateDate } from "@/schemas/utils";
 
-
 const EmployeeScheduleRequestSchema = z.object({
   startDayId: z
     .number({ message: validationMessages.required("Fecha de inicio") })

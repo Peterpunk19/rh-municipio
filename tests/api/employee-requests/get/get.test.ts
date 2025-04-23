@@ -30,7 +30,7 @@ describe("API: GET /employee-requests", () => {
           queryParams.append(key, String(value));
         }
       });
-      
+
       const url = `${process.env.NEXT_PUBLIC_API_URL}/employee-requests?${queryParams.toString()}`;
 
       const requestObj = {

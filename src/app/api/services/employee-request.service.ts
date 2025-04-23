@@ -248,13 +248,15 @@ export const EmployeeRequestService = {
         id: item.requested_by.id,
         username: item.requested_by.username,
       },
-      resolvedBy: item.resolved_by ? {
-        id: item.resolved_by.id,
-        name: item.resolved_by.name,
-        paternalLastName: item.resolved_by.paternal_last_name,
-        maternalLastName: item.resolved_by.maternal_last_name,
-        fullName: `${item.resolved_by.name} ${item.resolved_by.paternal_last_name} ${item.resolved_by.maternal_last_name}`,
-      } : null,
+      resolvedBy: item.resolved_by
+        ? {
+            id: item.resolved_by.id,
+            name: item.resolved_by.name,
+            paternalLastName: item.resolved_by.paternal_last_name,
+            maternalLastName: item.resolved_by.maternal_last_name,
+            fullName: `${item.resolved_by.name} ${item.resolved_by.paternal_last_name} ${item.resolved_by.maternal_last_name}`,
+          }
+        : null,
     }));
 
     const total = await prisma.employeeRequest.count({ where: whereClause });

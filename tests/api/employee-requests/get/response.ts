@@ -6,7 +6,7 @@ export const response = {
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      page: { messages: [validationMessages.number('Página')] },
+      page: { messages: [validationMessages.number("Página")] },
     },
     statusCode: 400,
   },
@@ -15,7 +15,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
-        messages: [validationMessages.minNumber('Página', 1)],
+        messages: [validationMessages.minNumber("Página", 1)],
       },
     },
     statusCode: 400,
@@ -25,7 +25,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       page: {
-        messages: [validationMessages.minNumber('Página', 1)],
+        messages: [validationMessages.minNumber("Página", 1)],
       },
     },
     statusCode: 400,
@@ -35,7 +35,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
-        messages: [validationMessages.number('Límite')],
+        messages: [validationMessages.number("Límite")],
       },
     },
     statusCode: 400,
@@ -45,7 +45,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
-        messages: [validationMessages.minNumber('Límite', 1)],
+        messages: [validationMessages.minNumber("Límite", 1)],
       },
     },
     statusCode: 400,
@@ -55,7 +55,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       limit: {
-        messages: [validationMessages.minNumber('Límite', 1)],
+        messages: [validationMessages.minNumber("Límite", 1)],
       },
     },
     statusCode: 400,
@@ -65,7 +65,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       request_id: {
-        messages: [validationMessages.number('ID de solicitud')],
+        messages: [validationMessages.number("ID de solicitud")],
       },
     },
     statusCode: 400,
@@ -75,7 +75,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       request_status_id: {
-        messages: [validationMessages.number('ID de estatus de solicitud')],
+        messages: [validationMessages.number("ID de estatus de solicitud")],
       },
     },
     statusCode: 400,
@@ -85,7 +85,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       request_id: {
-        messages: [validationMessages.minNumber('ID de solicitud', 1)],
+        messages: [validationMessages.minNumber("ID de solicitud", 1)],
       },
     },
     statusCode: 400,
@@ -95,7 +95,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       request_status_id: {
-        messages: [validationMessages.minNumber('ID de estatus de solicitud', 1)],
+        messages: [validationMessages.minNumber("ID de estatus de solicitud", 1)],
       },
     },
     statusCode: 400,
@@ -105,7 +105,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       request_id: {
-        messages: [validationMessages.minNumber('ID de solicitud', 1)],
+        messages: [validationMessages.minNumber("ID de solicitud", 1)],
       },
     },
     statusCode: 400,
@@ -115,7 +115,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       request_status_id: {
-        messages: [validationMessages.minNumber('ID de estatus de solicitud', 1)],
+        messages: [validationMessages.minNumber("ID de estatus de solicitud", 1)],
       },
     },
     statusCode: 400,
@@ -125,7 +125,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       created_at: {
-        messages: [validationMessages.invalidaFormat('Fecha de creación')],
+        messages: [validationMessages.invalidaFormat("Fecha de creación")],
       },
     },
     statusCode: 400,
@@ -135,7 +135,7 @@ export const response = {
     message: HttpMessages.error.validationFields,
     responseObject: {
       search: {
-        messages: [validationMessages.maxLength('Búsqueda', 255)],
+        messages: [validationMessages.maxLength("Búsqueda", 255)],
       },
     },
     statusCode: 400,
