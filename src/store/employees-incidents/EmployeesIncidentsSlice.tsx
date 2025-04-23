@@ -1,10 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import { AppDispatch } from "../store";
 import { getEmployeesIncidents as fetchEmployeesAPI } from "@/services/employees-incidents";
 import { updateTotal } from "@/store/tables/PaginationSlice";
 
 interface StateType {
   employeesIncidents: any[];
+  employeeData: any;
+  formData: {
+    employeeId: string,
+    incidentId: string,
+    startDate: string,
+    endDate: string,
+    description: string,
+  };
+  errors: {
+    [key: string]: string;
+  };
   search: string;
   sortBy: string;
   total: number;
@@ -23,11 +34,20 @@ interface StateType {
 
 const initialState = {
   employeesIncidents: [],
+  employeeData: null,
   search: "",
   sortBy: "id",
   total: 0,
   page: 1,
   limit: 10,
+  formData: {
+    employeeId: "0",
+    incidentId: "0",
+    startDate: "",
+    endDate: "",
+    description: "",
+  },
+  errors: {},
   filters: {
     active: true,
     statusEmployeeId: 1,
@@ -77,6 +97,31 @@ export const EmployeesIncidentsSlice = createSlice({
     emptyMessage: (state, action) => {
       state.emptyMessage = action.payload;
     },
+
+    setEmployeeData(state, action: PayloadAction<any>) {
+      state.employeeData = action.payload;
+    },
+    updateFormData(state, action: PayloadAction<{ field: string; value: any }>) {
+      const { field, value } = action.payload;
+      const fields = field.split('.');
+      let current: any = state.formData;
+
+      for (let i = 0; i < fields.length - 1; i++) {
+        current = current[fields[i]];
+      }
+
+      current[fields[fields.length - 1]] = value;
+    },
+    setErrors(state, action: PayloadAction<{ [key: string]: string }>) {
+      state.errors = action.payload;
+    },
+    clearErrors(state) {
+      state.errors = {};
+    },
+    resetForm(state) {
+      state.formData = initialState.formData;
+      state.errors = {};
+    },
   },
 });
 export const { hasError, getEmployees, searchEmployee, sortById, filterEmployees, filterReset, emptyMessage } =
@@ -94,5 +139,14 @@ export const fetchEmployees = (filters: string) => async (dispatch: AppDispatch)
     dispatch(hasError(error));
   }
 };
+
+export const {
+  setEmployeeData,
+  updateFormData,
+  setErrors,
+  clearErrors,
+  resetForm
+} = EmployeesIncidentsSlice.actions;
+
 
 export default EmployeesIncidentsSlice.reducer;

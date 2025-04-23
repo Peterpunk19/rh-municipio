@@ -12,6 +12,7 @@ import {
   validateEmployee,
   validateEmployeeIncident,
 } from "@/app/api/common/utils.service";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -30,12 +31,12 @@ export async function POST(request: NextRequest) {
       if (validationResponse) return handleHttpResponse(validationResponse);
     }
 
-    const [employee] = await EmployeeIncidentsService.createEmployeeIncidents(body);
-    const response = HttpResponse.success(HttpMessages.employeeIncidents.createdSuccess, employee);
+    const [createEmployeeIncidents] = await EmployeeIncidentsService.createEmployeeIncidents(body);
+    const response = HttpResponse.success(HttpMessages.employeeIncidents.createdSuccess, createEmployeeIncidents);
 
     return handleHttpResponse(response);
   } catch (error: any) {
-    console.error(error.message);
+    logger.error({ error: error.message, stack: error.stack });
 
     const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message });
 
