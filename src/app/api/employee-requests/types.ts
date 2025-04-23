@@ -22,6 +22,15 @@ export interface IEmployeeRequest {
   requestedById: number;
 }
 
+export interface IEmployeeRequestsFilters {
+  page: number | string;
+  limit: number | string;
+  request_id?: number | string | null | undefined;
+  request_status_id?: number | string | null | undefined;
+  created_at?: string | null | undefined;
+  search?: string | null | undefined;
+}
+
 export interface IRequestValidation {
   id: string;
   service: (id: number) => Promise<any>;

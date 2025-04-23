@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
-import React from "react";
+import type React from "react";
 import { formatDateStringTS } from "@/utils/formatter";
+
 import { WhereKey } from "@/interfaces/WhereConfig";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
@@ -54,7 +55,6 @@ export const buildWhereClause = async (
   searchMappings?: { path: string[]; operators?: string[] }[],
 ) => {
   const whereClause: Record<string, any> = {};
-
   Object.entries(filterMappings).forEach(([filterKey, whereKey]) => {
     if (filters[filterKey] !== undefined && filters[filterKey] !== null) {
       if (typeof whereKey === "object" && "path" in whereKey) {
@@ -167,9 +167,8 @@ export const getNestedValue = (obj: any, key: string): any => {
 
   for (const k of keys) {
     if (k.includes("[") && k.includes("]")) {
-      // Handle array index access
       const arrayKey = k.split("[")[0];
-      const index = parseInt(k.split("[")[1].split("]")[0], 10);
+      const index = Number.parseInt(k.split("[")[1].split("]")[0], 10);
       result = result[arrayKey]?.[index];
     } else {
       result = result?.[k];
