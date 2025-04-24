@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import { useTheme } from "@mui/material/styles";
-import { format } from "date-fns";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -27,6 +26,7 @@ import RowMenu from "./RowMenu";
 import TableRenderCell from "./TableRenderCell";
 import { getNestedValue } from "@/common/utils";
 import {IconCalendar, IconClock} from "@tabler/icons-react";
+import { format } from "date-fns";
 
 interface TableProps<T> {
   title: string;
@@ -36,7 +36,7 @@ interface TableProps<T> {
   filtersConfig: () => FiltersConfig[];
   entity: string;
   emptyMessage: string;
-  createLink?: JSX.Element | JSX.Element[];
+  createLink?: React.ReactElement | React.ReactElement[];
   children?: React.ReactNode;
 }
 

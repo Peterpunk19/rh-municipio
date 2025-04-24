@@ -21,6 +21,7 @@ import FiltersReducer from "./tables/FiltersSlice";
 import PaginationReducer from "./tables/PaginationSlice";
 import catalogsReducer from "./tables/CatalogsSlice";
 import EmployeesIncidentsSlice from "@/store/employees-incidents/EmployeesIncidentsSlice";
+import EmployeesRequestsFiltersSlice from "@/store/employees-requests/EmployeesRequestsFiltersSlice";
 import CreateEmployeeRequestReducer from "@/store/employees-requests/CreateEmployeeRequest";
 import CreateEmployeeAttendanceReducer from "@/store/employees-attendances/CreateEmployeeAttendance";
 import EmployeesAttendancesSlice from "@/store/employees-attendances/EmployeesAttendancesSlice";
@@ -45,6 +46,7 @@ export const store = configureStore({
     employeesReducer: EmployeesReducer,
     filterEmployeesSlice: EmployeesFiltersReducer,
     employeesIncidentsSlice: EmployeesIncidentsSlice,
+    employeeRequestsSlice: EmployeesRequestsFiltersSlice,
     usersReducer: UsersReducer,
     filterUsersSlice: UsersFiltersReducer,
     filters: FiltersReducer,

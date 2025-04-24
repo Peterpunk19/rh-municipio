@@ -117,14 +117,45 @@ export const fetchMunicipalitiesData = async (stateId: string): Promise<IRespons
   }
 };
 
-export const fetchCatalogData = async (catalogName: string) => {
+export const fetchCatalogData = async (catalogName: string, params?: Record<string, any>) => {
   try {
-    const response = await fetch(`/api/catalogs/${catalogName}`);
+    const baseUrl = `/api/catalogs/${catalogName}`;
+
+    let url = baseUrl;
+    if (params && Object.keys(params).length > 0) {
+      const urlParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          urlParams.append(key, value.toString());
+        }
+      });
+      const queryString = urlParams.toString();
+      if (queryString) {
+        url += `? ${queryString}`;
+      }
+    }
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}, URL: ${url}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(`Expected JSON response but got ${contentType || "unknown"} from ${url}`);
+    }
+
     const data = await response.json();
+
     return data;
   } catch (error) {
     console.error(`Error fetching ${catalogName} catalog:`, error);
-    throw error;
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Error desconocido",
+      responseObject: [],
+    };
   }
 };
 

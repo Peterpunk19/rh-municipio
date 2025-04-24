@@ -82,6 +82,11 @@ const employeesIncidentsConfig: EntityConfig = {
   initialSortBy: "name",
 };
 
+const employeeRequestsConfig: EntityConfig = {
+  name: "employeeRequests",
+  initialSortBy: "created_at",
+};
+
 const userConfig: EntityConfig = {
   name: "user",
   initialSortBy: "email",
@@ -96,6 +101,7 @@ export const filtersSlice = createFiltersSlice([
   employeeConfig,
   userConfig,
   employeesIncidentsConfig,
+  employeeRequestsConfig,
   employeesAttendancesConfig,
 ]);
 

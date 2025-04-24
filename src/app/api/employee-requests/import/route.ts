@@ -3,9 +3,9 @@ import { HttpResponse } from "@/common/response/model";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
-import { IEmployeeRequest } from "@/app/api/employee-requests/types";
+import type { IEmployeeRequest } from "@/app/api/employee-requests/types";
 import { authMiddleware } from "@/middleware/authMiddleware";
-import { NextRequest } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -27,8 +27,9 @@ function mapToIEmployeeRequest(data: any, folio: string, userId: number): IEmplo
     description: "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
     requestId: requestId,
     employeeId: data.id || "",
-    requestStatusId: 1,
+    requestStatusId: getRandomNumber(1, 5),
     requestDate: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     requestedById: userId,
   };
   switch (requestId) {
@@ -69,10 +70,12 @@ function mapToIEmployeeRequest(data: any, folio: string, userId: number): IEmplo
 
 export async function POST(request: NextRequest) {
   try {
-    const authResponse = await authMiddleware(request);
-    if (authResponse) return authResponse;
+    const authResponse = await authMiddleware();
+    if (authResponse instanceof NextResponse) {
+      return authResponse;
+    }
 
-    const userId = (request as any).userId;
+    const userId = authResponse.userId;
 
     const createdEmployeesRequests: IEmployeeRequest[] = [];
 
