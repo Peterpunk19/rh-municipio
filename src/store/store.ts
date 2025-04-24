@@ -22,6 +22,7 @@ import PaginationReducer from "./tables/PaginationSlice";
 import catalogsReducer from "./tables/CatalogsSlice";
 import EmployeesIncidentsSlice from "@/store/employees-incidents/EmployeesIncidentsSlice";
 import CreateEmployeeRequestReducer from "@/store/employees-requests/CreateEmployeeRequest";
+import EmployeesAttendancesSlice from "@/store/employees-attendances/EmployeesAttendancesSlice";
 
 const persistConfig = {
   key: "root",
@@ -49,6 +50,7 @@ export const store = configureStore({
     pagination: PaginationReducer,
     catalogs: catalogsReducer,
     createEmployeeRequest: CreateEmployeeRequestReducer,
+    employeesAttendancesSlice: EmployeesAttendancesSlice,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),

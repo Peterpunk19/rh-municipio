@@ -44,6 +44,12 @@ export const EmployeeAttendanceService = {
     const offset = (page - 1) * limit;
 
     const filterMappings = {
+      typeAttendance: {
+        path: "employee_location.attendance_id",
+      },
+      location: {
+        path: "employee_location.location_id",
+      },
       organismPublic: {
         path: "employee_hiring.direccion.secretaria_id",
       },
@@ -75,7 +81,7 @@ export const EmployeeAttendanceService = {
       };
     }
 
-    const data = await prisma.employeeAttendance.findMany({
+    const attendances = await prisma.employeeAttendance.findMany({
       where: whereClause,
       skip: offset,
       take: limit,
@@ -140,13 +146,13 @@ export const EmployeeAttendanceService = {
       },
     });
 
-    const attendances = data.map((item: any) => ({
+    const data = attendances.map((item: any) => ({
       id: item.id,
       check_in: item.check_in,
       check_out: item.check_out,
+      created_at: item.created_at,
       active: item.active,
       description: item.description,
-      created_at: item.created_at,
       location: {
         id: item.employee_location.location_id,
         active: item.employee_location.active,
@@ -179,7 +185,7 @@ export const EmployeeAttendanceService = {
     const total = await prisma.employeeAttendance.count({ where: whereClause });
     const pagination = await getPaginationData(total, limit, page);
 
-    return { ...pagination, attendances };
+    return { ...pagination, data };
   },
 
   async getEmployeeAttendanceById(id: number) {

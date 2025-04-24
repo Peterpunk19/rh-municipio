@@ -18,6 +18,8 @@ export async function GET(request: Request) {
       limit: DEFAULT_LIMIT,
       checkIn: null,
       checkOut: null,
+      typeAttendance: null,
+      location: null,
       organismPublic: null,
       organismAdministrative: null,
       search: null,
@@ -42,7 +44,7 @@ export async function GET(request: Request) {
     const existingEmployeesAttendances =
       await EmployeeAttendanceService.getEmployeesAttendanceByParams(validRequestData);
 
-    if (!existingEmployeesAttendances || existingEmployeesAttendances.total === 0) {
+    if (existingEmployeesAttendances && existingEmployeesAttendances.total === 0) {
       const response = HttpResponse.success(HttpMessages.employeeAttendance.notFound, {
         data: [],
         total: 0,
