@@ -26,6 +26,7 @@ import ParentCard from "@/components/shared/cards/ParentCard";
 import RowMenu from "./RowMenu";
 import TableRenderCell from "./TableRenderCell";
 import { getNestedValue } from "@/common/utils";
+import {IconCalendar, IconClock} from "@tabler/icons-react";
 
 interface TableProps<T> {
   title: string;
@@ -93,6 +94,22 @@ const TableWithPagination = <T,>({
     switch (config.renderType) {
       case "date":
         return <Typography>{format(new Date(value as string), "dd/MM/yyyy")}</Typography>;
+
+      case "dateTime":
+        return <Box display="flex" flexDirection="column" gap={0.5}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <IconCalendar size="14" />
+            <Typography fontWeight={500} variant="body2">
+              {format(new Date(value as string), "dd/MM/yyyy")}
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center" gap={1}>
+            <IconClock size="14" />
+            <Typography fontWeight={500} variant="body2">
+              {format(new Date(value as string), "HH:mm")}
+            </Typography>
+          </Box>
+        </Box>;
 
       case "boolean":
         return (

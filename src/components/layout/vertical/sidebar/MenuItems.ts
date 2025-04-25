@@ -102,7 +102,7 @@ const Menuitems: MenuitemsType[] = [
     id: uniqueId(),
     title: "Asistencia",
     icon: IconAppWindow,
-    href: "/frontend-pages/",
+    href: "/employees-attendances",
     children: [
       {
         id: uniqueId(),
@@ -114,7 +114,7 @@ const Menuitems: MenuitemsType[] = [
         id: uniqueId(),
         title: "Crear asistencia",
         icon: IconPoint,
-        href: "/frontend-pages/about",
+        href: "/admin/employees-attendances/create",
       },
     ],
   },
