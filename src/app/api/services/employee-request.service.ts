@@ -147,6 +147,7 @@ export const EmployeeRequestService = {
     const filterMappings = {
       request_id: "request_id",
       request_status_id: "request_status_id",
+      request_date: "request_date",
     };
 
     const searchMappings = [
@@ -159,11 +160,31 @@ export const EmployeeRequestService = {
     ];
 
     const whereClause: any = await buildWhereClause(filterMappings, employeeRequestsFilters, searchMappings);
+    if (employeeRequestsFilters.request_date) {
+      try {
+        const dateStr =
+          typeof employeeRequestsFilters.request_date === "string"
+            ? employeeRequestsFilters.request_date
+            : new Date(employeeRequestsFilters.request_date).toISOString().split("T")[0];
+        const parts = dateStr.split("-");
 
-    if (employeeRequestsFilters.created_at) {
-      whereClause.created_at = {
-        gte: new Date(employeeRequestsFilters.created_at),
-      };
+        if (parts.length === 3) {
+          const year = Number.parseInt(parts[0], 10);
+          const month = Number.parseInt(parts[1], 10);
+          const day = Number.parseInt(parts[2], 10);
+
+          if (!Number.isNaN(year) && !Number.isNaN(month) && !Number.isNaN(day)) {
+            const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+            const endDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+            whereClause.request_date = {
+              gte: startDate,
+              lte: endDate,
+            };
+          }
+        }
+      } catch (error) {
+        console.error("Error al procesar request_date:", error);
+      }
     }
 
     const data = await prisma.employeeRequest.findMany({

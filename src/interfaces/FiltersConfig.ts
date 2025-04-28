@@ -15,4 +15,5 @@ export interface FiltersConfig {
   error?: Error | null;
   onChange?: (value: any) => void;
   gridSize?: { xs: number; sm: number; lg: number };
+  formatValue?: (value: any) => any;
 }

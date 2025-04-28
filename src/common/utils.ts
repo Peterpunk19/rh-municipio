@@ -2,7 +2,7 @@ import bcryptjs from "bcryptjs";
 import type React from "react";
 import { formatDateStringTS } from "@/utils/formatter";
 
-import { WhereKey } from "@/interfaces/WhereConfig";
+import type { WhereKey } from "@/interfaces/WhereConfig";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 

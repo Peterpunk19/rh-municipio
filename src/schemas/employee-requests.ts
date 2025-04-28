@@ -116,7 +116,21 @@ export const EmployeeRequestsGetFilterSchema = z.object({
     .optional()
     .nullable(),
   created_at: z
-    .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de creación") }))
+    .preprocess(
+      (val) => {
+        return validateDate(val);
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha de creación (formato YYYY-MM-DD)") }),
+    )
+    .optional()
+    .nullable(),
+  request_date: z
+    .preprocess(
+      (val) => {
+        return validateDate(val);
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha de solicitud (formato YYYY-MM-DD)") }),
+    )
     .optional()
     .nullable(),
   search: z

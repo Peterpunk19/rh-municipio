@@ -19,6 +19,7 @@ export async function GET(request: Request) {
       request_id: null,
       request_status_id: null,
       created_at: null,
+      request_date: null,
       search: null,
     };
 

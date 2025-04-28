@@ -28,6 +28,7 @@ export interface IEmployeeRequestsFilters {
   request_id?: number | string | null | undefined;
   request_status_id?: number | string | null | undefined;
   created_at?: string | null | undefined;
+  request_date?: string | null | undefined;
   search?: string | null | undefined;
 }
 
