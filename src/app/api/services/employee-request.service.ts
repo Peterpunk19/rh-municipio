@@ -245,6 +245,7 @@ export const EmployeeRequestService = {
       requestDate: item.request_date,
       resolvedAt: item.resolved_at,
       active: item.active,
+      createdAt: item.created_at,
       employee: {
         id: item.employee.id,
         numberEmployee: item.employee.number_employee,
