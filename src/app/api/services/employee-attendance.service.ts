@@ -238,6 +238,12 @@ export const EmployeeAttendanceService = {
                 },
               },
             },
+            category: {
+              select: {
+                id: true,
+                display_name: true,
+              },
+            },
           },
         },
         created_by: {
@@ -273,6 +279,10 @@ export const EmployeeAttendanceService = {
         fullName: `${employeeAttendance.employee_hiring.employee?.name} ${employeeAttendance.employee_hiring.employee?.paternal_last_name} ${employeeAttendance.employee_hiring.employee?.maternal_last_name}`,
         rfc: employeeAttendance.employee_hiring.employee?.rfc,
         curp: employeeAttendance.employee_hiring.employee?.curp,
+        category: {
+          id: employeeAttendance.employee_hiring.category?.id,
+          name: employeeAttendance.employee_hiring.category?.display_name,
+        },
       },
       organism_public: employeeAttendance.employee_hiring.direccion.secretaria,
       organism_administrative: {

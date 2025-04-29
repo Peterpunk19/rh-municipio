@@ -62,7 +62,7 @@ describe("API: GET /employee-attendance/:id", () => {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/employee-attendance/${requestData.id}`;
       const requestObj = new Request(url, { method: "GET" });
 
-      const response = await GET(requestObj, { params: { id: requestData.id.toString() } });
+      const response = await GET(requestObj, { params: Promise.resolve({ id: requestData.id.toString() }) });
       const body = await response.json();
       expect(response.status).toBe(expectedStatus);
       expect(body).toEqual(expectedResponse);

@@ -188,7 +188,7 @@ export const a11yProps = (tab: string, index: any) => {
   };
 };
 
-export const failureResponse = (message: string) => handleHttpResponse(HttpResponse.failure(message, {}));
+export const failureResponse = (message: string, data: object = {}, statusCode?: number) => handleHttpResponse(HttpResponse.failure(message, data, statusCode));
 
-export const successResponse = (message: string, data: object) =>
-  handleHttpResponse(HttpResponse.success(message, data));
+export const successResponse = (message: string, data: object, statusCode?: number) =>
+  handleHttpResponse(HttpResponse.success(message, data, statusCode));
