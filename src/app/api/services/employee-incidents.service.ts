@@ -212,6 +212,9 @@ export const EmployeeIncidentsService = {
             name: true,
             maternal_last_name: true,
             paternal_last_name: true,
+            number_employee: true,
+            rfc: true,
+            curp: true,
             employee_hiring: {
               select: {
                 id: true,
@@ -219,7 +222,7 @@ export const EmployeeIncidentsService = {
                   select: { id: true, name: true, display_name: true },
                 },
                 employee_type: {
-                  select: { id: true, name: true },
+                  select: { id: true, name: true, display_name: true },
                 },
                 direccion: {
                   select: {
@@ -240,6 +243,13 @@ export const EmployeeIncidentsService = {
               take: 1,
               select: {
                 id: true,
+                location: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
               },
             },
           },

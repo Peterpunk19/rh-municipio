@@ -27,11 +27,12 @@ import { logger } from "@/lib/logger";
 import CardContent from "@mui/material/CardContent";
 import { generateUniqueKey } from "@/utils";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import { IconDownload } from "@tabler/icons-react";
 import EmployeeDetails from "@/components/customComponents/EmployeeDetails";
 import IncidentStatusHistory from "@/components/customComponents/IncidentStatusHistory";
 import IncidentDetails from "@/components/customComponents/IncidentDetails";
 import LoadingComponent from "@/components/customComponents/LoadingComponent";
+import PDFGenerator from "@/components/shared/pdfs/PDFGenerator";
+import IncidentTemplate from "@/components/shared/pdfs/templates/IncidentTemplate";
 
 const BCrumb = [
   {
@@ -157,9 +158,12 @@ const EmployeeIncident = () => {
             <Grid size={{ lg: 6, xs: 12 }}>
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
                 <Box display="flex" gap={1}>
-                  <Button variant="outlined" color="secondary" startIcon={<IconDownload width={18} />}>
-                    Descargar formato
-                  </Button>
+                  <PDFGenerator
+                    data={employeeIncidentData}
+                    title="Formato de incidencia"
+                    fileName={`incidencia-${employeeIncidentData.folio}`}
+                    template={IncidentTemplate}
+                  />
                 </Box>
               </Stack>
             </Grid>
