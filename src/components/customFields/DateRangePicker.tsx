@@ -29,7 +29,6 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     const newStartDate = event.target.value;
     onStartDateChange(newStartDate);
     
-    // Si la fecha fin es anterior a la nueva fecha inicio, la reseteamos
     if (endDate && newStartDate > endDate) {
       onEndDateChange('');
     }
