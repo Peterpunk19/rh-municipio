@@ -107,5 +107,7 @@ export const HttpMessages = {
     createdSuccess: "Solicitud creada correctamente",
     notFound: "No se encontraron solicitudes con los filtros proporcionados",
     getSuccess: "Solicitudes encontradas correctamente",
+    notFoundById: "No se encontró la solicitud con el ID proporcionado",
+    foundById: "Solicitud encontrada correctamente",
   },
 };

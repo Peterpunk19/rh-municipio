@@ -286,4 +286,235 @@ export const EmployeeRequestService = {
 
     return { ...pagination, requests };
   },
+
+  async getEmployeeRequestById(id: number) {
+    const employeeRequest = await prisma.employeeRequest.findFirst({
+      where: { id },
+      select: {
+        id: true,
+        folio: true,
+        oficio: true,
+        description: true,
+        request_date: true,
+        created_at: true,
+        request_status: {
+          select: {
+            id: true,
+            name: true,
+            display_name: true,
+            btn_display_name: true,
+            btn_icon: true,
+            btn_color: true,
+            type: true,
+            active: true,
+          },
+        },
+        employee: {
+          select: {
+            name: true,
+            maternal_last_name: true,
+            paternal_last_name: true,
+            number_employee: true,
+            rfc: true,
+            curp: true,
+            employee_location: {
+              where: {
+                active: true,
+              },
+              select: {
+                location: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    active: true,
+                  },
+                },
+                attendance: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    active: true,
+                  },
+                },
+              },
+            },
+            employee_hiring: {
+              select: {
+                direccion: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    secretaria: {
+                      select: {
+                        id: true,
+                        name: true,
+                        display_name: true,
+                      },
+                    },
+                  },
+                },
+                category: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        request: {
+          select: {
+            id: true,
+            name: true,
+            display_name: true,
+            active: true,
+          },
+        },
+        employee_request_detail: {
+          select: {
+            id: true,
+            start_date: true,
+            end_date: true,
+            attendance_date: true,
+            location: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
+            attendance: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
+          },
+        },
+        EmployeeRequestSchedule: {
+          select: {
+            id: true,
+            start_day: true,
+            end_day: true,
+            start_hour: true,
+            end_hour: true,
+          },
+        },
+        requested_by: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        resolved_by: {
+          select: {
+            id: true,
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+          },
+        },
+        EmployeeRequestStatus: {
+          select: {
+            id: true,
+            created_at: true,
+            request_status: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                btn_color: true,
+                btn_icon: true,
+                btn_display_name: true,
+              },
+            },
+            created_by: {
+              select: {
+                id: true,
+                name: true,
+                paternal_last_name: true,
+                maternal_last_name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!employeeRequest) return null;
+
+    return {
+      id: employeeRequest.id,
+      folio: employeeRequest.folio,
+      oficio: employeeRequest.oficio,
+      justification: employeeRequest.description,
+      created_at: employeeRequest.created_at,
+      request_status: {
+        ...employeeRequest.request_status,
+      },
+      employee: {
+        name: `${employeeRequest.employee.name} ${employeeRequest.employee.paternal_last_name} ${employeeRequest.employee.maternal_last_name}`,
+        employeeNumber: employeeRequest.employee.number_employee,
+        rfc: employeeRequest.employee.rfc,
+        curp: employeeRequest.employee.curp,
+        publicOrganization: employeeRequest.employee.employee_hiring[0].direccion.secretaria.display_name,
+        administrativeOrganization: employeeRequest.employee.employee_hiring[0].direccion.display_name,
+        category: employeeRequest.employee.employee_hiring[0].category?.display_name,
+      },
+      request: {
+        ...employeeRequest.request,
+      },
+      request_details: {
+        ...(["schedule_change_request", "location_change_request"].includes(employeeRequest.request.name) && {
+          start_at: employeeRequest.employee_request_detail[0].start_date,
+          end_at: employeeRequest.employee_request_detail[0].end_date,
+        }),
+        ...(employeeRequest.request.name === "schedule_change_request" && {
+          schedule: {
+            ...employeeRequest.EmployeeRequestSchedule,
+          },
+        }),
+        ...(employeeRequest.request.name === "checker_change_request" && {
+          attendance_date: employeeRequest.employee_request_detail[0].attendance_date,
+          current_attendance:
+            employeeRequest.employee?.employee_location?.length > 0
+              ? { ...employeeRequest.employee.employee_location[0].attendance }
+              : null,
+          new_attendance: {
+            ...employeeRequest.employee_request_detail[0].attendance,
+          },
+        }),
+        ...(employeeRequest.request.name === "location_change_request" && {
+          current_location:
+            employeeRequest.employee?.employee_location?.length > 0
+              ? { ...employeeRequest.employee.employee_location[0].location }
+              : null,
+          new_location: {
+            ...employeeRequest.employee_request_detail[0].location,
+          },
+        }),
+        ...(employeeRequest.request.name === "fingerprint_registration_request" && {
+          location: {
+            ...employeeRequest.employee_request_detail[0].location,
+          },
+        }),
+        request_date: employeeRequest.request_date,
+      },
+      requestedBy: {
+        ...employeeRequest.requested_by,
+      },
+      approvedBy: {
+        ...employeeRequest.resolved_by,
+      },
+      employee_attendance_status: employeeRequest.EmployeeRequestStatus,
+    };
+  },
 };

@@ -303,6 +303,10 @@ model RequestStatus {
   name              String
   display_name      String
   description       String
+  btn_display_name  String
+  btn_icon          String
+  btn_color         String
+  type              Int
   active            Boolean           @default(true)
   employee_requests EmployeeRequest[]
   employee_request_status EmployeeRequestStatus[]
