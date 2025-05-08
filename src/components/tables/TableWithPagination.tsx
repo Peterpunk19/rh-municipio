@@ -27,6 +27,7 @@ import TableRenderCell from "./TableRenderCell";
 import { getNestedValue } from "@/common/utils";
 import {IconCalendar, IconClock} from "@tabler/icons-react";
 import { format } from "date-fns";
+import { formatDate } from "@/utils/formatter";
 
 interface TableProps<T> {
   title: string;
@@ -93,7 +94,7 @@ const TableWithPagination = <T,>({
 
     switch (config.renderType) {
       case "date":
-        return <Typography>{format(new Date(value as string), "dd/MM/yyyy")}</Typography>;
+        return <Typography>{formatDate(new Date(value as string), "dd/MM/yyyy")}</Typography>;
 
       case "dateTime":
         return <Box display="flex" flexDirection="column" gap={0.5}>

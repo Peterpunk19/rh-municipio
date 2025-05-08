@@ -24,7 +24,9 @@ const BCrumb = [
 
 const EmployeeAttendanceById = () => {
   const [loading, setLoading] = useState(false);
-  const [employeeAttendanceDataById, setEmployeeAttendanceDataById] = useState<IEmployeeAttendanceDataById | null>(null);
+  const [employeeAttendanceDataById, setEmployeeAttendanceDataById] = useState<IEmployeeAttendanceDataById | null>(
+    null,
+  );
   const { id } = useParams();
 
   React.useEffect(() => {
@@ -111,13 +113,21 @@ const EmployeeAttendanceById = () => {
             <Typography variant="subtitle1" fontWeight="bold">
               Fecha y hora de entrada
             </Typography>
-            <TextField disabled fullWidth value={formatDate(employeeAttendanceDataById!.check_in, "dd/MM/yyyy HH:mm")} />
+            <TextField
+              disabled
+              fullWidth
+              value={formatDate(employeeAttendanceDataById!.check_in, "dd/MM/yyyy HH:mm")}
+            />
           </Grid2>
           <Grid2 size={{ xs: 12, md: 4 }}>
             <Typography variant="subtitle1" fontWeight="bold">
               Fecha y hora de salida
             </Typography>
-            <TextField disabled fullWidth value={formatDate(employeeAttendanceDataById!.check_out, "dd/MM/yyyy HH:mm")} />
+            <TextField
+              disabled
+              fullWidth
+              value={formatDate(employeeAttendanceDataById!.check_out, "dd/MM/yyyy HH:mm")}
+            />
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Typography variant="subtitle1" fontWeight="bold">

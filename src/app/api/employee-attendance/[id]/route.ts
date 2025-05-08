@@ -34,6 +34,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     return successResponse(HttpMessages.employeeAttendance.foundById, existingEmployeeAttendance);
   } catch (error: any) {
     logger.error({ error: error.message, stack: error.stack });
-    return failureResponse(HttpMessages.error.internalServerError, { error: HttpMessages.error.internalServerError }, StatusCodes.INTERNAL_SERVER_ERROR);
+    return failureResponse(
+      HttpMessages.error.internalServerError,
+      { error: HttpMessages.error.internalServerError },
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
   }
 }
