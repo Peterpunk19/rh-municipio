@@ -5,13 +5,18 @@ import { HttpMessages } from "@/common/response/messages";
 import type { IEmployeeIncidentFilters } from "@/app/api/employee-incidents/types";
 import { EmployeeIncidentsGetFilterSchema } from "@/schemas/employee-incidents";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
-import { getParamsFromUrl } from "@/common/utils";
+import { getParamsFromUrl, getRoleValueById } from "@/common/utils";
+import { authMiddleware } from "@/middleware/authMiddleware";
+import { NextResponse } from "next/server";
+import { ROLES } from "@/common/constants/Roles";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   try {
     const params = {
       page: 1,
       limit: 5,
+      employee_id: null,
       incident_id: null,
       incident_status_id: null,
       start_date: null,
@@ -20,6 +25,15 @@ export async function GET(request: Request) {
     };
 
     const requestParams = await getParamsFromUrl(request, params);
+
+    const authData = await authMiddleware();
+
+    if (authData instanceof NextResponse) {
+      return authData;
+    }
+
+    const { roleId, employeeId } = authData;
+    const role = getRoleValueById(roleId);
 
     const validationRequest = await validateRequestByUrlParams<IEmployeeIncidentFilters>(
       requestParams,
@@ -33,6 +47,15 @@ export async function GET(request: Request) {
     if (!validRequestData) {
       const response = HttpResponse.failure(HttpMessages.error.validationFields, {});
       return handleHttpResponse(response);
+    }
+
+    if (role === ROLES.EMPLEADO && requestParams.employee_id && requestParams.employee_id !== employeeId) {
+      const response = HttpResponse.failure(HttpMessages.employeeIncidents.notAllowedToList, {});
+      return handleHttpResponse(response);
+    }
+
+    if (role === ROLES.EMPLEADO) {
+      validRequestData.employee_id = Number(employeeId);
     }
 
     const existingEmployees = await EmployeeIncidentsService.getEmployeesIncidentsByParams(validRequestData);
@@ -51,8 +74,9 @@ export async function GET(request: Request) {
     const response = HttpResponse.success(HttpMessages.employeeIncidents.getSuccess, existingEmployees);
 
     return handleHttpResponse(response);
-  } catch (error) {
-    console.error(`An error occurred detail: ${error}`);
+  } catch (error: any) {
+    logger.error({ error: error.message, stack: error.stack });
+
     const response = HttpResponse.failure(HttpMessages.error.internalServerError, error);
     return handleHttpResponse(response);
   }

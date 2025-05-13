@@ -4,9 +4,12 @@ import { HttpMessages } from "@/common/response/messages";
 import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { EmployeeRequestsGetFilterSchema } from "@/schemas/employee-requests";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
-import { getParamsFromUrl } from "@/common/utils";
+import { getParamsFromUrl, getRoleValueById } from "@/common/utils";
 import { logger } from "@/lib/logger";
 import type { IEmployeeRequestsFilters } from "./types";
+import { authMiddleware } from "@/middleware/authMiddleware";
+import { NextResponse } from "next/server";
+import { ROLES } from "@/common/constants/Roles";
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_PAGE = 1;
@@ -16,6 +19,7 @@ export async function GET(request: Request) {
     const params = {
       page: DEFAULT_PAGE,
       limit: DEFAULT_LIMIT,
+      employee_id: null,
       request_id: null,
       request_status_id: null,
       created_at: null,

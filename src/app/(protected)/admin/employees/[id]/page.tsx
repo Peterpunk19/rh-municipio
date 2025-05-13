@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Grid2 as Grid, Tabs, Tab, Box, CardContent, Divider } from "@mui/material";
 import BlankCard from "@/components/shared/BlankCard";
-import { IconArticle, IconBell, IconUserCircle } from "@tabler/icons-react";
+import { IconAlertCircle, IconArticle, IconFileInvoice, IconMap2, IconUserCircle } from "@tabler/icons-react";
 import { StatusCodes } from "http-status-codes";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { logger } from "@/lib/logger";
@@ -14,6 +14,11 @@ import EmployeeProfileCard from "../(profile)/sections/EmployeeProfileCard";
 import { useParams } from "next/navigation";
 import { getEmployeeById } from "@/services/employees";
 import { redirect } from "next/navigation";
+import EmployeesIncidents from "@/app/(protected)/admin/employees-incidents/page";
+import { updateConfigFilters, updateFilter } from "@/store/tables/FiltersSlice";
+import { useDispatch } from "@/store/hooks";
+import EmployeeRequests from "@/app/(protected)/admin/employees-requests/page";
+import { a11yPropsProfile } from "@/common/utils";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -37,13 +42,6 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
 const BCrumb = [
   {
     to: "/admin/employees",
@@ -54,6 +52,7 @@ const BCrumb = [
   },
 ];
 const Profile = () => {
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [employeeData, setEmployeeData] = React.useState<any>(null);
@@ -86,6 +85,16 @@ const Profile = () => {
   }, [id]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    dispatch(updateConfigFilters({ entity: event.target.id, title: "", showSearchBar: false }));
+
+    dispatch(
+      updateFilter({
+        entity: event.target.id,
+        key: "employee_id",
+        value: id,
+      }),
+    );
+
     setValue(newValue);
   };
 
@@ -101,21 +110,38 @@ const Profile = () => {
         </BlankCard>
         <Grid size={12}>
           <BlankCard>
-            <Box sx={{ maxWidth: { xs: 440, sm: 600 } }}>
+            <Box sx={{ pl: 2 }}>
               <Tabs value={value} onChange={handleChange} scrollButtons="auto" aria-label="profile tabs">
                 <Tab
                   iconPosition="start"
                   icon={<IconUserCircle size="22" />}
                   label="Datos personales"
-                  {...a11yProps(0)}
+                  {...a11yPropsProfile("personalInformation")}
                 />
 
-                <Tab iconPosition="start" icon={<IconBell size="22" />} label="Datos de domicilio" {...a11yProps(1)} />
+                <Tab
+                  iconPosition="start"
+                  icon={<IconMap2 size="22" />}
+                  label="Datos de domicilio"
+                  {...a11yPropsProfile("addressInformation")}
+                />
                 <Tab
                   iconPosition="start"
                   icon={<IconArticle size="22" />}
                   label="Datos de contratación"
-                  {...a11yProps(2)}
+                  {...a11yPropsProfile("hiringInformation")}
+                />
+                <Tab
+                  iconPosition="start"
+                  icon={<IconAlertCircle size="22" />}
+                  label="Incidencias"
+                  {...a11yPropsProfile("employeesIncidents")}
+                />
+                <Tab
+                  iconPosition="start"
+                  icon={<IconFileInvoice size="22" />}
+                  label="Solicitudes"
+                  {...a11yPropsProfile("employeeRequests")}
                 />
               </Tabs>
             </Box>
@@ -129,6 +155,12 @@ const Profile = () => {
               </TabPanel>
               <TabPanel value={value} index={2}>
                 <HiringTab employeeData={employeeData} />
+              </TabPanel>
+              <TabPanel value={value} index={3}>
+                <EmployeesIncidents />
+              </TabPanel>
+              <TabPanel value={value} index={4}>
+                <EmployeeRequests />
               </TabPanel>
             </CardContent>
           </BlankCard>

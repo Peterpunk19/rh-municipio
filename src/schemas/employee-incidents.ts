@@ -53,6 +53,10 @@ export const EmployeeIncidentsGetFilterSchema = z.object({
     .number({ message: validationMessages.number("Limite") })
     .min(1, { message: validationMessages.minNumber("Limite", 1) })
     .nullable(),
+  employee_id: z
+    .number({ message: validationMessages.number("Empleado") })
+    .optional()
+    .nullable(),
   incident_id: z
     .number({ message: validationMessages.number("Tipo de incidencia") })
     .optional()

@@ -6,6 +6,7 @@ export const generator = {
   request: (overrides?: Partial<IEmployeeIncidentFilters>): IEmployeeIncidentFilters => ({
     page: overrides?.page ?? 1,
     limit: overrides?.limit ?? 5,
+    employee_id: "",
     search: overrides?.search ?? "",
     start_date: overrides?.start_date ?? "",
     end_date: overrides?.end_date ?? "",

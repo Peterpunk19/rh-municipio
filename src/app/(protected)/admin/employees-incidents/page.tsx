@@ -26,7 +26,7 @@ export default function EmployeesIncidents() {
   const ENTITY = "employeesIncidents";
   const dispatch = useDispatch<AppDispatch>();
   const { page, limit } = useSelector((state: RootState) => state.pagination);
-  const { searchTerm, values } = useSelector(
+  const { searchTerm, values, title, showSearchBar } = useSelector(
     (state: RootState) => state.filters.employeesIncidents || { searchTerm: "", values: {} },
   );
 
@@ -54,8 +54,8 @@ export default function EmployeesIncidents() {
   );
 
   return (
-    <PageContainer title="Incidencias de empleados" description="Incidencias de empleados">
-      <Breadcrumb title="Incidencias de empleados" items={BCrumb} />
+    <PageContainer title={title} description={title}>
+      {showSearchBar ?? <Breadcrumb title={title} items={BCrumb} />}
       <TableWithPagination
         title=""
         headCells={header}

@@ -145,6 +145,7 @@ export const EmployeeRequestService = {
     const offset = (page - 1) * limit;
 
     const filterMappings = {
+      employee_id: "employee_id",
       request_id: "request_id",
       request_status_id: "request_status_id",
       request_date: "request_date",

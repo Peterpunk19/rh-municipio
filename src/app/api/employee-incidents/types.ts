@@ -13,6 +13,7 @@ export interface IEmployeeIncident {
 export interface IEmployeeIncidentFilters {
   page: number | string;
   limit: number | string;
+  employee_id: number | string | undefined;
   incident_id: number | string | undefined;
   incident_status_id: number | string | undefined;
   start_date: string | null | undefined;

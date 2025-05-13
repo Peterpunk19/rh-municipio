@@ -105,6 +105,10 @@ export const EmployeeRequestsGetFilterSchema = z.object({
     .number({ message: validationMessages.number("Límite") })
     .min(1, { message: validationMessages.minNumber("Límite", 1) })
     .nullable(),
+  employee_id: z
+    .number({ message: validationMessages.number("Empleado") })
+    .optional()
+    .nullable(),
   request_id: z
     .number({ message: validationMessages.number("ID de solicitud") })
     .min(1, { message: validationMessages.minNumber("ID de solicitud", 1) })

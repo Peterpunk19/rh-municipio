@@ -8,12 +8,6 @@ export const header: readonly HeadCell[] = [
     label: "Folio",
   },
   {
-    id: "oficio",
-    numeric: false,
-    disablePadding: false,
-    label: "Oficio",
-  },
-  {
     id: "incident_status.display_name",
     numeric: false,
     disablePadding: false,

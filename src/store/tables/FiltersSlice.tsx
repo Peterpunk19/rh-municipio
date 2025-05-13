@@ -5,12 +5,16 @@ interface EntityFiltersState {
   values: Record<string, any>;
   searchTerm: string;
   filterOpen: boolean;
+  title: string;
+  showSearchBar: boolean;
 }
 
 interface EntityConfig {
   name: string;
   initialSortBy?: string;
   initialSearchTerm?: string;
+  title?: string;
+  showSearchBar?: boolean;
 }
 
 export const createFiltersSlice = (configs: EntityConfig[]) => {
@@ -22,6 +26,8 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
       searchTerm: config.initialSearchTerm || "",
       values: {},
       filterOpen: false,
+      title: config.title || "",
+      showSearchBar: config.showSearchBar || true,
     };
   });
 
@@ -54,6 +60,13 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
           state[entity].filterOpen = filterOpen;
         }
       },
+      updateConfigFilters: (state, action: PayloadAction<{ entity: string; title: string, showSearchBar: boolean }>) => {
+        const { entity, title, showSearchBar } = action.payload;
+        if (state[entity]) {
+          state[entity].title = title;
+          state[entity].showSearchBar = showSearchBar;
+        }
+      },
       sortBy: (state, action: PayloadAction<{ entity: string; sortBy: string }>) => {
         const { entity, sortBy } = action.payload;
         if (state[entity]) {
@@ -80,11 +93,15 @@ const employeeConfig: EntityConfig = {
 const employeesIncidentsConfig: EntityConfig = {
   name: "employeesIncidents",
   initialSortBy: "name",
+  title: "Incidencias de empleados",
+  showSearchBar: true,
 };
 
 const employeeRequestsConfig: EntityConfig = {
   name: "employeeRequests",
   initialSortBy: "created_at",
+  title: "Solicitudes de empleados",
+  showSearchBar: true,
 };
 
 const userConfig: EntityConfig = {
@@ -95,6 +112,8 @@ const userConfig: EntityConfig = {
 const employeesAttendancesConfig: EntityConfig = {
   name: "employeesAttendances",
   initialSortBy: "name",
+  title: "Asistencias de empleados",
+  showSearchBar: true,
 };
 
 export const filtersSlice = createFiltersSlice([
@@ -105,5 +124,5 @@ export const filtersSlice = createFiltersSlice([
   employeesAttendancesConfig,
 ]);
 
-export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen } = filtersSlice.actions;
+export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen, updateConfigFilters } = filtersSlice.actions;
 export default filtersSlice.reducer;

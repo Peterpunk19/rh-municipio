@@ -22,6 +22,7 @@ export const HttpMessages = {
     createdSuccess: "Incidencia creada correctamente",
     updatedSuccess: "Incidencia actualizada correctamente",
     notFound: "No se encontraron incidencias con los filtros proporcionados",
+    notAllowedToList: "No tienes permiso para ver incidencias de otros empleados",
     getSuccess: "Incidencias encontradas correctamente",
     invalidEmployeeType: "No fue encontrado el tipo de empleado.",
     folioError: "Folio no creado.",

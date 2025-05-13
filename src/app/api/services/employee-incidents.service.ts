@@ -84,6 +84,7 @@ export const EmployeeIncidentsService = {
     const offset = (Number(page) - 1) * Number(limit);
 
     const filterMappings = {
+      employee_id: "employee_id",
       incident_id: "incident_id",
       incident_status_id: "incident_status_id",
       start_date: "start_date",
