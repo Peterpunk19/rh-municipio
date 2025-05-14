@@ -16,6 +16,7 @@ export async function GET(request: Request) {
     const params = {
       page: DEFAULT_PAGE,
       limit: DEFAULT_LIMIT,
+      employeeId: null,
       checkIn: null,
       checkOut: null,
       typeAttendance: null,

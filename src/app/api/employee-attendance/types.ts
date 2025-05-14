@@ -12,6 +12,7 @@ export interface IEmployeeAttendance {
 export interface IEmployeeAttendanceFilters {
   page: number | string;
   limit: number | string;
+  employeeId: number | string | undefined;
   checkIn: string | null | undefined;
   checkOut: string | null | undefined;
   typeAttendance: number | string | null | undefined;

@@ -32,7 +32,7 @@ export const EmployeeAttendanceGetFilterSchema = z.object({
     .number({ message: validationMessages.number("Límite") })
     .min(1, { message: validationMessages.minNumber("Límite", 1) })
     .nullable(),
-  employee_id: z
+  employeeId: z
     .number({ message: validationMessages.number("Empleado") })
     .optional()
     .nullable(),

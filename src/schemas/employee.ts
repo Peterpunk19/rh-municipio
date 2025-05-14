@@ -157,6 +157,10 @@ export const EmployeeGetByFilterSchema = z.object({
     .number({ message: validationMessages.number("Limite") })
     .min(1, { message: validationMessages.minNumber("Limite", 1) })
     .nullable(),
+  employee_id: z
+    .number({ message: validationMessages.number("Empleado") })
+    .optional()
+    .nullable(),
   active: z.preprocess((val) => {
     if (typeof val === "string" || val instanceof String) {
       const stringValue = val.toString().toLowerCase();

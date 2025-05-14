@@ -10,9 +10,12 @@ import { getRandomDate, getRandomElement } from "@/common/utils";
 import { StatusCodes } from "http-status-codes";
 import { logger } from "@/lib/logger";
 import { CatalogsService } from "@/app/api/services/catalogs.service";
+import type { NextRequest } from "next/server";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const body = await request.json();
+
     const createdEmployeesAttendance: IEmployeeAttendance[] = [];
 
     const LIMIT = 1;
@@ -34,6 +37,7 @@ export async function POST() {
     const employees = await EmployeeService.getEmployeesByParams({
       limit: 1000,
       page: 1,
+      employee_id: body.employee_id || null,
       active: true,
     });
 
@@ -61,6 +65,15 @@ export async function POST() {
     const randomCategory = getRandomElement(catalogCategory);
     const randomEmployeeType = getRandomElement(catalogEmployeeType);
     const randomDireccion = getRandomElement(catalogDireccion);
+
+    const fromDate = body.from ? new Date(body.from) : null;
+    const toDate = body.to ? new Date(body.to) : null;
+
+    if (fromDate) fromDate.setHours(0, 0, 0, 0);
+    if (toDate) toDate.setHours(0, 0, 0, 0);
+
+    const workStartHour = 8;
+    const workShiftLengthInHours = 8;
 
     for (const employeeData of employees.data) {
       let employeeLocationId: number;
@@ -96,34 +109,68 @@ export async function POST() {
         employeeHiringId = employeeData.employee_hiring[0].id;
       }
 
-      const randomBaseDate = new Date(getRandomDate(new Date("2025-01-01"), new Date()));
-      randomBaseDate.setHours(0, 0, 0, 0);
+      const employeeAttendances: IEmployeeAttendance[] = [];
 
-      const workStartHour = 8;
-      const workShiftLengthInHours = 8;
+      if (fromDate && toDate) {
+        for (let date = new Date(fromDate); date <= toDate; date.setDate(date.getDate() + 1)) {
+          const checkInDateTime = new Date(date);
+          checkInDateTime.setHours(workStartHour, 0, 0, 0);
 
-      const checkInDateTime = new Date(randomBaseDate);
-      checkInDateTime.setHours(workStartHour, 0, 0, 0);
+          const checkOutDateTime = new Date(checkInDateTime);
+          checkOutDateTime.setHours(checkInDateTime.getHours() + workShiftLengthInHours);
 
-      const checkOutDateTime = new Date(checkInDateTime);
-      checkOutDateTime.setHours(checkInDateTime.getHours() + workShiftLengthInHours);
+          const [attendance] = await EmployeeAttendanceService.createEmployeeAttendance({
+            checkIn: checkInDateTime.toISOString(),
+            checkOut: checkOutDateTime.toISOString(),
+            employeeId: employeeData.id,
+            employeeHiringId: employeeHiringId,
+            employeeLocationId: employeeLocationId,
+            createdById: createdById,
+            active: true,
+            description: "Asistencia generada automaticamente",
+          });
 
-      const [employee] = await EmployeeAttendanceService.createEmployeeAttendance({
-        checkIn: checkInDateTime.toISOString(),
-        checkOut: checkOutDateTime.toISOString(),
-        employeeId: employeeData.id,
-        employeeHiringId: employeeHiringId,
-        employeeLocationId: employeeLocationId,
-        createdById: createdById,
-        active: true,
-        description: "Asistencia generada automaticamente",
-      });
+          if (!attendance) {
+            const response = HttpResponse.failure(
+              HttpMessages.employeeAttendance.notCreated,
+              {},
+              StatusCodes.NOT_FOUND,
+            );
+            return handleHttpResponse(response);
+          }
 
-      if (!employee) {
-        const response = HttpResponse.failure(HttpMessages.employeeAttendance.notCreated, {}, StatusCodes.NOT_FOUND);
-        return handleHttpResponse(response);
+          employeeAttendances.push(attendance);
+        }
+      } else {
+        const randomBaseDate = new Date(getRandomDate(new Date("2025-01-01"), new Date()));
+        randomBaseDate.setHours(0, 0, 0, 0);
+
+        const workStartHour = 8;
+        const workShiftLengthInHours = 8;
+
+        const checkInDateTime = new Date(randomBaseDate);
+        checkInDateTime.setHours(workStartHour, 0, 0, 0);
+
+        const checkOutDateTime = new Date(checkInDateTime);
+        checkOutDateTime.setHours(checkInDateTime.getHours() + workShiftLengthInHours);
+
+        const [employee] = await EmployeeAttendanceService.createEmployeeAttendance({
+          checkIn: checkInDateTime.toISOString(),
+          checkOut: checkOutDateTime.toISOString(),
+          employeeId: employeeData.id,
+          employeeHiringId: employeeHiringId,
+          employeeLocationId: employeeLocationId,
+          createdById: createdById,
+          active: true,
+          description: "Asistencia generada automaticamente",
+        });
+
+        if (!employee) {
+          const response = HttpResponse.failure(HttpMessages.employeeAttendance.notCreated, {}, StatusCodes.NOT_FOUND);
+          return handleHttpResponse(response);
+        }
+        createdEmployeesAttendance.push(employee);
       }
-      createdEmployeesAttendance.push(employee);
     }
 
     const response = HttpResponse.success(HttpMessages.employeeAttendance.createdSuccess, {

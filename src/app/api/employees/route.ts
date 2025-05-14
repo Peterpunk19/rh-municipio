@@ -12,6 +12,7 @@ export async function GET(request: Request) {
     const page = Number.parseInt(searchParams.get("page") || ("1" as string), 10);
     const limit = Number.parseInt(searchParams.get("limit") || ("5" as string), 10);
     const active = searchParams.has("active") ? searchParams.get("active") : null;
+    const employee_id = searchParams.has("employee_id") ? Number.parseInt(searchParams.get("employee_id")!, 10) : null;
     const employee_type = searchParams.has("employee_type")
       ? Number.parseInt(searchParams.get("employee_type")!, 10)
       : null;
@@ -33,6 +34,7 @@ export async function GET(request: Request) {
     const requestParams = {
       page,
       limit,
+      employee_id,
       active,
       gender,
       category,

@@ -3,7 +3,14 @@
 import * as React from "react";
 import { Grid2 as Grid, Tabs, Tab, Box, CardContent, Divider } from "@mui/material";
 import BlankCard from "@/components/shared/BlankCard";
-import { IconAlertCircle, IconArticle, IconFileInvoice, IconMap2, IconUserCircle } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconArticle,
+  IconFileInvoice,
+  IconAppWindow,
+  IconMap2,
+  IconUserCircle,
+} from "@tabler/icons-react";
 import { StatusCodes } from "http-status-codes";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { logger } from "@/lib/logger";
@@ -19,6 +26,8 @@ import { updateConfigFilters, updateFilter } from "@/store/tables/FiltersSlice";
 import { useDispatch } from "@/store/hooks";
 import EmployeeRequests from "@/app/(protected)/admin/employees-requests/page";
 import { a11yPropsProfile } from "@/common/utils";
+import CustomCalendarAttendance from "@/components/customComponents/CustomCalendarAttendance";
+import { getEmployeeAttendanceById, getEmployeesAttendances } from "@/services/employees-attendances";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -143,6 +152,12 @@ const Profile = () => {
                   label="Solicitudes"
                   {...a11yPropsProfile("employeeRequests")}
                 />
+                <Tab
+                  iconPosition="start"
+                  icon={<IconAppWindow size="22" />}
+                  label="Asistencias"
+                  {...a11yPropsProfile("employeesAttendances")}
+                />
               </Tabs>
             </Box>
             <Divider />
@@ -161,6 +176,9 @@ const Profile = () => {
               </TabPanel>
               <TabPanel value={value} index={4}>
                 <EmployeeRequests />
+              </TabPanel>
+              <TabPanel value={value} index={5}>
+                <CustomCalendarAttendance employeeId={Number(id)} />
               </TabPanel>
             </CardContent>
           </BlankCard>

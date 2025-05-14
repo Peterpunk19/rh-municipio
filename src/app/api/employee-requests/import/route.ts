@@ -5,7 +5,7 @@ import { HttpMessages } from "@/common/response/messages";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
 import type { IEmployeeRequest } from "@/app/api/employee-requests/types";
 import { authMiddleware } from "@/middleware/authMiddleware";
-import type { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;

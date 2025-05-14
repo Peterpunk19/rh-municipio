@@ -51,6 +51,7 @@ export interface IEmployee {
 export interface IEmployeeFilters {
   page: number;
   limit: number;
+  employee_id: number | null | undefined;
   gender: number | null | undefined;
   employee_type: number | null | undefined;
   active: string | boolean | null | undefined;
