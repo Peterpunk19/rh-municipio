@@ -8,4 +8,12 @@ export const RoleService = {
       },
     });
   },
+
+  async getRoleByName(name: string) {
+    return prisma.role.findFirst({
+      where: {
+        name,
+      },
+    });
+  },
 };
