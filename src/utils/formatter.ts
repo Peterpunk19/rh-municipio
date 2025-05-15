@@ -35,36 +35,49 @@ export const formatDateStringFilters = (dateStr: string): string => {
   }
 };
 
+type ScheduleItem = {
+  start_day: { display_name: string };
+  start_hour: { display_name: string };
+  end_day: { display_name: string };
+  end_hour: { display_name: string };
+};
 
 export const formatScheduleText = (schedule: string) => {
   if (!schedule) return "";
   let formattedText = "";
   if (Array.isArray(schedule)) {
-    formattedText = schedule.map((item) => (
-      `${item.startDay?.name || item.start_day?.display_name} a ${item.endDay?.name || item.end_day?.display_name} de ${item.startHour?.name || item.start_hour?.display_name} a ${item.endHour?.name || item.end_hour?.display_name}`
-    )).join("\n");
-  } else if (typeof schedule === 'object') {
+    formattedText = schedule
+      .map(
+        (item) =>
+          `${item.startDay?.name || item.start_day?.display_name} a ${item.endDay?.name || item.end_day?.display_name} de ${item.startHour?.name || item.start_hour?.display_name} a ${item.endHour?.name || item.end_hour?.display_name}`,
+      )
+      .join("\n");
+  } else if (typeof schedule === "object") {
     const entries = Object.entries(schedule);
     entries.sort((a, b) => Number.parseInt(a[0]) - Number.parseInt(b[0]));
     const parts = [];
-    for (const [_, item] of entries) {
+    for (const [_, value] of entries) {
+      const item = value as ScheduleItem;
+
       if (item.start_day && item.start_hour && item.end_day && item.end_hour) {
-        parts.push(`${item.start_day.display_name} a ${item.end_day.display_name} de ${item.start_hour.display_name} a ${item.end_hour.display_name}`);
+        parts.push(
+          `${item.start_day.display_name} a ${item.end_day.display_name} de ${item.start_hour.display_name} a ${item.end_hour.display_name}`,
+        );
       }
     }
-    
-    const weekdaySchedule = parts.find(p => p.includes("Lunes"));
-    const weekendSchedule = parts.filter(p => p.includes("Sábado") || p.includes("Domingo"));
-    
+
+    const weekdaySchedule = parts.find((p) => p.includes("Lunes"));
+    const weekendSchedule = parts.filter((p) => p.includes("Sábado") || p.includes("Domingo"));
+
     if (weekdaySchedule) {
       formattedText += weekdaySchedule;
     }
-    
+
     if (weekendSchedule.length > 0) {
       if (formattedText) formattedText += "\n";
       formattedText += weekendSchedule.join("\n");
     }
-  } else if (typeof schedule === 'string') {
+  } else if (typeof schedule === "string") {
     formattedText = schedule;
   }
 

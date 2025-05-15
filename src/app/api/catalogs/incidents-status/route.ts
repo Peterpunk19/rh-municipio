@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     employee_attendance_id: null,
     area_id: null,
     direccion_id: null,
+    employee_id: null,
     incident_id: null,
     incident_status_id: null,
     start_date: null,

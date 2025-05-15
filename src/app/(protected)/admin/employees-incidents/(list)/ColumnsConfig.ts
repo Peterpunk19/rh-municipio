@@ -2,7 +2,6 @@ import type { ColumnTypeConfig } from "@/interfaces/ColumnTypeConfig";
 
 export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   folio: { renderType: "text" },
-  oficio: { renderType: "text" },
   "incident_status.display_name": { renderType: "text" },
   "employee.name": { renderType: "text" },
   "incident.display_name": { renderType: "text" },

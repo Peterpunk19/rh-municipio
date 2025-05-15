@@ -25,6 +25,7 @@ export interface IEmployeeRequest {
 export interface IEmployeeRequestsFilters {
   page: number | string;
   limit: number | string;
+  employee_id: number | string | undefined;
   request_id?: number | string | null | undefined;
   request_status_id?: number | string | null | undefined;
   created_at?: string | null | undefined;

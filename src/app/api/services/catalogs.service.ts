@@ -148,6 +148,7 @@ export const CatalogsService = {
       employee_attendance_id,
       area_id,
       direccion_id,
+      employee_id,
       incident_id,
       incident_status_id,
       start_date,
@@ -175,6 +176,10 @@ export const CatalogsService = {
                                               INNER JOIN Employee employee ON employee_incidents.employee_id = employee.id
                                      WHERE 1 
                                      `;
+
+    if (employee_id) {
+      baseQuery += ` AND employee_incidents.employee_id = ${employee_id}`;
+    }
 
     if (employee_attendance_id) {
       baseQuery += ` AND employee_incidents.employee_attendance_id = ${employee_attendance_id}`;
@@ -225,7 +230,7 @@ WHERE parent.active = 1 ORDER BY parent.id `;
   },
 
   async getRequestsStatus(params: any) {
-    const { request_id, search } = params;
+    const { employee_id, request_id, search } = params;
 
     let baseQuery = `SELECT
                          parent.id,
@@ -246,6 +251,10 @@ WHERE parent.active = 1 ORDER BY parent.id `;
                                               INNER JOIN Employee employee ON employee_requests.employee_id = employee.id
                                      WHERE 1=1 
                                      AND (employee_requests.active = 1 OR (employee_requests.request_status_id = 5 AND employee_requests.active = 0))`;
+
+    if (employee_id) {
+      baseQuery += ` AND employee_requests.employee_id = ${employee_id}`;
+    }
 
     if (request_id) {
       baseQuery += ` AND employee_requests.request_id = ${request_id}`;

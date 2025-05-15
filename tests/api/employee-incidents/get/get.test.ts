@@ -1,11 +1,16 @@
 import { GET } from "@/app/api/employee-incidents/route";
 import { testCases } from "./testCases";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
+import { authMiddleware } from "@/middleware/authMiddleware";
 
 jest.mock("@/app/api/services/employee-incidents.service", () => ({
   EmployeeIncidentsService: {
     getEmployeesIncidentsByParams: jest.fn(),
   },
+}));
+
+jest.mock("@/middleware/authMiddleware", () => ({
+  authMiddleware: jest.fn(),
 }));
 
 describe("API: GET /employee-incidents", () => {
@@ -15,6 +20,11 @@ describe("API: GET /employee-incidents", () => {
 
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`GET /employees-incidents/ ${description}`, async () => {
+      (authMiddleware as jest.Mock).mockResolvedValue({
+        userId: 1,
+        roleId: 1,
+      });
+
       if (description === "should successfully send message with valid data") {
         (EmployeeIncidentsService.getEmployeesIncidentsByParams as jest.Mock).mockResolvedValueOnce({
           data: [],

@@ -16,6 +16,7 @@ const baselightTheme = {
       light: '#E6FFFA',
       dark: '#02b3a9',
       contrastText: '#ffffff',
+      attendance: '#4CAF50',
     },
     info: {
       main: '#539BFF',
@@ -28,6 +29,7 @@ const baselightTheme = {
       light: '#FDEDE8',
       dark: '#f3704d',
       contrastText: '#ffffff',
+      attendance: '#F44336',
     },
     warning: {
       main: '#FFAE1F',

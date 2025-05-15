@@ -5,6 +5,7 @@ import { formatDateStringTS } from "@/utils/formatter";
 import type { WhereKey } from "@/interfaces/WhereConfig";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
+import { ROLES, ROLES_ID, RoleValue } from "@/common/constants/Roles";
 
 export const encryptPassword = async (password: string): Promise<string> => {
   return await bcryptjs.hash(password, 10);
@@ -188,8 +189,20 @@ export const a11yProps = (tab: string, index: any) => {
   };
 };
 
+export const a11yPropsProfile = (index: string) => {
+  return {
+    id: index,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+};
+
 export const failureResponse = (message: string, data: object = {}, statusCode?: number) =>
   handleHttpResponse(HttpResponse.failure(message, data, statusCode));
 
 export const successResponse = (message: string, data: object, statusCode?: number) =>
   handleHttpResponse(HttpResponse.success(message, data, statusCode));
+
+export const getRoleValueById = (id: number): RoleValue | undefined => {
+  const key = ROLES_ID[id as keyof typeof ROLES_ID]; // asegura que el índice es una clave válida
+  return key ? ROLES[key] : undefined;
+};

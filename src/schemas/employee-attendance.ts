@@ -32,6 +32,10 @@ export const EmployeeAttendanceGetFilterSchema = z.object({
     .number({ message: validationMessages.number("Límite") })
     .min(1, { message: validationMessages.minNumber("Límite", 1) })
     .nullable(),
+  employee_id: z
+    .number({ message: validationMessages.number("Empleado") })
+    .optional()
+    .nullable(),
   checkIn: z
     .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de entrada") }))
     .optional()

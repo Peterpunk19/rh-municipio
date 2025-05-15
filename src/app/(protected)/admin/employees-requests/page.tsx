@@ -28,7 +28,7 @@ export default function EmployeeRequests() {
   const dispatch = useDispatch<AppDispatch>();
 
   const { page, limit } = useSelector((state: RootState) => state.pagination);
-  const { searchTerm, values } = useSelector(
+  const { searchTerm, values, title, showSearchBar } = useSelector(
     (state: RootState) => state.filters.employeeRequests || { searchTerm: "", values: {} },
   );
 
@@ -73,8 +73,8 @@ export default function EmployeeRequests() {
   );
 
   return (
-    <PageContainer title="Solicitudes de empleados" description="Solicitudes de empleados">
-      <Breadcrumb title="Solicitudes de empleados" items={BCrumb} />
+    <PageContainer title={title} description={title}>
+      {showSearchBar ?? <Breadcrumb title={title} items={BCrumb} />}
       <TableWithPagination
         title=""
         headCells={header}
