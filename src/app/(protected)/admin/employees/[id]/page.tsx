@@ -10,6 +10,7 @@ import {
   IconAppWindow,
   IconMap2,
   IconUserCircle,
+  IconClock,
 } from "@tabler/icons-react";
 import { StatusCodes } from "http-status-codes";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
@@ -17,6 +18,7 @@ import { logger } from "@/lib/logger";
 import PersonalTab from "../(profile)/sections/PersonalTab";
 import AddressTab from "../(profile)/sections/AddressTab";
 import HiringTab from "../(profile)/sections/HiringTab";
+import LocationScheduleTab from "../(profile)/sections/LocationScheduleTab";
 import EmployeeProfileCard from "../(profile)/sections/EmployeeProfileCard";
 import { useParams } from "next/navigation";
 import { getEmployeeById } from "@/services/employees";
@@ -27,7 +29,6 @@ import { useDispatch } from "@/store/hooks";
 import EmployeeRequests from "@/app/(protected)/admin/employees-requests/page";
 import { a11yPropsProfile } from "@/common/utils";
 import CustomCalendarAttendance from "@/components/customComponents/CustomCalendarAttendance";
-import { getEmployeeAttendanceById, getEmployeesAttendances } from "@/services/employees-attendances";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -158,6 +159,12 @@ const Profile = () => {
                   label="Asistencias"
                   {...a11yPropsProfile("employeesAttendances")}
                 />
+                <Tab
+                  iconPosition="start"
+                  icon={<IconClock size="22" />}
+                  label="Ubicación y horario"
+                  {...a11yPropsProfile("employeesAttendances")}
+                />
               </Tabs>
             </Box>
             <Divider />
@@ -179,6 +186,9 @@ const Profile = () => {
               </TabPanel>
               <TabPanel value={value} index={5}>
                 <CustomCalendarAttendance employeeId={Number(id)} />
+              </TabPanel>
+              <TabPanel value={value} index={6}>
+                <LocationScheduleTab employeeData={employeeData} />
               </TabPanel>
             </CardContent>
           </BlankCard>
