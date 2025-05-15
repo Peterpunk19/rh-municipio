@@ -210,6 +210,10 @@ export const EmployeeService = {
       whereClause.active = employeeFilters.active;
     }
 
+    if (employeeFilters.employee_id) {
+      whereClause.id = employeeFilters.employee_id;
+    }
+
     if (employeeFilters.employee_status) {
       whereClause.status_employee_id = employeeFilters.employee_status;
     }

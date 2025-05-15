@@ -44,6 +44,9 @@ export const EmployeeAttendanceService = {
     const offset = (page - 1) * limit;
 
     const filterMappings = {
+      employeeId: {
+        path: "employee_hiring.employee.id",
+      },
       typeAttendance: {
         path: "employee_location.attendance_id",
       },
