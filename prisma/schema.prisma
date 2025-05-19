@@ -61,7 +61,7 @@ model Employee {
   sustitute                            Director?                 @relation("Substitute", fields: [sustitute_id], references: [id])
   employee_incidents                   EmployeeIncidents[]
   employee_incidents_status_created_by EmployeeIncidentsStatus[] @relation("createdByEmployee")
-  employee_request_status_created_by EmployeeRequestStatus[] @relation("createdByEmployee")
+  employee_request_status_created_by   EmployeeRequestStatus[]   @relation("createdByEmployee")
   employee_vacations                   EmployeeVacations[]       @relation("employeeVacations")
   employee_vacations_created_by        EmployeeVacations[]       @relation("employeeVacationsCreators")
   employee_requests                    EmployeeRequest[]
@@ -145,16 +145,33 @@ model EmployeeLocation {
   employee_id         Int
   location_id         Int
   attendance_id       Int
+  commission_id       Int?
   active              Boolean              @default(true)
   created_by          Int?
   created_at          DateTime?            @default(now())
   updated_at          DateTime?            @updatedAt
+  applied_at          DateTime?
   attendance          Attendance?          @relation(fields: [attendance_id], references: [id])
   location            Location?            @relation(fields: [location_id], references: [id])
   employee            Employee?            @relation(fields: [employee_id], references: [id])
+  employee_commission EmployeeCommission?  @relation(fields: [commission_id], references: [id])
   employee_attendance EmployeeAttendance[]
 
-  @@unique([employee_id, location_id, active])
+}
+
+model EmployeeCommission {
+  id                   Int                @id @default(autoincrement())
+  employee_request     EmployeeRequest    @relation(fields: [employee_request_id], references: [id])
+  employee_request_id  Int                @unique
+  employee_location_id Int
+  employee_location    EmployeeLocation[]
+  start_date           DateTime
+  end_date             DateTime
+  active               Boolean            @default(true)
+  created_at           DateTime?          @default(now())
+  updated_at           DateTime?          @updatedAt
+
+  @@unique([employee_location_id, start_date, end_date, active])
 }
 
 model Director {
@@ -261,7 +278,7 @@ model IncidentStatus {
   btn_color                 String
   type                      Int
   active                    Boolean
-  allowed_roles_to_update             String
+  allowed_roles_to_update   String
   employee_incidents_status EmployeeIncidentsStatus[]
   employee_incidents        EmployeeIncidents[]
 }
@@ -299,16 +316,17 @@ model Request {
 }
 
 model RequestStatus {
-  id                Int               @id @default(autoincrement())
-  name              String
-  display_name      String
-  description       String
-  btn_display_name  String
-  btn_icon          String
-  btn_color         String
-  type              Int
-  active            Boolean           @default(true)
-  employee_requests EmployeeRequest[]
+  id                      Int               @id @default(autoincrement())
+  name                    String
+  display_name            String
+  description             String
+  btn_display_name        String
+  btn_icon                String
+  btn_color               String
+  type                    Int
+  active                  Boolean           @default(true)
+  allowed_roles_to_update String
+  employee_requests       EmployeeRequest[]
   employee_request_status EmployeeRequestStatus[]
 }
 
@@ -335,6 +353,9 @@ model EmployeeRequest {
   employee_request_detail EmployeeRequestDetail[]
   EmployeeRequestStatus   EmployeeRequestStatus[]
   EmployeeRequestSchedule EmployeeRequestSchedule[]
+  employee_commission_id  Int?                      @unique
+  employee_commission     EmployeeCommission?
+
   @@unique([employee_id, request_id, request_date, active])
 }
 
@@ -352,16 +373,16 @@ model EmployeeRequestDetail {
 }
 
 model EmployeeRequestStatus {
-  id                   Int             @id @default(autoincrement())
-  employee_request_id  Int
-  employee_request     EmployeeRequest @relation(fields: [employee_request_id], references: [id])
-  request_status_id    Int
-  request_status       RequestStatus   @relation(fields: [request_status_id], references: [id])
-  active               Boolean         @default(true)
-  created_by_id        Int
-  created_by           Employee        @relation("createdByEmployee", fields: [created_by_id], references: [id])
-  created_at           DateTime?       @default(now())
-  updated_at           DateTime?       @updatedAt
+  id                  Int             @id @default(autoincrement())
+  employee_request_id Int
+  employee_request    EmployeeRequest @relation(fields: [employee_request_id], references: [id])
+  request_status_id   Int
+  request_status      RequestStatus   @relation(fields: [request_status_id], references: [id])
+  active              Boolean         @default(true)
+  created_by_id       Int
+  created_by          Employee        @relation("createdByEmployee", fields: [created_by_id], references: [id])
+  created_at          DateTime?       @default(now())
+  updated_at          DateTime?       @updatedAt
 }
 
 model EmployeeRequestSchedule {

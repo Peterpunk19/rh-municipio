@@ -148,3 +148,9 @@ export const EmployeeRequestsGetFilterSchema = z.object({
     .optional()
     .nullable(),
 });
+
+export const EmployeeRequestsUpdateSchema = z.object({
+  requestId: z.number(),
+  status: z.string(),
+  approvedBy: z.number(),
+});

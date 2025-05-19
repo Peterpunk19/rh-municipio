@@ -42,3 +42,21 @@ export interface IRequestValidation {
 export interface IRequestValidations {
   [key: string]: IRequestValidation[];
 }
+
+export interface IEmployeeRequestById {
+  id: number | string;
+  requestStatusId: number | string;
+  employee?: {
+    id: number;
+    employee_hiring: { id: number }[];
+    employee_location: { id: number }[];
+  };
+  createdById?: number;
+}
+
+export interface IEmployeeRequestUpdate {
+  requestId: number;
+  status?: string;
+  approvedBy: number;
+  statusId?: number;
+}

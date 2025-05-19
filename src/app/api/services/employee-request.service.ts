@@ -1,7 +1,13 @@
 import { prisma } from "@/lib/prisma";
-import type { IEmployeeRequest, IEmployeeRequestsFilters } from "@/app/api/employee-requests/types";
+import type {
+  IEmployeeRequest,
+  IEmployeeRequestsFilters,
+  IEmployeeRequestUpdate,
+} from "@/app/api/employee-requests/types";
 import { RequestService } from "@/app/api/services/request.service";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
+import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
+import REQUEST_TYPES from "@/common/constants/RequestTypes";
 
 export const EmployeeRequestService = {
   async getFolio() {
@@ -298,6 +304,7 @@ export const EmployeeRequestService = {
         description: true,
         request_date: true,
         created_at: true,
+        request_id: true,
         request_status: {
           select: {
             id: true,
@@ -458,6 +465,7 @@ export const EmployeeRequestService = {
       oficio: employeeRequest.oficio,
       justification: employeeRequest.description,
       created_at: employeeRequest.created_at,
+      request_id: employeeRequest.request_id,
       request_status: {
         ...employeeRequest.request_status,
       },
@@ -517,5 +525,239 @@ export const EmployeeRequestService = {
       },
       employee_attendance_status: employeeRequest.EmployeeRequestStatus,
     };
+  },
+  async updateEmployeeRequests(employeeRequest: IEmployeeRequestUpdate) {
+    return prisma.$transaction(async (tx) => {
+      const employeeRequestFound = await tx.employeeRequest.findUnique({
+        where: { id: Number(employeeRequest.requestId) },
+        include: {
+          request: true,
+          employee: {
+            select: {
+              id: true,
+            },
+          },
+          employee_request_detail: {
+            select: {
+              attendance_id: true,
+              attendance_date: true,
+              start_date: true,
+              end_date: true,
+              location: true,
+              attendance: true,
+            },
+          },
+          EmployeeRequestSchedule: {
+            include: {
+              start_day: true,
+              end_day: true,
+              start_hour: true,
+              end_hour: true,
+            },
+          },
+        },
+      });
+
+      if (!employeeRequestFound) {
+        throw new Error("No se encontró la solicitud");
+      }
+
+      await tx.employeeRequest.update({
+        data: {
+          request_status: {
+            connect: { id: Number(employeeRequest.statusId) },
+          },
+          resolved_at: employeeRequest.statusId === REQUEST_STATUS_ID.APROBADA ? new Date() : null,
+          resolved_by: {
+            connect: { id: Number(employeeRequest.approvedBy) },
+          },
+        },
+        where: {
+          id: Number(employeeRequest.requestId),
+        },
+      });
+
+      const createEmployeeRequestStatus = await tx.employeeRequestStatus.create({
+        data: {
+          employee_request: {
+            connect: { id: Number(employeeRequest.requestId) },
+          },
+          request_status: {
+            connect: { id: Number(employeeRequest.statusId) },
+          },
+          created_by: {
+            connect: { id: Number(employeeRequest.approvedBy) },
+          },
+          created_at: new Date(),
+        },
+      });
+
+      if (employeeRequest.statusId === REQUEST_STATUS_ID.APROBADA) {
+        const requestTypeId = employeeRequestFound.request.id;
+        const employeeId = employeeRequestFound.employee.id;
+
+        if (requestTypeId === REQUEST_TYPES.SCHEDULE) {
+          await tx.jobScheduleEmployee.updateMany({
+            where: {
+              employee_id: employeeId,
+              active: true,
+            },
+            data: {
+              active: false,
+              updated_at: new Date(),
+            },
+          });
+
+          if (employeeRequestFound.EmployeeRequestSchedule && employeeRequestFound.EmployeeRequestSchedule.length > 0) {
+            await Promise.all(
+              employeeRequestFound.EmployeeRequestSchedule.map((schedule) =>
+                tx.jobScheduleEmployee.create({
+                  data: {
+                    employee_id: employeeId,
+                    name: "Horario asignado por solicitud",
+                    description: "Creado automáticamente por aprobación de solicitud",
+                    start_day_id: schedule.start_day.id,
+                    end_day_id: schedule.end_day.id,
+                    start_hour_id: schedule.start_hour.id,
+                    end_hour_id: schedule.end_hour.id,
+                    active: true,
+                    created_at: new Date(),
+                  },
+                }),
+              ),
+            );
+          }
+        }
+
+        else if (requestTypeId === REQUEST_TYPES.LOCATION && employeeRequestFound.employee_request_detail.length > 0) {
+          const requestDetail = employeeRequestFound.employee_request_detail[0];
+
+          const currentLocation = await tx.employeeLocation.findFirst({
+            where: {
+              employee_id: employeeId,
+              active: true
+            }
+          });
+
+          if (currentLocation) {
+            await tx.employeeLocation.update({
+              where: {
+                id: currentLocation.id
+              },
+              data: {
+                active: false,
+                updated_at: new Date(),
+              },
+            });
+          }
+
+          if (requestDetail.location) {
+            const locationData: any = {
+              employee: {
+                connect: { id: employeeId }
+              },
+              location: {
+                connect: { id: requestDetail.location.id }
+              },
+              active: true,
+              created_at: new Date(),
+            };
+
+            if (currentLocation?.attendance_id) {
+              locationData.attendance = {
+                connect: { id: currentLocation.attendance_id }
+              };
+            } else {
+              if (requestDetail.attendance_id) {
+                locationData.attendance = {
+                  connect: { id: requestDetail.attendance_id }
+                };
+              } else {
+                locationData.attendance = {
+                  connect: { id: 1 }
+                };
+              }
+            }
+
+            if (requestDetail.start_date && requestDetail.end_date) {
+              const createdCommission = await tx.employeeCommission.create({
+                data: {
+                  employee_location_id: requestDetail.location.id,
+                  start_date: requestDetail.start_date,
+                  end_date: requestDetail.end_date,
+                  active: true,
+                  created_at: new Date(),
+                  employee_request: {
+                    connect: { id: Number(employeeRequest.requestId) }
+                  }
+                },
+              });
+
+              await tx.employeeRequest.update({
+                where: {
+                  id: Number(employeeRequest.requestId),
+                },
+                data: {
+                  employee_commission_id: createdCommission.id
+                },
+              });
+            }
+
+            await tx.employeeLocation.create({
+              data: locationData,
+            });
+          }
+        }
+
+        else if (requestTypeId === REQUEST_TYPES.ATTENDANCE && employeeRequestFound.employee_request_detail.length > 0) {
+          await tx.employeeLocation.updateMany({
+            where: {
+              employee_id: employeeId,
+              active: true,
+            },
+            data: {
+              active: false,
+              updated_at: new Date(),
+            },
+          });
+
+          const requestDetail = employeeRequestFound.employee_request_detail[0];
+          if (requestDetail.attendance) {
+            const currentLocation = await tx.employeeLocation.findFirst({
+              where: {
+                employee_id: employeeId,
+              },
+              orderBy: {
+                created_at: "desc",
+              },
+            });
+
+            const locationData: any = {
+              employee: {
+                connect: { id: employeeId }
+              },
+              attendance: {
+                connect: { id: requestDetail.attendance.id }
+              },
+              active: true,
+              applied_at: requestDetail.attendance_date,
+              created_at: new Date(),
+            };
+
+            if (currentLocation?.location_id) {
+              locationData.location = {
+                connect: { id: currentLocation.location_id }
+              };
+            }
+
+            await tx.employeeLocation.create({
+              data: locationData,
+            });
+          }
+        }
+      }
+
+      return [createEmployeeRequestStatus];
+    });
   },
 };
