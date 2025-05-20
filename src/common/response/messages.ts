@@ -111,4 +111,10 @@ export const HttpMessages = {
     notFoundById: "No se encontró la solicitud con el ID proporcionado",
     foundById: "Solicitud encontrada correctamente",
   },
+  administrativeOrganizations: {
+    leadersCreatedSuccess: "Directivos actualizados correctamente",
+    notFoundByDirectorId: "No se encontró el director con el ID proporcionado",
+    notFoundByDeputyDirectorId: "No se encontró el subdirector con el ID proporcionado",
+    notFoundByDireccionId: "No se encontró el organismo administrativo con el ID proporcionado",
+  },
 };

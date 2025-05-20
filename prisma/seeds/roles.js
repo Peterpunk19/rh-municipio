@@ -51,5 +51,17 @@ const roles = [
     display_name: "Regidor",
     description: "Regidor es el usuario que tiene acceso para para realizar solicitudes",
   },
+  {
+    id: 11,
+    name: "director",
+    display_name: "Director",
+    description: "Director de organismo administrativo",
+  },
+  {
+    id: 12,
+    name: "suplente",
+    display_name: "Suplente",
+    description: "Suplente de organismo administrativo",
+  },
 ];
 module.exports = roles;
