@@ -41,6 +41,25 @@ export const EmployeeRequestService = {
 
   async createEmployeeRequest(employeeRequest: IEmployeeRequest) {
     return prisma.$transaction(async (tx) => {
+      const currentEmployeeLocation = await tx.employeeLocation.findFirst({
+        where: {
+          employee_id: Number(employeeRequest.employeeId),
+          active: true,
+        },
+        select: {
+          location: {
+            select: {
+              id: true,
+            },
+          },
+          attendance: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
       const createEmployeeRequest = await tx.employeeRequest.create({
         data: {
           folio: employeeRequest.folio,
@@ -93,13 +112,23 @@ export const EmployeeRequestService = {
           employee_request: {
             connect: { id: Number(createEmployeeRequest.id) },
           },
-          ...(employeeRequest.locationId && {
+          ...(currentEmployeeLocation?.location?.id && {
             location: {
+              connect: { id: currentEmployeeLocation.location.id },
+            },
+          }),
+          ...(currentEmployeeLocation?.attendance?.id && {
+            attendance: {
+              connect: { id: currentEmployeeLocation.attendance.id },
+            },
+          }),
+          ...(employeeRequest.locationId && {
+            new_location: {
               connect: { id: Number(employeeRequest.locationId) },
             },
           }),
           ...(employeeRequest.attendanceId && {
-            attendance: {
+            new_attendance: {
               connect: { id: Number(employeeRequest.attendanceId) },
             },
           }),
@@ -405,6 +434,22 @@ export const EmployeeRequestService = {
                 active: true,
               },
             },
+            new_location: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
+            new_attendance: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
           },
         },
         EmployeeRequestSchedule: {
@@ -493,22 +538,20 @@ export const EmployeeRequestService = {
         }),
         ...(employeeRequest.request.name === "checker_change_request" && {
           attendance_date: employeeRequest.employee_request_detail[0].attendance_date,
-          current_attendance:
-            employeeRequest.employee?.employee_location?.length > 0
-              ? { ...employeeRequest.employee.employee_location[0].attendance }
-              : null,
-          new_attendance: {
-            ...employeeRequest.employee_request_detail[0].attendance,
-          },
+          current_attendance: employeeRequest.employee_request_detail[0].attendance
+            ? { ...employeeRequest.employee_request_detail[0].attendance }
+            : null,
+          new_attendance: employeeRequest.employee_request_detail[0].new_attendance
+            ? { ...employeeRequest.employee_request_detail[0].new_attendance }
+            : null,
         }),
         ...(employeeRequest.request.name === "location_change_request" && {
-          current_location:
-            employeeRequest.employee?.employee_location?.length > 0
-              ? { ...employeeRequest.employee.employee_location[0].location }
-              : null,
-          new_location: {
-            ...employeeRequest.employee_request_detail[0].location,
-          },
+          current_location: employeeRequest.employee_request_detail[0].location
+            ? { ...employeeRequest.employee_request_detail[0].location }
+            : null,
+          new_location: employeeRequest.employee_request_detail[0].new_location
+            ? { ...employeeRequest.employee_request_detail[0].new_location }
+            : null,
         }),
         ...(employeeRequest.request.name === "fingerprint_registration_request" && {
           location: {
@@ -627,22 +670,23 @@ export const EmployeeRequestService = {
               ),
             );
           }
-        }
-
-        else if (requestTypeId === REQUEST_TYPES.LOCATION && employeeRequestFound.employee_request_detail.length > 0) {
+        } else if (
+          requestTypeId === REQUEST_TYPES.LOCATION &&
+          employeeRequestFound.employee_request_detail.length > 0
+        ) {
           const requestDetail = employeeRequestFound.employee_request_detail[0];
 
           const currentLocation = await tx.employeeLocation.findFirst({
             where: {
               employee_id: employeeId,
-              active: true
-            }
+              active: true,
+            },
           });
 
           if (currentLocation) {
             await tx.employeeLocation.update({
               where: {
-                id: currentLocation.id
+                id: currentLocation.id,
               },
               data: {
                 active: false,
@@ -654,10 +698,10 @@ export const EmployeeRequestService = {
           if (requestDetail.location) {
             const locationData: any = {
               employee: {
-                connect: { id: employeeId }
+                connect: { id: employeeId },
               },
               location: {
-                connect: { id: requestDetail.location.id }
+                connect: { id: requestDetail.location.id },
               },
               active: true,
               created_at: new Date(),
@@ -665,16 +709,16 @@ export const EmployeeRequestService = {
 
             if (currentLocation?.attendance_id) {
               locationData.attendance = {
-                connect: { id: currentLocation.attendance_id }
+                connect: { id: currentLocation.attendance_id },
               };
             } else {
               if (requestDetail.attendance_id) {
                 locationData.attendance = {
-                  connect: { id: requestDetail.attendance_id }
+                  connect: { id: requestDetail.attendance_id },
                 };
               } else {
                 locationData.attendance = {
-                  connect: { id: 1 }
+                  connect: { id: 1 },
                 };
               }
             }
@@ -688,8 +732,8 @@ export const EmployeeRequestService = {
                   active: true,
                   created_at: new Date(),
                   employee_request: {
-                    connect: { id: Number(employeeRequest.requestId) }
-                  }
+                    connect: { id: Number(employeeRequest.requestId) },
+                  },
                 },
               });
 
@@ -698,7 +742,7 @@ export const EmployeeRequestService = {
                   id: Number(employeeRequest.requestId),
                 },
                 data: {
-                  employee_commission_id: createdCommission.id
+                  employee_commission_id: createdCommission.id,
                 },
               });
             }
@@ -707,9 +751,10 @@ export const EmployeeRequestService = {
               data: locationData,
             });
           }
-        }
-
-        else if (requestTypeId === REQUEST_TYPES.ATTENDANCE && employeeRequestFound.employee_request_detail.length > 0) {
+        } else if (
+          requestTypeId === REQUEST_TYPES.ATTENDANCE &&
+          employeeRequestFound.employee_request_detail.length > 0
+        ) {
           await tx.employeeLocation.updateMany({
             where: {
               employee_id: employeeId,
@@ -734,10 +779,10 @@ export const EmployeeRequestService = {
 
             const locationData: any = {
               employee: {
-                connect: { id: employeeId }
+                connect: { id: employeeId },
               },
               attendance: {
-                connect: { id: requestDetail.attendance.id }
+                connect: { id: requestDetail.attendance.id },
               },
               active: true,
               applied_at: requestDetail.attendance_date,
@@ -746,7 +791,7 @@ export const EmployeeRequestService = {
 
             if (currentLocation?.location_id) {
               locationData.location = {
-                connect: { id: currentLocation.location_id }
+                connect: { id: currentLocation.location_id },
               };
             }
 

@@ -156,7 +156,6 @@ model EmployeeLocation {
   employee            Employee?            @relation(fields: [employee_id], references: [id])
   employee_commission EmployeeCommission?  @relation(fields: [commission_id], references: [id])
   employee_attendance EmployeeAttendance[]
-
 }
 
 model EmployeeCommission {
@@ -193,15 +192,15 @@ model Director {
 }
 
 model Attendance {
-  id                      Int                     @id @default(autoincrement())
-  name                    String
-  display_name            String
-  active                  Boolean                 @default(true)
-  created_at              DateTime?               @default(now())
-  updated_at              DateTime?               @updatedAt
-  employee_request_detail EmployeeRequestDetail[]
-
-  employee_location EmployeeLocation[]
+  id                          Int                     @id @default(autoincrement())
+  name                        String
+  display_name                String
+  active                      Boolean                 @default(true)
+  created_at                  DateTime?               @default(now())
+  updated_at                  DateTime?               @updatedAt
+  employee_request_detail     EmployeeRequestDetail[] @relation("currentAttendance")
+  employee_request_detail_new EmployeeRequestDetail[] @relation("newAttendance")
+  employee_location           EmployeeLocation[]
 }
 
 model EmployeeAttendance {
@@ -224,25 +223,25 @@ model EmployeeAttendance {
 }
 
 model EmployeeIncidents {
-  id                      Int                       @id @default(autoincrement())
-  folio                   String                    @unique
-  oficio                  String?
-  start_date              DateTime
-  end_date                DateTime
-  description             String
-  incident_id             Int
-  incident                Incident                  @relation(fields: [incident_id], references: [id])
-  incident_status_id      Int
-  incident_status         IncidentStatus            @relation(fields: [incident_status_id], references: [id])
-  employee_id             Int
-  employee                Employee                  @relation(fields: [employee_id], references: [id])
-  employee_attendance_id  Int?
-  employee_attendance     EmployeeAttendance?       @relation(fields: [employee_attendance_id], references: [id])
-  employee_vacations      EmployeeVacations[]
-  created_at              DateTime?                 @default(now())
-  validated_at            DateTime?                 @updatedAt
+  id                        Int                       @id @default(autoincrement())
+  folio                     String                    @unique
+  oficio                    String?
+  start_date                DateTime
+  end_date                  DateTime
+  description               String
+  incident_id               Int
+  incident                  Incident                  @relation(fields: [incident_id], references: [id])
+  incident_status_id        Int
+  incident_status           IncidentStatus            @relation(fields: [incident_status_id], references: [id])
+  employee_id               Int
+  employee                  Employee                  @relation(fields: [employee_id], references: [id])
+  employee_attendance_id    Int?
+  employee_attendance       EmployeeAttendance?       @relation(fields: [employee_attendance_id], references: [id])
+  employee_vacations        EmployeeVacations[]
+  created_at                DateTime?                 @default(now())
+  validated_at              DateTime?                 @updatedAt
   employee_incidents_status EmployeeIncidentsStatus[]
-  active                  Boolean                   @default(true)
+  active                    Boolean                   @default(true)
 
   @@unique([employee_id, start_date, end_date, incident_status_id, incident_id])
 }
@@ -316,7 +315,7 @@ model Request {
 }
 
 model RequestStatus {
-  id                      Int               @id @default(autoincrement())
+  id                      Int                     @id @default(autoincrement())
   name                    String
   display_name            String
   description             String
@@ -324,7 +323,7 @@ model RequestStatus {
   btn_icon                String
   btn_color               String
   type                    Int
-  active                  Boolean           @default(true)
+  active                  Boolean                 @default(true)
   allowed_roles_to_update String
   employee_requests       EmployeeRequest[]
   employee_request_status EmployeeRequestStatus[]
@@ -367,9 +366,13 @@ model EmployeeRequestDetail {
   employee_request_id Int
   employee_request    EmployeeRequest @relation(fields: [employee_request_id], references: [id])
   location_id         Int?
-  location            Location?       @relation(fields: [location_id], references: [id])
+  location            Location?       @relation("currentLocation", fields: [location_id], references: [id])
   attendance_id       Int?
-  attendance          Attendance?     @relation(fields: [attendance_id], references: [id])
+  attendance          Attendance?     @relation("currentAttendance", fields: [attendance_id], references: [id])
+  new_location_id     Int?
+  new_location        Location?       @relation("newLocation", fields: [new_location_id], references: [id])
+  new_attendance_id   Int?
+  new_attendance      Attendance?     @relation("newAttendance", fields: [new_attendance_id], references: [id])
 }
 
 model EmployeeRequestStatus {
@@ -574,12 +577,13 @@ model Category {
 }
 
 model Location {
-  id                      Int                     @id @default(autoincrement())
-  name                    String                  @unique
-  display_name            String
-  active                  Boolean                 @default(true)
-  employee_location       EmployeeLocation[]
-  employee_request_detail EmployeeRequestDetail[]
+  id                          Int                     @id @default(autoincrement())
+  name                        String                  @unique
+  display_name                String
+  active                      Boolean                 @default(true)
+  employee_location           EmployeeLocation[]
+  employee_request_detail     EmployeeRequestDetail[] @relation("currentLocation")
+  employee_request_detail_new EmployeeRequestDetail[] @relation("newLocation")
 }
 
 model Direccion {
