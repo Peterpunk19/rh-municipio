@@ -37,3 +37,24 @@ export const CreateUpdateLeaderSchema = z
     message: validationMessages.invalidDateRange("Fecha de fin", "Fecha de inicio"),
     path: ["endDate"],
   });
+
+export const AdministrativeOrganizationsGetFilterSchema = z.object({
+  page: z
+    .number({ message: validationMessages.number("Página") })
+    .min(1, { message: validationMessages.minNumber("Página", 1) })
+    .nullable(),
+  limit: z
+    .number({ message: validationMessages.number("Limite") })
+    .min(1, { message: validationMessages.minNumber("Limite", 1) })
+    .nullable(),
+  search: z
+    .union([
+      z
+        .string()
+        .min(1, { message: validationMessages.required("Búsqueda") })
+        .max(255, { message: validationMessages.maxLength("Búsqueda", 255) }),
+      z.number().transform((num) => num.toString()),
+    ])
+    .optional()
+    .nullable(),
+});
