@@ -1,0 +1,10 @@
+export { default as DeathLeaveIncident } from "./DeathLeaveIncident";
+export { default as ExitJustificationIncident } from "./ExitJustificationIncident";
+export { default as IncapacityIncident } from "./IncapacityIncident";
+export { default as EconomicPermitIncident } from "./EconomicPermitIncident";
+export { default as PaternityIncident } from "./PaternityIncident";
+export { default as LactationIncident } from "./LactationIncident";
+export { default as UnpaidLeaveIncident } from "./UnpaidLeaveIncident";
+export { default as CommissionIncident } from "./CommissionIncident";
+export { default as EntryJustificationIncident } from "./EntryJustificationIncident";
+export { default as VacationIncident } from "./VacationIncident";

@@ -206,3 +206,31 @@ export const getRoleValueById = (id: number): RoleValue | undefined => {
   const key = ROLES_ID[id as keyof typeof ROLES_ID]; // asegura que el índice es una clave válida
   return key ? ROLES[key] : undefined;
 };
+
+export const calculateDaysBetweenDates = (startDate: string | Date, endDate: string | Date): number => {
+  let start: Date;
+  let end: Date;
+
+  const parseDate = (date: string | Date): Date => {
+    if (date instanceof Date) return date;
+
+    if (date.includes("/")) {
+      const [day, month, year] = date.split("/");
+      const parsedDate = new Date(Number(year), Number(month) - 1, Number(day));
+      if (!isNaN(parsedDate.getTime())) return parsedDate;
+    }
+
+    return new Date(date);
+  };
+
+  start = parseDate(startDate);
+  end = parseDate(endDate);
+
+  start.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+
+  const diffTime = Math.abs(end.getTime() - start.getTime());
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  return diffDays + 1;
+};
