@@ -5,3 +5,11 @@ export const REQUEST_STATUS = {
   ELIMINADA: "eliminada",
   CANCELADA: "cancelada",
 };
+
+export const REQUEST_STATUS_ID = {
+  CREADA: 1,
+  APROBADA: 2,
+  RECHAZADA: 3,
+  ELIMINADA: 4,
+  CANCELADA: 5,
+};

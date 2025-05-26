@@ -1,7 +1,14 @@
 import { prisma } from "@/lib/prisma";
-import type { IEmployeeRequest, IEmployeeRequestsFilters } from "@/app/api/employee-requests/types";
+import type {
+  IEmployeeRequest,
+  IEmployeeRequestsFilters,
+  IEmployeeRequestUpdateService,
+  IEmployeeRequestResponse,
+} from "@/app/api/employee-requests/types";
 import { RequestService } from "@/app/api/services/request.service";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
+import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
+import REQUEST_TYPES from "@/common/constants/RequestTypes";
 
 export const EmployeeRequestService = {
   async getFolio() {
@@ -35,6 +42,25 @@ export const EmployeeRequestService = {
 
   async createEmployeeRequest(employeeRequest: IEmployeeRequest) {
     return prisma.$transaction(async (tx) => {
+      const currentEmployeeLocation = await tx.employeeLocation.findFirst({
+        where: {
+          employee_id: Number(employeeRequest.employeeId),
+          active: true,
+        },
+        select: {
+          location: {
+            select: {
+              id: true,
+            },
+          },
+          attendance: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
       const createEmployeeRequest = await tx.employeeRequest.create({
         data: {
           folio: employeeRequest.folio,
@@ -87,13 +113,23 @@ export const EmployeeRequestService = {
           employee_request: {
             connect: { id: Number(createEmployeeRequest.id) },
           },
-          ...(employeeRequest.locationId && {
+          ...(currentEmployeeLocation?.location?.id && {
             location: {
+              connect: { id: currentEmployeeLocation.location.id },
+            },
+          }),
+          ...(currentEmployeeLocation?.attendance?.id && {
+            attendance: {
+              connect: { id: currentEmployeeLocation.attendance.id },
+            },
+          }),
+          ...(employeeRequest.locationId && {
+            new_location: {
               connect: { id: Number(employeeRequest.locationId) },
             },
           }),
           ...(employeeRequest.attendanceId && {
-            attendance: {
+            new_attendance: {
               connect: { id: Number(employeeRequest.attendanceId) },
             },
           }),
@@ -298,6 +334,7 @@ export const EmployeeRequestService = {
         description: true,
         request_date: true,
         created_at: true,
+        request_id: true,
         request_status: {
           select: {
             id: true,
@@ -312,6 +349,7 @@ export const EmployeeRequestService = {
         },
         employee: {
           select: {
+            id: true,
             name: true,
             maternal_last_name: true,
             paternal_last_name: true,
@@ -398,6 +436,22 @@ export const EmployeeRequestService = {
                 active: true,
               },
             },
+            new_location: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
+            new_attendance: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
           },
         },
         EmployeeRequestSchedule: {
@@ -458,10 +512,12 @@ export const EmployeeRequestService = {
       oficio: employeeRequest.oficio,
       justification: employeeRequest.description,
       created_at: employeeRequest.created_at,
+      request_id: employeeRequest.request_id,
       request_status: {
         ...employeeRequest.request_status,
       },
       employee: {
+        id: employeeRequest.employee.id,
         name: `${employeeRequest.employee.name} ${employeeRequest.employee.paternal_last_name} ${employeeRequest.employee.maternal_last_name}`,
         employeeNumber: employeeRequest.employee.number_employee,
         rfc: employeeRequest.employee.rfc,
@@ -479,28 +535,24 @@ export const EmployeeRequestService = {
           end_at: employeeRequest.employee_request_detail[0].end_date,
         }),
         ...(employeeRequest.request.name === "schedule_change_request" && {
-          schedule: {
-            ...employeeRequest.EmployeeRequestSchedule,
-          },
+          schedule: Object.values(employeeRequest.EmployeeRequestSchedule),
         }),
         ...(employeeRequest.request.name === "checker_change_request" && {
           attendance_date: employeeRequest.employee_request_detail[0].attendance_date,
-          current_attendance:
-            employeeRequest.employee?.employee_location?.length > 0
-              ? { ...employeeRequest.employee.employee_location[0].attendance }
-              : null,
-          new_attendance: {
-            ...employeeRequest.employee_request_detail[0].attendance,
-          },
+          current_attendance: employeeRequest.employee_request_detail[0].attendance
+            ? { ...employeeRequest.employee_request_detail[0].attendance }
+            : null,
+          new_attendance: employeeRequest.employee_request_detail[0].new_attendance
+            ? { ...employeeRequest.employee_request_detail[0].new_attendance }
+            : null,
         }),
         ...(employeeRequest.request.name === "location_change_request" && {
-          current_location:
-            employeeRequest.employee?.employee_location?.length > 0
-              ? { ...employeeRequest.employee.employee_location[0].location }
-              : null,
-          new_location: {
-            ...employeeRequest.employee_request_detail[0].location,
-          },
+          current_location: employeeRequest.employee_request_detail[0].location
+            ? { ...employeeRequest.employee_request_detail[0].location }
+            : null,
+          new_location: employeeRequest.employee_request_detail[0].new_location
+            ? { ...employeeRequest.employee_request_detail[0].new_location }
+            : null,
         }),
         ...(employeeRequest.request.name === "fingerprint_registration_request" && {
           location: {
@@ -516,6 +568,239 @@ export const EmployeeRequestService = {
         ...employeeRequest.resolved_by,
       },
       employee_attendance_status: employeeRequest.EmployeeRequestStatus,
-    };
+    } as IEmployeeRequestResponse;
+  },
+  async updateEmployeeRequests(employeeRequest: IEmployeeRequestUpdateService) {
+    return prisma.$transaction(async (tx) => {
+      const { employeeRequestFound, requestId, statusId, approvedBy } = employeeRequest;
+      await tx.employeeRequest.update({
+        data: {
+          request_status: {
+            connect: { id: statusId },
+          },
+          resolved_at: statusId === REQUEST_STATUS_ID.APROBADA ? new Date() : null,
+          resolved_by: {
+            connect: { id: approvedBy },
+          },
+        },
+        where: {
+          id: Number(requestId),
+        },
+      });
+
+      const createEmployeeRequestStatus = await tx.employeeRequestStatus.create({
+        data: {
+          employee_request: {
+            connect: { id: requestId },
+          },
+          request_status: {
+            connect: { id: statusId },
+          },
+          created_by: {
+            connect: { id: approvedBy },
+          },
+          created_at: new Date(),
+        },
+      });
+
+      if (statusId === REQUEST_STATUS_ID.APROBADA) {
+        const requestTypeId = employeeRequestFound.request.id;
+        const employeeId = employeeRequestFound.employee.id;
+
+        switch (requestTypeId) {
+          case REQUEST_TYPES.SCHEDULE:
+            await tx.jobScheduleEmployee.updateMany({
+              where: {
+                employee_id: employeeId,
+                active: true,
+              },
+              data: {
+                active: false,
+                updated_at: new Date(),
+              },
+            });
+
+            if (
+              employeeRequestFound.request_details.schedule &&
+              employeeRequestFound.request_details.schedule.length > 0
+            ) {
+              await Promise.all(
+                employeeRequestFound.request_details.schedule.map((schedule) => {
+                  if (
+                    !schedule.start_day_id ||
+                    !schedule.end_day_id ||
+                    !schedule.start_hour_id ||
+                    !schedule.end_hour_id
+                  ) {
+                    return Promise.resolve();
+                  }
+
+                  return tx.jobScheduleEmployee.create({
+                    data: {
+                      employee: {
+                        connect: { id: employeeId },
+                      },
+                      name: "Horario asignado por solicitud",
+                      description: "Creado automáticamente por aprobación de solicitud",
+                      start_day: {
+                        connect: { id: schedule.start_day_id },
+                      },
+                      end_day: {
+                        connect: { id: schedule.end_day_id },
+                      },
+                      start_hour: {
+                        connect: { id: schedule.start_hour_id },
+                      },
+                      end_hour: {
+                        connect: { id: schedule.end_hour_id },
+                      },
+                      active: true,
+                      created_at: new Date(),
+                    },
+                  });
+                }),
+              );
+            }
+            break;
+
+          case REQUEST_TYPES.LOCATION:
+            if (employeeRequestFound.request_details) {
+              const requestDetail = employeeRequestFound.request_details;
+
+              const currentLocation = await tx.employeeLocation.findFirst({
+                where: {
+                  employee_id: employeeId,
+                  active: true,
+                },
+              });
+
+              if (currentLocation) {
+                await tx.employeeLocation.update({
+                  where: {
+                    id: currentLocation.id,
+                  },
+                  data: {
+                    active: false,
+                    updated_at: new Date(),
+                  },
+                });
+              }
+
+              if (requestDetail.new_location) {
+                const locationData: any = {
+                  employee: {
+                    connect: { id: employeeId },
+                  },
+                  location: {
+                    connect: { id: requestDetail.new_location?.id },
+                  },
+                  active: true,
+                  created_at: new Date(),
+                };
+
+                if (currentLocation?.attendance_id) {
+                  locationData.attendance = {
+                    connect: { id: currentLocation.attendance_id },
+                  };
+                } else {
+                  if (requestDetail.new_attendance) {
+                    locationData.attendance = {
+                      connect: { id: requestDetail.new_attendance.id },
+                    };
+                  } else {
+                    locationData.attendance = {
+                      connect: { id: 1 },
+                    };
+                  }
+                }
+
+                if (requestDetail.start_at && requestDetail.end_at) {
+                  const createdCommission = await tx.employeeCommission.create({
+                    data: {
+                      employee_location_id: requestDetail.new_location.id,
+                      start_date: requestDetail.start_at,
+                      end_date: requestDetail.end_at,
+                      active: true,
+                      created_at: new Date(),
+                      employee_request: {
+                        connect: { id: requestId },
+                      },
+                    },
+                  });
+
+                  await tx.employeeRequest.update({
+                    where: {
+                      id: requestId,
+                    },
+                    data: {
+                      employee_commission_id: createdCommission.id,
+                    },
+                  });
+
+                  locationData.employee_commission = {
+                    connect: { id: createdCommission.id },
+                  };
+
+                  await tx.employeeLocation.create({
+                    data: locationData,
+                  });
+                }
+              }
+            }
+            break;
+
+          case REQUEST_TYPES.ATTENDANCE:
+            if (employeeRequestFound.request_details) {
+              await tx.employeeLocation.updateMany({
+                where: {
+                  employee_id: employeeId,
+                  active: true,
+                },
+                data: {
+                  active: false,
+                  updated_at: new Date(),
+                },
+              });
+
+              const requestDetail = employeeRequestFound.request_details;
+              if (requestDetail.new_attendance) {
+                const currentLocation = await tx.employeeLocation.findFirst({
+                  where: {
+                    employee_id: employeeId,
+                  },
+                  orderBy: {
+                    created_at: "desc",
+                  },
+                });
+
+                const locationData: any = {
+                  employee: {
+                    connect: { id: employeeId },
+                  },
+                  attendance: {
+                    connect: { id: requestDetail.new_attendance.id },
+                  },
+                  active: true,
+                  applied_at: requestDetail.attendance_date,
+                  created_at: new Date(),
+                };
+
+                if (currentLocation?.location_id) {
+                  locationData.location = {
+                    connect: { id: currentLocation.location_id },
+                  };
+                }
+
+                await tx.employeeLocation.create({
+                  data: locationData,
+                });
+              }
+            }
+            break;
+        }
+      }
+
+      return [createEmployeeRequestStatus];
+    });
   },
 };

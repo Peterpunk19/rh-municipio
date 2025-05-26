@@ -65,18 +65,7 @@ export const formatScheduleText = (schedule: string) => {
         );
       }
     }
-
-    const weekdaySchedule = parts.find((p) => p.includes("Lunes"));
-    const weekendSchedule = parts.filter((p) => p.includes("Sábado") || p.includes("Domingo"));
-
-    if (weekdaySchedule) {
-      formattedText += weekdaySchedule;
-    }
-
-    if (weekendSchedule.length > 0) {
-      if (formattedText) formattedText += "\n";
-      formattedText += weekendSchedule.join("\n");
-    }
+    formattedText = parts.join("\n");
   } else if (typeof schedule === "string") {
     formattedText = schedule;
   }
