@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   try {
     const params = {
       page: 1,
-      limit: 10,
+      limit: 50,
       search: null,
     };
 
