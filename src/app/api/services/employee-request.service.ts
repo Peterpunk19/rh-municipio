@@ -2,7 +2,8 @@ import { prisma } from "@/lib/prisma";
 import type {
   IEmployeeRequest,
   IEmployeeRequestsFilters,
-  IEmployeeRequestUpdate,
+  IEmployeeRequestUpdateService,
+  IEmployeeRequestResponse,
 } from "@/app/api/employee-requests/types";
 import { RequestService } from "@/app/api/services/request.service";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
@@ -348,6 +349,7 @@ export const EmployeeRequestService = {
         },
         employee: {
           select: {
+            id: true,
             name: true,
             maternal_last_name: true,
             paternal_last_name: true,
@@ -515,6 +517,7 @@ export const EmployeeRequestService = {
         ...employeeRequest.request_status,
       },
       employee: {
+        id: employeeRequest.employee.id,
         name: `${employeeRequest.employee.name} ${employeeRequest.employee.paternal_last_name} ${employeeRequest.employee.maternal_last_name}`,
         employeeNumber: employeeRequest.employee.number_employee,
         rfc: employeeRequest.employee.rfc,
@@ -532,9 +535,7 @@ export const EmployeeRequestService = {
           end_at: employeeRequest.employee_request_detail[0].end_date,
         }),
         ...(employeeRequest.request.name === "schedule_change_request" && {
-          schedule: {
-            ...employeeRequest.EmployeeRequestSchedule,
-          },
+          schedule: Object.values(employeeRequest.EmployeeRequestSchedule),
         }),
         ...(employeeRequest.request.name === "checker_change_request" && {
           attendance_date: employeeRequest.employee_request_detail[0].attendance_date,
@@ -567,75 +568,42 @@ export const EmployeeRequestService = {
         ...employeeRequest.resolved_by,
       },
       employee_attendance_status: employeeRequest.EmployeeRequestStatus,
-    };
+    } as IEmployeeRequestResponse;
   },
-  async updateEmployeeRequests(employeeRequest: IEmployeeRequestUpdate) {
+  async updateEmployeeRequests(employeeRequest: IEmployeeRequestUpdateService) {
     return prisma.$transaction(async (tx) => {
-      const employeeRequestFound = await tx.employeeRequest.findUnique({
-        where: { id: Number(employeeRequest.requestId) },
-        include: {
-          request: true,
-          employee: {
-            select: {
-              id: true,
-            },
-          },
-          employee_request_detail: {
-            select: {
-              attendance_id: true,
-              attendance_date: true,
-              start_date: true,
-              end_date: true,
-              location: true,
-              attendance: true,
-            },
-          },
-          EmployeeRequestSchedule: {
-            include: {
-              start_day: true,
-              end_day: true,
-              start_hour: true,
-              end_hour: true,
-            },
-          },
-        },
-      });
-
-      if (!employeeRequestFound) {
-        throw new Error("No se encontró la solicitud");
-      }
-
+      const { employeeRequestFound, requestId, statusId, approvedBy } = employeeRequest;
       await tx.employeeRequest.update({
         data: {
           request_status: {
-            connect: { id: Number(employeeRequest.statusId) },
+            connect: { id: statusId },
           },
-          resolved_at: employeeRequest.statusId === REQUEST_STATUS_ID.APROBADA ? new Date() : null,
+          resolved_at: statusId === REQUEST_STATUS_ID.APROBADA ? new Date() : null,
           resolved_by: {
-            connect: { id: Number(employeeRequest.approvedBy) },
+            connect: { id: approvedBy },
           },
         },
         where: {
-          id: Number(employeeRequest.requestId),
+          id: Number(requestId),
         },
       });
 
       const createEmployeeRequestStatus = await tx.employeeRequestStatus.create({
         data: {
           employee_request: {
-            connect: { id: Number(employeeRequest.requestId) },
+            connect: { id: requestId },
           },
           request_status: {
-            connect: { id: Number(employeeRequest.statusId) },
+            connect: { id: statusId },
           },
           created_by: {
-            connect: { id: Number(employeeRequest.approvedBy) },
+            connect: { id: approvedBy },
           },
           created_at: new Date(),
         },
       });
 
-      if (employeeRequest.statusId === REQUEST_STATUS_ID.APROBADA) {
+      if (statusId === REQUEST_STATUS_ID.APROBADA) {
         const requestTypeId = employeeRequestFound.request.id;
         const employeeId = employeeRequestFound.employee.id;
 
@@ -651,30 +619,49 @@ export const EmployeeRequestService = {
             },
           });
 
-          if (employeeRequestFound.EmployeeRequestSchedule && employeeRequestFound.EmployeeRequestSchedule.length > 0) {
+          if (
+            employeeRequestFound.request_details.schedule &&
+            employeeRequestFound.request_details.schedule.length > 0
+          ) {
             await Promise.all(
-              employeeRequestFound.EmployeeRequestSchedule.map((schedule) =>
-                tx.jobScheduleEmployee.create({
+              employeeRequestFound.request_details.schedule.map((schedule) => {
+                if (
+                  !schedule.start_day_id ||
+                  !schedule.end_day_id ||
+                  !schedule.start_hour_id ||
+                  !schedule.end_hour_id
+                ) {
+                  return Promise.resolve();
+                }
+
+                return tx.jobScheduleEmployee.create({
                   data: {
-                    employee_id: employeeId,
+                    employee: {
+                      connect: { id: employeeId },
+                    },
                     name: "Horario asignado por solicitud",
                     description: "Creado automáticamente por aprobación de solicitud",
-                    start_day_id: schedule.start_day.id,
-                    end_day_id: schedule.end_day.id,
-                    start_hour_id: schedule.start_hour.id,
-                    end_hour_id: schedule.end_hour.id,
+                    start_day: {
+                      connect: { id: schedule.start_day_id },
+                    },
+                    end_day: {
+                      connect: { id: schedule.end_day_id },
+                    },
+                    start_hour: {
+                      connect: { id: schedule.start_hour_id },
+                    },
+                    end_hour: {
+                      connect: { id: schedule.end_hour_id },
+                    },
                     active: true,
                     created_at: new Date(),
                   },
-                }),
-              ),
+                });
+              }),
             );
           }
-        } else if (
-          requestTypeId === REQUEST_TYPES.LOCATION &&
-          employeeRequestFound.employee_request_detail.length > 0
-        ) {
-          const requestDetail = employeeRequestFound.employee_request_detail[0];
+        } else if (requestTypeId === REQUEST_TYPES.LOCATION && employeeRequestFound.request_details) {
+          const requestDetail = employeeRequestFound.request_details;
 
           const currentLocation = await tx.employeeLocation.findFirst({
             where: {
@@ -695,13 +682,13 @@ export const EmployeeRequestService = {
             });
           }
 
-          if (requestDetail.location) {
+          if (requestDetail.new_location) {
             const locationData: any = {
               employee: {
                 connect: { id: employeeId },
               },
               location: {
-                connect: { id: requestDetail.location.id },
+                connect: { id: requestDetail.new_location?.id },
               },
               active: true,
               created_at: new Date(),
@@ -712,9 +699,9 @@ export const EmployeeRequestService = {
                 connect: { id: currentLocation.attendance_id },
               };
             } else {
-              if (requestDetail.attendance_id) {
+              if (requestDetail.new_attendance) {
                 locationData.attendance = {
-                  connect: { id: requestDetail.attendance_id },
+                  connect: { id: requestDetail.new_attendance.id },
                 };
               } else {
                 locationData.attendance = {
@@ -723,38 +710,39 @@ export const EmployeeRequestService = {
               }
             }
 
-            if (requestDetail.start_date && requestDetail.end_date) {
+            if (requestDetail.start_at && requestDetail.end_at) {
               const createdCommission = await tx.employeeCommission.create({
                 data: {
-                  employee_location_id: requestDetail.location.id,
-                  start_date: requestDetail.start_date,
-                  end_date: requestDetail.end_date,
+                  employee_location_id: requestDetail.new_location.id,
+                  start_date: requestDetail.start_at,
+                  end_date: requestDetail.end_at,
                   active: true,
                   created_at: new Date(),
                   employee_request: {
-                    connect: { id: Number(employeeRequest.requestId) },
+                    connect: { id: requestId },
                   },
                 },
               });
 
               await tx.employeeRequest.update({
                 where: {
-                  id: Number(employeeRequest.requestId),
+                  id: requestId,
                 },
                 data: {
                   employee_commission_id: createdCommission.id,
                 },
               });
-            }
 
-            await tx.employeeLocation.create({
-              data: locationData,
-            });
+              locationData.employee_commission = {
+                connect: { id: createdCommission.id },
+              };
+
+              await tx.employeeLocation.create({
+                data: locationData,
+              });
+            }
           }
-        } else if (
-          requestTypeId === REQUEST_TYPES.ATTENDANCE &&
-          employeeRequestFound.employee_request_detail.length > 0
-        ) {
+        } else if (requestTypeId === REQUEST_TYPES.ATTENDANCE && employeeRequestFound.request_details) {
           await tx.employeeLocation.updateMany({
             where: {
               employee_id: employeeId,
@@ -766,8 +754,8 @@ export const EmployeeRequestService = {
             },
           });
 
-          const requestDetail = employeeRequestFound.employee_request_detail[0];
-          if (requestDetail.attendance) {
+          const requestDetail = employeeRequestFound.request_details;
+          if (requestDetail.new_attendance) {
             const currentLocation = await tx.employeeLocation.findFirst({
               where: {
                 employee_id: employeeId,
@@ -782,7 +770,7 @@ export const EmployeeRequestService = {
                 connect: { id: employeeId },
               },
               attendance: {
-                connect: { id: requestDetail.attendance.id },
+                connect: { id: requestDetail.new_attendance.id },
               },
               active: true,
               applied_at: requestDetail.attendance_date,

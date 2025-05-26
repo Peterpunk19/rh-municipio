@@ -151,6 +151,7 @@ export const EmployeeRequestsGetFilterSchema = z.object({
 
 export const EmployeeRequestsUpdateSchema = z.object({
   requestId: z.number(),
-  status: z.string(),
-  approvedBy: z.number(),
+  statusId: z.number({ message: validationMessages.required("Estatus de solicitud") }).positive({
+    message: validationMessages.required("Estatus de solicitud"),
+  }),
 });

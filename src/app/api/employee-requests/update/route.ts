@@ -22,7 +22,7 @@ export async function PUT(request: NextRequest) {
       return authData;
     }
 
-    const { userId, roleId } = authData;
+    const { userId: userAuthenticatedId, roleId: userAuthenticatedRoleId } = authData;
 
     const validationRequest = await validateRequest<IEmployeeRequestUpdate>(request, EmployeeRequestsUpdateSchema);
     if (validationRequest.response) return validationRequest.response;
@@ -31,27 +31,10 @@ export async function PUT(request: NextRequest) {
     if (!body) return failureResponse(HttpMessages.error.invalidRequest);
 
     const employeeRequestId = Number(body.requestId);
-    
-    let requestStatusId: number;
-    switch (body.status?.toLowerCase()) {
-      case 'approved':
-        requestStatusId = REQUEST_STATUS_ID.APROBADA;
-        break;
-      case 'rejected':
-        requestStatusId = REQUEST_STATUS_ID.RECHAZADA;
-        break;
-      case 'canceled':
-        requestStatusId = REQUEST_STATUS_ID.CANCELADA;
-        break;
-      case 'created':
-        requestStatusId = REQUEST_STATUS_ID.CREADA;
-        break;
-      case 'deleted':
-        requestStatusId = REQUEST_STATUS_ID.ELIMINADA;
-        break;
-      default:
-        return failureResponse(HttpMessages.requestStatus.invalidStatus);
-    }
+    const requestStatusId = Number(body.statusId);
+
+    if (!Object.values(REQUEST_STATUS_ID).includes(requestStatusId))
+      return failureResponse(HttpMessages.requestStatus.invalidStatus);
 
     const isAllowedToUpdate = await RequestsStatusService.getRequestStatusById(requestStatusId);
 
@@ -59,7 +42,7 @@ export async function PUT(request: NextRequest) {
 
     const rolesArray = isAllowedToUpdate.allowed_roles_to_update.split(",").map(Number);
 
-    if (!rolesArray.includes(roleId)) {
+    if (!rolesArray.includes(userAuthenticatedRoleId)) {
       return failureResponse(HttpMessages.employeeRequests.notAllowedToUpdate);
     }
 
@@ -67,7 +50,7 @@ export async function PUT(request: NextRequest) {
 
     if (!employeeRequest) return failureResponse(HttpMessages.employeeRequests.notFoundById);
 
-    if (requestStatusId === REQUEST_STATUS_ID.CANCELADA && employeeRequest.requestedBy.id !== userId) {
+    if (requestStatusId === REQUEST_STATUS_ID.CANCELADA && employeeRequest.requestedBy.id !== userAuthenticatedId) {
       return failureResponse(HttpMessages.employeeRequests.invalidUserToCancel);
     }
 
@@ -86,9 +69,10 @@ export async function PUT(request: NextRequest) {
     if (validateEmployeeRequestStatusId) return failureResponse(HttpMessages.requestStatus.invalidRequestStatusId);
 
     const updateData = {
+      employeeRequestFound: employeeRequest,
       requestId: employeeRequestId,
       statusId: requestStatusId,
-      approvedBy: requestStatusId === REQUEST_STATUS_ID.CANCELADA ? employeeRequest.requestedBy.id : Number(body.approvedBy),
+      approvedBy: userAuthenticatedId,
     };
 
     const [updatedEmployeeRequest] = await EmployeeRequestService.updateEmployeeRequests(updateData);

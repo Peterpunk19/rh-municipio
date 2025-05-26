@@ -5,40 +5,44 @@ import { validationMessages } from "@/common/validation/messages";
 export const response = {
   emptyId: generator.response({
     success: false,
-    message: HttpMessages.requestStatus.idNotFound,
-    responseObject: {},
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      requestId: { messages: ["Required"] },
+    },
     statusCode: 400,
   }),
   idNotNumber: generator.response({
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      requestId: { messages: ["Expected number, received nan"] },
+      requestId: { messages: ["Expected number, received string"] },
     },
     statusCode: 400,
   }),
-  idZero: {
+  idZero: generator.response({
     success: false,
     message: HttpMessages.requestStatus.idNotFound,
     responseObject: {},
     statusCode: 400,
-  },
-  idNegative: {
+  }),
+  idNegative: generator.response({
     success: false,
     message: HttpMessages.requestStatus.idNotFound,
     responseObject: {},
     statusCode: 400,
-  },
-  idLong: {
+  }),
+  idLong: generator.response({
     success: false,
     message: HttpMessages.requestStatus.idNotFound,
     responseObject: {},
     statusCode: 400,
-  },
+  }),
   emptyStatus: generator.response({
     success: false,
-    message: HttpMessages.requestStatus.invalidStatus,
-    responseObject: {},
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      statusId: { messages: [validationMessages.required("Estatus de solicitud")] },
+    },
     statusCode: 400,
   }),
   invalidStatus: generator.response({
