@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import type { ICreateLeader } from "@/app/api/administrative-organizations/types";
+import type { ICreateLeader, IAdministrativeOrganizationsFilters } from "@/app/api/administrative-organizations/types";
+import { buildWhereClause, getPaginationData } from "@/common/utils";
+import { ROLES } from "@/common/constants/Roles";
 
 export const AdministrativeOrganizationLeadersService = {
   async createLeader(leader: ICreateLeader) {
@@ -89,5 +91,114 @@ export const AdministrativeOrganizationLeadersService = {
         created_by_id: createdById,
       },
     });
+  },
+
+  async getAdministrativeOrganizationsByParams(
+    administrativeOrganizationsFilters: IAdministrativeOrganizationsFilters,
+  ) {
+    const { limit, page } = administrativeOrganizationsFilters;
+    const offset = (Number(page) - 1) * Number(limit);
+
+    const whereClause: any = {};
+
+    if (administrativeOrganizationsFilters.search) {
+      whereClause.OR = [
+        { display_name: { contains: administrativeOrganizationsFilters.search } },
+        {
+          direcciones: {
+            some: {
+              OR: [
+                { display_name: { contains: administrativeOrganizationsFilters.search } },
+                {
+                  leaders: {
+                    some: {
+                      employee: {
+                        OR: [
+                          { name: { contains: administrativeOrganizationsFilters.search } },
+                          { paternal_last_name: { contains: administrativeOrganizationsFilters.search } },
+                          { maternal_last_name: { contains: administrativeOrganizationsFilters.search } },
+                        ],
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ];
+    }
+
+    const data = await prisma.secretaria.findMany({
+      where: whereClause,
+      skip: offset,
+      take: Number(limit),
+      orderBy: {
+        id: "desc",
+      },
+      select: {
+        id: true,
+        name: true,
+        display_name: true,
+        direcciones: {
+          where: {
+            active: true,
+          },
+          select: {
+            id: true,
+            name: true,
+            display_name: true,
+            leaders: {
+              where: {
+                active: true,
+              },
+              select: {
+                id: true,
+                employee: {
+                  select: {
+                    id: true,
+                    name: true,
+                    paternal_last_name: true,
+                    maternal_last_name: true,
+                  },
+                },
+                role: {
+                  select: {
+                    name: true,
+                  },
+                },
+                start_date: true,
+                end_date: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const administrativeOrganizations = data.map((item: any) => ({
+      name: item.name,
+      display_name: item.display_name,
+      direcciones: item.direcciones.map((direccion: any) => {
+        const director = direccion.leaders.find((leader: any) => leader.role.name === ROLES.DIRECTOR);
+        const deputyDirector = direccion.leaders.find((leader: any) => leader.role.name === ROLES.SUPLENTE);
+
+        const getFullName = (employee: any) =>
+          employee ? `${employee.paternal_last_name} ${employee.maternal_last_name} ${employee.name}` : null;
+
+        return {
+          name: direccion.display_name,
+          director: getFullName(director?.employee),
+          deputy_director: getFullName(deputyDirector?.employee),
+          startDate: director?.start_date ?? null,
+          endDate: director?.end_date ?? null,
+        };
+      }),
+    }));
+
+    const total = await prisma.secretaria.count({ where: whereClause });
+    const pagination = await getPaginationData(total, Number(limit), Number(page));
+
+    return { ...pagination, administrativeOrganizations };
   },
 };

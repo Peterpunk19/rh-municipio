@@ -112,6 +112,8 @@ export const HttpMessages = {
     foundById: "Solicitud encontrada correctamente",
   },
   administrativeOrganizations: {
+    getSuccess: "Organismos administrativos encontrados correctamente",
+    notFound: "No se encontraron organismos administrativos con los filtros proporcionados",
     leadersCreatedSuccess: "Directivos actualizados correctamente",
     notFoundByDirectorId: "No se encontró el director con el ID proporcionado",
     notFoundByDeputyDirectorId: "No se encontró el subdirector con el ID proporcionado",
