@@ -148,3 +148,10 @@ export const EmployeeRequestsGetFilterSchema = z.object({
     .optional()
     .nullable(),
 });
+
+export const EmployeeRequestsUpdateSchema = z.object({
+  requestId: z.number(),
+  statusId: z.number({ message: validationMessages.required("Estatus de solicitud") }).positive({
+    message: validationMessages.required("Estatus de solicitud"),
+  }),
+});

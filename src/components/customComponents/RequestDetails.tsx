@@ -18,7 +18,9 @@ type Props = {
       username: string;
     };
     approvedBy?: {
-      fullName: string;
+      name: string;
+      paternal_last_name: string;
+      maternal_last_name: string;
     };
   };
 };
@@ -102,7 +104,9 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
             </Grid>
             <Grid size={7}>
               <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-                {data.approvedBy?.fullName || "-"}
+                {data.approvedBy && Object.keys(data.approvedBy).length > 0 ? 
+                  data.approvedBy.name + " " + data.approvedBy.paternal_last_name + " " + data.approvedBy.maternal_last_name 
+                  : "-"}
               </Typography>
             </Grid>
           </Grid>

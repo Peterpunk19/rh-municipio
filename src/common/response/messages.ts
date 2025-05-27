@@ -54,7 +54,10 @@ export const HttpMessages = {
     invalidIncidentStatusId: "La incidencia ya estuvo anteriormente en este estatus",
   },
   requestStatus: {
+    idNotFound: "El ID de estatus de la solcitud no fue encontrado",
     notFound: "Estatus de solicitud no encontrado",
+    invalidRequestStatusId: "La solicitud ya estuvo anteriormente en este estatus",
+    invalidStatus: "El estado proporcionado no es válido",
   },
   error: {
     internalServerError: "Ocurrio un error en el servidor",
@@ -110,6 +113,11 @@ export const HttpMessages = {
     getSuccess: "Solicitudes encontradas correctamente",
     notFoundById: "No se encontró la solicitud con el ID proporcionado",
     foundById: "Solicitud encontrada correctamente",
+    notAllowedToUpdate: "No tienes permiso para actualizar esta solicitud",
+    invalidUserToCancel: "Solo el solicitante puede cancelar la solicitud",
+    invalidUpdateData: "No se puede actualizar al mismo estado",
+    employeeWithoutHiringOrLocation: "El empleado no tiene contratación o ubicación activa",
+    updatedSuccess: "Solicitud actualizada exitosamente",
   },
   administrativeOrganizations: {
     getSuccess: "Organismos administrativos encontrados correctamente",
