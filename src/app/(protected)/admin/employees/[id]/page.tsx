@@ -163,7 +163,7 @@ const Profile = () => {
                   iconPosition="start"
                   icon={<IconClock size="22" />}
                   label="Ubicación y horario"
-                  {...a11yPropsProfile("employeesAttendances")}
+                  {...a11yPropsProfile("employeesSchedule")}
                 />
               </Tabs>
             </Box>
@@ -185,7 +185,7 @@ const Profile = () => {
                 <EmployeeRequests />
               </TabPanel>
               <TabPanel value={value} index={5}>
-                <CustomCalendarAttendance employeeId={Number(id)} />
+                <CustomCalendarAttendance />
               </TabPanel>
               <TabPanel value={value} index={6}>
                 <LocationScheduleTab employeeData={employeeData} />

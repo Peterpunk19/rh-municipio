@@ -4,7 +4,15 @@ import { getToken } from "next-auth/jwt";
 import { HttpStatusCode } from "axios";
 import { HttpMessages } from "@/common/response/messages";
 
-import { publicRoutes, authRoutes, apiAuthPrefix, apiPrefix, DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import {
+  publicRoutes,
+  authRoutes,
+  apiAuthPrefix,
+  apiPrefix,
+  DEFAULT_LOGIN_REDIRECT,
+  DEFAULT_ADMIN_REDIRECT,
+  DEFAULT_EMPLOYEE_REDIRECT,
+} from "@/routes";
 import { NextResponse } from "next/server";
 import { HttpResponse } from "./common/response/model";
 
@@ -18,6 +26,8 @@ export default auth(async (req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isApiRoute = nextUrl.pathname.startsWith(apiPrefix);
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+  const isEmployeeRoute = nextUrl.pathname.startsWith("/employee");
 
   if (isPublicRoute) {
     return null;
@@ -45,13 +55,33 @@ export default auth(async (req) => {
 
   if (isAuthRoute) {
     if (isLoggedIn) {
-      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+      const token = await getToken({
+        req,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
+
+      if (token.role_name === "empleado") {
+        return Response.redirect(new URL(DEFAULT_EMPLOYEE_REDIRECT, nextUrl));
+      }
+      return Response.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl));
     }
     return null;
   }
 
   if (!isLoggedIn) {
     return Response.redirect(new URL("/login", nextUrl));
+  }
+
+  if (isLoggedIn) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+    if (isAdminRoute && token?.role_name === "empleado") {
+      return NextResponse.redirect(new URL(DEFAULT_EMPLOYEE_REDIRECT, nextUrl));
+    }
+
+    if (isEmployeeRoute && token?.role_name !== "empleado") {
+      return NextResponse.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl));
+    }
   }
 
   return null;

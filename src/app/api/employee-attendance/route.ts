@@ -5,8 +5,11 @@ import { HttpMessages } from "@/common/response/messages";
 import { IEmployeeAttendanceFilters } from "@/app/api/employee-attendance/types";
 import { EmployeeAttendanceGetFilterSchema } from "@/schemas/employee-attendance";
 import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
-import { getParamsFromUrl } from "@/common/utils";
+import { getParamsFromUrl, getRoleValueById } from "@/common/utils";
 import { logger } from "@/lib/logger";
+import { ROLES } from "@/common/constants/Roles";
+import { authMiddleware } from "@/middleware/authMiddleware";
+import { NextResponse } from "next/server";
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_PAGE = 1;
@@ -28,6 +31,15 @@ export async function GET(request: Request) {
 
     const requestParams = await getParamsFromUrl(request, params);
 
+    const authData = await authMiddleware();
+
+    if (authData instanceof NextResponse) {
+      return authData;
+    }
+
+    const { roleId, employeeId } = authData;
+    const role = getRoleValueById(roleId);
+
     const validationRequest = await validateRequestByUrlParams<IEmployeeAttendanceFilters>(
       requestParams,
       EmployeeAttendanceGetFilterSchema,
@@ -40,6 +52,15 @@ export async function GET(request: Request) {
     if (!validRequestData) {
       const response = HttpResponse.failure(HttpMessages.error.validationFields, {});
       return handleHttpResponse(response);
+    }
+
+    if (role === ROLES.EMPLEADO && requestParams.employee_id && requestParams.employee_id !== employeeId) {
+      const response = HttpResponse.failure(HttpMessages.employeeIncidents.notAllowedToList, {});
+      return handleHttpResponse(response);
+    }
+
+    if (role === ROLES.EMPLEADO) {
+      validRequestData.employeeId = Number(employeeId);
     }
 
     const existingEmployeesAttendances =
