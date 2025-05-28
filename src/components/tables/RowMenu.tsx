@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { redirect } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -20,6 +19,11 @@ const RowMenu = ({ row, redirectPath }: { row: any; redirectPath?: string }) => 
     setAnchorEl(null);
   };
 
+  const handleOpenInNewTab = (path: string) => {
+    window.open(path, "_blank");
+    handleClose();
+  };
+
   return (
     <Stack direction="row">
       <Tooltip title="Acciones">
@@ -28,8 +32,8 @@ const RowMenu = ({ row, redirectPath }: { row: any; redirectPath?: string }) => 
         </IconButton>
       </Tooltip>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem onClick={() => redirect(`${redirectPath}${row.id}`)}>Ver</MenuItem>
-        <MenuItem onClick={() => redirect(`${redirectPath}/edit/${row.id}`)}>Editar</MenuItem>
+        <MenuItem onClick={() => handleOpenInNewTab(`${redirectPath}${row.id}`)}>Ver</MenuItem>
+        <MenuItem onClick={() => handleOpenInNewTab(`${redirectPath}/edit/${row.id}`)}>Editar</MenuItem>
       </Menu>
     </Stack>
   );

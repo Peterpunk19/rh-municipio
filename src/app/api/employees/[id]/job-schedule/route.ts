@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { handleHttpResponse } from "@/common/response/handler";
 import type { HttpResponse } from "@/common/response/model";
