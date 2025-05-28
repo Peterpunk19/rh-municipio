@@ -66,7 +66,7 @@ export const header: readonly HeadCell[] = [
     empty_text: "No hay ubicación",
     children: [
       {
-        id: "employee_location[0].attendance.display_name",
+        id: "employee_attendance_type[0].attendance.display_name",
         numeric: false,
         disablePadding: false,
         label: "Tipo de checado",

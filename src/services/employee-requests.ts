@@ -25,6 +25,7 @@ export const getEmployeeRequests = async (queryParams: string) => {
       success: false,
       message: error.message || "Error al obtener solicitudes",
       responseObject: { data: [], total: 0 },
+      statusCode: 500,
     };
   }
 };
@@ -38,6 +39,7 @@ export const getEmployeeRequestById = async (id: string) => {
       success: false,
       message: error.message || "Error al obtener detalles de la solicitud",
       responseObject: null,
+      statusCode: 500,
     };
   }
 };
@@ -51,6 +53,21 @@ export const createEmployeeRequest = async (data: any) => {
       success: false,
       message: error.message || "Error al crear la solicitud",
       responseObject: null,
+      statusCode: 500,
+    };
+  }
+};
+
+export const updateEmployeeRequest = async (data: any): Promise<IResponse> => {
+  try {
+    const response = await http.put<IResponse>("/api/employee-requests/update", data);
+    return response.data;
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Error al actualizar la solicitud",
+      responseObject: null,
+      statusCode: 500,
     };
   }
 };

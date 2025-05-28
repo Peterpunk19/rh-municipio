@@ -4,8 +4,13 @@ import { testCases } from "./testCases";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { RequestService } from "@/app/api/services/request.service";
 
-const { getEmployeeRequestFolio, getRequestStatus, validateEmployee, validateEmployeeRequest, validateExistence } =
-  jest.requireMock("@/app/api/common/utils.service");
+jest.mock("@/app/api/common/utils.service", () => ({
+  getEmployeeRequestFolio: jest.fn(),
+  getRequestStatus: jest.fn(),
+  validateEmployee: jest.fn(),
+  validateEmployeeRequest: jest.fn(),
+  validateExistence: jest.fn(),
+}));
 
 jest.mock("@/app/api/services/request.service", () => ({
   RequestService: {
@@ -24,6 +29,9 @@ jest.mock("@/app/api/services/employee-request.service", () => ({
     validateEmployeeRequest: jest.fn(),
   },
 }));
+
+const { getEmployeeRequestFolio, getRequestStatus, validateEmployee, validateEmployeeRequest, validateExistence } =
+  require("@/app/api/common/utils.service");
 
 describe("API: /employee-requests", () => {
   afterEach(() => {

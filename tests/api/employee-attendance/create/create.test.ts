@@ -18,6 +18,12 @@ jest.mock("@/app/api/services/employee-attendance.service", () => ({
   },
 }));
 
+jest.mock("@/app/api/services/employee.service", () => ({
+  EmployeeService: {
+    getEmployeeByIdTest: jest.fn(),
+  },
+}));
+
 describe("API: /employee-attendance", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -28,14 +34,9 @@ describe("API: /employee-attendance", () => {
       if (
         !(description === "should return error for empty employee" || description === "should return invalid request")
       ) {
-        const employee = await EmployeeService.getEmployeeByIdTest();
-
-        if (!employee) {
-          console.warn("Test skipped: No employee found.");
-          return;
-        }
-
-        requestData.employeeId = employee.id;
+        const mockEmployee = { id: 1 };
+        (EmployeeService.getEmployeeByIdTest as jest.Mock).mockResolvedValue(mockEmployee);
+        requestData.employeeId = mockEmployee.id;
       }
 
       if (description === "should return error message with invalid employee data") {
@@ -43,6 +44,7 @@ describe("API: /employee-attendance", () => {
           id: requestData.employeeId,
           employee_hiring: [],
           employee_location: [],
+          employee_attendance_type: [],
         });
 
         validateEmployeeData.mockResolvedValueOnce(HttpResponse.failure(HttpMessages.employeeLocation.notFound, {}));
@@ -53,6 +55,7 @@ describe("API: /employee-attendance", () => {
           id: requestData.employeeId,
           employee_hiring: [{ id: 1 }],
           employee_location: [{ id: 1 }],
+          employee_attendance_type: [{ id: 1 }],
         });
 
         (EmployeeAttendanceService.createEmployeeAttendance as jest.Mock).mockResolvedValueOnce([{}, {}]);

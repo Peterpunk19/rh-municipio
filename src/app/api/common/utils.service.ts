@@ -93,6 +93,10 @@ export const validateEmployeeData = async (employee: any, body: IEmployeeAttenda
     return HttpResponse.failure(HttpMessages.employeeLocation.notFound, {});
   }
 
+  if (!employee.employee_attendance_type.length) {
+    return HttpResponse.failure(HttpMessages.employeeAttendanceType.notFound, {});
+  }
+
   if (await EmployeeAttendanceService.validateEmployeeAttendance(body)) {
     return HttpResponse.failure(HttpMessages.employeeAttendance.invalidData, {});
   }

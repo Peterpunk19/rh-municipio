@@ -4,6 +4,7 @@ export interface IEmployeeAttendance {
   employeeId: number | string;
   employeeHiringId: number;
   employeeLocationId: number;
+  employeeAttendanceTypeId: number;
   description: string;
   createdById: number;
   active: boolean;

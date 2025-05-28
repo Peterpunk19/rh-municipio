@@ -21,9 +21,16 @@ jest.mock("@/app/api/services/direccion.service", () => ({
   },
 }));
 
+jest.mock("@/app/api/services/role.service", () => ({
+  RoleService: {
+    getRoleByName: jest.fn(),
+  },
+}));
+
 jest.mock("@/app/api/services/administrative-organization-leaders.service", () => ({
   AdministrativeOrganizationLeadersService: {
     createLeader: jest.fn(),
+    deactivateLeader: jest.fn(),
   },
 }));
 
@@ -39,6 +46,11 @@ describe("API: /administrative-organizations", () => {
 
     it(`POST /administrative-organizations ${description}`, async () => {
       if (description === "should successfully send message with valid data") {
+        const { RoleService } = require("@/app/api/services/role.service");
+        (RoleService.getRoleByName as jest.Mock)
+          .mockResolvedValueOnce({ id: 1, name: "director" })
+          .mockResolvedValueOnce({ id: 2, name: "suplente" });
+
         (DireccionService.getDireccionById as jest.Mock).mockResolvedValue({
           id: requestData.direccionId,
         });

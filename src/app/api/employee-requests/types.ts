@@ -100,10 +100,26 @@ export interface IEmployeeRequestResponse {
     end_at?: Date | null;
     schedule?: {
       id: number;
-      start_day_id: number;
-      end_day_id: number;
-      start_hour_id: number;
-      end_hour_id: number;
+      start_day: {
+        id: number;
+        name: string;
+        display_name: string;
+      };
+      end_day: {
+        id: number;
+        name: string;
+        display_name: string;
+      };
+      start_hour: {
+        id: number;
+        name: string;
+        display_name: string;
+      };
+      end_hour: {
+        id: number;
+        name: string;
+        display_name: string;
+      };
     }[];
     attendance_date?: string;
     current_attendance?: {
