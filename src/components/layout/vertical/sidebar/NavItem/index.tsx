@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
-import Chip from '@mui/material/Chip';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { Theme } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { styled, useTheme } from '@mui/material/styles';
+import Chip from "@mui/material/Chip";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import { Theme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { styled, useTheme } from "@mui/material/styles";
 import { useSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
 import { AppState } from "@/store/store";
@@ -38,35 +38,24 @@ interface ItemType {
   pathDirect: string;
 }
 
-export default function NavItem({
-  item,
-  level,
-  pathDirect,
-  hideMenu,
-  onClick,
-}: ItemType) {
+export default function NavItem({ item, level, pathDirect, hideMenu, onClick }: ItemType) {
   const lgDown = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
   const customizer = useSelector((state: AppState) => state.customizer);
   const Icon = item?.icon;
   const theme = useTheme();
   const { t } = useTranslation();
-  const itemIcon =
-    level > 1 ? (
-      <Icon stroke={1.5} size="1rem" />
-    ) : (
-      <Icon stroke={1.5} size="1.3rem" />
-    );
+  const itemIcon = level > 1 ? <Icon stroke={1.5} size="1rem" /> : <Icon stroke={1.5} size="1.3rem" />;
 
   const ListItemStyled = styled(ListItemButton)(() => ({
-    whiteSpace: "nowrap",
+    whiteSpace: "break-spaces",
+    height: "auto",
+    minHeight: "42px",
     marginBottom: "2px",
     padding: "8px 10px",
     borderRadius: `${customizer.borderRadius}px`,
     backgroundColor: level > 1 ? "transparent !important" : "inherit",
     color:
-      level > 1 && pathDirect === item?.href
-        ? `${theme.palette.primary.main}!important`
-        : theme.palette.text.secondary,
+      level > 1 && pathDirect === item?.href ? `${theme.palette.primary.main}!important` : theme.palette.text.secondary,
     paddingLeft: hideMenu ? "10px" : level > 2 ? `${level * 15}px` : "10px",
     "&:hover": {
       backgroundColor: theme.palette.primary.light,
@@ -106,10 +95,7 @@ export default function NavItem({
             sx={{
               minWidth: "36px",
               p: "3px 0",
-              color:
-                level > 1 && pathDirect === item?.href
-                  ? `${theme.palette.primary.main}!important`
-                  : "inherit",
+              color: level > 1 && pathDirect === item?.href ? `${theme.palette.primary.main}!important` : "inherit",
             }}
           >
             {itemIcon}
@@ -117,13 +103,7 @@ export default function NavItem({
           <ListItemText>
             {hideMenu ? "" : <>{t(`${item?.title}`)}</>}
             <br />
-            {item?.subtitle ? (
-              <Typography variant="caption">
-                {hideMenu ? "" : item?.subtitle}
-              </Typography>
-            ) : (
-              ""
-            )}
+            {item?.subtitle ? <Typography variant="caption">{hideMenu ? "" : item?.subtitle}</Typography> : ""}
           </ListItemText>
 
           {!item?.chip || hideMenu ? null : (

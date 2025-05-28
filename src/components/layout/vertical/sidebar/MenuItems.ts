@@ -22,6 +22,7 @@ import {
   IconUser,
   IconUsers,
   IconFileInvoice,
+  IconBuilding,
 } from "@tabler/icons-react";
 
 const Menuitems: MenuitemsType[] = [
@@ -117,6 +118,12 @@ const Menuitems: MenuitemsType[] = [
         href: "/admin/employees-attendances/create",
       },
     ],
+  },
+  {
+    id: uniqueId(),
+    title: "Organizaciones Administrativas",
+    icon: IconBuilding,
+    href: "/admin/administratives-organizations",
   },
 ];
 

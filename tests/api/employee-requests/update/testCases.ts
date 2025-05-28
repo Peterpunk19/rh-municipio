@@ -1,5 +1,5 @@
 import { dataProvider } from "./dataProvider";
-import type { IEmployeeRequestUpdateInput } from "@/app/api/employee-requests/types";
+import type { IEmployeeRequestUpdate } from "@/app/api/employee-requests/types";
 
 export const testCases = [
   {
@@ -16,13 +16,13 @@ export const testCases = [
   },
   {
     description: "should return error for id zero",
-    requestData: dataProvider.idZero.request as IEmployeeRequestUpdateInput,
+    requestData: dataProvider.idZero.request as IEmployeeRequestUpdate,
     expectedStatus: dataProvider.idZero.status,
     expectedResponse: dataProvider.idZero.response,
   },
   {
     description: "should return error for id negative",
-    requestData: dataProvider.idNegative.request as IEmployeeRequestUpdateInput,
+    requestData: dataProvider.idNegative.request as IEmployeeRequestUpdate,
     expectedStatus: dataProvider.idNegative.status,
     expectedResponse: dataProvider.idNegative.response,
   },

@@ -153,6 +153,12 @@ describe("EmployeeRequestService", () => {
         employeeRequestDetail: {
           create: jest.fn(),
         },
+        employeeLocation: {
+          findFirst: jest.fn().mockResolvedValue({
+            location: { id: 1 },
+            attendance: { id: 1 }
+          })
+        },
       };
 
       (prisma.$transaction as jest.Mock).mockImplementationOnce((fn) => fn(mockTx));

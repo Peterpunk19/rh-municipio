@@ -134,7 +134,7 @@ export const AdministrativeOrganizationLeadersService = {
       skip: offset,
       take: Number(limit),
       orderBy: {
-        id: "desc",
+        display_name: "asc",
       },
       select: {
         id: true,
@@ -143,6 +143,9 @@ export const AdministrativeOrganizationLeadersService = {
         direcciones: {
           where: {
             active: true,
+          },
+          orderBy: {
+            display_name: "asc",
           },
           select: {
             id: true,
@@ -177,6 +180,7 @@ export const AdministrativeOrganizationLeadersService = {
     });
 
     const administrativeOrganizations = data.map((item: any) => ({
+      id: item.id,
       name: item.name,
       display_name: item.display_name,
       direcciones: item.direcciones.map((direccion: any) => {
@@ -187,9 +191,10 @@ export const AdministrativeOrganizationLeadersService = {
           employee ? `${employee.paternal_last_name} ${employee.maternal_last_name} ${employee.name}` : null;
 
         return {
+          id: direccion.id,
           name: direccion.display_name,
-          director: getFullName(director?.employee),
-          deputy_director: getFullName(deputyDirector?.employee),
+          director: { id: director?.employee.id ?? "", name: getFullName(director?.employee) },
+          deputy_director: { id: deputyDirector?.employee.id ?? "", name: getFullName(deputyDirector?.employee) },
           startDate: director?.start_date ?? null,
           endDate: director?.end_date ?? null,
         };

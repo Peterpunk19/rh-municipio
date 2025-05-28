@@ -8,6 +8,8 @@ const requestStatus = [
     btn_icon: "clock",
     btn_color: "warning",
     type: 1,
+    active: true,
+    allowed_roles_to_update: "1,2,3",
   },
   {
     id: 2,
@@ -18,6 +20,8 @@ const requestStatus = [
     btn_icon: "check",
     btn_color: "success",
     type: 1,
+    active: true,
+    allowed_roles_to_update: "1,2,3",
   },
   {
     id: 3,
@@ -28,6 +32,8 @@ const requestStatus = [
     btn_icon: "x",
     btn_color: "error",
     type: 1,
+    active: true,
+    allowed_roles_to_update: "1,2,3",
   },
   {
     id: 4,
@@ -38,6 +44,8 @@ const requestStatus = [
     btn_icon: "trash",
     btn_color: "warning",
     type: 1,
+    active: true,
+    allowed_roles_to_update: "1,2,3",
   },
   {
     id: 5,
@@ -48,6 +56,8 @@ const requestStatus = [
     btn_icon: "x",
     btn_color: "error",
     type: 1,
+    active: true,
+    allowed_roles_to_update: "1,2,3",
   },
 ];
 module.exports = requestStatus;
