@@ -9,6 +9,8 @@ import {IconClockUp, IconClockDown, IconClockCheck, IconClockCancel} from "@tabl
 import {getEmployeesAttendances} from "@/services/employees-attendances";
 import {StatusCodes} from "http-status-codes";
 import {logger} from "@/lib/logger";
+wimport {useSelector} from "@/store/hooks";
+import type {RootState} from "@/store/store";
 
 type CalendarDay = {
   date: Temporal.PlainDate;
@@ -21,24 +23,25 @@ type Attendance = {
   check_out: string;
 };
 
-const CustomCalendarAttendance = ({ employeeId }: { employeeId: number })=> {
+const CustomCalendarAttendance = ()=> {
+  const { values } = useSelector(
+    (state: RootState) => state.filters.employeesAttendances || { searchTerm: "", values: {} },
+  );
+
   const [attendanceData, setAttendanceData] = React.useState<any>([]);
 
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
   async function fetchEmployeesAttendances(month: number, year: number) {
     const [from, to] = getFirstAndLastMonth(month, year);
+    const employeeId = values.employee_id;
 
     try {
-      if (employeeId) {
-        const response = await getEmployeesAttendances({ employee_id: employeeId, checkIn: from, checkOut: to});
-        if (response.statusCode === StatusCodes.OK) {
-          setAttendanceData(response.responseObject.data);
-        } else {
-          setAttendanceData(null);
-        }
+      const response = await getEmployeesAttendances({ employeeId: employeeId ?? "", checkIn: from, checkOut: to});
+      if (response.statusCode === StatusCodes.OK) {
+        setAttendanceData(response.responseObject.data);
       } else {
-        logger.error({ error: "No employee id provided" });
+        setAttendanceData(null);
       }
     } catch (error: any) {
       logger.error({ error: error.message, stack: error.stack });

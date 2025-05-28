@@ -193,7 +193,7 @@ const TableWithPagination = <T,>({
             <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
               <EnhancedTableHead headCells={headCells} />
               <TableBody>
-                {items.map((row: any) => {
+                {items && items.map((row: any) => {
                   return (
                     <TableRow hover tabIndex={-1} key={row.id}>
                       {headCells.map((headCell) => (
