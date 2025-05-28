@@ -9,7 +9,7 @@ import {IconClockUp, IconClockDown, IconClockCheck, IconClockCancel} from "@tabl
 import {getEmployeesAttendances} from "@/services/employees-attendances";
 import {StatusCodes} from "http-status-codes";
 import {logger} from "@/lib/logger";
-wimport {useSelector} from "@/store/hooks";
+import {useSelector} from "@/store/hooks";
 import type {RootState} from "@/store/store";
 
 type CalendarDay = {
