@@ -57,6 +57,7 @@ export interface IEmployeeFilters {
   active: string | boolean | null | undefined;
   employee_status: number | null | undefined;
   location: number | null | undefined;
+  employeeAttendanceType: number | null | undefined;
   category: number | null | undefined;
   direccion: number | null | undefined;
   secretaria: number | null | undefined;
@@ -83,6 +84,14 @@ export interface IEmployeeById {
 export interface IEmployeeLocation {
   employeeId: number;
   locationId: number;
+  active: boolean;
+  createdBy: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IEmployeeAttendanceType {
+  employeeId: number;
   attendanceId: number;
   active: boolean;
   createdBy: number;

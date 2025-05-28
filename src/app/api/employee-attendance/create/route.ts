@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { validateRequest } from "@/common/request/validateRequest";
@@ -8,7 +8,7 @@ import { EmployeeAttendanceService } from "@/app/api/services/employee-attendanc
 import { getEmployee, validateEmployeeData } from "@/app/api/common/utils.service";
 import { EmployeeAttendancePostSchema } from "@/schemas/employee-attendance";
 import { logger } from "@/lib/logger";
-import { IEmployee } from "@/app/api/employee-attendance/create/types";
+import type { IEmployee } from "@/app/api/employee-attendance/create/types";
 
 export async function POST(request: NextRequest) {
   const { response, data: body } = await validateRequest<IEmployeeAttendance>(request, EmployeeAttendancePostSchema);
@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
 
     body.employeeHiringId = employee.employee_hiring[0].id;
     body.employeeLocationId = employee.employee_location[0].id;
+    body.employeeAttendanceTypeId = employee.employee_attendance_type[0].id;
     body.createdById = employee.id;
 
     const [employeeAttendance] = await EmployeeAttendanceService.createEmployeeAttendance(body);

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { IEmployeeAttendance, IEmployeeAttendanceFilters } from "@/app/api/employee-attendance/types";
+import type { IEmployeeAttendance, IEmployeeAttendanceFilters } from "@/app/api/employee-attendance/types";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
 
 export const EmployeeAttendanceService = {
@@ -27,6 +27,9 @@ export const EmployeeAttendanceService = {
           employee_location: {
             connect: { id: employeeAttendance.employeeLocationId },
           },
+          employee_attendance_type: {
+            connect: { id: employeeAttendance.employeeAttendanceTypeId },
+          },
           created_by: {
             connect: { id: employeeAttendance.createdById },
           },
@@ -48,7 +51,7 @@ export const EmployeeAttendanceService = {
         path: "employee_hiring.employee.id",
       },
       typeAttendance: {
-        path: "employee_location.attendance_id",
+        path: "employee_attendance_type.attendance_id",
       },
       location: {
         path: "employee_location.location_id",
@@ -96,13 +99,20 @@ export const EmployeeAttendanceService = {
           select: {
             location_id: true,
             active: true,
-            attendance: {
+            location: {
               select: {
                 id: true,
+                name: true,
                 display_name: true,
               },
             },
-            location: {
+          },
+        },
+        employee_attendance_type: {
+          select: {
+            attendance_id: true,
+            active: true,
+            attendance: {
               select: {
                 id: true,
                 name: true,
@@ -162,7 +172,7 @@ export const EmployeeAttendanceService = {
         name: item.employee_location.location.name,
         display_name: item.employee_location.location.display_name,
       },
-      type_attendance: item.employee_location.attendance,
+      type_attendance: item.employee_attendance_type.attendance,
       employee: {
         id: item.employee_hiring.employee.id,
         number_employee: item.employee_hiring.employee.number_employee,
@@ -199,13 +209,20 @@ export const EmployeeAttendanceService = {
           select: {
             location_id: true,
             active: true,
-            attendance: {
+            location: {
               select: {
                 id: true,
+                name: true,
                 display_name: true,
               },
             },
-            location: {
+          },
+        },
+        employee_attendance_type: {
+          select: {
+            attendance_id: true,
+            active: true,
+            attendance: {
               select: {
                 id: true,
                 name: true,
@@ -272,7 +289,7 @@ export const EmployeeAttendanceService = {
         name: employeeAttendance.employee_location.location?.name,
         display_name: employeeAttendance.employee_location.location?.display_name,
       },
-      type_attendance: employeeAttendance.employee_location.attendance,
+      type_attendance: employeeAttendance.employee_attendance_type.attendance,
       employee: {
         id: employeeAttendance.employee_hiring.employee?.id,
         number_employee: employeeAttendance.employee_hiring.employee?.number_employee,

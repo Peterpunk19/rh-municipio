@@ -2,7 +2,7 @@ import { handleHttpResponse } from "@/common/response/handler";
 import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
-import { IEmployeeAttendanceFilters } from "@/app/api/employee-attendance/types";
+import type { IEmployeeAttendanceFilters } from "@/app/api/employee-attendance/types";
 import { EmployeeAttendanceGetFilterSchema } from "@/schemas/employee-attendance";
 import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
 import { getParamsFromUrl, getRoleValueById } from "@/common/utils";

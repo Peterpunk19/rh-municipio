@@ -4,7 +4,7 @@ import { logger } from "@/lib/logger";
 import { EmployeeAttendanceGetByIdSchema } from "@/schemas/employee-attendance";
 import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
 import { StatusCodes } from "http-status-codes";
-import { IEmployeeAttendanceById } from "@/app/api/employee-attendance/types";
+import type { IEmployeeAttendanceById } from "@/app/api/employee-attendance/types";
 import { failureResponse, successResponse } from "@/common/utils";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {

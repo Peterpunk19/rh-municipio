@@ -15,69 +15,71 @@ datasource db {
 }
 
 model User {
-  id                     Int                  @id @default(autoincrement())
-  uuid                   String               @unique
-  username               String               @unique
-  password               String
-  set_password_key       String?
-  active                 Boolean              @default(true)
-  created_at             DateTime?            @default(now())
-  updated_at             DateTime?            @updatedAt
-  employee               Employee?
-  employee_id            Int?                 @unique
-  role_id                Int
-  role                   Role                 @relation(fields: [role_id], references: [id])
-  user_module_actions    UserModuleActions[]
-  attendances_created_by EmployeeAttendance[]
-  created_by             User?                @relation("UserCreatedBy", fields: [created_by_id], references: [id])
-  created_by_id          Int?
-  users_created          User[]               @relation("UserCreatedBy")
-  employee_requests_by   EmployeeRequest[]    @relation("requestedBy")
-  leaders_by             AdministrativeOrganizationLeaders[] @relation("createdBy")
+  id                                  Int                                 @id @default(autoincrement())
+  uuid                                String                              @unique
+  username                            String                              @unique
+  password                            String
+  set_password_key                    String?
+  active                              Boolean                             @default(true)
+  created_at                          DateTime?                           @default(now())
+  updated_at                          DateTime?                           @updatedAt
+  employee                            Employee?
+  employee_id                         Int?                                @unique
+  role_id                             Int
+  role                                Role                                @relation(fields: [role_id], references: [id])
+  user_module_actions                 UserModuleActions[]
+  attendances_created_by              EmployeeAttendance[]
+  created_by                          User?                               @relation("UserCreatedBy", fields: [created_by_id], references: [id])
+  created_by_id                       Int?
+  users_created                       User[]                              @relation("UserCreatedBy")
+  employee_requests_by                EmployeeRequest[]                   @relation("requestedBy")
+  leaders_by                          AdministrativeOrganizationLeaders[] @relation("createdBy")
+  employee_attendance_type_created_by EmployeeAttendanceType[]            @relation("createdByEmployeeAttendanceType")
 }
 
 model Employee {
-  id                                   Int                       @id @default(autoincrement())
-  number_employee                      String                    @unique
+  id                                   Int                                 @id @default(autoincrement())
+  number_employee                      String                              @unique
   name                                 String
   paternal_last_name                   String
   maternal_last_name                   String
   birthday                             DateTime
-  rfc                                  String                    @unique
-  curp                                 String                    @unique
-  active                               Boolean                   @default(true)
-  created_at                           DateTime?                 @default(now())
-  updated_at                           DateTime?                 @updatedAt
-  user                                 User                      @relation(fields: [user_id], references: [id])
-  user_id                              Int                       @unique
-  status_employee                      StatusEmployee            @relation(fields: [status_employee_id], references: [id])
+  rfc                                  String                              @unique
+  curp                                 String                              @unique
+  active                               Boolean                             @default(true)
+  created_at                           DateTime?                           @default(now())
+  updated_at                           DateTime?                           @updatedAt
+  user                                 User                                @relation(fields: [user_id], references: [id])
+  user_id                              Int                                 @unique
+  status_employee                      StatusEmployee                      @relation(fields: [status_employee_id], references: [id])
   status_employee_id                   Int
-  gender                               Gender                    @relation(fields: [gender_id], references: [id])
+  gender                               Gender                              @relation(fields: [gender_id], references: [id])
   gender_id                            Int
   employee_hiring                      EmployeeHiring[]
   employee_location                    EmployeeLocation[]
-  director_id                          Int?                      @unique
-  director                             Director?                 @relation("Director", fields: [director_id], references: [id])
-  sustitute_id                         Int?                      @unique
-  sustitute                            Director?                 @relation("Substitute", fields: [sustitute_id], references: [id])
+  employee_attendance_type             EmployeeAttendanceType[]
+  director_id                          Int?                                @unique
+  director                             Director?                           @relation("Director", fields: [director_id], references: [id])
+  sustitute_id                         Int?                                @unique
+  sustitute                            Director?                           @relation("Substitute", fields: [sustitute_id], references: [id])
   employee_incidents                   EmployeeIncidents[]
-  employee_incidents_status_created_by EmployeeIncidentsStatus[] @relation("createdByEmployee")
-  employee_request_status_created_by   EmployeeRequestStatus[]   @relation("createdByEmployee")
-  employee_vacations                   EmployeeVacations[]       @relation("employeeVacations")
-  employee_vacations_created_by        EmployeeVacations[]       @relation("employeeVacationsCreators")
+  employee_incidents_status_created_by EmployeeIncidentsStatus[]           @relation("createdByEmployee")
+  employee_request_status_created_by   EmployeeRequestStatus[]             @relation("createdByEmployee")
+  employee_vacations                   EmployeeVacations[]                 @relation("employeeVacations")
+  employee_vacations_created_by        EmployeeVacations[]                 @relation("employeeVacationsCreators")
   employee_requests                    EmployeeRequest[]
-  employee_requests_resolved_by        EmployeeRequest[]         @relation("resolvedBy")
-  employee_created_by                  EmployeeHiring[]          @relation("EmployeeCreatedBy")
+  employee_requests_resolved_by        EmployeeRequest[]                   @relation("resolvedBy")
+  employee_created_by                  EmployeeHiring[]                    @relation("EmployeeCreatedBy")
   employee_address                     EmployeeAddress[]
-  marital_status                       MaritalStatus?            @relation(fields: [marital_status_id], references: [id])
+  marital_status                       MaritalStatus?                      @relation(fields: [marital_status_id], references: [id])
   marital_status_id                    Int?
-  schooling                            Schooling?                @relation(fields: [schooling_id], references: [id])
+  schooling                            Schooling?                          @relation(fields: [schooling_id], references: [id])
   schooling_id                         Int?
-  profession                           Profession?               @relation(fields: [profession_id], references: [id])
+  profession                           Profession?                         @relation(fields: [profession_id], references: [id])
   profession_id                        Int?
-  occupation                           Occupation?               @relation(fields: [occupation_id], references: [id])
+  occupation                           Occupation?                         @relation(fields: [occupation_id], references: [id])
   occupation_id                        Int?
-  identification_type                  IdentificationType?       @relation(fields: [identification_type_id], references: [id])
+  identification_type                  IdentificationType?                 @relation(fields: [identification_type_id], references: [id])
   identification_type_id               Int?
   employee_trade_union                 EmployeeTradeUnion[]
   trade_union_id                       Int?
@@ -146,17 +148,30 @@ model EmployeeLocation {
   id                  Int                  @id @default(autoincrement())
   employee_id         Int
   location_id         Int
-  attendance_id       Int
   commission_id       Int?
   active              Boolean              @default(true)
   created_by          Int?
   created_at          DateTime?            @default(now())
   updated_at          DateTime?            @updatedAt
   applied_at          DateTime?
-  attendance          Attendance?          @relation(fields: [attendance_id], references: [id])
+  employee_attendance EmployeeAttendance[]
   location            Location?            @relation(fields: [location_id], references: [id])
   employee            Employee?            @relation(fields: [employee_id], references: [id])
   employee_commission EmployeeCommission?  @relation(fields: [commission_id], references: [id])
+}
+
+model EmployeeAttendanceType {
+  id                  Int                  @id @default(autoincrement())
+  employee_id         Int
+  attendance_id       Int
+  active              Boolean              @default(true)
+  created_by_id       Int?
+  created_by          User?                @relation("createdByEmployeeAttendanceType", fields: [created_by_id], references: [id])
+  created_at          DateTime?            @default(now())
+  updated_at          DateTime?            @updatedAt
+  applied_at          DateTime?
+  attendance          Attendance?          @relation(fields: [attendance_id], references: [id])
+  employee            Employee?            @relation(fields: [employee_id], references: [id])
   employee_attendance EmployeeAttendance[]
 }
 
@@ -194,32 +209,34 @@ model Director {
 }
 
 model Attendance {
-  id                          Int                     @id @default(autoincrement())
+  id                          Int                      @id @default(autoincrement())
   name                        String
   display_name                String
-  active                      Boolean                 @default(true)
-  created_at                  DateTime?               @default(now())
-  updated_at                  DateTime?               @updatedAt
-  employee_request_detail     EmployeeRequestDetail[] @relation("currentAttendance")
-  employee_request_detail_new EmployeeRequestDetail[] @relation("newAttendance")
-  employee_location           EmployeeLocation[]
+  active                      Boolean                  @default(true)
+  created_at                  DateTime?                @default(now())
+  updated_at                  DateTime?                @updatedAt
+  employee_request_detail     EmployeeRequestDetail[]  @relation("currentAttendance")
+  employee_request_detail_new EmployeeRequestDetail[]  @relation("newAttendance")
+  employee_attendance_type    EmployeeAttendanceType[]
 }
 
 model EmployeeAttendance {
-  id                   Int                 @id @default(autoincrement())
-  check_in             DateTime
-  check_out            DateTime
-  active               Boolean             @default(true)
-  created_by_id        Int
-  employee_hiring_id   Int
-  description          String
-  created_by           User                @relation(fields: [created_by_id], references: [id])
-  employee_location_id Int
-  employee_location    EmployeeLocation    @relation(fields: [employee_location_id], references: [id])
-  employee_hiring      EmployeeHiring      @relation(fields: [employee_hiring_id], references: [id])
-  created_at           DateTime?           @default(now())
-  udpated_at           DateTime?           @updatedAt
-  employee_incidents   EmployeeIncidents[]
+  id                          Int                    @id @default(autoincrement())
+  check_in                    DateTime
+  check_out                   DateTime
+  active                      Boolean                @default(true)
+  created_by_id               Int
+  employee_hiring_id          Int
+  description                 String
+  created_by                  User                   @relation(fields: [created_by_id], references: [id])
+  employee_attendance_type_id Int
+  employee_attendance_type    EmployeeAttendanceType @relation(fields: [employee_attendance_type_id], references: [id])
+  employee_location_id        Int
+  employee_location           EmployeeLocation       @relation(fields: [employee_location_id], references: [id])
+  employee_hiring             EmployeeHiring         @relation(fields: [employee_hiring_id], references: [id])
+  created_at                  DateTime?              @default(now())
+  udpated_at                  DateTime?              @updatedAt
+  employee_incidents          EmployeeIncidents[]
 
   @@unique([check_in, check_out, employee_hiring_id, employee_location_id])
 }
@@ -449,13 +466,13 @@ model Hour {
 }
 
 model Role {
-  id           Int      @id @default(autoincrement())
-  name         String   @unique
+  id           Int                                 @id @default(autoincrement())
+  name         String                              @unique
   display_name String
   description  String
-  active       Boolean  @default(true)
+  active       Boolean                             @default(true)
   users        User[]
-  modules      Module[] @relation("ModuleRoles")
+  modules      Module[]                            @relation("ModuleRoles")
   leaders      AdministrativeOrganizationLeaders[]
 }
 
@@ -590,11 +607,11 @@ model Location {
 }
 
 model Direccion {
-  id            Int              @id @default(autoincrement())
-  name          String           @unique
+  id            Int                                 @id @default(autoincrement())
+  name          String                              @unique
   display_name  String
-  active        Boolean          @default(true)
-  secretaria    Secretaria       @relation(fields: [secretaria_id], references: [id])
+  active        Boolean                             @default(true)
+  secretaria    Secretaria                          @relation(fields: [secretaria_id], references: [id])
   secretaria_id Int
   directors     Director[]
   employees     EmployeeHiring[]

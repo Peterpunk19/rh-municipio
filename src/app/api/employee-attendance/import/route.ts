@@ -2,9 +2,10 @@ import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
-import { IEmployeeAttendance } from "@/app/api/employee-attendance/types";
+import type { IEmployeeAttendance } from "@/app/api/employee-attendance/types";
 import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
 import { EmployeeLocationService } from "@/app/api/services/employee-location.service";
+import { EmployeeAttendanceTypeService } from "@/app/api/services/employee-attendance-type.service";
 import { UserService } from "@/app/api/services/user.service";
 import { getRandomDate, getRandomElement } from "@/common/utils";
 import { StatusCodes } from "http-status-codes";
@@ -84,7 +85,6 @@ export async function POST(request: NextRequest) {
           locationId: randomLocation.id,
           active: true,
           createdBy: createdById,
-          attendanceId: randomAttendance.id,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });
@@ -92,6 +92,21 @@ export async function POST(request: NextRequest) {
         employeeLocationId = employeeLocation[0].id;
       } else {
         employeeLocationId = employeeData.employee_location[0].id;
+      }
+
+      let employeeAttendanceTypeId: number;
+      if (!employeeData.employee_attendance_type[0]?.id) {
+        const employeeAttendanceType = await EmployeeAttendanceTypeService.createEmployeeAttendanceType({
+          employeeId: employeeData.id,
+          attendanceId: randomAttendance.id,
+          active: true,
+          createdBy: createdById,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        employeeAttendanceTypeId = employeeAttendanceType[0].id;
+      } else {
+        employeeAttendanceTypeId = employeeData.employee_attendance_type[0].id;
       }
 
       let employeeHiringId: number;
@@ -125,6 +140,7 @@ export async function POST(request: NextRequest) {
             employeeId: employeeData.id,
             employeeHiringId: employeeHiringId,
             employeeLocationId: employeeLocationId,
+            employeeAttendanceTypeId: employeeAttendanceTypeId,
             createdById: createdById,
             active: true,
             description: "Asistencia generada automaticamente",
@@ -160,6 +176,7 @@ export async function POST(request: NextRequest) {
           employeeId: employeeData.id,
           employeeHiringId: employeeHiringId,
           employeeLocationId: employeeLocationId,
+          employeeAttendanceTypeId: employeeAttendanceTypeId,
           createdById: createdById,
           active: true,
           description: "Asistencia generada automaticamente",
