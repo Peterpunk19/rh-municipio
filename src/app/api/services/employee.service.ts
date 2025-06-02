@@ -55,8 +55,27 @@ export const EmployeeService = {
           },
         },
         employee_location: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: "desc",
+          },
           include: {
             location: true,
+          },
+        },
+        employee_attendance_type: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: "desc",
+          },
+          include: {
+            attendance: true,
           },
         },
         gender: true,
@@ -80,6 +99,9 @@ export const EmployeeService = {
           },
         },
         job_schedule_employee: {
+          where: {
+            active: true,
+          },
           select: {
             id: true,
             start_day: true,
@@ -192,6 +214,16 @@ export const EmployeeService = {
           location: {
             connect: { id: Number(employee.locationId) },
           },
+          active: employee.active,
+          created_at: new Date(),
+        },
+      });
+
+      const createdEmployeeAttendanceType = await tx.employeeAttendanceType.create({
+        data: {
+          employee: {
+            connect: { id: Number(createEmployee.id) },
+          },
           attendance: {
             connect: { id: Number(employee.attendanceId) },
           },
@@ -205,7 +237,14 @@ export const EmployeeService = {
         data: { employee_id: createEmployee.id },
       });
 
-      return [createUser, createEmployee, createEmployeeHiring, createEmployeeAddress, createdEmployeeLocation];
+      return [
+        createUser,
+        createEmployee,
+        createEmployeeHiring,
+        createEmployeeAddress,
+        createdEmployeeLocation,
+        createdEmployeeAttendanceType,
+      ];
     });
   },
 
@@ -318,6 +357,15 @@ export const EmployeeService = {
       };
     }
 
+    if (employeeFilters.employeeAttendanceType) {
+      whereClause.employee_attendance_type = {
+        some: {
+          attendance_id: employeeFilters.employeeAttendanceType,
+          active: true,
+        },
+      };
+    }
+
     if (employeeFilters.search) {
       whereClause.OR = [
         {
@@ -413,6 +461,15 @@ export const EmployeeService = {
                 display_name: true,
               },
             },
+          },
+        },
+        employee_attendance_type: {
+          select: {
+            id: true,
+            attendance_id: true,
+            active: true,
+            created_at: true,
+            updated_at: true,
             attendance: {
               select: {
                 id: true,
@@ -466,8 +523,9 @@ export const EmployeeService = {
                  LEFT JOIN EmployeeTradeUnion AS etu ON e.id = etu.employee_id
                  LEFT JOIN TradeUnion AS tu ON etu.trade_union_id = tu.id
                  LEFT JOIN EmployeeLocation AS el ON e.id = el.employee_id AND el.active = 1
+                 LEFT JOIN EmployeeAttendanceType AS eat ON e.id = eat.employee_id AND eat.active = 1
                  LEFT JOIN Location AS l ON el.location_id = l.id
-                 LEFT JOIN Attendance AS at ON el.attendance_id = at.id
+                 LEFT JOIN Attendance AS at ON eat.attendance_id = at.id
     `;
 
     let employees: {
@@ -499,7 +557,7 @@ export const EmployeeService = {
         `;
 
       employees = await prisma.$queryRawUnsafe(
-        baseQuery + " ORDER BY e.id DESC",
+        `${baseQuery} ORDER BY e.id DESC`,
         search,
         search,
         search,
@@ -508,7 +566,7 @@ export const EmployeeService = {
         search,
       );
     } else {
-      employees = await prisma.$queryRawUnsafe(baseQuery + " ORDER BY e.id DESC");
+      employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`);
     }
 
     return employees.map((emp: any) => ({
@@ -538,6 +596,9 @@ export const EmployeeService = {
           some: { active: true },
         },
         employee_location: {
+          some: { active: true },
+        },
+        employee_attendance_type: {
           some: { active: true },
         },
       },

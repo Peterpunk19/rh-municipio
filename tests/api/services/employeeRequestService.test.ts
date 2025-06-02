@@ -22,6 +22,12 @@ jest.mock("@/lib/prisma", () => ({
   },
 }));
 
+jest.mock("@/app/api/services/request.service", () => ({
+  RequestService: {
+    getRequestById: jest.fn(),
+  },
+}));
+
 describe("EmployeeRequestService", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -55,15 +61,11 @@ describe("EmployeeRequestService", () => {
         active: 1,
       };
 
-      (prisma.request.findFirst as jest.Mock).mockResolvedValue(mockRequest);
+      (RequestService.getRequestById as jest.Mock).mockResolvedValue(mockRequest);
 
       const result = await RequestService.getRequestById(mockRequest.id);
 
-      expect(prisma.request.findFirst).toHaveBeenCalledWith({
-        where: {
-          id: 2,
-        },
-      });
+      expect(RequestService.getRequestById).toHaveBeenCalledWith(2);
       expect(result).toEqual(mockRequest);
     });
   });
@@ -145,29 +147,71 @@ describe("EmployeeRequestService", () => {
 
       const mockTx = {
         employeeRequest: {
-          create: jest.fn().mockResolvedValue({ id: 1 }),
+          create: jest.fn().mockResolvedValue({ id: 1, request_id: 1 }),
         },
         employeeRequestStatus: {
-          create: jest.fn(),
+          create: jest.fn().mockResolvedValue({ id: 1 }),
         },
         employeeRequestDetail: {
-          create: jest.fn(),
+          create: jest.fn().mockResolvedValue({ id: 1 }),
         },
         employeeLocation: {
           findFirst: jest.fn().mockResolvedValue({
             location: { id: 1 },
+          }),
+        },
+        employeeAttendanceType: {
+          findFirst: jest.fn().mockResolvedValue({
             attendance: { id: 1 },
           }),
         },
+        employeeRequestSchedule: {
+          create: jest.fn().mockResolvedValue({ id: 1 }),
+        },
       };
+
+      (RequestService.getRequestById as jest.Mock).mockResolvedValue({
+        id: 1,
+        name: "schedule_change_request",
+        display_name: "Cambio de horario",
+      });
 
       (prisma.$transaction as jest.Mock).mockImplementationOnce((fn) => fn(mockTx));
 
-      await EmployeeRequestService.createEmployeeRequest(mockRequest);
+      const result = await EmployeeRequestService.createEmployeeRequest(mockRequest);
+
+      expect(mockTx.employeeLocation.findFirst).toHaveBeenCalledWith({
+        where: {
+          employee_id: 1,
+          active: true,
+        },
+        select: {
+          location: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      expect(mockTx.employeeAttendanceType.findFirst).toHaveBeenCalledWith({
+        where: {
+          employee_id: 1,
+          active: true,
+        },
+        select: {
+          attendance: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
 
       expect(mockTx.employeeRequest.create).toHaveBeenCalled();
       expect(mockTx.employeeRequestStatus.create).toHaveBeenCalled();
       expect(mockTx.employeeRequestDetail.create).toHaveBeenCalled();
+      expect(RequestService.getRequestById).toHaveBeenCalledWith(1);
     });
   });
 });

@@ -48,6 +48,9 @@ export const HttpMessages = {
   employeeLocation: {
     notFound: "No se encontraron datos de ubicación para el empleado",
   },
+  employeeAttendanceType: {
+    notFound: "No se encontraron datos de tipo de asistencia para el empleado",
+  },
   incidentStatus: {
     idNotFound: "El ID de estatus de incidencia no fue encontrado",
     notFound: "Estatus de incidencia no encontrado",

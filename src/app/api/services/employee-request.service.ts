@@ -53,6 +53,15 @@ export const EmployeeRequestService = {
               id: true,
             },
           },
+        },
+      });
+
+      const currentEmployeeAttendanceType = await tx.employeeAttendanceType.findFirst({
+        where: {
+          employee_id: Number(employeeRequest.employeeId),
+          active: true,
+        },
+        select: {
           attendance: {
             select: {
               id: true,
@@ -118,9 +127,9 @@ export const EmployeeRequestService = {
               connect: { id: currentEmployeeLocation.location.id },
             },
           }),
-          ...(currentEmployeeLocation?.attendance?.id && {
+          ...(currentEmployeeAttendanceType?.attendance?.id && {
             attendance: {
-              connect: { id: currentEmployeeLocation.attendance.id },
+              connect: { id: currentEmployeeAttendanceType.attendance.id },
             },
           }),
           ...(employeeRequest.locationId && {
@@ -369,12 +378,18 @@ export const EmployeeRequestService = {
                     active: true,
                   },
                 },
+              },
+            },
+            employee_attendance_type: {
+              where: {
+                active: true,
+              },
+              select: {
                 attendance: {
                   select: {
                     id: true,
                     name: true,
                     display_name: true,
-                    active: true,
                   },
                 },
               },
@@ -619,7 +634,6 @@ export const EmployeeRequestService = {
                 updated_at: new Date(),
               },
             });
-
             if (
               employeeRequestFound.request_details.schedule &&
               employeeRequestFound.request_details.schedule.length > 0
@@ -627,10 +641,10 @@ export const EmployeeRequestService = {
               await Promise.all(
                 employeeRequestFound.request_details.schedule.map((schedule) => {
                   if (
-                    !schedule.start_day_id ||
-                    !schedule.end_day_id ||
-                    !schedule.start_hour_id ||
-                    !schedule.end_hour_id
+                    !schedule.start_day.id ||
+                    !schedule.end_day.id ||
+                    !schedule.start_hour.id ||
+                    !schedule.end_hour.id
                   ) {
                     return Promise.resolve();
                   }
@@ -643,16 +657,16 @@ export const EmployeeRequestService = {
                       name: "Horario asignado por solicitud",
                       description: "Creado automáticamente por aprobación de solicitud",
                       start_day: {
-                        connect: { id: schedule.start_day_id },
+                        connect: { id: schedule.start_day.id },
                       },
                       end_day: {
-                        connect: { id: schedule.end_day_id },
+                        connect: { id: schedule.end_day.id },
                       },
                       start_hour: {
-                        connect: { id: schedule.start_hour_id },
+                        connect: { id: schedule.start_hour.id },
                       },
                       end_hour: {
-                        connect: { id: schedule.end_hour_id },
+                        connect: { id: schedule.end_hour.id },
                       },
                       active: true,
                       created_at: new Date(),
@@ -667,24 +681,16 @@ export const EmployeeRequestService = {
             if (employeeRequestFound.request_details) {
               const requestDetail = employeeRequestFound.request_details;
 
-              const currentLocation = await tx.employeeLocation.findFirst({
+              await tx.employeeLocation.updateMany({
                 where: {
                   employee_id: employeeId,
                   active: true,
                 },
+                data: {
+                  active: false,
+                  updated_at: new Date(),
+                },
               });
-
-              if (currentLocation) {
-                await tx.employeeLocation.update({
-                  where: {
-                    id: currentLocation.id,
-                  },
-                  data: {
-                    active: false,
-                    updated_at: new Date(),
-                  },
-                });
-              }
 
               if (requestDetail.new_location) {
                 const locationData: any = {
@@ -697,22 +703,6 @@ export const EmployeeRequestService = {
                   active: true,
                   created_at: new Date(),
                 };
-
-                if (currentLocation?.attendance_id) {
-                  locationData.attendance = {
-                    connect: { id: currentLocation.attendance_id },
-                  };
-                } else {
-                  if (requestDetail.new_attendance) {
-                    locationData.attendance = {
-                      connect: { id: requestDetail.new_attendance.id },
-                    };
-                  } else {
-                    locationData.attendance = {
-                      connect: { id: 1 },
-                    };
-                  }
-                }
 
                 if (requestDetail.start_at && requestDetail.end_at) {
                   const createdCommission = await tx.employeeCommission.create({
@@ -751,7 +741,7 @@ export const EmployeeRequestService = {
 
           case REQUEST_TYPES.ATTENDANCE:
             if (employeeRequestFound.request_details) {
-              await tx.employeeLocation.updateMany({
+              await tx.employeeAttendanceType.updateMany({
                 where: {
                   employee_id: employeeId,
                   active: true,
@@ -764,16 +754,8 @@ export const EmployeeRequestService = {
 
               const requestDetail = employeeRequestFound.request_details;
               if (requestDetail.new_attendance) {
-                const currentLocation = await tx.employeeLocation.findFirst({
-                  where: {
-                    employee_id: employeeId,
-                  },
-                  orderBy: {
-                    created_at: "desc",
-                  },
-                });
-
-                const locationData: any = {
+                console.log("approvedBy", approvedBy);
+                const attendanceTypeData: any = {
                   employee: {
                     connect: { id: employeeId },
                   },
@@ -781,18 +763,15 @@ export const EmployeeRequestService = {
                     connect: { id: requestDetail.new_attendance.id },
                   },
                   active: true,
+                  created_by: {
+                    connect: { id: approvedBy },
+                  },
                   applied_at: requestDetail.attendance_date,
                   created_at: new Date(),
                 };
 
-                if (currentLocation?.location_id) {
-                  locationData.location = {
-                    connect: { id: currentLocation.location_id },
-                  };
-                }
-
-                await tx.employeeLocation.create({
-                  data: locationData,
+                await tx.employeeAttendanceType.create({
+                  data: attendanceTypeData,
                 });
               }
             }

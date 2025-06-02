@@ -21,6 +21,18 @@ jest.mock("@/app/api/services/catalogs.service", () => ({
   },
 }));
 
+jest.mock("@/app/api/services/incidents-status.service", () => ({
+  IncidentsStatusService: {
+    validateIncidentStatus: jest.fn(),
+  },
+}));
+
+jest.mock("@/app/api/services/employee-incidents-status.service", () => ({
+  EmployeeIncidentsStatusService: {
+    validateEmployeeIncidentStatus: jest.fn(),
+  },
+}));
+
 describe("API: /employees/update", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -34,6 +46,14 @@ describe("API: /employees/update", () => {
     });
     it(`PUT /employee-incidents/update ${description}`, async () => {
       if (description === "should successfully send message with valid data") {
+        const { IncidentsStatusService } = require("@/app/api/services/incidents-status.service");
+        (IncidentsStatusService.validateIncidentStatus as jest.Mock).mockResolvedValue({
+          allowed_roles_to_update: "1,2,3",
+        });
+
+        const { EmployeeIncidentsStatusService } = require("@/app/api/services/employee-incidents-status.service");
+        (EmployeeIncidentsStatusService.validateEmployeeIncidentStatus as jest.Mock).mockResolvedValue(null);
+
         (EmployeeIncidentsService.getEmployeeIncidentById as jest.Mock).mockResolvedValue({
           id: 1,
           folio: "000001",
@@ -44,6 +64,7 @@ describe("API: /employees/update", () => {
           end_date: "2001-05-28T17:04:14.929Z",
           active: true,
           created_at: "2025-04-10T00:07:52.066Z",
+          employee_id: 32,
           incident: {
             id: 1,
             name: "incapacidad",
