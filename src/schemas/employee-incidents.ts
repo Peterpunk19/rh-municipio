@@ -38,6 +38,7 @@ export const EmployeeIncidentsPostSchema = z
       .number({ message: validationMessages.required("Asistencia") })
       .optional()
       .nullable(),
+    createdBy: z.number({ message: validationMessages.required("Creado por") }),
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: validationMessages.invalidDateRange("Fecha de Terminación", "Fecha de Inicio"),

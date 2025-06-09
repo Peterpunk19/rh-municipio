@@ -63,6 +63,7 @@ model Employee {
   sustitute_id                         Int?                                @unique
   sustitute                            Director?                           @relation("Substitute", fields: [sustitute_id], references: [id])
   employee_incidents                   EmployeeIncidents[]
+  employee_incidents_created_by        EmployeeIncidents[]                 @relation("createdByEmployeeIncidents")
   employee_incidents_status_created_by EmployeeIncidentsStatus[]           @relation("createdByEmployee")
   employee_request_status_created_by   EmployeeRequestStatus[]             @relation("createdByEmployee")
   employee_vacations                   EmployeeVacations[]                 @relation("employeeVacations")
@@ -257,6 +258,8 @@ model EmployeeIncidents {
   employee_attendance_id    Int?
   employee_attendance       EmployeeAttendance?       @relation(fields: [employee_attendance_id], references: [id])
   employee_vacations        EmployeeVacations[]
+  created_by_id             Int
+  created_by                Employee                  @relation("createdByEmployeeIncidents", fields: [created_by_id], references: [id])
   created_at                DateTime?                 @default(now())
   validated_at              DateTime?                 @updatedAt
   employee_incidents_status EmployeeIncidentsStatus[]

@@ -8,6 +8,7 @@ export interface IEmployeeIncident {
   endDate: string;
   description: string;
   employeeAttendanceId?: number;
+  createdBy: number | string;
 }
 
 export interface IEmployeeIncidentFilters {
@@ -43,4 +44,11 @@ export interface IEmployeeIncidentUpdate {
   checkIn: Date | string;
   checkOut: Date | string;
   createdById: number;
+}
+
+export interface IncidentCreateModalProps {
+  open: boolean;
+  onClose: () => void;
+  employeeId?: number | string;
+  onSuccess?: () => void;
 }
