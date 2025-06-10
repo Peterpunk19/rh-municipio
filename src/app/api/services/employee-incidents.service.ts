@@ -56,6 +56,9 @@ export const EmployeeIncidentsService = {
           employee: {
             connect: { id: Number(employeeIncident.employeeId) },
           },
+          created_by: {
+            connect: { id: Number(employeeIncident.createdBy) },
+          },
           created_at: new Date(),
         },
       });

@@ -112,7 +112,7 @@ export const EmployeeService = {
         },
       },
       where: {
-        id,
+        id
       },
     });
   },

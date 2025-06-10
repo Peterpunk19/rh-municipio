@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TableWithPagination from "@/components/tables/TableWithPagination";
 import type { EmployeeType } from "@/types/EmployeeType";
 import { useSelector } from "@/store/hooks";
@@ -14,6 +14,8 @@ import PageContainer from "@/app/components/container/PageContainer";
 import CustomIncidentStatusComponent from "@/components/customComponents/CustomIncidentStatusComponent";
 import { Button } from "@mui/material";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
+import { IncidentCreateModal } from "./IncidentCreateModal";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const BCrumb = [
   {
@@ -29,6 +31,15 @@ export default function EmployeesIncidents() {
   const { searchTerm, values, title, showSearchBar } = useSelector(
     (state: RootState) => state.filters.employeesIncidents || { searchTerm: "", values: {} },
   );
+  const { user } = useCurrentUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleSuccess = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   useEffect(() => {
     const queryParams = [];
@@ -41,14 +52,14 @@ export default function EmployeesIncidents() {
     });
 
     dispatch(fetchEmployees(queryParams.join("&")));
-  }, [dispatch, page, limit, searchTerm, values]);
+  }, [dispatch, page, limit, searchTerm, values, refreshKey]);
 
   const items: EmployeeType[] = useSelector((state) => state.employeesIncidentsSlice.employeesIncidents);
 
   const emptyMessage = useSelector((state) => state.employeesIncidentsSlice.emptyMessage);
 
   const createLink = (
-    <Button href="/admin/employees-incidents/create" fullWidth variant="contained" color="primary">
+    <Button onClick={handleOpenModal} fullWidth variant="contained" color="primary">
       Crear Incidencia
     </Button>
   );
@@ -68,6 +79,12 @@ export default function EmployeesIncidents() {
       >
         <CustomIncidentStatusComponent />
       </TableWithPagination>
+      <IncidentCreateModal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        employeeId={user?.employee_id}
+        onSuccess={handleSuccess}
+      />
     </PageContainer>
   );
 }

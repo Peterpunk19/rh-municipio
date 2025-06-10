@@ -6,6 +6,7 @@ declare module "next-auth" {
     role_display_name?: string;
     number_employee?: string;
     accessToken?: string;
+    employee_id?: string;
   }
 }
 
@@ -18,5 +19,6 @@ declare module "@auth/core/jwt" {
     role_display_name?: string;
     number_employee?: string;
     accessToken?: string;
+    employee_id?: string;
   }
 }
