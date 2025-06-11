@@ -138,6 +138,12 @@ describe("EmployeeIncidentsService", () => {
           data: expect.objectContaining({
             check_in: mockEmployeeIncident.checkIn,
             check_out: mockEmployeeIncident.checkOut,
+            description: "Asistencia creada por incidencia",
+            employee_hiring: { connect: { id: mockEmployeeIncident.employeeHiringId } },
+            employee_location: { connect: { id: mockEmployeeIncident.employeeLocationId } },
+            employee_attendance_type: { connect: { id: 1 } },
+            created_by: { connect: { id: mockEmployeeIncident.createdById } },
+            employee_incident: { connect: { id: mockEmployeeIncident.id } },
           }),
         }),
       );
@@ -146,7 +152,6 @@ describe("EmployeeIncidentsService", () => {
         data: {
           incident_status_id: mockEmployeeIncident.incidentStatusId,
           validated_at: expect.any(Date),
-          employee_attendance_id: 99,
         },
         where: {
           id: mockEmployeeIncident.id,

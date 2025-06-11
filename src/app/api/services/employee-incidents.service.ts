@@ -7,6 +7,8 @@ import {
 import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
 
+const MAX_VACATION_DAYS = 20;
+
 export const EmployeeIncidentsService = {
   async getFolio() {
     const lastFolio = await prisma.employeeIncidents.findFirst({
@@ -40,6 +42,10 @@ export const EmployeeIncidentsService = {
 
   async createEmployeeIncidents(employeeIncident: IEmployeeIncident) {
     return prisma.$transaction(async (tx) => {
+      if (employeeIncident.vacationDates && employeeIncident.vacationDates.length > MAX_VACATION_DAYS) {
+        throw new Error(`Las fechas de vacaciones no pueden exceder ${MAX_VACATION_DAYS} días`);
+      }
+
       const createEmployeeIncidents = await tx.employeeIncidents.create({
         data: {
           folio: employeeIncident.folio,
@@ -77,6 +83,18 @@ export const EmployeeIncidentsService = {
           created_at: new Date(),
         },
       });
+
+      if (employeeIncident.vacationDates && employeeIncident.vacationDates.length > 0) {
+        const vacationDayRecords = employeeIncident.vacationDates.map((dateStr) => ({
+          date: new Date(dateStr),
+          employee_incident_id: createEmployeeIncidents.id,
+          created_at: new Date(),
+        }));
+
+        await tx.employeeIncidentDays.createMany({
+          data: vacationDayRecords,
+        });
+      }
 
       return [createEmployeeIncidents, createEmployeeIncidentsStatus];
     });
@@ -281,16 +299,24 @@ export const EmployeeIncidentsService = {
             },
           },
         },
+        employee_incident_days: {
+          select: {
+            id: true,
+            date: true,
+            created_at: true,
+          },
+          orderBy: {
+            date: "asc",
+          },
+        },
       },
     });
   },
 
   async updateEmployeeIncidents(employeeIncident: IEmployeeIncidentUpdate) {
     return prisma.$transaction(async (tx) => {
-      let employeeAttendanceId: number | null = null;
-
       if (employeeIncident.incidentStatusId === INCIDENT_STATUS_ID.APROBADA) {
-        const attendance = await tx.employeeAttendance.create({
+        await tx.employeeAttendance.create({
           data: {
             check_in: employeeIncident.checkIn,
             check_out: employeeIncident.checkOut,
@@ -301,20 +327,23 @@ export const EmployeeIncidentsService = {
             employee_location: {
               connect: { id: employeeIncident.employeeLocationId },
             },
+            employee_attendance_type: {
+              connect: { id: 1 },
+            },
             created_by: {
               connect: { id: employeeIncident.createdById },
             },
+            employee_incident: {
+              connect: { id: Number(employeeIncident.id) },
+            },
           },
         });
-
-        employeeAttendanceId = attendance.id;
       }
 
       await tx.employeeIncidents.update({
         data: {
           incident_status_id: employeeIncident.incidentStatusId,
           validated_at: employeeIncident.incidentStatusId === INCIDENT_STATUS_ID.APROBADA ? new Date() : null,
-          employee_attendance_id: employeeAttendanceId,
         },
         where: {
           id: Number(employeeIncident.id),

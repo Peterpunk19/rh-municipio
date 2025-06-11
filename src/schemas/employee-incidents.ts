@@ -2,6 +2,8 @@ import { z } from "zod";
 import { validationMessages } from "@/common/validation/messages";
 import { validateDate } from "@/schemas/utils";
 
+const MAX_NUM_VACATION_DAYS = process.env.MAX_NUM_VACATION_DAYS;
+
 export const EmployeeIncidentsPostSchema = z
   .object({
     folio: z
@@ -38,7 +40,13 @@ export const EmployeeIncidentsPostSchema = z
       .number({ message: validationMessages.required("Asistencia") })
       .optional()
       .nullable(),
-    createdBy: z.number({ message: validationMessages.required("Creado por") }),
+    vacationDates: z
+      .array(z.string())
+      .max(Number(MAX_NUM_VACATION_DAYS), {
+        message: `Fechas de vacaciones no puede exceder de ${MAX_NUM_VACATION_DAYS} días`,
+      })
+      .optional()
+      .nullable(),
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: validationMessages.invalidDateRange("Fecha de Terminación", "Fecha de Inicio"),

@@ -66,8 +66,6 @@ model Employee {
   employee_incidents_created_by        EmployeeIncidents[]                 @relation("createdByEmployeeIncidents")
   employee_incidents_status_created_by EmployeeIncidentsStatus[]           @relation("createdByEmployee")
   employee_request_status_created_by   EmployeeRequestStatus[]             @relation("createdByEmployee")
-  employee_vacations                   EmployeeVacations[]                 @relation("employeeVacations")
-  employee_vacations_created_by        EmployeeVacations[]                 @relation("employeeVacationsCreators")
   employee_requests                    EmployeeRequest[]
   employee_requests_resolved_by        EmployeeRequest[]                   @relation("resolvedBy")
   employee_created_by                  EmployeeHiring[]                    @relation("EmployeeCreatedBy")
@@ -226,18 +224,20 @@ model EmployeeAttendance {
   check_in                    DateTime
   check_out                   DateTime
   active                      Boolean                @default(true)
+  is_vacation                 Boolean                @default(false)
   created_by_id               Int
   employee_hiring_id          Int
   description                 String
   created_by                  User                   @relation(fields: [created_by_id], references: [id])
   employee_attendance_type_id Int
   employee_attendance_type    EmployeeAttendanceType @relation(fields: [employee_attendance_type_id], references: [id])
+  employee_incident_id        Int?
+  employee_incident           EmployeeIncidents?     @relation(fields: [employee_incident_id], references: [id])
   employee_location_id        Int
   employee_location           EmployeeLocation       @relation(fields: [employee_location_id], references: [id])
   employee_hiring             EmployeeHiring         @relation(fields: [employee_hiring_id], references: [id])
   created_at                  DateTime?              @default(now())
   udpated_at                  DateTime?              @updatedAt
-  employee_incidents          EmployeeIncidents[]
 
   @@unique([check_in, check_out, employee_hiring_id, employee_location_id])
 }
@@ -255,9 +255,8 @@ model EmployeeIncidents {
   incident_status           IncidentStatus            @relation(fields: [incident_status_id], references: [id])
   employee_id               Int
   employee                  Employee                  @relation(fields: [employee_id], references: [id])
-  employee_attendance_id    Int?
-  employee_attendance       EmployeeAttendance?       @relation(fields: [employee_attendance_id], references: [id])
-  employee_vacations        EmployeeVacations[]
+  employee_attendance       EmployeeAttendance[]
+  employee_incident_days    EmployeeIncidentDays[]
   created_by_id             Int
   created_by                Employee                  @relation("createdByEmployeeIncidents", fields: [created_by_id], references: [id])
   created_at                DateTime?                 @default(now())
@@ -312,17 +311,11 @@ model Vacation {
   active     Boolean @default(true)
 }
 
-model EmployeeVacations {
+model EmployeeIncidentDays {
   id                   Int               @id @default(autoincrement())
-  start                DateTime
-  end                  DateTime
-  color                String
-  created_by_id        Int
-  created_by           Employee          @relation("employeeVacationsCreators", fields: [created_by_id], references: [id])
+  date                 DateTime
   employee_incident_id Int
   employee_incident    EmployeeIncidents @relation(fields: [employee_incident_id], references: [id])
-  employee_id          Int
-  employee             Employee          @relation("employeeVacations", fields: [employee_id], references: [id])
   created_at           DateTime?         @default(now())
   updated_at           DateTime?         @updatedAt
 }

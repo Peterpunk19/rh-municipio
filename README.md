@@ -78,6 +78,13 @@ Run tests
 
 ```bash
 dcli yarn test
+dcli yarn test --runInBand
+```
+
+Run Fix Format
+
+```bash
+dcli yarn fix
 ```
 
 ## Access Services

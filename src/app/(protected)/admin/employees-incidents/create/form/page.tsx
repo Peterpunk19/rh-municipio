@@ -7,15 +7,18 @@ import {
   resetForm,
   setErrors,
   clearErrors,
+  setVacationDates,
 } from "@/store/employees-incidents/EmployeesIncidentsSlice";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
+import CustomCalendar from "@/components/customComponents/CustomCalendar";
 import {
   Alert,
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -36,6 +39,9 @@ import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import Link from "next/link";
 import EmployeeFinder from "@/components/shared/EmployeeFinder";
 import { AppDispatch, RootState } from "@/store/store";
+import { formatDate } from "@/utils/formatter";
+
+const VACATION_INCIDENT_ID = 10;
 
 const IncidentCreateForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -44,10 +50,21 @@ const IncidentCreateForm = () => {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openCalendar, setOpenCalendar] = useState(false);
+
+  const isVacationIncident = Number(formData.incidentId) === VACATION_INCIDENT_ID;
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
     dispatch(updateFormData({ field: name, value }));
+
+    if (name === "incidentId" && Number(value) === VACATION_INCIDENT_ID) {
+      setOpenCalendar(true);
+    }
+
+    if (name === "incidentId" && Number(value) !== VACATION_INCIDENT_ID) {
+      dispatch(setVacationDates([]));
+    }
   };
 
   const handleSelectEmployee = async (employee: Employee) => {
@@ -65,6 +82,22 @@ const IncidentCreateForm = () => {
   const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
   const { options: incidentTypes, isLoading, error } = useFetchOptions(fetchData);
 
+  const handleCalendarSave = (selectedDates: string[]) => {
+    if (selectedDates.length > 0) {
+      const startDate = selectedDates[0];
+      const endDate = selectedDates[selectedDates.length - 1];
+
+      dispatch(updateFormData({ field: "startDate", value: startDate }));
+      dispatch(updateFormData({ field: "endDate", value: endDate }));
+      dispatch(setVacationDates(selectedDates));
+    }
+    setOpenCalendar(false);
+  };
+
+  const handleCalendarCancel = () => {
+    setOpenCalendar(false);
+  };
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setOpenDialog(true);
@@ -73,8 +106,14 @@ const IncidentCreateForm = () => {
   const handleConfirm = async () => {
     setIsSubmitting(true);
     dispatch(clearErrors());
+
     try {
-      const response = await createEmployeeIncident(formData);
+      const submitData = {
+        ...formData,
+        ...(isVacationIncident && { vacationDates: formData.vacationDates }),
+      };
+
+      const response = await createEmployeeIncident(submitData);
       if (!response.success) {
         if (response.responseObject) {
           const newErrors: { [key: string]: string } = {};
@@ -122,7 +161,7 @@ const IncidentCreateForm = () => {
         <form onSubmit={handleSubmit}>
           <Grid2 container spacing={2}>
             <Grid2 size={{ lg: 12 }}>
-              <EmployeeFinder onEmployeeSelect={handleSelectEmployee} error={errors.employeeId} />
+              <EmployeeFinder onEmployeeSelect={handleSelectEmployee} error={errors.employeeId || ""} />
             </Grid2>
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
@@ -152,6 +191,20 @@ const IncidentCreateForm = () => {
                 <CustomLabelError field={errors.incidentId} />
               </FormControl>
             </Grid2>
+
+            <Dialog fullWidth maxWidth="lg" open={openCalendar} onClose={handleCalendarCancel} disableEscapeKeyDown>
+              <DialogTitle>Seleccionar fechas de vacaciones</DialogTitle>
+              <DialogContent>
+                <CustomCalendar
+                  onSave={handleCalendarSave}
+                  onCancel={handleCalendarCancel}
+                  showActions={true}
+                  maxSelections={20}
+                  daysSelected={formData.vacationDates}
+                />
+              </DialogContent>
+            </Dialog>
+
             <Grid2 size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <CustomFormLabel>Fecha de inicio</CustomFormLabel>
@@ -163,13 +216,14 @@ const IncidentCreateForm = () => {
                   onChange={handleChange}
                   variant="outlined"
                   fullWidth
+                  disabled={isVacationIncident}
                 />
                 <CustomLabelError field={errors.startDate && errors.startDate} />
               </FormControl>
             </Grid2>
             <Grid2 size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
-                <CustomFormLabel>Fecha de terminacion</CustomFormLabel>
+                <CustomFormLabel>Fecha de terminación</CustomFormLabel>
                 <CustomTextField
                   id="endDate"
                   name="endDate"
@@ -178,10 +232,67 @@ const IncidentCreateForm = () => {
                   onChange={handleChange}
                   variant="outlined"
                   fullWidth
+                  disabled={isVacationIncident}
                 />
                 <CustomLabelError field={errors.endDate && errors.endDate} />
               </FormControl>
             </Grid2>
+
+            {isVacationIncident && (
+              <Grid2 size={{ lg: 12 }}>
+                <FormControl fullWidth>
+                  <CustomFormLabel>Fechas de vacaciones</CustomFormLabel>
+                  <Box
+                    sx={{
+                      border: 1,
+                      borderColor: "grey.300",
+                      borderRadius: 1,
+                      p: 2,
+                      minHeight: 56,
+                      display: "flex",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      gap: 1,
+                      backgroundColor: "#f5f5f5",
+                    }}
+                  >
+                    {formData.vacationDates && formData.vacationDates.length > 0 ? (
+                      <>
+                        {formData.vacationDates.map((date, index) => (
+                          <Chip
+                            key={index}
+                            label={formatDate(date, "dd/MM/yyyy")}
+                            color="primary"
+                            variant="outlined"
+                            size="small"
+                          />
+                        ))}
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => setOpenCalendar(true)}
+                          sx={{ ml: "auto" }}
+                        >
+                          Modificar fechas
+                        </Button>
+                      </>
+                    ) : (
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}
+                      >
+                        <Typography variant="body2" color="textSecondary">
+                          No se han seleccionado fechas de vacaciones
+                        </Typography>
+                        <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
+                          Seleccionar fechas
+                        </Button>
+                      </Box>
+                    )}
+                  </Box>
+                </FormControl>
+              </Grid2>
+            )}
+
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
                 <CustomFormLabel>Justificación</CustomFormLabel>

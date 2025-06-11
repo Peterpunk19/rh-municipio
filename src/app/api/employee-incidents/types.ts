@@ -9,6 +9,7 @@ export interface IEmployeeIncident {
   description: string;
   employeeAttendanceId?: number;
   createdBy: number | string;
+  vacationDates?: string[];
 }
 
 export interface IEmployeeIncidentFilters {

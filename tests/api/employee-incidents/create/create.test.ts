@@ -19,6 +19,13 @@ jest.mock("@/app/api/services/employee-incidents.service", () => ({
   },
 }));
 
+// Mock authMiddleware
+jest.mock("@/middleware/authMiddleware", () => ({
+  authMiddleware: jest.fn(),
+}));
+
+const { authMiddleware } = jest.requireMock("@/middleware/authMiddleware");
+
 describe("API: /employee-incidents", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -31,6 +38,7 @@ describe("API: /employee-incidents", () => {
         getIncidentStatus.mockResolvedValue(null);
         validateEmployee.mockResolvedValue(null);
         validateEmployeeIncident.mockResolvedValue(null);
+        authMiddleware.mockResolvedValue({ userId: 1 });
         (EmployeeIncidentsService.createEmployeeIncidents as jest.Mock).mockResolvedValueOnce([{}, {}]);
       }
 

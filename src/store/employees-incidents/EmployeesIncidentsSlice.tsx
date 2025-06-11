@@ -12,9 +12,15 @@ interface StateType {
     startDate: string,
     endDate: string,
     description: string,
+    vacationDates: string[],
   };
   errors: {
-    [key: string]: string;
+    employeeId?: string;
+    incidentId?: string;
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+    [key: string]: string | undefined;
   };
   search: string;
   sortBy: string;
@@ -32,7 +38,7 @@ interface StateType {
   error: string;
 }
 
-const initialState = {
+const initialState: StateType = {
   employeesIncidents: [],
   employeeData: null,
   search: "",
@@ -46,6 +52,7 @@ const initialState = {
     startDate: "",
     endDate: "",
     description: "",
+    vacationDates: [],
   },
   errors: {},
   filters: {
@@ -112,6 +119,9 @@ export const EmployeesIncidentsSlice = createSlice({
 
       current[fields[fields.length - 1]] = value;
     },
+    setVacationDates(state, action: PayloadAction<string[]>) {
+      state.formData.vacationDates = action.payload;
+    },
     setErrors(state, action: PayloadAction<{ [key: string]: string }>) {
       state.errors = action.payload;
     },
@@ -143,10 +153,10 @@ export const fetchEmployees = (filters: string) => async (dispatch: AppDispatch)
 export const {
   setEmployeeData,
   updateFormData,
+  setVacationDates,
   setErrors,
   clearErrors,
   resetForm
 } = EmployeesIncidentsSlice.actions;
-
 
 export default EmployeesIncidentsSlice.reducer;

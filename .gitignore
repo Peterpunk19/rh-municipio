@@ -16,3 +16,4 @@ yarn.lock
 .env
 .vscode/
 docker-compose.override.yml
+.cursor/
