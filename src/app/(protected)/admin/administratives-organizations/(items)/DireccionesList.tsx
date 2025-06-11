@@ -1,14 +1,33 @@
-import { Card, CardContent, Typography, Button, Stack } from "@mui/material";
+import { Card, CardContent, Typography, Button, Stack, Chip } from "@mui/material";
 import { useState } from "react";
 import DirectorFormDialog from "./DirectorFormDialog";
 import { IDireccion } from "@/interfaces/AdministrativeOrganization";
 import { EditIcon } from "lucide-react";
+import { formatDate } from "@/utils/formatter";
 
 export default function DireccionesList({
+  secretaria,
   direcciones,
   onUpdateDirector,
-}: { direcciones: IDireccion[]; onUpdateDirector: (id: number, data: any) => void }) {
+}: { secretaria: string; direcciones: IDireccion[]; onUpdateDirector: (id: number, data: any) => void }) {
   const [selected, setSelected] = useState<IDireccion | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleOpenDialog = (direccion: IDireccion) => {
+    setSelected(direccion);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleSaveDirector = (data: any) => { 
+    if (selected) {
+      onUpdateDirector(selected.id, data);
+    }
+    setIsDialogOpen(false);
+  };
 
   return (
     <>
@@ -18,12 +37,41 @@ export default function DireccionesList({
           <Card key={direccion.id}>
             <CardContent>
               <Typography variant="h6">{direccion.name}</Typography>
-              <Typography variant="body1">Director: {direccion.director.name || "No asignado"}</Typography>
-              <Typography variant="body1">Suplente: {direccion.deputy_director.name || "N/A"}</Typography>
-              <Typography variant="body1">
-                Periodo: {direccion.startDate || "N/A"} - {direccion.endDate || "N/A"}
-              </Typography>
-              <Button onClick={() => setSelected(direccion)} size="small" startIcon={<EditIcon />}>
+
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1, mb: 0.5 }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Director:
+                </Typography>
+                <Typography variant="body2">{direccion.director?.name || "No asignado"}</Typography>
+                {direccion.director?.name && <Chip size="small" label="Activo" color="primary" variant="outlined" />}
+              </Stack>
+
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Suplente:
+                </Typography>
+                <Typography variant="body2">{direccion.deputy_director?.name || "No asignado"}</Typography>
+              </Stack>
+
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Periodo:
+                </Typography>
+                <Typography variant="body2">
+                  {direccion.director && direccion.director.startDate
+                    ? formatDate(direccion.director.startDate)
+                    : "N/A"}{" "}
+                  -
+                  {direccion.director && direccion.director.endDate ? formatDate(direccion.director.endDate) : "Actual"}
+                </Typography>
+              </Stack>
+
+              <Button
+                onClick={() => handleOpenDialog(direccion)}
+                size="small"
+                startIcon={<EditIcon />}
+                variant="outlined"
+              >
                 Editar Director
               </Button>
             </CardContent>
@@ -32,13 +80,11 @@ export default function DireccionesList({
       </Stack>
 
       <DirectorFormDialog
-        open={!!selected}
-        director={selected?.director}
-        onClose={() => setSelected(null)}
-        onSave={(data) => {
-          onUpdateDirector(selected?.id || 0, data);
-          setSelected(null);
-        }}
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        onSave={handleSaveDirector}
+        secretaria={secretaria}
+        direccion={selected || null}
       />
     </>
   );

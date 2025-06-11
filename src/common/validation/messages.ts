@@ -19,6 +19,7 @@ export const validationMessages = {
   maxNumber: (field: string, maxNumber: number) => `${field} debe ser un número igual o menor a ${maxNumber}`,
   invalidBoolean: (field: string) => `${field} debe ser un valor booleano`,
   invalidDateRange: (to: string, from: string) => `${to} debe ser mayor o igual a ${from} `,
+  invalidDateRangeGreaterThan: (to: string, from: string) => `${to} debe ser mayor a ${from} `,
   duplicated: (field: string) => `${field} ya existe.`,
   invalid: (field: string) => `${field} es inválido`,
 };

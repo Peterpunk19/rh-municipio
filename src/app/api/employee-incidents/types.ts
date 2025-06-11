@@ -45,6 +45,7 @@ export interface IEmployeeIncidentUpdate {
   checkIn: Date | string;
   checkOut: Date | string;
   createdById: number;
+  employeeAttendanceTypeId: number;
 }
 
 export interface IncidentCreateModalProps {

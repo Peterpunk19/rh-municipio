@@ -114,6 +114,7 @@ describe("EmployeeIncidentsService", () => {
       employeeLocationId: 20,
       createdById: 40,
       employeeId: 40,
+      employeeAttendanceTypeId: 1,
     };
 
     it("should create attendance, update incident, and create incident status when status is APROBADA", async () => {

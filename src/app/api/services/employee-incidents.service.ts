@@ -273,6 +273,11 @@ export const EmployeeIncidentsService = {
                 },
               },
             },
+            employee_attendance_type: {
+              select: {
+                id: true,
+              },
+            },
           },
         },
         employee_incidents_status: {

@@ -33,8 +33,8 @@ export const CreateUpdateLeaderSchema = z
     message: "El director y el subdirector no pueden ser la misma persona",
     path: ["deputyDirector"],
   })
-  .refine((data) => data.endDate >= data.startDate, {
-    message: validationMessages.invalidDateRange("Fecha de fin", "Fecha de inicio"),
+  .refine((data) => data.endDate > data.startDate, {
+    message: validationMessages.invalidDateRangeGreaterThan("Fecha de fin", "Fecha de inicio"),
     path: ["endDate"],
   });
 

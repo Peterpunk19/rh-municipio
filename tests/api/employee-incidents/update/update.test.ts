@@ -112,6 +112,11 @@ describe("API: /employees/update", () => {
                 id: 31,
               },
             ],
+            employee_attendance_type: [
+              {
+                id: 1,
+              },
+            ],
           },
           employee_incidents_status: [
             {

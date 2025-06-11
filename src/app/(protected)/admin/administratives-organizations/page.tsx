@@ -29,16 +29,46 @@ export default function AdministrativesOrganizations() {
     if (!secretarias) return;
 
     const secretaria = secretarias.find((sec) => sec.id === secretariaId);
-    if (!secretaria || !secretaria.direcciones) return;
+    if (!secretaria || !secretaria.direcciones) {
+      logger.error("No se encontró la secretaría con ID:", secretariaId);
+      return;
+    }
 
     const direccion = secretaria.direcciones.find((dir) => dir.id === direccionId);
-    if (!direccion) return;
+    if (!direccion) {
+      logger.error("No se encontró la dirección con ID:", direccionId);
+      return;
+    }
 
     const updatedSecretarias = secretarias.map((sec) => {
       if (sec.id === secretariaId) {
         const updatedDirecciones = (sec.direcciones || []).map((dir) => {
           if (dir.id === direccionId) {
-            return { ...dir, director: data };
+            const directorData = data.director;
+            const deputyDirectorData = data.deputyDirector;
+
+            const updatedDir = {
+              ...dir,
+              director: {
+                ...dir.director,
+                name: directorData.employee
+                  ? `${directorData.employee.name} ${directorData.employee.paternal_last_name} ${directorData.employee.maternal_last_name}`
+                  : dir.director?.name || "Director",
+                id: directorData.employee_id || dir.director?.id,
+                startDate: directorData.start_date || dir.director?.startDate,
+                endDate: directorData.end_date || dir.director?.endDate,
+              },
+              ...(deputyDirectorData && {
+                deputy_director: {
+                  ...dir.deputy_director,
+                  name: deputyDirectorData.employee
+                    ? `${deputyDirectorData.employee.name} ${deputyDirectorData.employee.paternal_last_name} ${deputyDirectorData.employee.maternal_last_name}`
+                    : dir.deputy_director?.name || "Suplente",
+                  id: deputyDirectorData.employee_id || dir.deputy_director?.id,
+                },
+              }),
+            };
+            return updatedDir;
           }
           return dir;
         });
@@ -94,6 +124,7 @@ export default function AdministrativesOrganizations() {
           </AccordionSummary>
           <AccordionDetails>
             <DireccionesList
+              secretaria={secretaria.display_name}
               direcciones={secretaria.direcciones || []}
               onUpdateDirector={(direccionId, data) => updateDirector(secretaria.id, direccionId, data)}
             />
