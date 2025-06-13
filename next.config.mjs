@@ -5,6 +5,7 @@ const nextConfig = {reactStrictMode: false,
         NEXT_PUBLIC_BASE_API_AUTH: process.env.NEXT_PUBLIC_BASE_API_AUTH,
         NEXTAUTH_URL: process.env.NEXTAUTH_URL,
         JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN,
+        MAX_NUM_VACATION_DAYS: process.env.MAX_NUM_VACATION_DAYS,
     }
 
 

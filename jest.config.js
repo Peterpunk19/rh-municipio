@@ -3,7 +3,7 @@ module.exports = {
   setupFiles: ["<rootDir>/jest.setup.js"],
   testEnvironment: "node",
   transform: {
-    "^.+.tsx?$": ["ts-jest",{}],
+    "^.+\\.tsx?$": ["ts-jest", {}],
   },
   moduleNameMapper: {
     "@/tests/(.*)": "<rootDir>/__tests__/$1",
@@ -11,4 +11,8 @@ module.exports = {
   },
   testPathIgnorePatterns: ["/node_modules/", "/dist/", "/tools/",],
   coveragePathIgnorePatterns: ["/tests/",],
+  transformIgnorePatterns: [
+    "node_modules/(?!(next-auth|@auth/core|oauth4webapi|preact-render-to-string|preact|@panva/hkdf|jose)/)"
+  ],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
 };

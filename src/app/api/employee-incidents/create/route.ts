@@ -6,6 +6,8 @@ import { HttpMessages } from "@/common/response/messages";
 import type { IEmployeeIncident } from "@/app/api/employee-incidents/types";
 import { EmployeeIncidentsPostSchema } from "@/schemas/employee-incidents";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
+import { authMiddleware } from "@/middleware/authMiddleware";
+import { NextResponse } from "next/server";
 import {
   getFolio,
   getIncidentStatus,
@@ -25,13 +27,26 @@ export async function POST(request: NextRequest) {
     return handleHttpResponse(response);
   }
 
+  const authData = await authMiddleware();
+
+  if (authData instanceof NextResponse) {
+    return authData;
+  }
+
+  const { userId: userAuthenticatedId } = authData;
+
   try {
     for (const validation of [getFolio, getIncidentStatus, validateEmployee, validateEmployeeIncident]) {
       const validationResponse = await validation(body);
       if (validationResponse) return handleHttpResponse(validationResponse);
     }
 
-    const [createEmployeeIncidents] = await EmployeeIncidentsService.createEmployeeIncidents(body);
+    const createData = {
+      ...body,
+      createdBy: userAuthenticatedId,
+    };
+
+    const [createEmployeeIncidents] = await EmployeeIncidentsService.createEmployeeIncidents(createData);
     const response = HttpResponse.success(HttpMessages.employeeIncidents.createdSuccess, createEmployeeIncidents);
 
     return handleHttpResponse(response);

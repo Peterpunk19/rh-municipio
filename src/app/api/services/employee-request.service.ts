@@ -754,7 +754,6 @@ export const EmployeeRequestService = {
 
               const requestDetail = employeeRequestFound.request_details;
               if (requestDetail.new_attendance) {
-                console.log("approvedBy", approvedBy);
                 const attendanceTypeData: any = {
                   employee: {
                     connect: { id: employeeId },
