@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TableWithPagination from "@/components/tables/TableWithPagination";
 import type { EmployeeRequestType } from "@/types/EmployeeRequestType";
 import { useSelector } from "@/store/hooks";
@@ -15,6 +15,8 @@ import CustomRequestStatusComponent from "@/components/customComponents/CustomRe
 import { Button } from "@mui/material";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { formatDateStringFilters } from "@/utils/formatter";
+import RequestCreateModal from "./RequestCreateModal";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const BCrumb = [
   {
@@ -31,6 +33,15 @@ export default function EmployeeRequests() {
   const { searchTerm, values, title, showSearchBar } = useSelector(
     (state: RootState) => state.filters.employeeRequests || { searchTerm: "", values: {} },
   );
+  const { user } = useCurrentUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleSuccess = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,7 +67,7 @@ export default function EmployeeRequests() {
     };
 
     fetchData();
-  }, [dispatch, page, limit, searchTerm, values]);
+  }, [dispatch, page, limit, searchTerm, values, refreshKey]);
 
   const items: EmployeeRequestType[] = useSelector(
     (state: RootState) => state.employeeRequestsSlice?.employeeRequests || [],
@@ -67,7 +78,7 @@ export default function EmployeeRequests() {
   );
 
   const createLink = (
-    <Button href="/admin/employees-requests/create" fullWidth variant="contained" color="primary">
+    <Button onClick={handleOpenModal} fullWidth variant="contained" color="primary">
       Crear Solicitud
     </Button>
   );
@@ -87,6 +98,12 @@ export default function EmployeeRequests() {
       >
         <CustomRequestStatusComponent />
       </TableWithPagination>
+      <RequestCreateModal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        employeeId={user?.employee_id}
+        onSuccess={handleSuccess}
+      />
     </PageContainer>
   );
 }
