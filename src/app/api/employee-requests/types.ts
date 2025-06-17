@@ -178,3 +178,10 @@ export interface IEmployeeRequestResponse {
     };
   }[];
 }
+
+export interface RequestCreateModalProps {
+  open: boolean;
+  onClose: () => void;
+  employeeId?: number | string;
+  onSuccess?: () => void;
+}
