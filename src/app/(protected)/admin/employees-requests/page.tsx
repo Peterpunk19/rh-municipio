@@ -17,6 +17,7 @@ import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { formatDateStringFilters } from "@/utils/formatter";
 import RequestCreateModal from "./RequestCreateModal";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { ROLES } from "@/common/constants/Roles";
 
 const BCrumb = [
   {
@@ -25,7 +26,7 @@ const BCrumb = [
   },
 ];
 
-export default function EmployeeRequests() {
+export default function EmployeeRequests({ role = ROLES.ADMIN }: { role?: string }) {
   const ENTITY = "employeeRequests";
   const dispatch = useDispatch<AppDispatch>();
 
@@ -78,7 +79,12 @@ export default function EmployeeRequests() {
   );
 
   const createLink = (
-    <Button onClick={handleOpenModal} fullWidth variant="contained" color="primary">
+    <Button
+      {...(role === ROLES.ADMIN ? { href: "/admin/employees-requests/create" } : { onClick: handleOpenModal })}
+      fullWidth
+      variant="contained"
+      color="primary"
+    >
       Crear Solicitud
     </Button>
   );
