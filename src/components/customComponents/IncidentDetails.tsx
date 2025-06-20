@@ -28,6 +28,16 @@ const IncidentDetails: React.FC<Props> = ({ data }) => {
           </Grid>
           <Grid size={{ lg: 3, xs: 12 }}>
             <Typography variant="subtitle1" color="text.secondary">
+              Tipo de incidencia
+            </Typography>
+          </Grid>
+          <Grid size={{ lg: 9, xs: 12 }}>
+            <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
+              {data.incident.display_name}
+            </Typography>
+          </Grid>
+          <Grid size={{ lg: 3, xs: 12 }}>
+            <Typography variant="subtitle1" color="text.secondary">
               Fecha Inicio
             </Typography>
           </Grid>

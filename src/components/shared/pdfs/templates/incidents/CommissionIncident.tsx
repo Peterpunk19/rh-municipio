@@ -11,7 +11,6 @@ const CommissionIncident: React.FC<IncidentItemProps> = ({ data, styles }) => {
         <Text style={[styles.cell, styles.cellHeader, { flex: 1, textAlign: "left" }]}>TIPO DE INCIDENCIA</Text>
         <Text style={[styles.cell, styles.cellHeader, { flex: 2, textAlign: "left" }]}>FECHAS</Text>
         <Text style={[styles.cell, styles.cellHeader, styles.lastCell, { flex: 1, textAlign: "left" }]}>No. DÍAS</Text>
-        <Text style={[styles.cell, styles.cellHeader, styles.lastCell, { flex: 1, textAlign: "left" }]}>TIPO</Text>
       </View>
       <View style={styles.row}>
         <Text style={[styles.cell, styles.uppercase, styles.italic, { flex: 1 }]}>{data.incident?.display_name}</Text>
@@ -26,7 +25,6 @@ const CommissionIncident: React.FC<IncidentItemProps> = ({ data, styles }) => {
             formatDate(data.end_date, "dd/MM/yyyy"),
           )}
         </Text>
-        <Text style={[styles.cell, styles.italic, styles.lastCell, styles.lastRow, { flex: 1 }]}></Text>
       </View>
     </>
   );
