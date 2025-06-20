@@ -20,4 +20,7 @@ export interface IEmployeeIncidentDetails {
   start_date: string;
   end_date: string;
   employee_incidents_status: [];
+  incident: {
+    display_name?: string;
+  };
 }

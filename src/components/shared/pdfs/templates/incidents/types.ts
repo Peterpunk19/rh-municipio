@@ -75,6 +75,11 @@ export interface IncidentData {
   salida: string;
   registro: string;
   fechaJustificar: string;
+  employee_incident_days: Array<{
+    id: number;
+    date: string;
+    created_at: string;
+  }>;
 }
 
 export interface IncidentItemProps {

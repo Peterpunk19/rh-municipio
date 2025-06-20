@@ -216,16 +216,6 @@ const EmployeeIncident = () => {
               </Stack>
               <Divider></Divider>
 
-              <Grid container>
-                <Grid size={12} sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Tipo de Incidencia:{" "}
-                  </Typography>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    {employeeIncidentData.incident.display_name}
-                  </Typography>
-                </Grid>
-              </Grid>
               <Grid container spacing={3} mt={2} mb={4}>
                 <Grid size={6}>
                   <EmployeeDetails data={employeeIncidentData} />
