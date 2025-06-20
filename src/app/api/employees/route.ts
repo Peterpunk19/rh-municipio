@@ -31,6 +31,9 @@ export async function GET(request: Request) {
     const end_job_date_start = searchParams.has("end_job_date_start") ? searchParams.get("end_job_date_start") : null;
     const end_job_date_end = searchParams.has("end_job_date_end") ? searchParams.get("end_job_date_end") : null;
     const search = searchParams.has("search") ? searchParams.get("search") : null;
+    const employeeAttendanceType = searchParams.has("employeeAttendanceType")
+      ? Number(searchParams.get("employeeAttendanceType"))
+      : null;
     const requestParams = {
       page,
       limit,
@@ -48,6 +51,7 @@ export async function GET(request: Request) {
       end_job_date_start,
       end_job_date_end,
       search,
+      employeeAttendanceType,
     };
     const validationRequest = await validateRequestByUrlParams<IEmployeeFilters>(
       requestParams,

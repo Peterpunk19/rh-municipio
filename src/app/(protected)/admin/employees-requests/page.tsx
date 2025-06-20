@@ -91,7 +91,7 @@ export default function EmployeeRequests({ role = ROLES.ADMIN }: { role?: string
 
   return (
     <PageContainer title={title} description={title}>
-      {showSearchBar ?? <Breadcrumb title={title} items={BCrumb} />}
+      {showSearchBar && <Breadcrumb title={title} items={BCrumb} />}
       <TableWithPagination
         title=""
         headCells={header}

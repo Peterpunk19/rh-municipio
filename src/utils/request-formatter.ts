@@ -29,6 +29,11 @@ interface FormData {
     attendanceType: string;
     applicationDate: string;
   };
+  adscriptionForm: {
+    attendanceType: string;
+    locationId: number;
+    direccionId: number;
+  };
 }
 
 export const formatRequestData = (formData: FormData) => {
@@ -72,6 +77,14 @@ export const formatRequestData = (formData: FormData) => {
         ...baseData,
         locationId: formData.fingerprintForm.locationId,
         requestDate: formData.fingerprintForm.requestDate,
+      };
+
+    case REQUEST_TYPES.ADSCRIPTION:
+      return {
+        ...baseData,
+        locationId: formData.adscriptionForm.locationId,
+        direccionId: formData.adscriptionForm.direccionId,
+        attendanceType: Number(formData.adscriptionForm.attendanceType),
       };
 
     default:

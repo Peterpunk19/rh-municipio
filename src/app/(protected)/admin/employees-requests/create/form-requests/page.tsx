@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
@@ -8,6 +8,7 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -45,6 +46,7 @@ import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import CustomTextField from "@/components/theme-elements/CustomTextField";
 import { createEmployeeRequest } from "@/services/employees-requests";
 import REQUEST_TYPES from "@/common/constants/RequestTypes";
+import AdscriptionForm from "@/app/(protected)/admin/employees-requests/create/form-requests/adscription/page";
 
 const CreateRequestForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -66,6 +68,9 @@ const CreateRequestForm = () => {
         }),
       );
       dispatch(updateFormData({ field: "attendanceTypeForm", value: { attendanceType: "", applicationDate: "" } }));
+      dispatch(
+        updateFormData({ field: "adscriptionForm", value: { attendanceType: "", locationId: "", direccionId: "" } }),
+      );
     }
     dispatch(updateFormData({ field: name, value }));
   };
@@ -158,7 +163,63 @@ const CreateRequestForm = () => {
 
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
-                <CustomFormLabel>Descripción</CustomFormLabel>
+                <CustomFormLabel sx={{ m: 0, p: 0 }}>Tipo de solicitud</CustomFormLabel>
+
+                {formData.typeRequestId === "0" ? (
+                  <CustomSelect
+                    fullWidth
+                    name="typeRequestId"
+                    value={formData.typeRequestId}
+                    onChange={handleChange}
+                    disabled={isLoading || error || formData.employeeId === "" || formData.employeeId === "0"}
+                  >
+                    <MenuItem key="default" value="0">
+                      Selecciona el tipo de solicitud
+                    </MenuItem>
+                    {isLoading ? (
+                      <MenuItem disabled> Cargando...</MenuItem>
+                    ) : error ? (
+                      <MenuItem disabled>Error al cargar</MenuItem>
+                    ) : (
+                      requestsTypes?.map((requestType) => (
+                        <MenuItem key={requestType.id} value={requestType.id}>
+                          {requestType.display_name}
+                        </MenuItem>
+                      ))
+                    )}
+                  </CustomSelect>
+                ) : (
+                  <Chip
+                    sx={{
+                      mt: 1,
+                      fontSize: 16,
+                    }}
+                    label={
+                      requestsTypes.find((rt) => rt.id === formData.typeRequestId)?.display_name ?? "Tipo desconocido"
+                    }
+                    color="primary"
+                    onDelete={() => dispatch(updateFormData({ field: "typeRequestId", value: "0" }))}
+                  />
+                )}
+                <CustomLabelError field={errors.requestId} />
+              </FormControl>
+            </Grid2>
+
+            {formData.typeRequestId ? (
+              <Grid2 size={{ xs: 12, md: 12 }}>
+                {Number(formData.typeRequestId) === REQUEST_TYPES.SCHEDULE && (
+                  <ScheduleForm currentJobSchedule={currentJobSchedule} />
+                )}
+                {Number(formData.typeRequestId) === REQUEST_TYPES.LOCATION && <LocationForm />}
+                {Number(formData.typeRequestId) === REQUEST_TYPES.ATTENDANCE && <AttendanceTypeForm />}
+                {Number(formData.typeRequestId) === REQUEST_TYPES.FINGERPRINT && <FingerprintForm />}
+                {Number(formData.typeRequestId) === REQUEST_TYPES.ADSCRIPTION && <AdscriptionForm />}
+              </Grid2>
+            ) : null}
+
+            <Grid2 size={{ lg: 12 }}>
+              <FormControl fullWidth>
+                <CustomFormLabel sx={{ m: 0, p: 0 }}>Justificación</CustomFormLabel>
                 <CustomTextField
                   id="description"
                   name="description"
@@ -169,58 +230,6 @@ const CreateRequestForm = () => {
                 />
                 <CustomLabelError field={errors.description} />
               </FormControl>
-            </Grid2>
-
-            <Grid2 size={{ lg: 12 }}>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <CustomFormLabel>Tipo de solicitud</CustomFormLabel>
-                <CustomSelect
-                  fullWidth
-                  name="typeRequestId"
-                  value={formData.typeRequestId}
-                  onChange={handleChange}
-                  disabled={isLoading || error || formData.employeeId === "" || formData.employeeId === "0"}
-                >
-                  <MenuItem key="default" value="0">
-                    Selecciona el tipo de solicitud
-                  </MenuItem>
-                  {isLoading ? (
-                    <MenuItem disabled> Cargando...</MenuItem>
-                  ) : error ? (
-                    <MenuItem disabled>Error al cargar</MenuItem>
-                  ) : (
-                    requestsTypes?.map((requestType) => (
-                      <MenuItem key={requestType.id} value={requestType.id}>
-                        {requestType.display_name}
-                      </MenuItem>
-                    ))
-                  )}
-                </CustomSelect>
-                <CustomLabelError field={errors.requestId} />
-              </FormControl>
-            </Grid2>
-
-            <Grid2 size={{ xs: 12, md: 12 }}>
-              {Number(formData.typeRequestId) === REQUEST_TYPES.SCHEDULE && (
-                <ParentCard title="Registro de horario">
-                  <ScheduleForm currentJobSchedule={currentJobSchedule} />
-                </ParentCard>
-              )}
-              {Number(formData.typeRequestId) === REQUEST_TYPES.LOCATION && (
-                <ParentCard title="Registro de ubicación">
-                  <LocationForm />
-                </ParentCard>
-              )}
-              {Number(formData.typeRequestId) === REQUEST_TYPES.ATTENDANCE && (
-                <ParentCard title="Registro de tipo de checado">
-                  <AttendanceTypeForm />
-                </ParentCard>
-              )}
-              {Number(formData.typeRequestId) === REQUEST_TYPES.FINGERPRINT && (
-                <ParentCard title="Registro de huella">
-                  <FingerprintForm />
-                </ParentCard>
-              )}
             </Grid2>
 
             <Grid2 size={12} sx={{ mt: 2 }}>

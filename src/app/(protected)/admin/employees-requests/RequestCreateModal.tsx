@@ -74,6 +74,9 @@ export const RequestCreateModal = ({ open, onClose, employeeId, onSuccess }: Req
         }),
       );
       dispatch(updateFormData({ field: "attendanceTypeForm", value: { attendanceType: "", applicationDate: "" } }));
+      dispatch(
+        updateFormData({ field: "adscriptionForm", value: { attendanceType: "", locationId: "", direccionId: "" } }),
+      );
     }
     dispatch(updateFormData({ field: name, value }));
   };

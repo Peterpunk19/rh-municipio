@@ -18,6 +18,7 @@ export interface IEmployeeRequest {
   startDate?: string | null;
   endDate?: string | null;
   attendanceId?: number | null;
+  direccionId?: number | null;
   attendanceDate?: string | null;
   requestedById: number;
 }

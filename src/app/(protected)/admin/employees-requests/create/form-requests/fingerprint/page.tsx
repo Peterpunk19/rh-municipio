@@ -26,7 +26,7 @@ const FingerprintForm = () => {
 
   return (
     <Box>
-      <Grid2 container spacing={2} sx={{ mb: 2 }}>
+      <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, md: 6 }}>
           <FormControl fullWidth>
             <CustomFormLabel sx={{ mt: 0 }}>Ubicación</CustomFormLabel>

@@ -160,6 +160,11 @@ describe("EmployeeRequestService", () => {
             location: { id: 1 },
           }),
         },
+        employeeAdscriptions: {
+          findFirst: jest.fn().mockResolvedValue({
+            direccion: { id: 1 },
+          }),
+        },
         employeeAttendanceType: {
           findFirst: jest.fn().mockResolvedValue({
             attendance: { id: 1 },

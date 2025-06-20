@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { EmployeeRequestPostSchema } from "@/schemas/employee-requests";
+import { EmployeeRequestDatesPostSchema, EmployeeRequestPostSchema } from "@/schemas/employee-requests";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { validateRequest } from "@/common/request/validateRequest";
@@ -21,6 +21,7 @@ import {
 import { startOfDay } from "@/common/utils";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/middleware/authMiddleware";
+import { DireccionService } from "@/app/api/services/direccion.service";
 
 const requestValidations: IRequestValidations = {
   schedule_change_request: [
@@ -37,6 +38,11 @@ const requestValidations: IRequestValidations = {
   ],
   fingerprint_registration_request: [
     { id: "locationId", service: LocationService.getLocationById, message: HttpMessages.location.notFoundById },
+  ],
+  adscription_change_request: [
+    { id: "locationId", service: LocationService.getLocationById, message: HttpMessages.location.notFoundById },
+    { id: "direccionId", service: DireccionService.getDireccionById, message: HttpMessages.location.notFoundById },
+    { id: "attendanceId", service: AttendanceService.getAttendanceById, message: HttpMessages.attendance.notFoundById },
   ],
 };
 
@@ -72,24 +78,26 @@ export async function POST(request: NextRequest) {
 
     const validations = requestValidations[existingRequest.name];
 
-    if (validations) {
-      const itemsToValidate =
-        existingRequest.name === "schedule_change_request" && Array.isArray(body.schedule) ? body.schedule : [body];
+    if (!validations) {
+      return handleHttpResponse(HttpResponse.failure(HttpMessages.request.validationsNotFound, {}));
+    }
 
-      for (const item of itemsToValidate) {
-        try {
-          const validationPromises = validations.map((validation) => {
-            const value = (item as any)[validation.id];
-            return validateExistence(value, validation.id, validation.service, validation.message);
-          });
-          const responses = await Promise.all(validationPromises);
-          const failedResponse = responses.find((response) => response);
-          if (failedResponse) return handleHttpResponse(failedResponse);
-        } catch (error: any) {
-          return handleHttpResponse(
-            HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message }),
-          );
-        }
+    const itemsToValidate =
+      existingRequest.name === "schedule_change_request" && Array.isArray(body.schedule) ? body.schedule : [body];
+
+    for (const item of itemsToValidate) {
+      try {
+        const validationPromises = validations.map((validation) => {
+          const value = (item as any)[validation.id];
+          return validateExistence(value, validation.id, validation.service, validation.message);
+        });
+        const responses = await Promise.all(validationPromises);
+        const failedResponse = responses.find((response) => response);
+        if (failedResponse) return handleHttpResponse(failedResponse);
+      } catch (error: any) {
+        return handleHttpResponse(
+          HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message }),
+        );
       }
     }
 

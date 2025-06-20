@@ -35,6 +35,8 @@ model User {
   employee_requests_by                EmployeeRequest[]                   @relation("requestedBy")
   leaders_by                          AdministrativeOrganizationLeaders[] @relation("createdBy")
   employee_attendance_type_created_by EmployeeAttendanceType[]            @relation("createdByEmployeeAttendanceType")
+
+  adscriptions                        EmployeeAdscriptions[] @relation("createdBy")
 }
 
 model Employee {
@@ -85,6 +87,7 @@ model Employee {
   identification_folio                 String?
   job_schedule_employee                JobScheduleEmployee[]
   leaders                              AdministrativeOrganizationLeaders[]
+  adscriptions                          EmployeeAdscriptions[]
 }
 
 model EmployeeAddress {
@@ -380,6 +383,10 @@ model EmployeeRequestDetail {
   attendance_date     DateTime?
   employee_request_id Int
   employee_request    EmployeeRequest @relation(fields: [employee_request_id], references: [id])
+  direccion_id       Int?
+  direccion          Direccion?     @relation("currentDireccion", fields: [direccion_id], references: [id])
+  new_direccion_id       Int?
+  new_direccion          Direccion?     @relation("newDireccion", fields: [new_direccion_id], references: [id])
   location_id         Int?
   location            Location?       @relation("currentLocation", fields: [location_id], references: [id])
   attendance_id       Int?
@@ -612,6 +619,9 @@ model Direccion {
   directors     Director[]
   employees     EmployeeHiring[]
   leaders       AdministrativeOrganizationLeaders[]
+  employee_request_detail     EmployeeRequestDetail[]  @relation("currentDireccion")
+  employee_request_detail_new EmployeeRequestDetail[]  @relation("newDireccion")
+  adscriptions  EmployeeAdscriptions[]
 }
 
 model Secretaria {
@@ -665,5 +675,20 @@ model AdministrativeOrganizationLeaders {
   direccion     Direccion @relation(fields: [direccion_id], references: [id])
   employee      Employee  @relation(fields: [employee_id], references: [id])
   role          Role      @relation(fields: [role_id], references: [id])
+  created_by    User      @relation("createdBy", fields: [created_by_id], references: [id])
+}
+
+model EmployeeAdscriptions {
+  id            Int       @id @default(autoincrement())
+  direccion_id  Int
+  employee_id   Int
+  created_by_id Int
+  active        Boolean   @default(true)
+  start_date    DateTime
+  end_date      DateTime
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  direccion     Direccion @relation(fields: [direccion_id], references: [id])
+  employee      Employee  @relation(fields: [employee_id], references: [id])
   created_by    User      @relation("createdBy", fields: [created_by_id], references: [id])
 }

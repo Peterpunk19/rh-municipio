@@ -6,6 +6,7 @@ import { RequestScheduleDetails } from "@/components/customComponents/RequestSch
 import { RequestLocationDetails } from "@/components/customComponents/RequestLocationDetails";
 import { RequestAttendanceDetails } from "@/components/customComponents/RequestAttendanceDetails";
 import { RequestFingerprintDetails } from "@/components/customComponents/RequestFingerprintDetails";
+import { RequestAdscriptionDetails } from "@/components/customComponents/RequestAdscriptionDetails";
 
 type Props = {
   data: {
@@ -30,6 +31,7 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
   const isScheduleRequest = request.name === "schedule_change_request";
   const isLocationRequest = request.name === "location_change_request";
   const isCheckerRequest = request.name === "checker_change_request";
+  const adscriptionChangeRequest = request.name === "adscription_change_request";
   const isFingerprintRequest =
     request.name === "fingerprint_registration_request";
 
@@ -83,6 +85,14 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
                 currentAttendance={request_details.current_attendance}
                 newAttendance={request_details.new_attendance}
                 attendanceDate={request_details.attendance_date}
+              />
+            )}
+            {adscriptionChangeRequest && (
+              <RequestAdscriptionDetails
+                attendance={request_details.attendance}
+                currentDireccion={request_details.current_direccion}
+                newDireccion={request_details.new_direccion}
+                newLocation={request_details.new_location}
               />
             )}
 

@@ -56,6 +56,13 @@ export const EmployeeRequestService = {
         },
       });
 
+      const currentEmployeeAscriptions = await tx.employeeAdscriptions.findFirst({
+        where: {
+          employee_id: Number(employeeRequest.employeeId),
+          active: true,
+        },
+      });
+
       const currentEmployeeAttendanceType = await tx.employeeAttendanceType.findFirst({
         where: {
           employee_id: Number(employeeRequest.employeeId),
@@ -132,6 +139,11 @@ export const EmployeeRequestService = {
               connect: { id: currentEmployeeAttendanceType.attendance.id },
             },
           }),
+          ...(currentEmployeeAscriptions?.id && {
+            direccion: {
+              connect: { id: currentEmployeeAscriptions.direccion_id },
+            },
+          }),
           ...(employeeRequest.locationId && {
             new_location: {
               connect: { id: Number(employeeRequest.locationId) },
@@ -140,6 +152,11 @@ export const EmployeeRequestService = {
           ...(employeeRequest.attendanceId && {
             new_attendance: {
               connect: { id: Number(employeeRequest.attendanceId) },
+            },
+          }),
+          ...(employeeRequest.direccionId && {
+            new_direccion: {
+              connect: { id: Number(employeeRequest.direccionId) },
             },
           }),
         },
@@ -394,6 +411,30 @@ export const EmployeeRequestService = {
                 },
               },
             },
+            employee_adscriptions: {
+              where: {
+                active: true,
+              },
+              select: {
+                id: true,
+                start_date: true,
+                end_date: true,
+                direccion: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    secretaria: {
+                      select: {
+                        id: true,
+                        name: true,
+                        display_name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
             employee_hiring: {
               select: {
                 direccion: {
@@ -435,6 +476,14 @@ export const EmployeeRequestService = {
             start_date: true,
             end_date: true,
             attendance_date: true,
+            direccion: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
             location: {
               select: {
                 id: true,
@@ -465,6 +514,21 @@ export const EmployeeRequestService = {
                 name: true,
                 display_name: true,
                 active: true,
+              },
+            },
+            new_direccion: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+                secretaria: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
               },
             },
           },
@@ -540,6 +604,7 @@ export const EmployeeRequestService = {
         publicOrganization: employeeRequest.employee.employee_hiring[0].direccion.secretaria.display_name,
         administrativeOrganization: employeeRequest.employee.employee_hiring[0].direccion.display_name,
         category: employeeRequest.employee.employee_hiring[0].category?.display_name,
+        adscription: employeeRequest.employee.employee_adscriptions[0],
       },
       request: {
         ...employeeRequest.request,
@@ -573,6 +638,23 @@ export const EmployeeRequestService = {
           location: {
             ...employeeRequest.employee_request_detail[0].location,
           },
+        }),
+        ...(employeeRequest.request.name === "adscription_change_request" && {
+          current_direccion: employeeRequest.employee_request_detail[0].direccion
+            ? { ...employeeRequest.employee_request_detail[0].direccion }
+            : null,
+          new_direccion: employeeRequest.employee_request_detail[0].new_direccion
+            ? { ...employeeRequest.employee_request_detail[0].new_direccion }
+            : null,
+          current_location: employeeRequest.employee_request_detail[0].location
+            ? { ...employeeRequest.employee_request_detail[0].location }
+            : null,
+          new_location: employeeRequest.employee_request_detail[0].new_location
+            ? { ...employeeRequest.employee_request_detail[0].new_location }
+            : null,
+          attendance: employeeRequest.employee_request_detail[0].attendance
+            ? { ...employeeRequest.employee_request_detail[0].attendance }
+            : null,
         }),
         request_date: employeeRequest.request_date,
       },

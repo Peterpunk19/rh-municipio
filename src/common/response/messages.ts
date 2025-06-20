@@ -70,6 +70,7 @@ export const HttpMessages = {
     notFound: "Datos no encontrados",
     validationFields: "Datos incorrectos, por favor revise de nuevo el formulario.",
     notAuthorized: "No autorizado: JWT inválido o ausente",
+    invalidJSONFormat: "Invalid JSON format",
   },
   user: {
     usernameAlreadyExists: "El nombre de usuario ya existe",
@@ -95,6 +96,7 @@ export const HttpMessages = {
   },
   request: {
     notFoundById: "No se encontró solicitud con el ID proporcionado",
+    validationsNotFound: "No se encontraron validaciones para este tipo de solicitud",
   },
   day: {
     notFoundById: "No se encontró el día con el ID proporcionado",

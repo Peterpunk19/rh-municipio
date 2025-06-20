@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppDispatch } from "../store";
-import REQUEST_TYPES from "@/common/constants/RequestTypes";
 
 interface StateType {
   employeeData: any;
@@ -31,6 +29,11 @@ interface StateType {
     attendanceTypeForm: {
       attendanceType: string;
       applicationDate: string;
+    };
+    adscriptionForm: {
+      direccionId: number;
+      locationId: number;
+      attendanceType: string;
     };
   };
   errors: {
@@ -66,6 +69,11 @@ const initialState: StateType = {
       attendanceType: "",
       applicationDate: "",
     },
+    adscriptionForm: {
+      attendanceType: "",
+      locationId: 0,
+      direccionId: 0,
+    },
   },
   errors: {},
   currentJobSchedule: null,
@@ -91,9 +99,6 @@ export const CreateEmployeeRequestSlice = createSlice({
       
       current[fields[fields.length - 1]] = value;
     },
-    addSchedule(state, action: PayloadAction<any>) {
-      state.formData.scheduleForm.schedules.push(action.payload);
-    },
     removeSchedule(state, action: PayloadAction<number>) {
       state.formData.scheduleForm.schedules.splice(action.payload, 1);
     },
@@ -102,9 +107,6 @@ export const CreateEmployeeRequestSlice = createSlice({
     },
     clearErrors(state) {
       state.errors = {};
-    },
-    setCurrentJobSchedule(state, action: PayloadAction<any>) {
-      state.currentJobSchedule = action.payload;
     },
     resetForm(state) {
       state.formData = initialState.formData;
@@ -116,66 +118,11 @@ export const CreateEmployeeRequestSlice = createSlice({
 export const { 
   setEmployeeData, 
   updateFormData, 
-  addSchedule, 
   removeSchedule,
   setErrors,
   clearErrors,
-  setCurrentJobSchedule,
   resetForm
 } = CreateEmployeeRequestSlice.actions;
 
-export const validateForm = () => (dispatch: AppDispatch) => {
-  const errors: { [key: string]: string } = {};
-
-  if (!state.formData.employeeId || state.formData.employeeId === "0") {
-    errors.employeeId = "El empleado es requerido";
-  }
-
-  if (!state.formData.description) {
-    errors.description = "La descripción es requerida";
-  }
-
-  if (!state.formData.typeRequestId || state.formData.typeRequestId === "0") {
-    errors.typeRequestId = "El tipo de solicitud es requerido";
-  }
-
-  switch (Number(state.formData.typeRequestId)) {
-    case REQUEST_TYPES.SCHEDULE:
-      if (state.formData.scheduleForm.schedules.length === 0) {
-        errors.scheduleForm = "Debe agregar al menos un horario";
-      }
-      break;
-    case REQUEST_TYPES.LOCATION:
-      if (!state.formData.locationForm.newLocationId) {
-        errors.newLocationId = "La nueva ubicación es requerida";
-      }
-      if (!state.formData.locationForm.startDate) {
-        errors.startDate = "La fecha de inicio es requerida";
-      }
-      if (!state.formData.locationForm.endDate) {
-        errors.endDate = "La fecha de fin es requerida";
-      }
-      break;
-    case REQUEST_TYPES.ATTENDANCE:
-      if (!state.formData.attendanceTypeForm.attendanceType) {
-        errors.attendanceType = "El tipo de checado es requerido";
-      }
-      if (!state.formData.attendanceTypeForm.applicationDate) {
-        errors.applicationDate = "La fecha de aplicación es requerida";
-      }
-      break;
-    case REQUEST_TYPES.FINGERPRINT:
-      if (!state.formData.fingerprintForm.locationId) {
-        errors.locationId = "La ubicación es requerida";
-      }
-      if (!state.formData.fingerprintForm.requestDate) {
-        errors.requestDate = "La fecha de registro es requerida";
-      }
-      break;
-  }
-  
-  dispatch(setErrors(errors));
-  return Object.keys(errors).length === 0;
-};
 
 export default CreateEmployeeRequestSlice.reducer;

@@ -11,14 +11,10 @@ export const response = {
   }),
   emptyParams: generator.response({
     responseObject: {
-      description: {
-        messages: [validationMessages.required("Descripción")],
-      },
       requestId: {
-        messages: [validationMessages.required("Tipo de solicitud")],
-      },
-      employeeId: {
-        messages: [validationMessages.required("Empleado")],
+        messages: [
+          validationMessages.invalidDiscriminator("Invalid discriminator value. Expected 1 | 2 | 3 | 4 | 5 | 6 | 7"),
+        ],
       },
     },
   }),
@@ -32,7 +28,9 @@ export const response = {
   emptyRequestId: generator.response({
     responseObject: {
       requestId: {
-        messages: [validationMessages.required("Tipo de solicitud")],
+        messages: [
+          validationMessages.invalidDiscriminator("Invalid discriminator value. Expected 1 | 2 | 3 | 4 | 5 | 6 | 7"),
+        ],
       },
     },
   }),

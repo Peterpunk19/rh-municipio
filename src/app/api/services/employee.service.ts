@@ -206,6 +206,18 @@ export const EmployeeService = {
         },
       });
 
+      const createEmployeeAscriptions = await tx.employeeAdscriptions.create({
+        data: {
+          employee_id: createEmployee.id,
+          start_date: employee.startJobDate,
+          end_date: employee.endJobDate,
+          direccion_id: Number(employee.direccionId),
+          created_by_id: 1,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      });
+
       const createdEmployeeLocation = await tx.employeeLocation.create({
         data: {
           employee: {
@@ -244,6 +256,7 @@ export const EmployeeService = {
         createEmployeeAddress,
         createdEmployeeLocation,
         createdEmployeeAttendanceType,
+        createEmployeeAscriptions,
       ];
     });
   },

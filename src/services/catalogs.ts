@@ -23,17 +23,17 @@ export const fetchCategoryData = async (options?: { signal?: AbortSignal }): Pro
   }
 };
 
-export const fetchSecretariasData = async (): Promise<IResponseObject | null> => {
+export const fetchSecretariasData = async (): Promise<IResponseObject> => {
   try {
     const response = await http.get<IResponseObject>("/api/catalogs/secretarias");
     return response.data;
   } catch (error) {
     console.error("Failed to fetch secretarias:", error);
-    return null;
+    return { success: false, responseObject: [] };
   }
 };
 
-export const fetchDireccionesData = async (secretariaId: string): Promise<IResponseObject | null> => {
+export const fetchDireccionesData = async (secretariaId: string): Promise<IResponseObject> => {
   if (!secretariaId || secretariaId === "0") return null;
 
   try {
@@ -41,7 +41,7 @@ export const fetchDireccionesData = async (secretariaId: string): Promise<IRespo
     return response.data;
   } catch (error) {
     console.error("Failed to fetch direcciones:", error);
-    return null;
+    return { success: false, responseObject: [] };
   }
 };
 
