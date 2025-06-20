@@ -50,6 +50,7 @@ describe("EmployeeIncidentsService", () => {
         folio: "000124",
         oficio: "",
         description: "Test",
+        createdBy: "1",
       };
 
       (prisma.employeeIncidents.findFirst as jest.Mock).mockResolvedValue(null);
@@ -79,6 +80,7 @@ describe("EmployeeIncidentsService", () => {
         folio: "000124",
         oficio: "12345",
         description: "Test",
+        createdBy: "1",
       };
 
       const mockCreatedIncident = { id: 1, ...mockIncident };

@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getHours } from "@/app/api/services/catalog.service";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";

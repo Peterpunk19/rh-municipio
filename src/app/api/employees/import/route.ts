@@ -32,7 +32,7 @@ function mapToIEmployee(data: any): IEmployee {
     startJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     endJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     categoryId: getRandomNumber(1, 193),
-    employeeTypeName: "base_no_sindizalizado",
+    employeeTypeName: "base_no_sindicalizado",
     direccionId: 1,
     maritalStatusId: 1,
     schoolingId: getRandomNumber(1, 10),
@@ -66,7 +66,6 @@ export async function POST(request: NextRequest) {
           if (employeeMapped.curp == "") employeeMapped.curp = employeeMapped.rfc;
 
           const employeeType = await EmployeeTypeService.getEmployeeTypeByName(body.employeeTypeName);
-
           if (employeeType) {
             employeeMapped.employeeTypeId = employeeType.id;
 

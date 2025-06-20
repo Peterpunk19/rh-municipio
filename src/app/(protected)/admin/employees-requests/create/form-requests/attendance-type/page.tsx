@@ -25,17 +25,9 @@ const AttendanceTypeForm = () => {
 
   return (
     <Box>
-      <Grid2 container spacing={2}>
-        <Grid2 size={12}>
-          <CustomFormLabel sx={{ mt: 0 }}>Tipo de checado actual</CustomFormLabel>
-          <Typography variant="body1" gutterBottom>
-            {employeeData?.attendance_type_display_name ? employeeData?.attendance_type_display_name : "No asignado"}
-          </Typography>
-        </Grid2>
-      </Grid2>
       <Grid2 container spacing={1} sx={{ mt: 1 }}>
         <Grid2 size={{ xs: 12, md: 12 }}>
-          <CustomFormLabel> Nuevo Tipo de Checado</CustomFormLabel>
+          <CustomFormLabel sx={{ m: 0, p: 0 }}> Nuevo Tipo de Checado</CustomFormLabel>
 
           {!isLoading && error ? (
             <Typography variant="body1" gutterBottom>

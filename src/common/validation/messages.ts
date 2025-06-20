@@ -1,5 +1,6 @@
 export const validationMessages = {
   required: (field: string) => `${field} es requerido`,
+  invalidDiscriminator: (field: string) => `${field}`,
   requiredIf: (targetField: string, conditionField: string, expectedValue: string) =>
     `${targetField} es requerido si el ${conditionField} es ${expectedValue}`,
   maxLength: (field: string, max: number) => `${field} no puede exceder de ${max} caracteres`,

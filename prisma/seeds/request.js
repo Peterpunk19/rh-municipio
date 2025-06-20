@@ -1,16 +1,21 @@
 const requests = [
-  { id: 1, name: "schedule_change_request", display_name: "HORARIO", description: "Solicitud de cambio de horario" },
+  {
+    id: 1,
+    name: "schedule_change_request",
+    display_name: "CAMBIO DE HORARIO",
+    description: "Solicitud de cambio de horario",
+  },
   {
     id: 2,
     name: "location_change_request",
-    display_name: "UBICACION",
-    description: "Solicitiud de cambio de ubicación",
+    display_name: "COMISIÓN",
+    description: "Solicitud de cambio de ubicación",
   },
   {
     id: 3,
     name: "checker_change_request",
     display_name: "TIPO DE CHECADO",
-    description: "Solicitiud de cambio de tipo de checador",
+    description: "Solicitud de cambio de tipo de checador",
   },
   {
     id: 4,
@@ -18,5 +23,24 @@ const requests = [
     display_name: "REGISTRO DE HUELLA",
     description: "Solicitud de registro de huella en checador",
   },
+  {
+    id: 5,
+    name: "adscription_change_request",
+    display_name: "CAMBIO DE ADSCRIPCIÓN",
+    description: "Solicitud de cambio de adscripción",
+  },
+  {
+    id: 6,
+    name: "release_request",
+    display_name: "PUESTO A DISPOSICIÓN",
+    description: "Solicitud de puesto a disposición",
+  },
+  {
+    id: 7,
+    name: "union_leave_request",
+    display_name: "LICENCIA SINDICAL",
+    description: "Solicitud de licencia sindical",
+  },
 ];
+
 module.exports = requests;

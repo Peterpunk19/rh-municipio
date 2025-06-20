@@ -3,6 +3,9 @@ const REQUEST_TYPES = {
   LOCATION: 2,
   ATTENDANCE: 3,
   FINGERPRINT: 4,
+  ADSCRIPTION: 5,
+  RELEASE: 6,
+  UNION_LEAVE: 7,
 };
 
 export default REQUEST_TYPES;

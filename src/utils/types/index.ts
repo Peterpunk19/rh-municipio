@@ -6,6 +6,7 @@ export interface ICatalog {
 }
 
 export interface IResponseObject {
+  success: boolean;
   responseObject: { id: string; name: string; display_name: string }[];
 }
 

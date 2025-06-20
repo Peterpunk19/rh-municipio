@@ -54,8 +54,8 @@ describe("API: /employee-requests", () => {
         (EmployeeRequestService.validateEmployeeRequest as jest.Mock).mockResolvedValue(null);
         (RequestService.getRequestById as jest.Mock).mockResolvedValue({
           id: requestData.requestId,
-          name: "Name",
-          display_name: "DISPLAY_NAME",
+          name: "schedule_change_request",
+          display_name: "CAMBIO DE HORARIO",
           description: "Estatus de la solicitud",
           active: 1,
         });
