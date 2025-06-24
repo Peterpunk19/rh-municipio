@@ -1,11 +1,15 @@
+export interface IDirector {
+  id: number;
+  name: string;
+  startDate?: string;
+  endDate?: string;
+}
+
 export interface IDireccion {
   id: number;
   name: string;
-  display_name: string;
-  director: { id: number; name: string };
-  deputy_director: { id: number; name: string };
-  startDate: string;
-  endDate: string;
+  director: IDirector;
+  deputy_director: IDirector;
 }
 
 export interface IAdministrativeOrganization {
@@ -13,4 +17,20 @@ export interface IAdministrativeOrganization {
   name: string;
   display_name: string;
   direcciones?: IDireccion[];
+}
+
+export interface DirectorFormProps {
+  open: boolean;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  secretaria: string;
+  direccion: IDireccion | null;
+}
+
+export interface FormErrors {
+  director_id?: string;
+  deputy_director_id?: string;
+  startDate?: string;
+  endDate?: string;
+  [key: string]: string | undefined;
 }

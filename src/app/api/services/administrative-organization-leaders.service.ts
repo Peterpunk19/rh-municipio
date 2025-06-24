@@ -15,6 +15,15 @@ export const AdministrativeOrganizationLeadersService = {
           end_date: new Date(leader.endDate),
           active: true,
         },
+        include: {
+          employee: {
+            select: {
+              name: true,
+              paternal_last_name: true,
+              maternal_last_name: true,
+            },
+          },
+        },
       });
 
       if (existingIdenticalLeader) {
@@ -26,6 +35,11 @@ export const AdministrativeOrganizationLeadersService = {
           active: existingIdenticalLeader.active,
           start_date: existingIdenticalLeader.start_date,
           end_date: existingIdenticalLeader.end_date,
+          employee: {
+            name: existingIdenticalLeader.employee.name,
+            paternal_last_name: existingIdenticalLeader.employee.paternal_last_name,
+            maternal_last_name: existingIdenticalLeader.employee.maternal_last_name,
+          },
         };
       }
 
@@ -73,6 +87,13 @@ export const AdministrativeOrganizationLeadersService = {
           active: true,
           start_date: true,
           end_date: true,
+          employee: {
+            select: {
+              name: true,
+              paternal_last_name: true,
+              maternal_last_name: true,
+            },
+          },
         },
       });
     });
@@ -193,10 +214,13 @@ export const AdministrativeOrganizationLeadersService = {
         return {
           id: direccion.id,
           name: direccion.display_name,
-          director: { id: director?.employee.id ?? "", name: getFullName(director?.employee) },
+          director: {
+            id: director?.employee.id ?? "",
+            name: getFullName(director?.employee),
+            startDate: director?.start_date ?? null,
+            endDate: director?.end_date ?? null,
+          },
           deputy_director: { id: deputyDirector?.employee.id ?? "", name: getFullName(deputyDirector?.employee) },
-          startDate: director?.start_date ?? null,
-          endDate: director?.end_date ?? null,
         };
       }),
     }));

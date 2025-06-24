@@ -9,3 +9,12 @@ export const getAdministrativesOrganizations = async (): Promise<IResponse> => {
     return error;
   }
 };
+
+export const updateLeader = async (data: object): Promise<IResponse> => {
+  try {
+    const response = await http.post<IResponse>("/api/administrative-organizations/leader", data);
+    return response.data;
+  } catch (error: any) {
+    return error;
+  }
+};

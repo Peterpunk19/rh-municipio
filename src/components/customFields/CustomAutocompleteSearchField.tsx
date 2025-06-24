@@ -5,10 +5,13 @@ import { Autocomplete, TextField, CircularProgress, MenuItem, Paper } from "@mui
 import { useDebouncedCallback } from "use-debounce";
 import { CustomAutocompleteProps } from "@/components/customFields/type";
 
-const CustomAutocompleteSearchField: React.FC<CustomAutocompleteProps> = ({ field, handleChange }) => {
+export type { CustomAutocompleteProps };
+
+const CustomAutocompleteSearchField = ({ field, handleChange, initialOption }: CustomAutocompleteProps) => {
   const [inputValue, setInputValue] = useState(field.value);
   const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<any[]>([]);
+  const [options, setOptions] = useState<any[]>(initialOption ? [initialOption] : []);
+  const [selectedOption, setSelectedOption] = useState<any>(initialOption || null);
 
   const fetchOptions = useDebouncedCallback(async (query: string) => {
     if (!query) return;
@@ -25,11 +28,18 @@ const CustomAutocompleteSearchField: React.FC<CustomAutocompleteProps> = ({ fiel
   }, 800);
 
   useEffect(() => {
-    if(inputValue === "") {
-      setOptions([]);
+    if (inputValue === "") {
+      setOptions(initialOption ? [initialOption] : []);
+    } else {
+      fetchOptions(inputValue);
     }
-    fetchOptions(inputValue);
-  }, [inputValue, fetchOptions]);
+  }, [inputValue, fetchOptions, initialOption]);
+
+  useEffect(() => {
+    if (initialOption) {
+      setSelectedOption(initialOption);
+    }
+  }, [initialOption]);
 
   return (
     <Autocomplete
@@ -40,6 +50,7 @@ const CustomAutocompleteSearchField: React.FC<CustomAutocompleteProps> = ({ fiel
       inputValue={inputValue}
       onInputChange={(_, option) => setInputValue(option)}
       onChange={(_, option) => handleChange(_, option)}
+      value={selectedOption}
       loading={loading}
       renderInput={(params) => (
         <TextField

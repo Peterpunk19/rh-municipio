@@ -81,6 +81,7 @@ export async function PUT(request: NextRequest) {
         incidentStatusId === INCIDENT_STATUS_ID.CANCELADA ? employeeIncident.employee_id : Number(employeeId),
       checkIn: employeeIncident.start_date,
       checkOut: employeeIncident.end_date,
+      employeeAttendanceTypeId: employeeIncident.employee.employee_attendance_type[0].id,
     };
 
     const [updatedEmployeeIncident] = await EmployeeIncidentsService.updateEmployeeIncidents(updateData);
