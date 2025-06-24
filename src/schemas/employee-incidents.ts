@@ -40,10 +40,10 @@ export const EmployeeIncidentsPostSchema = z
       .number({ message: validationMessages.required("Asistencia") })
       .optional()
       .nullable(),
-    vacationDates: z
+    incidentDates: z
       .array(z.string())
       .max(Number(MAX_NUM_VACATION_DAYS), {
-        message: `Fechas de vacaciones no puede exceder de ${MAX_NUM_VACATION_DAYS} días`,
+        message: `Fechas de incidencia no puede exceder de ${MAX_NUM_VACATION_DAYS} días`,
       })
       .optional()
       .nullable(),

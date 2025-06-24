@@ -10,8 +10,9 @@ import {
   Button,
   IconButton,
   Stack,
-  Paper,
   Tooltip,
+  Grid2 as Grid,
+  Chip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -24,6 +25,12 @@ import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
 import { fetchCatalogData } from "@/services/catalogs";
 import { AppDispatch } from "@/store/store";
 import DateRangePicker from "@/components/customFields/DateRangePicker";
+import BlankCard from "@/app/components/shared/BlankCard";
+import CardContent from "@mui/material/CardContent";
+import Avatar from "@mui/material/Avatar";
+import { IconMapPin } from "@tabler/icons-react";
+import { onToggleFollow } from "@/store/apps/userProfile/UserProfileSlice";
+import { formatDate } from "@/utils/formatter";
 
 interface ScheduleFormProps {
   currentJobSchedule: any;
@@ -172,20 +179,44 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ currentJobSchedule }) => {
           <Typography variant="h6" gutterBottom>
             Horario Actual
           </Typography>
-          {currentJobSchedule ? (
-            <Paper sx={{ p: 2 }}>
-              <Typography>
-                {`${currentJobSchedule.start_day.display_name} a ${currentJobSchedule.end_day.display_name}`}
-              </Typography>
-              <Typography>
-                {`${currentJobSchedule.start_hour.display_name} a ${currentJobSchedule.end_hour.display_name}`}
-              </Typography>
-            </Paper>
-          ) : (
-            <Typography color="text.secondary">No hay horario asignado actualmente</Typography>
-          )}
         </Grid2>
 
+        <Grid2 size={{ xs: 12 }}>
+          <Grid2 container spacing={2}>
+            {currentJobSchedule && currentJobSchedule.length ? (
+              currentJobSchedule.map((schedule: any, index: any) => (
+                <Grid
+                  key={index.id}
+                  size={{
+                    xs: 2,
+                  }}
+                >
+                  <BlankCard>
+                    <CardContent>
+                      <Stack direction={"row"} gap={2} alignItems="center">
+                        <Box>
+                          <Typography>
+                            {`${schedule.start_day.display_name} a ${schedule.end_day.display_name}`}
+                          </Typography>
+                          <Chip
+                            key={index}
+                            label={`${schedule.start_hour.display_name} a ${schedule.end_hour.display_name}`}
+                            color="primary"
+                            variant="outlined"
+                            size="small"
+                            sx={{ mr: 1 }}
+                          />
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </BlankCard>
+                </Grid>
+              ))
+            ) : (
+              <Typography color="text.secondary">No hay horario asignado actualmente</Typography>
+            )}
+          </Grid2>
+        </Grid2>
         <Grid2 size={{ xs: 12 }}>
           <Stack direction="row" spacing={2} alignItems="center">
             <Typography variant="h6" gutterBottom>

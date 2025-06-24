@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type {JobScheduleEmployee} from "@/app/api/interfaces/JobScheduleEmployee";
 
 interface StateType {
   employeeData: any;
@@ -102,6 +103,9 @@ export const CreateEmployeeRequestSlice = createSlice({
     removeSchedule(state, action: PayloadAction<number>) {
       state.formData.scheduleForm.schedules.splice(action.payload, 1);
     },
+    setCurrentJobSchedule(state, action: PayloadAction<JobScheduleEmployee>) {
+      state.currentJobSchedule = action.payload;
+    },
     setErrors(state, action: PayloadAction<{ [key: string]: string }>) {
       state.errors = action.payload;
     },
@@ -119,6 +123,7 @@ export const {
   setEmployeeData, 
   updateFormData, 
   removeSchedule,
+  setCurrentJobSchedule,
   setErrors,
   clearErrors,
   resetForm

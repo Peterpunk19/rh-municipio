@@ -34,13 +34,14 @@ import {
   resetForm,
   setErrors,
   clearErrors,
+  setCurrentJobSchedule,
 } from "@/store/employees-requests/CreateEmployeeRequest";
 import type { RootState } from "@/store/store";
 import { getEmployeeJobSchedule } from "@/services/employees";
 import type { Employee } from "@/app/api/interfaces/Employee";
 import type { JobScheduleEmployee } from "@/app/api/interfaces/JobScheduleEmployee";
 import type { HttpResponse } from "@/app/api/interfaces/HttpResponse";
-import { setSelectedEmployee, setJobSchedule } from "@/store/slices/employeeRequestSlice";
+import { setSelectedEmployee } from "@/store/slices/employeeRequestSlice";
 import type { AppDispatch } from "@/store/store";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import CustomTextField from "@/components/theme-elements/CustomTextField";
@@ -85,7 +86,7 @@ const CreateRequestForm = () => {
         dispatch(updateFormData({ field: "employeeId", value: employee.id.toString() }));
         const response = (await getEmployeeJobSchedule(employee.id)) as HttpResponse<JobScheduleEmployee>;
         if (response?.success && response.responseObject) {
-          dispatch(setJobSchedule(response.responseObject));
+          dispatch(setCurrentJobSchedule(response.responseObject));
         }
       } catch (error) {
         console.error("Error fetching employee job schedule:", error);

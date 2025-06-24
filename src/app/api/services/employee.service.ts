@@ -720,7 +720,7 @@ export const EmployeeService = {
 
   async getCurrentJobSchedule(employeeId: number) {
     try {
-      const jobSchedule = await prisma.jobScheduleEmployee.findFirst({
+      return await prisma.jobScheduleEmployee.findMany({
         where: {
           employee_id: employeeId,
           active: true,
@@ -731,8 +731,10 @@ export const EmployeeService = {
           start_hour: true,
           end_hour: true,
         },
+        orderBy: {
+          id: "desc",
+        },
       });
-      return jobSchedule;
     } catch (error) {
       throw error;
     }

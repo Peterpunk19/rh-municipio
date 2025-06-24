@@ -17,38 +17,6 @@ const EmployeeScheduleRequestSchema = z.object({
     .positive({ message: validationMessages.required("Hora de término") }),
 });
 
-export const EmployeeRequestDatesPostSchema = z
-  .object({
-    startDate: z
-      .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }))
-      .optional()
-      .nullable(),
-    endDate: z
-      .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de fin") }))
-      .optional()
-      .nullable(),
-  })
-  .refine(
-    (data) => {
-      if (!data.startDate || !data.endDate) return true;
-      return data.endDate >= data.startDate;
-    },
-    {
-      message: validationMessages.invalidDateRange("Fecha de fin", "Fecha de inicio"),
-      path: ["endDate"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (!data.startDate && !data.endDate) return true;
-      return !!data.startDate && !!data.endDate;
-    },
-    {
-      message: validationMessages.requiredIf("El campo Fecha de fin", "campo Fecha de inicio", "agregado y viceversa."),
-      path: ["startDate", "endDate"],
-    },
-  );
-
 export const EmployeeRequestsGetFilterSchema = z.object({
   page: z
     .number({ message: validationMessages.number("Página") })
@@ -224,42 +192,22 @@ const RequestSchemas = [
   UnionLeaveSchema,
 ] as const;
 
-export const EmployeeRequestPostSchema = z
-  .discriminatedUnion("requestId", RequestSchemas)
-  .refine(
-    (data) => {
-      const hasDates = [1, 2, 5, 7].includes(data.requestId);
+export const EmployeeRequestPostSchema = z.discriminatedUnion("requestId", RequestSchemas).refine(
+  (data) => {
+    const hasDates = [1, 2, 5, 7].includes(data.requestId);
 
-      if (!hasDates) return true;
+    if (!hasDates) return true;
 
-      const d = data as {
-        startDate: Date;
-        endDate: Date;
-      };
+    const d = data as {
+      startDate: Date;
+      endDate: Date;
+    };
 
-      if (!d.startDate || !d.endDate) return true;
-      return d.endDate >= d.startDate;
-    },
-    {
-      message: validationMessages.invalidDateRange("Fecha de fin", "Fecha de inicio"),
-      path: ["endDate"],
-    },
-  )
-  .refine(
-    (data) => {
-      const hasDates = [1, 2, 5, 7].includes(data.requestId);
-
-      if (!hasDates) return true;
-
-      const d = data as {
-        startDate?: Date;
-        endDate?: Date;
-      };
-
-      return !!d.startDate && !!d.endDate;
-    },
-    {
-      message: validationMessages.requiredIf("El campo Fecha de fin", "campo Fecha de inicio", "agregado y viceversa."),
-      path: ["startDate", "endDate"],
-    },
-  );
+    if (!d.startDate || !d.endDate) return true;
+    return d.endDate >= d.startDate;
+  },
+  {
+    message: validationMessages.invalidDateRange("Fecha de fin", "Fecha de inicio"),
+    path: ["endDate"],
+  },
+);

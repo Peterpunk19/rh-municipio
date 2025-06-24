@@ -42,10 +42,6 @@ export const EmployeeIncidentsService = {
 
   async createEmployeeIncidents(employeeIncident: IEmployeeIncident) {
     return prisma.$transaction(async (tx) => {
-      if (employeeIncident.vacationDates && employeeIncident.vacationDates.length > MAX_VACATION_DAYS) {
-        throw new Error(`Las fechas de vacaciones no pueden exceder ${MAX_VACATION_DAYS} días`);
-      }
-
       const createEmployeeIncidents = await tx.employeeIncidents.create({
         data: {
           folio: employeeIncident.folio,
@@ -84,8 +80,8 @@ export const EmployeeIncidentsService = {
         },
       });
 
-      if (employeeIncident.vacationDates && employeeIncident.vacationDates.length > 0) {
-        const vacationDayRecords = employeeIncident.vacationDates.map((dateStr) => ({
+      if (employeeIncident.incidentDates && employeeIncident.incidentDates.length > 0) {
+        const vacationDayRecords = employeeIncident.incidentDates.map((dateStr) => ({
           date: new Date(dateStr),
           employee_incident_id: createEmployeeIncidents.id,
           created_at: new Date(),
@@ -214,6 +210,7 @@ export const EmployeeIncidentsService = {
             id: true,
             name: true,
             display_name: true,
+            type: true,
           },
         },
         incident_status: {
@@ -276,6 +273,18 @@ export const EmployeeIncidentsService = {
             employee_attendance_type: {
               select: {
                 id: true,
+              },
+            },
+            job_schedule_employee: {
+              where: {
+                active: true,
+              },
+              select: {
+                id: true,
+                start_day: true,
+                end_day: true,
+                start_hour: true,
+                end_hour: true,
               },
             },
           },

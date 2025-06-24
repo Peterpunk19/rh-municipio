@@ -52,12 +52,36 @@ export interface Employee {
       display_name: string;
     };
   }>;
+  job_schedule_employee: Array<{
+    id: number;
+    start_day: {
+      id: number;
+      name: string;
+      display_name: string;
+    };
+    end_day: {
+      id: number;
+      name: string;
+      display_name: string;
+    };
+    start_hour: {
+      id: number;
+      name: string;
+      display_name: string;
+    };
+    end_hour: {
+      id: number;
+      name: string;
+      display_name: string;
+    };
+  }>;
 }
 
 export interface IncidentData {
   incident?: {
     name: IncidentTypes;
     display_name: string;
+    type: string;
   };
   start_date: string;
   end_date: string;

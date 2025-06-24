@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "@react-pdf/renderer";
-import { formatDate } from "@/utils/formatter";
 import { IncidentItemProps } from "./types";
+import IncidentDays from "@/components/shared/pdfs/templates/incidents/IncidentDays";
 
 const VacationIncident: React.FC<IncidentItemProps> = ({ data, styles }) => {
   return (
@@ -13,11 +13,7 @@ const VacationIncident: React.FC<IncidentItemProps> = ({ data, styles }) => {
       </View>
       <View style={styles.row}>
         <Text style={[styles.cell, styles.uppercase, styles.italic, { flex: 1 }]}>{data.incident?.display_name}</Text>
-        <Text style={[styles.cell, styles.uppercase, styles.italic, { flex: 2 }]}>
-          {data.employee_incident_days
-            .map((days: any) => formatDate(days.date, "dd/MM/yyyy"))
-            .join(" - ")}
-        </Text>
+        <IncidentDays data={data} styles={styles} />
         <Text style={[styles.cell, styles.uppercase, styles.italic, styles.lastCell, { flex: 1 }]}>
           {data.employee_incident_days.length}
         </Text>

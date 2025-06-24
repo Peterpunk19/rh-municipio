@@ -109,30 +109,33 @@ const IncidentTemplate: React.FC<{ data: IncidentData }> = ({ data }) => {
             <Text style={[styles.cell, styles.cellHeader, { flex: 1 }]}>HORA DE SALIDA</Text>
             <Text style={[styles.cell, styles.cellHeader, styles.lastCell, { flex: 1 }]}>REGISTRO DE ASISTENCIAS</Text>
           </View>
-          <View style={styles.row}>
-            <Text style={[styles.cell, styles.center, styles.uppercase, styles.italic, styles.lastRow, { flex: 1 }]}>
-              {data.jornada}
-            </Text>
-            <Text style={[styles.cell, styles.center, styles.uppercase, styles.italic, styles.lastRow, { flex: 1 }]}>
-              {data.entrada}
-            </Text>
-            <Text style={[styles.cell, styles.center, styles.uppercase, styles.italic, styles.lastRow, { flex: 1 }]}>
-              {data.salida}
-            </Text>
-            <Text
-              style={[
-                styles.cell,
-                styles.center,
-                styles.uppercase,
-                styles.italic,
-                styles.lastCell,
-                styles.lastRow,
-                { flex: 1 },
-              ]}
-            >
-              {data.registro}
-            </Text>
-          </View>
+          {data.employee.job_schedule_employee.map((item) => (
+            <View style={styles.row} key={`job_schedule_${item.id}`}>
+              <Text style={[styles.cell, styles.center, styles.uppercase, styles.italic, styles.lastRow, { flex: 1 }]}>
+                {item.start_day.display_name} - {item.end_day.display_name}
+              </Text>
+              <Text style={[styles.cell, styles.center, styles.uppercase, styles.italic, styles.lastRow, { flex: 1 }]}>
+                {item.start_hour.display_name}
+              </Text>
+              <Text style={[styles.cell, styles.center, styles.uppercase, styles.italic, styles.lastRow, { flex: 1 }]}>
+                {item.end_hour.display_name}
+              </Text>
+              <Text
+                style={[
+                  styles.cell,
+                  styles.center,
+                  styles.uppercase,
+                  styles.italic,
+                  styles.lastCell,
+                  styles.lastRow,
+                  { flex: 1 },
+                ]}
+              >
+                {data.registro}
+              </Text>
+            </View>
+          ))}
+
         </View>
 
         <Text style={styles.tableTitle}>DATOS DE LA INCIDENCIA</Text>
