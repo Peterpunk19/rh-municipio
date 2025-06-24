@@ -1,7 +1,6 @@
 import React from "react";
 import { Text, View } from "@react-pdf/renderer";
 import { formatDate } from "@/utils/formatter";
-import { calculateDaysBetweenDates } from "@/common/utils";
 import { IncidentItemProps } from "./types";
 
 const DeathLeaveIncident: React.FC<IncidentItemProps> = ({ data, styles }) => {
@@ -24,10 +23,7 @@ const DeathLeaveIncident: React.FC<IncidentItemProps> = ({ data, styles }) => {
           {data.parentesco || "NO ESPECIFICADO"}
         </Text>
         <Text style={[styles.cell, styles.uppercase, styles.italic, styles.lastCell, { flex: 1 }]}>
-          {calculateDaysBetweenDates(
-            formatDate(data.start_date, "dd/MM/yyyy"),
-            formatDate(data.end_date, "dd/MM/yyyy"),
-          )}
+          {data.employee_incident_days.length}
         </Text>
       </View>
     </>

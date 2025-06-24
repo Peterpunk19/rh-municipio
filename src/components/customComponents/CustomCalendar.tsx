@@ -14,12 +14,11 @@ type CalendarDay = {
 interface CustomCalendarProps {
   onSave?: (selectedDates: string[]) => void;
   onCancel?: () => void;
-  showActions?: boolean;
   maxSelections?: number;
   daysSelected?: string[];
 }
 
-const CustomCalendar = ({ onSave, onCancel, showActions = false, maxSelections = 20, daysSelected = [] }: CustomCalendarProps) => {
+const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [] }: CustomCalendarProps) => {
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const today = Temporal.Now.plainDateISO();
 
@@ -48,8 +47,6 @@ const CustomCalendar = ({ onSave, onCancel, showActions = false, maxSelections =
   }, [month, year]);
 
   const handleDateClick = useCallback((dateStr: string) => {
-    if (!showActions) return;
-
     setSelectedDates(prev => {
       const newSelectedDates = new Set(prev);
       
@@ -65,7 +62,7 @@ const CustomCalendar = ({ onSave, onCancel, showActions = false, maxSelections =
       
       return newSelectedDates;
     });
-  }, [showActions, maxSelections]);
+  }, [maxSelections]);
 
   const handleSave = useCallback(() => {
     const sortedDates = Array.from(selectedDates).sort();
@@ -132,13 +129,11 @@ const CustomCalendar = ({ onSave, onCancel, showActions = false, maxSelections =
           </Typography>
         </Box>
 
-        {showActions && (
-          <Box>
-            <Typography variant="body2" color="textSecondary">
-              Fechas seleccionadas: {selectedDates.size} / {maxSelections}
-            </Typography>
-          </Box>
-        )}
+        <Box>
+          <Typography variant="body2" color="textSecondary">
+            Fechas seleccionadas: {selectedDates.size} / {maxSelections}
+          </Typography>
+        </Box>
       </Box>
 
       <Grid container columns={7}>
@@ -178,8 +173,8 @@ const CustomCalendar = ({ onSave, onCancel, showActions = false, maxSelections =
                   p: 2,
                   position: 'relative',
                   minHeight: 112,
-                  cursor: showActions && day.isInMonth ? 'pointer' : 'default',
-                  '&:hover': showActions && day.isInMonth ? {
+                  cursor: day.isInMonth ? 'pointer' : 'default',
+                  '&:hover': day.isInMonth ? {
                     backgroundColor: isSelected ? '#1565c0' : '#e3f2fd',
                   } : {}
                 }}
@@ -212,30 +207,28 @@ const CustomCalendar = ({ onSave, onCancel, showActions = false, maxSelections =
           )
         })}
       </Grid>
-      
-      {showActions && (
-        <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
-          <Typography variant="body2" color="textSecondary">
-            {selectedDates.size > 0 
-              ? `${selectedDates.size} ${selectedDates.size === 1 ? 'día seleccionado' : 'días seleccionados'}`
-              : 'Selecciona las fechas de vacaciones'
-            }
-          </Typography>
-          <Box>
-            <Button onClick={handleCancel} color="error" sx={{ mr: 1 }}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleSave} 
-              variant="contained" 
-              color="primary"
-              disabled={selectedDates.size === 0}
-            >
-              Guardar Fechas
-            </Button>
-          </Box>
-        </DialogActions>
-      )}
+
+      <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
+        <Typography variant="body2" color="textSecondary">
+          {selectedDates.size > 0
+            ? `${selectedDates.size} ${selectedDates.size === 1 ? 'día seleccionado' : 'días seleccionados'}`
+            : 'Selecciona las fechas de vacaciones'
+          }
+        </Typography>
+        <Box>
+          <Button onClick={handleCancel} color="error" sx={{ mr: 1 }}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSave}
+            variant="contained"
+            color="primary"
+            disabled={selectedDates.size === 0}
+          >
+            Guardar Fechas
+          </Button>
+        </Box>
+      </DialogActions>
     </Box>
   );
 }

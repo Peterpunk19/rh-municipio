@@ -4,14 +4,12 @@ import type { JobScheduleEmployee } from "@/app/api/interfaces/JobScheduleEmploy
 
 interface EmployeeRequestState {
   selectedEmployee: Employee | null;
-  jobSchedule: JobScheduleEmployee | null;
-  // ... existing state properties ...
+  currentJobSchedule: JobScheduleEmployee | null;
 }
 
 const initialState: EmployeeRequestState = {
   selectedEmployee: null,
-  jobSchedule: null,
-  // ... existing initial state ...
+  currentJobSchedule: null,
 };
 
 export const employeeRequestSlice = createSlice({
@@ -22,9 +20,8 @@ export const employeeRequestSlice = createSlice({
       state.selectedEmployee = action.payload;
     },
     setJobSchedule: (state, action: PayloadAction<JobScheduleEmployee>) => {
-      state.jobSchedule = action.payload;
+      state.currentJobSchedule = action.payload;
     },
-    // ... existing reducers ...
   },
 });
 

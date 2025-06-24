@@ -62,11 +62,7 @@ export const EmployeesRequestsFiltersSlice = createSlice({
 export const { 
   hasError, 
   getEmployeeRequests, 
-  searchEmployeeRequest, 
-  sortById, 
-  filterEmployeeRequests, 
-  filterReset, 
-  emptyMessage 
+  emptyMessage
 } = EmployeesRequestsFiltersSlice.actions;
 
 export const fetchEmployeeRequests = (filters: string) => async (dispatch: AppDispatch) => {

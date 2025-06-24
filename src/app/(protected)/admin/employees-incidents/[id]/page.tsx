@@ -33,6 +33,7 @@ import IncidentDetails from "@/components/customComponents/IncidentDetails";
 import LoadingComponent from "@/components/customComponents/LoadingComponent";
 import PDFGenerator from "@/components/shared/pdfs/PDFGenerator";
 import IncidentTemplate from "@/components/shared/pdfs/templates/IncidentTemplate";
+import IncidentDays from "@/components/customComponents/IncidentDays";
 
 const BCrumb = [
   {
@@ -223,6 +224,11 @@ const EmployeeIncident = () => {
                 <Grid size={6}>
                   <IncidentDetails data={employeeIncidentData} />
                 </Grid>
+                {employeeIncidentData.incident.type ? (
+                  <Grid size={12}>
+                    <IncidentDays data={employeeIncidentData} />
+                  </Grid>
+                ) : null}
               </Grid>
 
               <Grid mb={3} size={12}>

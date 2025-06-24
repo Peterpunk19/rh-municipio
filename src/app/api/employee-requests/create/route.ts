@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { EmployeeRequestDatesPostSchema, EmployeeRequestPostSchema } from "@/schemas/employee-requests";
+import { EmployeeRequestPostSchema } from "@/schemas/employee-requests";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { validateRequest } from "@/common/request/validateRequest";

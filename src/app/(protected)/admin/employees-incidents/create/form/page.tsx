@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateFormData,
@@ -7,7 +7,7 @@ import {
   resetForm,
   setErrors,
   clearErrors,
-  setVacationDates,
+  setIncidentDates,
 } from "@/store/employees-incidents/EmployeesIncidentsSlice";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
@@ -41,8 +41,6 @@ import EmployeeFinder from "@/components/shared/EmployeeFinder";
 import { AppDispatch, RootState } from "@/store/store";
 import { formatDate } from "@/utils/formatter";
 
-const VACATION_INCIDENT_ID = 10;
-
 const IncidentCreateForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { formData, errors } = useSelector((state: RootState) => state.createEmployeeIncident);
@@ -52,18 +50,35 @@ const IncidentCreateForm = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
 
-  const isVacationIncident = Number(formData.incidentId) === VACATION_INCIDENT_ID;
-
   const handleChange = (event: any) => {
     const { name, value } = event.target;
     dispatch(updateFormData({ field: name, value }));
+    dispatch(setErrors({ field: name, value }));
 
-    if (name === "incidentId" && Number(value) === VACATION_INCIDENT_ID) {
-      setOpenCalendar(true);
+    if (name === "incidentId") {
+      const isCalendarIncident = incidentTypes?.find((item) => item.id === value)?.type === 1;
+
+      if (isCalendarIncident) {
+        setOpenCalendar(true);
+      }
     }
 
-    if (name === "incidentId" && Number(value) !== VACATION_INCIDENT_ID) {
-      dispatch(setVacationDates([]));
+    if (name === "endDate") {
+      const start = new Date(formData.startDate);
+      const end = new Date(value);
+
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime()) && start <= end) {
+        const dates: string[] = [];
+        const current = new Date(start);
+
+        while (current <= end) {
+          dates.push(current.toISOString().split("T")[0]);
+          current.setDate(current.getDate() + 1);
+        }
+        dispatch(setIncidentDates(dates));
+      } else {
+        dispatch(setIncidentDates([]));
+      }
     }
   };
 
@@ -82,6 +97,14 @@ const IncidentCreateForm = () => {
   const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
   const { options: incidentTypes, isLoading, error } = useFetchOptions(fetchData);
 
+  const calendarIncidentIds = useMemo(() => {
+    return incidentTypes?.filter((item) => item.type === 1).map((item) => item.id) || [];
+  }, [incidentTypes]);
+
+  const isVacationIncident = useMemo(() => {
+    return calendarIncidentIds.includes(formData.incidentId);
+  }, [formData.incidentId, calendarIncidentIds]);
+
   const handleCalendarSave = (selectedDates: string[]) => {
     if (selectedDates.length > 0) {
       const startDate = selectedDates[0];
@@ -89,13 +112,19 @@ const IncidentCreateForm = () => {
 
       dispatch(updateFormData({ field: "startDate", value: startDate }));
       dispatch(updateFormData({ field: "endDate", value: endDate }));
-      dispatch(setVacationDates(selectedDates));
+      dispatch(setIncidentDates(selectedDates));
     }
     setOpenCalendar(false);
   };
 
   const handleCalendarCancel = () => {
     setOpenCalendar(false);
+  };
+
+  const removeDates = () => {
+    dispatch(updateFormData({ field: "startDate", value: "" }));
+    dispatch(updateFormData({ field: "endDate", value: "" }));
+    dispatch(updateFormData({ field: "incidentDates", value: [] }));
   };
 
   const handleSubmit = async (event: any) => {
@@ -110,7 +139,7 @@ const IncidentCreateForm = () => {
     try {
       const submitData = {
         ...formData,
-        ...(isVacationIncident && { vacationDates: formData.vacationDates }),
+        ...(isVacationIncident && { incidentDates: formData.incidentDates }),
       };
 
       const response = await createEmployeeIncident(submitData);
@@ -165,7 +194,7 @@ const IncidentCreateForm = () => {
             </Grid2>
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
-                <CustomFormLabel>Tipo de incidencia</CustomFormLabel>
+                <CustomFormLabel sx={{ mt: 1 }}>Tipo de incidencia</CustomFormLabel>
                 <CustomSelect
                   fullWidth
                   name="incidentId"
@@ -193,21 +222,20 @@ const IncidentCreateForm = () => {
             </Grid2>
 
             <Dialog fullWidth maxWidth="lg" open={openCalendar} onClose={handleCalendarCancel} disableEscapeKeyDown>
-              <DialogTitle>Seleccionar fechas de vacaciones</DialogTitle>
+              <DialogTitle>Seleccionar fechas de incidencia</DialogTitle>
               <DialogContent>
                 <CustomCalendar
                   onSave={handleCalendarSave}
                   onCancel={handleCalendarCancel}
-                  showActions={true}
                   maxSelections={20}
-                  daysSelected={formData.vacationDates}
+                  daysSelected={formData.incidentDates}
                 />
               </DialogContent>
             </Dialog>
 
             <Grid2 size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
-                <CustomFormLabel>Fecha de inicio</CustomFormLabel>
+                <CustomFormLabel sx={{ mt: 1 }}>Fecha de inicio</CustomFormLabel>
                 <CustomTextField
                   id="startDate"
                   name="startDate"
@@ -218,12 +246,12 @@ const IncidentCreateForm = () => {
                   fullWidth
                   disabled={isVacationIncident}
                 />
-                <CustomLabelError field={errors.startDate && errors.startDate} />
+                <CustomLabelError field={errors.startDate} />
               </FormControl>
             </Grid2>
             <Grid2 size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
-                <CustomFormLabel>Fecha de terminación</CustomFormLabel>
+                <CustomFormLabel sx={{ mt: 1 }}>Fecha de terminación</CustomFormLabel>
                 <CustomTextField
                   id="endDate"
                   name="endDate"
@@ -241,7 +269,7 @@ const IncidentCreateForm = () => {
             {isVacationIncident && (
               <Grid2 size={{ lg: 12 }}>
                 <FormControl fullWidth>
-                  <CustomFormLabel>Fechas de vacaciones</CustomFormLabel>
+                  <CustomFormLabel sx={{ mt: 1 }}>Fechas de incidencia</CustomFormLabel>
                   <Box
                     sx={{
                       border: 1,
@@ -253,12 +281,12 @@ const IncidentCreateForm = () => {
                       alignItems: "center",
                       flexWrap: "wrap",
                       gap: 1,
-                      backgroundColor: "#f5f5f5",
+                      backgroundColor: "primary.light",
                     }}
                   >
-                    {formData.vacationDates && formData.vacationDates.length > 0 ? (
+                    {formData.incidentDates && formData.incidentDates.length > 0 ? (
                       <>
-                        {formData.vacationDates.map((date, index) => (
+                        {formData.incidentDates.map((date, index) => (
                           <Chip
                             key={index}
                             label={formatDate(date, "dd/MM/yyyy")}
@@ -267,21 +295,32 @@ const IncidentCreateForm = () => {
                             size="small"
                           />
                         ))}
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => setOpenCalendar(true)}
+                        <Stack
+                          justifyContent="space-between"
+                          direction="row"
+                          alignItems="center"
+                          my={2}
                           sx={{ ml: "auto" }}
                         >
-                          Modificar fechas
-                        </Button>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => setOpenCalendar(true)}
+                            sx={{ ml: "auto", mr: 2 }}
+                          >
+                            Modificar fechas
+                          </Button>
+                          <Button variant="outlined" color="warning" size="small" onClick={removeDates}>
+                            Quitar fechas
+                          </Button>
+                        </Stack>
                       </>
                     ) : (
                       <Box
                         sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}
                       >
                         <Typography variant="body2" color="textSecondary">
-                          No se han seleccionado fechas de vacaciones
+                          No se han seleccionado fechas de incidencia
                         </Typography>
                         <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
                           Seleccionar fechas
@@ -295,7 +334,7 @@ const IncidentCreateForm = () => {
 
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
-                <CustomFormLabel>Justificación</CustomFormLabel>
+                <CustomFormLabel sx={{ mt: 1 }}>Justificación</CustomFormLabel>
                 <CustomTextField
                   id="description"
                   name="description"
@@ -309,7 +348,22 @@ const IncidentCreateForm = () => {
             </Grid2>
 
             <Grid2 size={12}>
+              {responseMessage && (
+                <Alert severity={isSuccess ? "success" : "error"}>
+                  <Typography variant="body1" fontWeight={600}>
+                    {responseMessage}
+                  </Typography>
+                </Alert>
+              )}
+            </Grid2>
+
+            <Grid2 size={12}>
               <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Link href={"/admin/employees-incidents"} passHref>
+                  <Button variant="contained" color="error" sx={{ display: "flex" }}>
+                    Cancelar
+                  </Button>
+                </Link>
                 <Button
                   type="submit"
                   variant="contained"
@@ -319,21 +373,7 @@ const IncidentCreateForm = () => {
                 >
                   Guardar
                 </Button>
-                <Link href={"/admin/employees-incidents"} passHref>
-                  <Button variant="contained" color="error" sx={{ display: "flex" }}>
-                    Salir
-                  </Button>
-                </Link>
               </Stack>
-            </Grid2>
-            <Grid2 size={12}>
-              {responseMessage && (
-                <Alert severity={isSuccess ? "success" : "error"}>
-                  <Typography variant="body1" fontWeight={600}>
-                    {responseMessage}
-                  </Typography>
-                </Alert>
-              )}
             </Grid2>
           </Grid2>
         </form>
@@ -348,11 +388,11 @@ const IncidentCreateForm = () => {
             <DialogContentText id="alert-dialog-description">¿Desea continuar?</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleConfirm} color="primary" autoFocus disabled={isSubmitting}>
-              Continuar
-            </Button>
-            <Button onClick={handleCancel} color="error" disabled={isSubmitting}>
+            <Button variant="contained" onClick={handleCancel} color="error" disabled={isSubmitting}>
               Cancelar
+            </Button>
+            <Button variant="contained" onClick={handleConfirm} color="primary" autoFocus disabled={isSubmitting}>
+              Continuar
             </Button>
           </DialogActions>
         </Box>
