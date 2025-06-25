@@ -16,6 +16,7 @@ import { Button } from "@mui/material";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { IncidentCreateModal } from "./IncidentCreateModal";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { ROLES } from "@/common/constants/Roles";
 
 const BCrumb = [
   {
@@ -24,7 +25,7 @@ const BCrumb = [
   },
 ];
 
-export default function EmployeesIncidents() {
+export default function EmployeesIncidents({ role = ROLES.ADMIN }: { role?: string }) {
   const ENTITY = "employeesIncidents";
   const dispatch = useDispatch<AppDispatch>();
   const { page, limit } = useSelector((state: RootState) => state.pagination);
@@ -59,7 +60,12 @@ export default function EmployeesIncidents() {
   const emptyMessage = useSelector((state) => state.employeesIncidentsSlice.emptyMessage);
 
   const createLink = (
-    <Button onClick={handleOpenModal} fullWidth variant="contained" color="primary">
+    <Button
+      {...(role === ROLES.ADMIN ? { href: "/admin/employees-incidents/create" } : { onClick: handleOpenModal })}
+      fullWidth
+      variant="contained"
+      color="primary"
+    >
       Crear Incidencia
     </Button>
   );
