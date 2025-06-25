@@ -5,6 +5,10 @@ import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
 import { EmployeeService } from "@/app/api/services/employee.service";
+import { authMiddleware } from "@/middleware/authMiddleware";
+import { NextResponse } from "next/server";
+import { ROLES } from "@/common/constants/Roles";
+import { getRoleValueById, applyRoleFilters } from "@/common/utils";
 
 export async function GET(request: Request) {
   try {
@@ -22,7 +26,13 @@ export async function GET(request: Request) {
     const gender = searchParams.has("gender") ? Number.parseInt(searchParams.get("gender")!, 10) : null;
     const location = searchParams.has("location") ? Number.parseInt(searchParams.get("location")!, 10) : null;
     const category = searchParams.has("category") ? Number.parseInt(searchParams.get("category")!, 10) : null;
-    const direccion = searchParams.has("direccion") ? Number.parseInt(searchParams.get("direccion")!, 10) : null;
+    let direccion = null;
+    if (searchParams.has("direccion")) {
+      const dirValue = Number.parseInt(searchParams.get("direccion")!, 10);
+      if (!isNaN(dirValue)) {
+        direccion = dirValue;
+      }
+    }
     const secretaria = searchParams.has("secretaria") ? Number.parseInt(searchParams.get("secretaria")!, 10) : null;
     const start_job_date_start = searchParams.has("start_job_date_start")
       ? searchParams.get("start_job_date_start")
@@ -34,7 +44,7 @@ export async function GET(request: Request) {
     const employeeAttendanceType = searchParams.has("employeeAttendanceType")
       ? Number(searchParams.get("employeeAttendanceType"))
       : null;
-    const requestParams = {
+    const requestParams: any = {
       page,
       limit,
       employee_id,
@@ -53,6 +63,17 @@ export async function GET(request: Request) {
       search,
       employeeAttendanceType,
     };
+
+    const authData = await authMiddleware();
+    if (authData && !(authData instanceof NextResponse)) {
+      const { roleId, employeeId } = authData;
+      const role = getRoleValueById(roleId);
+      await applyRoleFilters(role, employeeId as number, requestParams, EmployeeService, "direccion");
+    }
+    if (typeof requestParams.direccion === "number") {
+      requestParams.direccion = requestParams.direccion;
+    }
+
     const validationRequest = await validateRequestByUrlParams<IEmployeeFilters>(
       requestParams,
       EmployeeGetByFilterSchema,
