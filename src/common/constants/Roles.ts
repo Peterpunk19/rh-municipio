@@ -3,6 +3,7 @@ export const ROLES = {
   USER: "user",
   EMPLEADO: "empleado",
   ENLACE: "enlace",
+  SUBENLACE: "subenlace",
   CAPTURISTA: "capturista",
   ANALISTA: "analista",
   ADMIN_INCIDENCIA: "admin_incidencias",

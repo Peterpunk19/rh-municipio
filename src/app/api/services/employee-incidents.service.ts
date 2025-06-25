@@ -110,6 +110,18 @@ export const EmployeeIncidentsService = {
 
     const whereClause: any = await buildWhereClause(filterMappings, employeeIncidentsFilters);
 
+    if (employeeIncidentsFilters.direccion_id) {
+      whereClause.employee = {
+        ...whereClause.employee,
+        employee_hiring: {
+          some: {
+            direccion_id: employeeIncidentsFilters.direccion_id,
+            active: true,
+          },
+        },
+      };
+    }
+
     if (employeeIncidentsFilters.search) {
       whereClause.OR = [
         { oficio: { contains: employeeIncidentsFilters.search } },

@@ -223,6 +223,19 @@ export const EmployeeRequestService = {
     ];
 
     const whereClause: any = await buildWhereClause(filterMappings, employeeRequestsFilters, searchMappings);
+
+    if (employeeRequestsFilters.direccion_id) {
+      whereClause.employee = {
+        ...whereClause.employee,
+        employee_hiring: {
+          some: {
+            direccion_id: employeeRequestsFilters.direccion_id,
+            active: true,
+          },
+        },
+      };
+    }
+
     if (employeeRequestsFilters.request_date) {
       try {
         const dateStr =

@@ -10,6 +10,7 @@ import type { IEmployeeRequestsFilters } from "./types";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { NextResponse } from "next/server";
 import { ROLES } from "@/common/constants/Roles";
+import { EmployeeService } from "@/app/api/services/employee.service";
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_PAGE = 1;
@@ -39,6 +40,19 @@ export async function GET(request: Request) {
     if (!validRequestData) {
       const response = HttpResponse.failure(HttpMessages.error.validationFields, {});
       return handleHttpResponse(response);
+    }
+
+    const authData = await authMiddleware();
+    if (authData && !(authData instanceof NextResponse)) {
+      const { roleId, employeeId } = authData;
+      const role = getRoleValueById(roleId);
+      if (role === ROLES.ENLACE || role === ROLES.SUBENLACE) {
+        const employee = await EmployeeService.getEmployeeById(employeeId as number);
+        const direccionId = employee?.employee_hiring?.[0]?.direccion?.id;
+        if (typeof direccionId === "number" && !isNaN(direccionId)) {
+          validRequestData.direccion_id = direccionId;
+        }
+      }
     }
 
     const employeeRequests = await EmployeeRequestService.getEmployeeRequestsByParams(validRequestData);

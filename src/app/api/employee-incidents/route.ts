@@ -10,6 +10,7 @@ import { authMiddleware } from "@/middleware/authMiddleware";
 import { NextResponse } from "next/server";
 import { ROLES } from "@/common/constants/Roles";
 import { logger } from "@/lib/logger";
+import { EmployeeService } from "@/app/api/services/employee.service";
 
 export async function GET(request: Request) {
   try {
@@ -56,6 +57,14 @@ export async function GET(request: Request) {
 
     if (role === ROLES.EMPLEADO) {
       validRequestData.employee_id = Number(employeeId);
+    }
+
+    if (role === ROLES.ENLACE || role === ROLES.SUBENLACE) {
+      const employee = await EmployeeService.getEmployeeById(employeeId as number);
+      const direccionId = employee?.employee_hiring?.[0]?.direccion?.id;
+      if (typeof direccionId === "number" && !isNaN(direccionId)) {
+        validRequestData.direccion_id = direccionId;
+      }
     }
 
     const existingEmployees = await EmployeeIncidentsService.getEmployeesIncidentsByParams(validRequestData);
