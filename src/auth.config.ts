@@ -16,7 +16,7 @@ export default {
 
             return {
               id: response.responseObject.payload.id.toString(),
-              employee_id: response.responseObject.payload.employee_id.toString(),
+              employee_id: response.responseObject.payload.employee_id?.toString(),
               name: response.responseObject.payload.name,
               email: response.responseObject.payload.email,
               role: response.responseObject.payload.role_id.toString(),

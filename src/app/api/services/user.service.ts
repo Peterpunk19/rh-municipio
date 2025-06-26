@@ -78,6 +78,7 @@ export const UserService = {
 
     return null;
   },
+
   async getUserInfoAuthById(id: number) {
     const data = await prisma.user.findFirst({
       where: {
@@ -123,9 +124,27 @@ export const UserService = {
 
     return null;
   },
+
   async createUser(user: IUser) {
-    return await prisma.user.create({
-      data: {
+    return prisma.$transaction(async (tx) => {
+      if (user.direcciones_ids && user.direcciones_ids.length > 0) {
+        const existingUserDirecciones = await this.findActiveUserDireccionesByRoleAndDirecciones(
+          user.role_id,
+          user.direcciones_ids,
+        );
+
+        for (const userDireccion of existingUserDirecciones) {
+          await tx.userDireccion.update({
+            where: { id: userDireccion.id },
+            data: {
+              active: false,
+              updated_at: new Date(),
+            },
+          });
+        }
+      }
+
+      const userData: any = {
         uuid: user.uuid ?? uuidv4(),
         username: user.username,
         password: await encryptPassword(user.password),
@@ -134,15 +153,37 @@ export const UserService = {
         role: {
           connect: { id: user.role_id },
         },
-      },
-      select: {
-        id: true,
-        uuid: true,
-        username: true,
-        role_id: true,
-        active: true,
-        created_at: true,
-      },
+      };
+
+      if (user.created_by_id) {
+        userData.created_by = {
+          connect: { id: user.created_by_id },
+        };
+      }
+
+      const createUser = await tx.user.create({
+        data: userData,
+        select: {
+          id: true,
+          uuid: true,
+          username: true,
+          role_id: true,
+          active: true,
+          created_at: true,
+        },
+      });
+
+      if (user.direcciones_ids && user.direcciones_ids.length > 0) {
+        await tx.userDireccion.createMany({
+          data: user.direcciones_ids.map((direccion_id) => ({
+            user_id: createUser.id,
+            direccion_id,
+            created_by_id: user.created_by_id ?? 1,
+          })),
+        });
+      }
+
+      return createUser;
     });
   },
 
@@ -228,5 +269,27 @@ export const UserService = {
         updated_at: true,
       },
     });
+  },
+
+  async findActiveUserDireccionesByRoleAndDirecciones(role_id: number, direcciones_ids: number[]) {
+    const userDirecciones = await prisma.userDireccion.findMany({
+      where: {
+        active: true,
+        direccion_id: {
+          in: direcciones_ids,
+        },
+        user: {
+          role_id: role_id,
+          active: true,
+        },
+      },
+      select: {
+        id: true,
+        user_id: true,
+        direccion_id: true,
+      },
+    });
+
+    return userDirecciones;
   },
 };

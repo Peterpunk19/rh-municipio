@@ -352,7 +352,7 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
               </Alert>
             )}
             <Stack direction="row" spacing={2} justifyContent="flex-end">
-              <Button onClick={handleButtonClose} disabled={loading}>
+              <Button onClick={handleButtonClose} variant="outlined" color="warning" disabled={loading}>
                 Cerrar
               </Button>
               <Button

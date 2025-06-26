@@ -30,6 +30,57 @@ export const UserSchema = z.object({
   created_by_id: z.number().int().positive().optional().nullable(),
 });
 
+export const UserPostSchema = z
+  .object({
+    id: z.number().int().positive().optional(),
+    uuid: z
+      .string()
+      .uuid({ message: validationMessages.invalidFormat("UUID") })
+      .optional(),
+    username: z
+      .string({ message: validationMessages.required("Usuario") })
+      .min(1, { message: validationMessages.required("Usuario") })
+      .max(30, { message: validationMessages.maxLength("Usuario", 30) }),
+    password: z
+      .string({ message: validationMessages.required("Contraseña") })
+      .min(8, { message: validationMessages.minLength("Contraseña", 8) })
+      .max(30, { message: validationMessages.maxLength("Contraseña", 30) })
+      .regex(/[A-Z]/, { message: validationMessages.oneUppercaseLetter("Contraseña") })
+      .regex(/[a-z]/, { message: validationMessages.oneLowercaseLetter("Contraseña") })
+      .regex(/[0-9]/, { message: validationMessages.oneNumber("Contraseña") })
+      .regex(/[^A-Za-z0-9]/, { message: validationMessages.oneSymbol("Contraseña") }),
+    set_password_key: z.string().min(1).optional().nullable(),
+    created_at: z.date().optional(),
+    updated_at: z.date().optional(),
+    employee_id: z
+      .number({ message: validationMessages.number("Empleado") })
+      .optional()
+      .nullable(),
+    role_id: z.number({ message: validationMessages.required("Rol") }).nullable(),
+    created_by_id: z.number().int().positive().optional().nullable(),
+    secretaria_id: z.number().optional().nullable(),
+    direcciones_ids: z.array(z.number()).optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.role_id === 4 || data.role_id === 5) {
+      if (!data.secretaria_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: validationMessages.required("Secretaria"),
+          path: ["secretaria_id"],
+        });
+      }
+
+      if (!data.direcciones_ids || data.direcciones_ids.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: validationMessages.oneItem("Dirección"),
+          path: ["direcciones_ids"],
+        });
+      }
+    }
+  });
+
 export const UserGetByFilterSchema = z.object({
   limit: z
     .number({ message: validationMessages.number("El limite") })

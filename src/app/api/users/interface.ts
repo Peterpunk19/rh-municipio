@@ -4,6 +4,9 @@ export interface IUser {
   employee_id?: number;
   password: string;
   role_id: number;
+  secretaria_id?: number | null;
+  direcciones_ids?: number[] | null;
+  created_by_id?: number;
 }
 
 export interface IUserFilters {

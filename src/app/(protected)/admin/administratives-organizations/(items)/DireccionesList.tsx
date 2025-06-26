@@ -66,6 +66,20 @@ export default function DireccionesList({
                 </Typography>
               </Stack>
 
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Enlace:
+                </Typography>
+                <Typography variant="body2">{direccion.enlace?.username || "No asignado"}</Typography>
+              </Stack>
+
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Subenlace:
+                </Typography>
+                <Typography variant="body2">{direccion.subenlace?.username || "No asignado"}</Typography>
+              </Stack>
+
               <Button
                 onClick={() => handleOpenDialog(direccion)}
                 size="small"

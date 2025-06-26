@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { ICreateLeader, IAdministrativeOrganizationsFilters } from "@/app/api/administrative-organizations/types";
 import { getPaginationData } from "@/common/utils";
-import { ROLES } from "@/common/constants/Roles";
+import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 export const AdministrativeOrganizationLeadersService = {
   async createLeader(leader: ICreateLeader) {
@@ -52,11 +52,15 @@ export const AdministrativeOrganizationLeadersService = {
       });
 
       if (activeLeader) {
+        const startDateObj = new Date(leader.startDate);
+        startDateObj.setDate(startDateObj.getDate() - 1);
+        const endDate = startDateObj;
         await tx.administrativeOrganizationLeaders.update({
           where: { id: activeLeader.id },
           data: {
             active: false,
             updated_at: new Date(),
+            end_date: endDate,
           },
         });
       }
@@ -195,6 +199,21 @@ export const AdministrativeOrganizationLeadersService = {
                 end_date: true,
               },
             },
+            user_direcciones: {
+              where: {
+                active: true,
+              },
+              select: {
+                id: true,
+                user: {
+                  select: {
+                    id: true,
+                    username: true,
+                    role_id: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -211,6 +230,11 @@ export const AdministrativeOrganizationLeadersService = {
         const getFullName = (employee: any) =>
           employee ? `${employee.paternal_last_name} ${employee.maternal_last_name} ${employee.name}` : null;
 
+        const ENLACE_ID = ROLES_ID_VALUES[ROLES.ENLACE as keyof typeof ROLES_ID_VALUES];
+        const SUBENLACE_ID = ROLES_ID_VALUES[ROLES.SUBENLACE as keyof typeof ROLES_ID_VALUES];
+        const enlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === ENLACE_ID);
+        const subenlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === SUBENLACE_ID);
+
         return {
           id: direccion.id,
           name: direccion.display_name,
@@ -221,6 +245,8 @@ export const AdministrativeOrganizationLeadersService = {
             endDate: director?.end_date ?? null,
           },
           deputy_director: { id: deputyDirector?.employee.id ?? "", name: getFullName(deputyDirector?.employee) },
+          enlace: { id: enlace?.user.id, username: enlace?.user.username },
+          subenlace: { id: subenlace?.user.id, username: subenlace?.user.username },
         };
       }),
     }));
@@ -229,5 +255,37 @@ export const AdministrativeOrganizationLeadersService = {
     const pagination = await getPaginationData(total, Number(limit), Number(page));
 
     return { ...pagination, administrativeOrganizations };
+  },
+
+  async getDireccionById(direccionId: number) {
+    return prisma.direccion.findUnique({
+      where: {
+        id: direccionId,
+      },
+      include: {
+        user_direcciones: {
+          where: {
+            active: true,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                role_id: true,
+                role: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                active: true,
+              },
+            },
+          },
+        },
+      },
+    });
   },
 };

@@ -93,6 +93,7 @@ export const HttpMessages = {
   },
   role: {
     notFound: "El rol no existe",
+    notAllowed: "No se puede crear un usuario con este rol",
   },
   request: {
     notFoundById: "No se encontró solicitud con el ID proporcionado",
@@ -133,5 +134,7 @@ export const HttpMessages = {
     notFoundByDireccionId: "No se encontró el organismo administrativo con el ID proporcionado",
     directorFound: "Director encontrado correctamente",
     directorNotFound: "No se encontró un director para la dirección y fecha especificadas",
+    secretariaNotFound: "No se encontró la secretaria con el ID proporcionado",
+    direccionesNotFound: "Algunas direcciones no existen o no pertenecen a la secretaría seleccionada",
   },
 };

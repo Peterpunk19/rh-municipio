@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { UserSchema } from "@/schemas/user";
+import { UserPostSchema } from "@/schemas/user";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { validateRequest } from "@/common/request/validateRequest";
@@ -8,17 +8,28 @@ import { RoleService } from "@/app/api/services/role.service";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
 import { IUser } from "@/app/api/users/interface";
+import { isRoleExcluded, ROLES } from "@/common/constants/Roles";
+import { CatalogsService } from "../../services/catalogs.service";
+import { authMiddleware } from "@/middleware/authMiddleware";
+import { NextResponse } from "next/server";
+import { AdministrativeOrganizationLeadersService } from "../../services/administrative-organization-leaders.service";
 
 export async function POST(request: NextRequest) {
-  const validationRequest = await validateRequest<IUser>(request, UserSchema);
+  const authResponse = await authMiddleware();
+  if (authResponse instanceof NextResponse) {
+    return authResponse;
+  }
+
+  const validationRequest = await validateRequest<IUser>(request, UserPostSchema);
   if (validationRequest.response) return validationRequest.response;
 
   const body = validationRequest.data;
-
   if (!body) {
     const response = HttpResponse.failure(HttpMessages.error.invalidRequest, {});
     return handleHttpResponse(response);
   }
+
+  body.created_by_id = authResponse.userId;
 
   try {
     const existingUsername = await UserService.getUserByUsername(body.username);
@@ -80,6 +91,43 @@ export async function POST(request: NextRequest) {
       return handleHttpResponse(response);
     }
 
+    if (existingRole && isRoleExcluded(existingRole.name, "USER_CREATION")) {
+      const response = HttpResponse.failure(HttpMessages.error.validationFields, {
+        role_id: {
+          messages: [HttpMessages.role.notAllowed],
+        },
+      });
+      return handleHttpResponse(response);
+    }
+
+    const isEnlaceOrSubenlace = existingRole.name === ROLES.ENLACE || existingRole.name === ROLES.SUBENLACE;
+
+    if (isEnlaceOrSubenlace) {
+      const existingSecretaria = await CatalogsService.getCatalogById("secretaria", body.secretaria_id!);
+
+      if (!existingSecretaria) {
+        const response = HttpResponse.failure(HttpMessages.administrativeOrganizations.secretariaNotFound, {
+          secretaria_id: body.secretaria_id,
+        });
+        return handleHttpResponse(response);
+      }
+
+      const direccionesBySecretaria = await CatalogsService.getDirecciones(body.secretaria_id!);
+      const direccionesIds = direccionesBySecretaria.map((dir) => dir.id);
+
+      const direccionesInvalidas = body.direcciones_ids?.filter((id) => !direccionesIds.includes(id));
+
+      if (direccionesInvalidas?.length) {
+        const response = HttpResponse.failure(HttpMessages.administrativeOrganizations.direccionesNotFound, {
+          direcciones_invalidas: direccionesInvalidas,
+        });
+        return handleHttpResponse(response);
+      }
+    } else {
+      body.secretaria_id = undefined;
+      body.direcciones_ids = [];
+    }
+
     const user = await UserService.createUser(body);
     const response = HttpResponse.success(HttpMessages.user.createdSuccess, {
       id: user.id,
@@ -92,10 +140,7 @@ export async function POST(request: NextRequest) {
 
     return handleHttpResponse(response);
   } catch (error: any) {
-    console.log(error);
-
     const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message });
-
     return handleHttpResponse(response);
   }
 }

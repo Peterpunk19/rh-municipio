@@ -25,6 +25,12 @@ jest.mock("@/app/api/services/employee.service", () => ({
   },
 }));
 
+jest.mock("@/middleware/authMiddleware", () => ({
+  authMiddleware: jest.fn(),
+}));
+
+const { authMiddleware } = jest.requireMock("@/middleware/authMiddleware");
+
 describe("API: /users", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -35,6 +41,7 @@ describe("API: /users", () => {
       if (description === "should successfully send message with valid data") {
         (RoleService.getRoleById as jest.Mock).mockResolvedValueOnce({});
         (UserService.createUser as jest.Mock).mockResolvedValueOnce([{}, {}]);
+        authMiddleware.mockResolvedValue({ userId: 1 });
       }
 
       if (description === "should return error for existing employee_id" && "employee_id" in requestData) {

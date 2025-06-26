@@ -63,5 +63,11 @@ const roles = [
     display_name: "Suplente",
     description: "Suplente de organismo administrativo",
   },
+  {
+    id: 13,
+    name: "subenlace",
+    display_name: "Subenlace",
+    description: "Subenlace es el usuario encargado de una Secretaria",
+  },
 ];
 module.exports = roles;
