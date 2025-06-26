@@ -207,6 +207,22 @@ export const getRoleValueById = (id: number): RoleValue | undefined => {
   return key ? ROLES[key] : undefined;
 };
 
+export const applyRoleFilters = async (
+  role: RoleValue | undefined,
+  employeeId: number,
+  validRequestData: any,
+  EmployeeService: any,
+  fieldName: string = "direccion_id",
+): Promise<void> => {
+  if (role === ROLES.ENLACE || role === ROLES.SUBENLACE) {
+    const employee = await EmployeeService.getEmployeeById(employeeId);
+    const direccionId = employee?.employee_hiring?.[0]?.direccion?.id;
+    if (typeof direccionId === "number" && !isNaN(direccionId)) {
+      validRequestData[fieldName] = direccionId;
+    }
+  }
+};
+
 export const calculateDaysBetweenDates = (startDate: string | Date, endDate: string | Date): number => {
   let start: Date;
   let end: Date;

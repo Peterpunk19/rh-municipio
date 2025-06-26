@@ -21,6 +21,7 @@ export interface IEmployeeIncidentFilters {
   start_date: string | null | undefined;
   end_date: string | null | undefined;
   search: string | null | undefined;
+  direccion_id?: number | undefined;
 }
 
 export interface IEmployeeIncidentById {

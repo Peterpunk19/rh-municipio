@@ -32,6 +32,7 @@ export interface IEmployeeRequestsFilters {
   created_at?: string | null | undefined;
   request_date?: string | null | undefined;
   search?: string | null | undefined;
+  direccion_id?: number | undefined;
 }
 
 export interface IRequestValidation {

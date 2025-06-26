@@ -5,11 +5,12 @@ import { HttpMessages } from "@/common/response/messages";
 import type { IEmployeeIncidentFilters } from "@/app/api/employee-incidents/types";
 import { EmployeeIncidentsGetFilterSchema } from "@/schemas/employee-incidents";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
-import { getParamsFromUrl, getRoleValueById } from "@/common/utils";
+import { getParamsFromUrl, getRoleValueById, applyRoleFilters } from "@/common/utils";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { NextResponse } from "next/server";
 import { ROLES } from "@/common/constants/Roles";
 import { logger } from "@/lib/logger";
+import { EmployeeService } from "@/app/api/services/employee.service";
 
 export async function GET(request: Request) {
   try {
@@ -57,6 +58,8 @@ export async function GET(request: Request) {
     if (role === ROLES.EMPLEADO) {
       validRequestData.employee_id = Number(employeeId);
     }
+
+    await applyRoleFilters(role, employeeId as number, validRequestData, EmployeeService);
 
     const existingEmployees = await EmployeeIncidentsService.getEmployeesIncidentsByParams(validRequestData);
 
