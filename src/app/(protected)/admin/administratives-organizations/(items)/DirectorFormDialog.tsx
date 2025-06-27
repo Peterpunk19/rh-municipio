@@ -27,13 +27,7 @@ import { getEmployeeById } from "@/services/employees";
 dayjs.extend(utc);
 dayjs.locale("es");
 
-export default function DirectorFormDialog({
-  open,
-  onClose,
-  onSave,
-  secretaria,
-  direccion,
-}: DirectorFormProps) {
+export default function DirectorFormDialog({ open, onClose, onSave, secretaria, direccion }: DirectorFormProps) {
   const [form, setForm] = useState({
     director_id: "",
     deputy_director_id: "",
@@ -113,7 +107,7 @@ export default function DirectorFormDialog({
                   if (employeeData) {
                     setDirectorEmployee(employeeData);
                   }
-                })
+                }),
               );
             }
 
@@ -123,7 +117,7 @@ export default function DirectorFormDialog({
                   if (employeeData) {
                     setDeputyDirectorEmployee(employeeData);
                   }
-                })
+                }),
               );
             }
 
@@ -199,7 +193,7 @@ export default function DirectorFormDialog({
         return;
       }
 
-      if (startDate.isSame(endDate, 'day')) {
+      if (startDate.isSame(endDate, "day")) {
         newErrors.endDate = "La fecha de fin no puede ser igual a la fecha de inicio";
         setErrors(newErrors);
         setLoading(false);
@@ -284,14 +278,10 @@ export default function DirectorFormDialog({
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={handleClose} 
-      maxWidth="md" 
-      fullWidth 
-      disableEscapeKeyDown
-    >
-      <DialogTitle>{secretaria} - {direccion?.name}</DialogTitle>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth disableEscapeKeyDown>
+      <DialogTitle>
+        {secretaria} - {direccion?.name}
+      </DialogTitle>
       {initialLoading ? (
         <Grid container justifyContent="center" alignItems="center" sx={{ py: 8 }}>
           <CircularProgress />
@@ -299,88 +289,84 @@ export default function DirectorFormDialog({
             Cargando información...
           </Typography>
         </Grid>
-      ) :
-        (
-          <>
-            <DialogContent>
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
-                  <EmployeeFinder
-                    onEmployeeSelect={handleDirectorSelect}
-                    error={""}
-                    label="Director"
-                    initialEmployee={directorEmployee}
-                  />
-                  <CustomLabelError field={errors.director && errors.director} />
-                </Grid>
-                <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
-                  <EmployeeFinder
-                    onEmployeeSelect={handleDeputyDirectorSelect}
-                    error=""
-                    label="Suplente"
-                    initialEmployee={deputyDirectorEmployee}
-                  />
-                  <CustomLabelError field={errors.deputyDirector && errors.deputyDirector} />
-                </Grid>
+      ) : (
+        <>
+          <DialogContent>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                <EmployeeFinder
+                  onEmployeeSelect={handleDirectorSelect}
+                  error={""}
+                  label="Director"
+                  initialEmployee={directorEmployee}
+                />
+                <CustomLabelError field={errors.director && errors.director} />
               </Grid>
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
-                Periodo del Cargo
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                    <DatePicker
-                      name="startDate"
-                      value={form.startDate && dayjs(form.startDate).isValid() ? dayjs(form.startDate) : null}
-                      onChange={handleDateChange("startDate")}
-                      label="Fecha de Inicio"
-                      sx={{ width: "100%" }}
-                    />
-                    <CustomLabelError field={errors.startDate && errors.startDate} />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                    <DatePicker
-                      name="endDate"
-                      value={form.endDate && dayjs(form.endDate).isValid() ? dayjs(form.endDate) : null}
-                      onChange={handleDateChange("endDate")}
-                      label="Fecha de Fin"
-                      sx={{ width: "100%" }}
-                    />
-                    <CustomLabelError field={errors.endDate && errors.endDate} />
-                  </LocalizationProvider>
-                </Grid>
+              <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                <EmployeeFinder
+                  onEmployeeSelect={handleDeputyDirectorSelect}
+                  error=""
+                  label="Suplente"
+                  initialEmployee={deputyDirectorEmployee}
+                />
+                <CustomLabelError field={errors.deputyDirector && errors.deputyDirector} />
               </Grid>
-
-            </DialogContent>
-            <DialogActions sx={{ flexDirection: 'column', alignItems: 'stretch', padding: 2 }}>
-              {message && (
-                <Alert
-                  severity={success ? "success" : "error"}
-                  sx={{ mb: 2, width: '100%' }}
-                >
-                  <Typography variant="body1" fontWeight={600}>{message}</Typography>
-                </Alert>
-              )}
-              <Stack direction="row" spacing={2} justifyContent="flex-end">
-                <Button onClick={handleButtonClose} disabled={loading}>
-                  Cerrar
-                </Button>
-                <Button
-                  onClick={handleSubmit}
-                  variant="contained"
-                  disabled={loading}
-                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-                >
-                  {loading ? "Guardando..." : "Guardar"}
-                </Button>
-              </Stack>
-            </DialogActions>
-          </>
-        )
-      }
+            </Grid>
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
+              Periodo del Cargo
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                  <DatePicker
+                    name="startDate"
+                    value={form.startDate && dayjs(form.startDate).isValid() ? dayjs(form.startDate) : null}
+                    onChange={handleDateChange("startDate")}
+                    label="Fecha de Inicio"
+                    sx={{ width: "100%" }}
+                  />
+                  <CustomLabelError field={errors.startDate && errors.startDate} />
+                </LocalizationProvider>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                  <DatePicker
+                    name="endDate"
+                    value={form.endDate && dayjs(form.endDate).isValid() ? dayjs(form.endDate) : null}
+                    onChange={handleDateChange("endDate")}
+                    label="Fecha de Fin"
+                    sx={{ width: "100%" }}
+                  />
+                  <CustomLabelError field={errors.endDate && errors.endDate} />
+                </LocalizationProvider>
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions sx={{ flexDirection: "column", alignItems: "stretch", padding: 2 }}>
+            {message && (
+              <Alert severity={success ? "success" : "error"} sx={{ mb: 2, width: "100%" }}>
+                <Typography variant="body1" fontWeight={600}>
+                  {message}
+                </Typography>
+              </Alert>
+            )}
+            <Stack direction="row" spacing={2} justifyContent="flex-end">
+              <Button onClick={handleButtonClose} disabled={loading}>
+                Cerrar
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                variant="contained"
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
+                {loading ? "Guardando..." : "Guardar"}
+              </Button>
+            </Stack>
+          </DialogActions>
+        </>
+      )}
     </Dialog>
   );
 }

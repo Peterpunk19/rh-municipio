@@ -12,6 +12,7 @@ export interface IEmployeeAttendanceType {
 
 export interface IEmployee {
   id: number;
+  user_id: number;
   employee_hiring: IEmployeeHiring[];
   employee_location: IEmployeeLocation[];
   employee_attendance_type: IEmployeeAttendanceType[];

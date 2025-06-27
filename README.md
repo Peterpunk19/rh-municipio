@@ -52,8 +52,10 @@ dcli yarn prisma migrate deploy
 ### Run Seeds
 
 ```bash
-dcli yarn tsc prisma/seed.ts
-dcli yarn node prisma/seed.js
+dcli yarn ts-node prisma/seed.ts
+
+User admin will be created
+admin:Password123
 ```
 ### To rollback a seed in Prisma
 ```bash

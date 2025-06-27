@@ -10,7 +10,7 @@ export const createEmployeeAttendance = async (data: any): Promise<IResponse> =>
   }
 };
 
-export const getEmployeesAttendances = async (data: string): Promise<IResponse> => {
+export const getEmployeesAttendances = async (data: {}): Promise<IResponse> => {
   try {
     const urlParams = new URLSearchParams(data).toString();
     const url = urlParams ? `/api/employee-attendance?${urlParams}` : "/api/employee-attendance";

@@ -56,7 +56,7 @@ const IncidentCreateForm = () => {
     dispatch(setErrors({ field: name, value }));
 
     if (name === "incidentId") {
-      const isCalendarIncident = incidentTypes?.find((item) => item.id === value)?.type === 1;
+      const isCalendarIncident = incidentTypes?.find((item) => item.id === value)?.display_calendar_dates;
 
       if (isCalendarIncident) {
         setOpenCalendar(true);
@@ -98,7 +98,7 @@ const IncidentCreateForm = () => {
   const { options: incidentTypes, isLoading, error } = useFetchOptions(fetchData);
 
   const calendarIncidentIds = useMemo(() => {
-    return incidentTypes?.filter((item) => item.type === 1).map((item) => item.id) || [];
+    return incidentTypes?.filter((item) => item.display_calendar_dates === 1).map((item) => item.id) || [];
   }, [incidentTypes]);
 
   const isVacationIncident = useMemo(() => {

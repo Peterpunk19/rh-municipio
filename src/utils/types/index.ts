@@ -3,7 +3,7 @@ export interface ICatalog {
   name: string;
   display_name: string;
   salary?: string;
-  type?: number;
+  display_calendar_dates?: number;
 }
 
 export interface IResponseObject {

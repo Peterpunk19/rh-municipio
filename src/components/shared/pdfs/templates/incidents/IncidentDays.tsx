@@ -6,7 +6,7 @@ import { IncidentItemProps } from "./types";
 const IncidentDays: React.FC<IncidentItemProps> = ({ data, styles }) => {
   return (
     <Text style={[styles.cell, styles.uppercase, styles.italic, { flex: 2 }]}>
-      {data.incident?.type ?
+      {data.incident?.display_calendar_dates ?
         data.employee_incident_days
           .map((days: any) => formatDate(days.date, "dd/MM/yyyy"))
           .join(" - ")
