@@ -82,6 +82,7 @@ export async function PUT(request: NextRequest) {
       checkIn: employeeIncident.start_date,
       checkOut: employeeIncident.end_date,
       employeeAttendanceTypeId: employeeIncident.employee.employee_attendance_type[0].id,
+      employeeIncidentDays: employeeIncident.employee_incident_days,
     };
 
     const [updatedEmployeeIncident] = await EmployeeIncidentsService.updateEmployeeIncidents(updateData);

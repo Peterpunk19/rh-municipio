@@ -224,7 +224,7 @@ const EmployeeIncident = () => {
                 <Grid size={6}>
                   <IncidentDetails data={employeeIncidentData} />
                 </Grid>
-                {employeeIncidentData.incident.type ? (
+                {employeeIncidentData.incident.display_calendar_dates ? (
                   <Grid size={12}>
                     <IncidentDays data={employeeIncidentData} />
                   </Grid>
@@ -268,11 +268,11 @@ const EmployeeIncident = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button color="primary" onClick={handleConfirm} autoFocus disabled={idStatus === 0}>
-              Continuar
-            </Button>
             <Button color="error" onClick={handleCancel} disabled={idStatus === 0}>
               Cancelar
+            </Button>
+            <Button color="primary" onClick={handleConfirm} autoFocus disabled={idStatus === 0}>
+              Continuar
             </Button>
           </DialogActions>
         </Dialog>

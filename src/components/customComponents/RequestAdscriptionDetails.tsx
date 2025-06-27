@@ -1,12 +1,12 @@
 import React from "react";
-import { Grid2 as Grid, Typography, Stack, Box } from "@mui/material";
+import { Grid2 as Grid, Typography, Stack } from "@mui/material";
 
 export interface RequestAdscriptionDetailsProps {
-  currentDireccion?: {
-    display_name?: string;
-  };
   newDireccion?: {
     display_name?: string;
+    secretaria: {
+      display_name: string;
+    }
   };
   currentLocation?: {
     display_name?: string;
@@ -20,10 +20,9 @@ export interface RequestAdscriptionDetailsProps {
 }
 
 export const RequestAdscriptionDetails = (
-  { currentDireccion, newDireccion, newLocation, attendance }: RequestAdscriptionDetailsProps
+  { newDireccion, newLocation, attendance }: RequestAdscriptionDetailsProps
 ) => {
 
-  console.log(currentDireccion);
   return (
     <>
       <Grid size={5}>

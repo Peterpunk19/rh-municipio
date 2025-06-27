@@ -87,7 +87,7 @@ model Employee {
   identification_folio                 String?
   job_schedule_employee                JobScheduleEmployee[]
   leaders                              AdministrativeOrganizationLeaders[]
-  adscriptions                          EmployeeAdscriptions[]
+  employee_adscriptions                          EmployeeAdscriptions[]
 }
 
 model EmployeeAddress {
@@ -288,6 +288,8 @@ model Incident {
   name               String              @unique
   display_name       String
   type               Int
+  display_calendar_dates               Boolean           @default(false)
+  display_time_on_calendar               Boolean           @default(false)
   active             Boolean
   employee_incidents EmployeeIncidents[]
 }
@@ -621,7 +623,7 @@ model Direccion {
   leaders       AdministrativeOrganizationLeaders[]
   employee_request_detail     EmployeeRequestDetail[]  @relation("currentDireccion")
   employee_request_detail_new EmployeeRequestDetail[]  @relation("newDireccion")
-  adscriptions  EmployeeAdscriptions[]
+  employee_adscriptions  EmployeeAdscriptions[]
 }
 
 model Secretaria {

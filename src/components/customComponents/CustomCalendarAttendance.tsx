@@ -11,6 +11,8 @@ import {StatusCodes} from "http-status-codes";
 import {logger} from "@/lib/logger";
 import {useSelector} from "@/store/hooks";
 import type {RootState} from "@/store/store";
+import {formatDate} from "@/utils/formatter";
+import {calculateDaysBetweenDates} from "@/common/utils";
 
 type CalendarDay = {
   date: Temporal.PlainDate;
@@ -21,6 +23,9 @@ type Attendance = {
   id: number;
   check_in: string;
   check_out: string;
+  isIncident?: boolean;
+  displayTimeOnCalendar?: boolean;
+  incidentType?: string;
 };
 
 const CustomCalendarAttendance = ()=> {
@@ -32,12 +37,17 @@ const CustomCalendarAttendance = ()=> {
 
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
-  async function fetchEmployeesAttendances(month: number, year: number) {
-    const [from, to] = getFirstAndLastMonth(month, year);
+  async function fetchEmployeesAttendances(from: string, to: string) {
     const employeeId = values.employee_id;
 
     try {
-      const response = await getEmployeesAttendances({ employeeId: employeeId ?? "", checkIn: from, checkOut: to});
+      const response = await getEmployeesAttendances({
+        employeeId: employeeId ?? "",
+        checkIn: from,
+        checkOut: to,
+        limit: calculateDaysBetweenDates(from, to)
+      });
+
       if (response.statusCode === StatusCodes.OK) {
         setAttendanceData(response.responseObject.data);
       } else {
@@ -53,9 +63,20 @@ const CustomCalendarAttendance = ()=> {
     if (!attendanceData) return map;
 
     for (const record of attendanceData) {
-      const dateStr = Temporal.Instant.from(record.check_in).toZonedDateTimeISO("America/Mexico_City").toPlainDate().toString();
-      map.set(dateStr, record);
+      const dateStr = Temporal.PlainDate.from(record.check_in.substring(0, 10)).toString();
+
+      const attendance: Attendance = {
+        id: record.id,
+        check_in: record.check_in,
+        check_out: record.check_out,
+        isIncident: !!record.employee_incident,
+        incidentType: record.employee_incident?.incident?.display_name || undefined,
+        displayTimeOnCalendar: record.employee_incident?.incident?.display_time_on_calendar || undefined,
+      };
+
+      map.set(dateStr, attendance);
     }
+
     return map;
   }, [attendanceData]);
 
@@ -64,16 +85,6 @@ const CustomCalendarAttendance = ()=> {
   const [month, setMonth] = useState(Temporal.Now.plainDateISO().month);
   const [year, setYear] = useState(Temporal.Now.plainDateISO().year);
   const [monthCalendar, setMonthCalendar] = useState<CalendarDay[]>([]);
-
-  const getFirstAndLastMonth = (month: number, year: number) => {
-    const firstDay = Temporal.PlainDate.from({ year: year, month: month, day: 1 });
-    const lastDay = firstDay.with({ day: firstDay.daysInMonth });
-
-    const firstDayStr = firstDay.toString();
-    const lastDayStr = lastDay.toString();
-
-    return [firstDayStr, lastDayStr];
-  }
 
   const next = () => {
     const { month: nextMonth, year: nextYear } = Temporal.PlainYearMonth.from({
@@ -96,8 +107,6 @@ const CustomCalendarAttendance = ()=> {
   };
 
   useEffect(() => {
-    fetchEmployeesAttendances(month, year);
-
     const fiveWeeks = 5 * 7;
     const sixWeeks = 6 * 7;
     const startOfMonth = Temporal.PlainDate.from({ year, month, day: 1 });
@@ -120,6 +129,11 @@ const CustomCalendarAttendance = ()=> {
           date,
         };
       });
+
+    const firstDay = calendar[0]?.date;
+    const lastDay = calendar[calendar.length - 1]?.date;
+
+    fetchEmployeesAttendances(formatDate(new Date(firstDay.toString()), "yyyy-MM-dd"), formatDate(new Date(lastDay.toString()), "yyyy-MM-dd"));
 
     setMonthCalendar(calendar);
   }, [year, month]);
@@ -160,15 +174,21 @@ const CustomCalendarAttendance = ()=> {
       <Grid container columns={7} flexGrow={1}>
         {monthCalendar.map((day, index) => {
           const attendance = attendanceMap.get(day.date.toString());
+          const isIncident = attendance?.isIncident;
+          const incidentType = attendance?.incidentType;
+          const displayTimeOnCalendar = attendance?.displayTimeOnCalendar;
 
           const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
           const hasAttendance = !!attendance;
 
-          const backgroundColor = hasAttendance
-            ? 'success.attendance'
-            : isPast
-              ? 'error.attendance'
-              : '#fff';
+          const backgroundColor =
+            hasAttendance
+              ? isIncident
+                ? 'warning.main'  // o 'warning.attendance', dependiendo de tu tema
+                : 'success.attendance'
+              : isPast
+                ? 'error.attendance'
+                : '#fff';
 
           const color = hasAttendance
             ? '#fff'
@@ -202,7 +222,7 @@ const CustomCalendarAttendance = ()=> {
                     <Box display="flex" alignItems="center" gap={1}>
                       <IconClockCheck size="16"/>
                       <Typography fontWeight={600} variant="body2">
-                        Asistencia
+                        {isIncident ? incidentType : "ASISTENCIA"}
                       </Typography>
                     </Box>
                   </Box>
@@ -217,7 +237,7 @@ const CustomCalendarAttendance = ()=> {
                     <Box display="flex" alignItems="center" gap={1}>
                       <IconClockCancel size="16"/>
                       <Typography fontWeight={600} variant="body2">
-                        Falta
+                        FALTA
                       </Typography>
                     </Box>
                   </Box>
@@ -247,7 +267,7 @@ const CustomCalendarAttendance = ()=> {
                   }
                 </Box>
 
-                {attendance && (
+                {attendance && (displayTimeOnCalendar || !isIncident) && (
                   <Box mt={4}>
                     <Box display="flex" alignItems="center" gap={1}>
                       <IconClockUp size={14} />

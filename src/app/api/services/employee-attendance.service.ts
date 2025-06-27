@@ -75,16 +75,24 @@ export const EmployeeAttendanceService = {
 
     const whereClause: any = await buildWhereClause(filterMappings, employeeAttendanceFilters, searchMappings);
 
-    if (employeeAttendanceFilters.checkIn) {
-      whereClause.check_in = {
-        gte: new Date(employeeAttendanceFilters.checkIn),
-      };
-    }
+    if (employeeAttendanceFilters.checkIn || employeeAttendanceFilters.checkOut) {
+      whereClause.AND = [];
 
-    if (employeeAttendanceFilters.checkOut) {
-      whereClause.check_out = {
-        lte: new Date(employeeAttendanceFilters.checkOut),
-      };
+      if (employeeAttendanceFilters.checkIn) {
+        whereClause.AND.push({
+          check_in: {
+            gte: new Date(employeeAttendanceFilters.checkIn),
+          },
+        });
+      }
+
+      if (employeeAttendanceFilters.checkOut) {
+        whereClause.AND.push({
+          check_out: {
+            lte: new Date(employeeAttendanceFilters.checkOut),
+          },
+        });
+      }
     }
 
     const attendances = await prisma.employeeAttendance.findMany({
@@ -95,6 +103,20 @@ export const EmployeeAttendanceService = {
         id: "desc",
       },
       include: {
+        employee_incident: {
+          select: {
+            id: true,
+            active: true,
+            incident: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                display_time_on_calendar: true,
+              },
+            },
+          },
+        },
         employee_location: {
           select: {
             location_id: true,
@@ -161,6 +183,7 @@ export const EmployeeAttendanceService = {
 
     const data = attendances.map((item: any) => ({
       id: item.id,
+      employee_incident: item.employee_incident,
       check_in: item.check_in,
       check_out: item.check_out,
       created_at: item.created_at,

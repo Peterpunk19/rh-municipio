@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     body.employeeHiringId = employee.employee_hiring[0].id;
     body.employeeLocationId = employee.employee_location[0].id;
     body.employeeAttendanceTypeId = employee.employee_attendance_type[0].id;
-    body.createdById = employee.id;
+    body.createdById = employee.user_id;
 
     const [employeeAttendance] = await EmployeeAttendanceService.createEmployeeAttendance(body);
 

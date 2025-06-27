@@ -604,7 +604,7 @@ export const EmployeeRequestService = {
         publicOrganization: employeeRequest.employee.employee_hiring[0].direccion.secretaria.display_name,
         administrativeOrganization: employeeRequest.employee.employee_hiring[0].direccion.display_name,
         category: employeeRequest.employee.employee_hiring[0].category?.display_name,
-        adscription: employeeRequest.employee.employee_adscriptions[0],
+        employee_adscriptions: employeeRequest.employee.employee_adscriptions[0],
       },
       request: {
         ...employeeRequest.request,

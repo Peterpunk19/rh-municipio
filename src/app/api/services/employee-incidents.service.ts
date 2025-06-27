@@ -210,7 +210,7 @@ export const EmployeeIncidentsService = {
             id: true,
             name: true,
             display_name: true,
-            type: true,
+            display_calendar_dates: true,
           },
         },
         incident_status: {
@@ -330,28 +330,32 @@ export const EmployeeIncidentsService = {
   async updateEmployeeIncidents(employeeIncident: IEmployeeIncidentUpdate) {
     return prisma.$transaction(async (tx) => {
       if (employeeIncident.incidentStatusId === INCIDENT_STATUS_ID.APROBADA) {
-        await tx.employeeAttendance.create({
-          data: {
-            check_in: employeeIncident.checkIn,
-            check_out: employeeIncident.checkOut,
-            description: "Asistencia creada por incidencia",
-            employee_hiring: {
-              connect: { id: employeeIncident.employeeHiringId },
-            },
-            employee_location: {
-              connect: { id: employeeIncident.employeeLocationId },
-            },
-            employee_attendance_type: {
-              connect: { id: 1 },
-            },
-            created_by: {
-              connect: { id: employeeIncident.createdById },
-            },
-            employee_incident: {
-              connect: { id: Number(employeeIncident.id) },
-            },
-          },
-        });
+        await Promise.all(
+          employeeIncident.employeeIncidentDays.map((item: any) =>
+            tx.employeeAttendance.create({
+              data: {
+                check_in: item.date,
+                check_out: item.date,
+                description: "Asistencia creada por incidencia",
+                employee_hiring: {
+                  connect: { id: employeeIncident.employeeHiringId },
+                },
+                employee_location: {
+                  connect: { id: employeeIncident.employeeLocationId },
+                },
+                employee_attendance_type: {
+                  connect: { id: 1 },
+                },
+                created_by: {
+                  connect: { id: employeeIncident.createdById },
+                },
+                employee_incident: {
+                  connect: { id: Number(employeeIncident.id) },
+                },
+              },
+            }),
+          ),
+        );
       }
 
       await tx.employeeIncidents.update({

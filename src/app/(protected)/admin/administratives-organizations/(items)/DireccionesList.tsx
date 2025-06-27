@@ -22,7 +22,7 @@ export default function DireccionesList({
     setIsDialogOpen(false);
   };
 
-  const handleSaveDirector = (data: any) => { 
+  const handleSaveDirector = (data: any) => {
     if (selected) {
       onUpdateDirector(selected.id, data);
     }

@@ -90,7 +90,6 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
             {adscriptionChangeRequest && (
               <RequestAdscriptionDetails
                 attendance={request_details.attendance}
-                currentDireccion={request_details.current_direccion}
                 newDireccion={request_details.new_direccion}
                 newLocation={request_details.new_location}
               />

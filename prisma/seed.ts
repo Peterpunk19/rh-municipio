@@ -1,4 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcryptjs");
+
 const attendance = require("./seeds/attendance");
 const category = require("./seeds/category");
 const day = require("./seeds/day");
@@ -23,6 +25,8 @@ const occupation = require("./seeds/occupation");
 const profession = require("./seeds/profession");
 const schooling = require("./seeds/schooling");
 const tradeUnion = require("./seeds/trade-union");
+const employee = require("./seeds/employee");
+const user = require("./seeds/user");
 
 const prisma = new PrismaClient();
 
@@ -53,6 +57,35 @@ async function main() {
   await prisma.profession.createMany({ data: profession });
   await prisma.schooling.createMany({ data: schooling });
   await prisma.tradeUnion.createMany({ data: tradeUnion });
+
+  const hashedPassword = await bcrypt.hash("Password123", 10);
+
+  const createdUser = await prisma.user.create({
+    data: {
+      ...user,
+      password: hashedPassword,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  });
+
+  const createdEmployee = await prisma.employee.create({
+    data: {
+      ...employee,
+      user_id: createdUser.id,
+      created_at: new Date(),
+      updated_at: new Date(),
+      birthday: new Date(employee.birthday),
+    },
+  });
+
+  await prisma.user.update({
+    where: { id: createdUser.id },
+    data: {
+      employee_id: createdEmployee.id,
+      updated_at: new Date(),
+    },
+  });
 
   console.log("Seeding finished.");
 }

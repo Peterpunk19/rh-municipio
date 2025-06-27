@@ -81,7 +81,7 @@ export interface IncidentData {
   incident?: {
     name: IncidentTypes;
     display_name: string;
-    type: string;
+    display_calendar_dates: string;
   };
   start_date: string;
   end_date: string;
