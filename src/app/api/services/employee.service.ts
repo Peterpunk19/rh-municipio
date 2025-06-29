@@ -4,6 +4,7 @@ import { encryptPassword, endOfDay, startOfDay } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters, IEmployeeHiring } from "@/app/api/employees/interface";
 import { ROLES } from "@/common/constants/Roles";
 import { STATUS_EMPLOYEE } from "@/common/constants/StatusEmployee";
+import { HttpMessages } from "@/common/response/messages";
 
 export const EmployeeService = {
   async getEmployeeByRfcCurp(rfc: string, curp: string, employeeId?: number) {
@@ -36,6 +37,22 @@ export const EmployeeService = {
   async getEmployeeById(id: number) {
     return prisma.employee.findFirst({
       include: {
+        employee_ascriptions: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: "desc",
+          },
+          include: {
+            direccion: {
+              include: {
+                secretaria: true,
+              },
+            },
+          },
+        },
         employee_hiring: {
           where: {
             active: true,
@@ -118,12 +135,12 @@ export const EmployeeService = {
   },
 
   async getEmployeeByUserId(id: number) {
-    return prisma.employee.findFirst({
+    return prisma.user.findFirst({
       select: {
-        id: true,
+        employee_id: true,
       },
       where: {
-        user_id: id,
+        id: id,
       },
     });
   },
@@ -284,6 +301,7 @@ export const EmployeeService = {
     }
 
     const employeeHiringConditions: any[] = [];
+    const employeeAscriptionsConditions: any[] = [];
 
     if (employeeFilters.employee_type) {
       employeeHiringConditions.push({
@@ -300,8 +318,10 @@ export const EmployeeService = {
     }
 
     if (employeeFilters.direccion) {
-      employeeHiringConditions.push({
-        direccion_id: employeeFilters.direccion,
+      employeeAscriptionsConditions.push({
+        direccion_id: Array.isArray(employeeFilters.direccion)
+          ? { in: employeeFilters.direccion }
+          : employeeFilters.direccion,
         active: true,
       });
     }
@@ -357,6 +377,14 @@ export const EmployeeService = {
       whereClause.employee_hiring = {
         some: {
           AND: employeeHiringConditions,
+        },
+      };
+    }
+
+    if (employeeAscriptionsConditions.length > 0) {
+      whereClause.employee_ascriptions = {
+        some: {
+          AND: employeeAscriptionsConditions,
         },
       };
     }
@@ -487,6 +515,34 @@ export const EmployeeService = {
               select: {
                 id: true,
                 display_name: true,
+              },
+            },
+          },
+        },
+        employee_ascriptions: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: "desc",
+          },
+          select: {
+            id: true,
+            direccion_id: true,
+            start_date: true,
+            end_date: true,
+            active: true,
+            direccion: {
+              select: {
+                id: true,
+                display_name: true,
+                secretaria: {
+                  select: {
+                    id: true,
+                    display_name: true,
+                  },
+                },
               },
             },
           },
@@ -738,5 +794,42 @@ export const EmployeeService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async validateDireccionAccessService(
+    userId: number,
+    employeeId: number,
+    enlaceRoleIds: number[],
+  ): Promise<{ allowed: boolean; errorMessage?: string; direccionId?: number }> {
+    const match = await prisma.employeeAscriptions.findFirst({
+      where: {
+        employee_id: employeeId,
+        active: true,
+        direccion: {
+          user_direcciones: {
+            some: {
+              user_id: userId,
+              active: true,
+              user: {
+                role_id: { in: enlaceRoleIds },
+                active: true,
+              },
+            },
+          },
+        },
+      },
+      select: {
+        direccion_id: true,
+      },
+    });
+
+    if (!match || !match.direccion_id) {
+      return {
+        allowed: false,
+        errorMessage: HttpMessages.error.notAllowedToCreateForDifferentDireccion,
+      };
+    }
+
+    return { allowed: true, direccionId: match.direccion_id };
   },
 };

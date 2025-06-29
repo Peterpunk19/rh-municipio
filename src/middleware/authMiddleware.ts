@@ -18,7 +18,7 @@ export async function authMiddleware() {
 
   return {
     userId,
-    employeeId: employee ? employee.id : null,
+    employeeId: employee ? employee.employee_id : null,
     roleId,
     session,
   };

@@ -16,6 +16,8 @@ import {
   getEmployeeDireccion,
 } from "@/app/api/common/utils.service";
 import { logger } from "@/lib/logger";
+import { getRoleValueById, validateDireccionAccess } from "@/common/utils";
+import { EmployeeService } from "@/app/api/services/employee.service";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -34,9 +36,17 @@ export async function POST(request: NextRequest) {
     return authData;
   }
 
-  const { userId: userAuthenticatedId } = authData;
+  const { employeeId, roleId, userId } = authData;
+  const role = getRoleValueById(roleId);
 
   try {
+    const direccionValidation = await validateDireccionAccess(role, userId, Number(body.employeeId), EmployeeService);
+
+    if (!direccionValidation.allowed) {
+      const response = HttpResponse.failure(HttpMessages.employeeIncidents.notAllowedToCreateForDifferentDireccion, {});
+      return handleHttpResponse(response);
+    }
+
     for (const validation of [getFolio, getIncidentStatus, validateEmployee, validateEmployeeIncident]) {
       const validationResponse = await validation(body);
       if (validationResponse) return handleHttpResponse(validationResponse);
@@ -44,7 +54,7 @@ export async function POST(request: NextRequest) {
     const direccionId = await getEmployeeDireccion(Number(body.employeeId));
     const createData = {
       ...body,
-      createdBy: userAuthenticatedId,
+      createdBy: employeeId,
       direccionId: direccionId,
     };
 

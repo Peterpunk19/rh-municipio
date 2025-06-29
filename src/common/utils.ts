@@ -6,6 +6,8 @@ import type { WhereKey } from "@/interfaces/WhereConfig";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { ROLES, ROLES_ID, RoleValue } from "@/common/constants/Roles";
+import { HttpMessages } from "./response/messages";
+import { ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 export const encryptPassword = async (password: string): Promise<string> => {
   return await bcryptjs.hash(password, 10);
@@ -209,16 +211,16 @@ export const getRoleValueById = (id: number): RoleValue | undefined => {
 
 export const applyRoleFilters = async (
   role: RoleValue | undefined,
-  employeeId: number,
+  userId: number,
   validRequestData: any,
-  EmployeeService: any,
+  UserService: any,
   fieldName: string = "direccion_id",
 ): Promise<void> => {
   if (role === ROLES.ENLACE || role === ROLES.SUBENLACE) {
-    const employee = await EmployeeService.getEmployeeById(employeeId);
-    const direccionId = employee?.employee_hiring?.[0]?.direccion?.id;
-    if (typeof direccionId === "number" && !isNaN(direccionId)) {
-      validRequestData[fieldName] = direccionId;
+    const direcciones = await UserService.getActiveUserDirecciones(userId);
+    const direccionIds = direcciones.map((d: any) => d.direccion.id);
+    if (direccionIds.length > 0) {
+      validRequestData[fieldName] = direccionIds;
     }
   }
 };
@@ -249,4 +251,27 @@ export const calculateDaysBetweenDates = (startDate: string | Date, endDate: str
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   return diffDays + 1;
+};
+
+export const validateDireccionAccess = async (
+  role: RoleValue | undefined,
+  userId: number,
+  employeeId: number,
+  EmployeeService: any,
+): Promise<{ allowed: boolean; errorMessage?: string }> => {
+  if (role !== ROLES.ENLACE && role !== ROLES.SUBENLACE) {
+    return { allowed: true };
+  }
+
+  const enlaceRoleIds = [ROLES_ID_VALUES[ROLES.ENLACE], ROLES_ID_VALUES[ROLES.SUBENLACE]];
+
+  try {
+    const result = await EmployeeService.validateDireccionAccessService(userId, employeeId, enlaceRoleIds);
+    return { allowed: result.allowed, errorMessage: result.errorMessage };
+  } catch (error) {
+    return {
+      allowed: false,
+      errorMessage: "Error al validar acceso de dirección.",
+    };
+  }
 };

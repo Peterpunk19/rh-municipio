@@ -292,4 +292,23 @@ export const UserService = {
 
     return userDirecciones;
   },
+
+  async getActiveUserDirecciones(user_id: number) {
+    return prisma.userDireccion.findMany({
+      where: {
+        user_id,
+        active: true,
+      },
+      select: {
+        direccion: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        created_at: true,
+        updated_at: true,
+      },
+    });
+  },
 };
