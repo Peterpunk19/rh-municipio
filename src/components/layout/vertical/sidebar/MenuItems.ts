@@ -75,12 +75,6 @@ const Menuitems: MenuitemsType[] = [
   },
   {
     id: uniqueId(),
-    title: "Usuarios",
-    icon: IconUser,
-    href: "/admin/users",
-  },
-  {
-    id: uniqueId(),
     title: "Empleados",
     icon: IconUsers,
     href: "/employees/",
@@ -91,39 +85,7 @@ const Menuitems: MenuitemsType[] = [
         icon: IconPoint,
         href: "/admin/employees",
       },
-      {
-        id: uniqueId(),
-        title: "Crear empleado",
-        icon: IconPoint,
-        href: "/admin/employees/create",
-      },
     ],
-  },
-  {
-    id: uniqueId(),
-    title: "Asistencia",
-    icon: IconAppWindow,
-    href: "/employees-attendances",
-    children: [
-      {
-        id: uniqueId(),
-        title: "Ver asistencias",
-        icon: IconPoint,
-        href: "/admin/employees-attendances",
-      },
-      {
-        id: uniqueId(),
-        title: "Crear asistencia",
-        icon: IconPoint,
-        href: "/admin/employees-attendances/create",
-      },
-    ],
-  },
-  {
-    id: uniqueId(),
-    title: "Organizaciones Administrativas",
-    icon: IconBuilding,
-    href: "/admin/administratives-organizations",
   },
 ];
 
