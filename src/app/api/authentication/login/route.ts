@@ -10,6 +10,8 @@ import { validateRequest } from "@/common/request/validateRequest";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { NextRequest } from "next/server";
+import { RoleModuleService } from "@/app/api/services/role-module.service";
+import { generateMenuItems } from "@/utils/menu-generator";
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,6 +37,11 @@ export async function POST(request: NextRequest) {
       return handleHttpResponse(response);
     }
     const validatedUser = UserGetSchema.parse(user);
+
+    const roleModules = await RoleModuleService.gerRoleModulesByIdRole(Number(validatedUser.role_id));
+
+    const menuItems = generateMenuItems(roleModules);
+
     const token = jwt.sign(
       {
         id: validatedUser.id,
@@ -46,7 +53,10 @@ export async function POST(request: NextRequest) {
     );
 
     const response = HttpResponse.success(HttpMessages.user.loginSuccess, {
-      payload: validatedUser,
+      payload: {
+        ...validatedUser,
+        menuItems,
+      },
       token,
     });
     return handleHttpResponse(response);

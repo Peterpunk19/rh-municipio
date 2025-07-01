@@ -27,7 +27,6 @@ model User {
   employee_id                         Int?                                @unique
   role_id                             Int
   role                                Role                                @relation(fields: [role_id], references: [id])
-  user_module_actions                 UserModuleActions[]
   attendances_created_by              EmployeeAttendance[]
   created_by                          User?                               @relation("UserCreatedBy", fields: [created_by_id], references: [id])
   created_by_id                       Int?
@@ -482,47 +481,37 @@ model Role {
   description  String
   active       Boolean                             @default(true)
   users        User[]
-  modules      Module[]                            @relation("ModuleRoles")
+  roleModules  RoleModule[]
   leaders      AdministrativeOrganizationLeaders[]
 }
 
 model Module {
-  id           Int            @id @default(autoincrement())
-  name         String         @unique
+  id           Int       @id @default(autoincrement())
+  name         String    @unique
   display_name String
-  active       Boolean        @default(true)
-  role_id      Int
-  roles        Role[]         @relation("ModuleRoles")
-  actions      ModuleAction[]
+  route        String
+  icon         String
+  active       Boolean   @default(true)
+  parent_id    Int?
+  parent       Module?   @relation("ModuleParent", fields: [parent_id], references: [id])
+  children     Module[]  @relation("ModuleParent")
+  roleModules  RoleModule[]
 }
 
-model Action {
-  id          Int            @id @default(autoincrement())
-  name        String         @unique
-  description String
-  active      Boolean        @default(true)
-  modules     ModuleAction[]
-}
+model RoleModule {
+  id         Int      @id @default(autoincrement())
+  role       Role     @relation(fields: [role_id], references: [id])
+  role_id    Int
+  module     Module   @relation(fields: [module_id], references: [id])
+  module_id  Int
+  can_view   Boolean  @default(true)
+  can_create Boolean  @default(false)
+  can_edit   Boolean  @default(false)
+  can_delete Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-model ModuleAction {
-  id                  Int                 @id @default(autoincrement())
-  module_id           Int
-  action_id           Int
-  active              Boolean             @default(true)
-  module              Module              @relation(fields: [module_id], references: [id])
-  action              Action              @relation(fields: [action_id], references: [id])
-  user_module_actions UserModuleActions[]
-
-  @@unique([module_id, action_id])
-}
-
-model UserModuleActions {
-  id               Int          @id @default(autoincrement())
-  active           Boolean
-  module_action_id Int
-  module_action    ModuleAction @relation(fields: [module_action_id], references: [id])
-  user_id          Int
-  user             User         @relation(fields: [user_id], references: [id])
+  @@unique([role_id, module_id])
 }
 
 model StatusEmployee {

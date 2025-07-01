@@ -120,8 +120,8 @@ describe("EmployeeIncidentsService", () => {
           id: 18,
           date: new Date(),
           created_at: new Date(),
-        }
-      ]
+        },
+      ],
     };
 
     it("should create attendance, update incident, and create incident status when status is APROBADA", async () => {
