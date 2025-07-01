@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Grid2 as Grid,
   Divider,
@@ -48,6 +48,7 @@ const BCrumb = [
 const EmployeeIncident = () => {
   const [loading, setLoading] = useState(false);
   const [employeeIncidentData, setEmployeeIncidentData] = useState<any>(null);
+  const [directorName, setDirectorName] = useState<string>("");
   const { id } = useParams();
   const [openDialog, setOpenDialog] = React.useState(false);
   const [idStatus, setIdStatus] = React.useState(0);
@@ -65,6 +66,21 @@ const EmployeeIncident = () => {
             setData({
               id: data.responseObject.id,
             });
+
+            getEmployeeIncidentById(id as string, true, data.responseObject.created_at)
+              .then((pdfData) => {
+                if (pdfData.success && pdfData.responseObject) {
+                  const dataWithDirector = pdfData.responseObject;
+                  const director = dataWithDirector?.direccion?.leaders?.[0];
+                  const directorFullName = director?.employee
+                    ? `${director.employee.name} ${director.employee.paternal_last_name} ${director.employee.maternal_last_name}`.toUpperCase()
+                    : "";
+                  setDirectorName(directorFullName);
+                }
+              })
+              .catch((error) => {
+                console.error("Error fetching director data for PDF:", error);
+              });
           } else {
             setEmployeeIncidentData(null);
             redirect("/admin/employees-incidents");
@@ -160,10 +176,10 @@ const EmployeeIncident = () => {
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
                 <Box display="flex" gap={1}>
                   <PDFGenerator
-                    data={employeeIncidentData}
+                    data={{ ...employeeIncidentData, directorName }}
                     title="Formato de incidencia"
                     fileName={`incidencia-${employeeIncidentData.folio}`}
-                    template={IncidentTemplate}
+                    template={IncidentTemplate as any}
                   />
                 </Box>
               </Stack>
@@ -251,7 +267,7 @@ const EmployeeIncident = () => {
                 </Paper>
               </Grid>
 
-              <Grid size={12}>
+              <Grid mb={3} size={12}>
                 <IncidentStatusHistory data={employeeIncidentData} />
               </Grid>
             </CardContent>

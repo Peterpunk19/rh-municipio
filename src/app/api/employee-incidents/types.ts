@@ -10,6 +10,7 @@ export interface IEmployeeIncident {
   employeeAttendanceId?: number;
   createdBy: number | string;
   incidentDates?: string[];
+  direccionId?: number | null;
 }
 
 export interface IEmployeeIncidentFilters {
@@ -35,6 +36,7 @@ export interface IEmployeeIncidentById {
     employee_location: { id: number }[];
   };
   createdById?: number;
+  validatedById?: number;
 }
 
 export interface IEmployeeIncidentUpdate {
@@ -48,6 +50,7 @@ export interface IEmployeeIncidentUpdate {
   createdById: number;
   employeeAttendanceTypeId: number;
   employeeIncidentDays: any;
+  validatedById?: number;
 }
 
 export interface IncidentCreateModalProps {

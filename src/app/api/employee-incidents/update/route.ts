@@ -83,6 +83,7 @@ export async function PUT(request: NextRequest) {
       checkOut: employeeIncident.end_date,
       employeeAttendanceTypeId: employeeIncident.employee.employee_attendance_type[0].id,
       employeeIncidentDays: employeeIncident.employee_incident_days,
+      validatedById: Number(employeeId),
     };
 
     const [updatedEmployeeIncident] = await EmployeeIncidentsService.updateEmployeeIncidents(updateData);

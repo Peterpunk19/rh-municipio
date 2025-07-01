@@ -122,6 +122,7 @@ describe("EmployeeIncidentsService", () => {
           created_at: new Date(),
         },
       ],
+      validatedById: 40,
     };
 
     it("should create attendance, update incident, and create incident status when status is APROBADA", async () => {
@@ -162,6 +163,7 @@ describe("EmployeeIncidentsService", () => {
         data: {
           incident_status_id: mockEmployeeIncident.incidentStatusId,
           validated_at: expect.any(Date),
+          validated_by_id: mockEmployeeIncident.validatedById,
         },
         where: {
           id: mockEmployeeIncident.id,
