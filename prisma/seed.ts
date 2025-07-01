@@ -27,6 +27,8 @@ const schooling = require("./seeds/schooling");
 const tradeUnion = require("./seeds/trade-union");
 const employee = require("./seeds/employee");
 const user = require("./seeds/user");
+const modules = require("./seeds/modules");
+const roleModules = require("./seeds/roleModules");
 
 const prisma = new PrismaClient();
 
@@ -57,6 +59,21 @@ async function main() {
   await prisma.profession.createMany({ data: profession });
   await prisma.schooling.createMany({ data: schooling });
   await prisma.tradeUnion.createMany({ data: tradeUnion });
+
+  await prisma.module.createMany({ data: modules });
+
+  for (const rm of roleModules) {
+    await prisma.roleModule.create({
+      data: {
+        role_id: rm.role_id,
+        module_id: rm.module_id,
+        can_view: rm.can_view ?? false,
+        can_create: rm.can_create ?? false,
+        can_edit: rm.can_edit ?? false,
+        can_delete: rm.can_delete ?? false,
+      },
+    });
+  }
 
   const hashedPassword = await bcrypt.hash("Password123", 10);
 
