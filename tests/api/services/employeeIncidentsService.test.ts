@@ -118,8 +118,8 @@ describe("EmployeeIncidentsService", () => {
       employeeIncidentDays: [
         {
           id: 18,
-          date: '2025-06-16T00:00:00.000Z',
-          created_at: '2025-06-27T08:32:58.286Z'
+          date: new Date(),
+          created_at: new Date(),
         }
       ]
     };
