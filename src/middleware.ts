@@ -63,11 +63,6 @@ export default auth(async (req) => {
       if (token.role_name === "empleado") {
         return Response.redirect(new URL(DEFAULT_EMPLOYEE_REDIRECT, nextUrl));
       }
-
-      if (token.role_name === "enlace") {
-        return Response.redirect(new URL("/enlace", nextUrl));
-      }
-
       return Response.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl));
     }
     return null;
