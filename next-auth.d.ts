@@ -8,6 +8,11 @@ declare module "next-auth" {
     accessToken?: string;
     employee_id?: string;
   }
+
+  interface Session {
+    menuItems?: any[];
+    user: User;
+  }
 }
 
 declare module "@auth/core/jwt" {
@@ -20,5 +25,6 @@ declare module "@auth/core/jwt" {
     number_employee?: string;
     accessToken?: string;
     employee_id?: string;
+    menuItems?: any[];
   }
 }

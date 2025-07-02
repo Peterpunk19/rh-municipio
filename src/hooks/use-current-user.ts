@@ -5,5 +5,6 @@ export const useCurrentUser = () => {
 
   return {
     user: session?.user,
+    menuItems: (session as any)?.menuItems || [],
   };
 };

@@ -50,6 +50,7 @@ export const {
         token.role_display_name = user.role_display_name || "";
         token.number_employee = user.number_employee || "";
         token.accessToken = user.accessToken;
+        token.menuItems = user.menuItems;
       }
 
       return token;
@@ -64,6 +65,7 @@ export const {
         session.user.role_display_name = token.role_display_name as string;
         session.user.number_employee = token.number_employee as string;
         session.accessToken = token.accessToken;
+        session.menuItems = token.menuItems;
       }
       return session;
     },

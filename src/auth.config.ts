@@ -21,6 +21,7 @@ export default {
               email: response.responseObject.payload.email,
               role: response.responseObject.payload.role_id.toString(),
               accessToken: response.responseObject.token,
+              menuItems: response.responseObject.payload.menuItems,
             };
           }
           return null;
