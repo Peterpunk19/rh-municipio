@@ -7,8 +7,9 @@ import { HttpMessages } from "@/common/response/messages";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
 import { failureResponse, successResponse } from "@/common/utils";
 import { logger } from "@/lib/logger";
+import { NextRequest } from "next/server";
 
-export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const id = Number.parseInt((await params).id);
     if (isNaN(id)) return failureResponse(HttpMessages.error.invalidId);
@@ -16,7 +17,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const validationRequest = await validateRequestByUrlParams<IEmployeeById>({ id }, EmployeeGetByIdSchema);
     if (validationRequest.response) return validationRequest.response;
 
-    const existingEmployeeIncident = await EmployeeIncidentsService.getEmployeeIncidentById(id);
+    const searchParams = request.nextUrl?.searchParams ?? new URLSearchParams();
+    const isPDF = searchParams.get("isPDF") === "true";
+    const incidentDateParam = searchParams.get("incidentDate");
+    const incidentDate = incidentDateParam ? new Date(incidentDateParam) : undefined;
+
+    const existingEmployeeIncident = await EmployeeIncidentsService.getEmployeeIncidentById(id, isPDF, incidentDate);
     if (!existingEmployeeIncident) return failureResponse(HttpMessages.employeeIncidents.notFoundById);
 
     return successResponse(HttpMessages.employeeIncidents.foundById, existingEmployeeIncident);

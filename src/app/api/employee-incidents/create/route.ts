@@ -13,6 +13,7 @@ import {
   getIncidentStatus,
   validateEmployee,
   validateEmployeeIncident,
+  getEmployeeDireccion,
 } from "@/app/api/common/utils.service";
 import { logger } from "@/lib/logger";
 
@@ -40,10 +41,11 @@ export async function POST(request: NextRequest) {
       const validationResponse = await validation(body);
       if (validationResponse) return handleHttpResponse(validationResponse);
     }
-
+    const direccionId = await getEmployeeDireccion(Number(body.employeeId));
     const createData = {
       ...body,
       createdBy: userAuthenticatedId,
+      direccionId: direccionId,
     };
 
     const [createEmployeeIncidents] = await EmployeeIncidentsService.createEmployeeIncidents(createData);

@@ -7,7 +7,18 @@ import {IEmployeeIncidentDetails} from "@/components/types/IEmployeeIncident";
 import {formatDate} from "@/utils/formatter";
 
 type Props = {
-  data: IEmployeeIncidentDetails;
+  data: IEmployeeIncidentDetails & {
+    created_by?: {
+      name: string;
+      paternal_last_name: string;
+      maternal_last_name: string;
+    };
+    validated_by?: {
+      name: string;
+      paternal_last_name: string;
+      maternal_last_name: string;
+    };
+  };
 };
 
 const IncidentDetails: React.FC<Props> = ({ data }) => {
@@ -58,12 +69,14 @@ const IncidentDetails: React.FC<Props> = ({ data }) => {
           </Grid>
           <Grid size={{ lg: 3, xs: 12 }}>
             <Typography variant="subtitle1" color="text.secondary">
-              Solicitud por
+              Solicitado por
             </Typography>
           </Grid>
           <Grid size={{ lg: 9, xs: 12 }}>
             <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-              -
+              {data.created_by && Object.keys(data.created_by).length > 0 ? 
+                data.created_by.name + " " + data.created_by.paternal_last_name + " " + data.created_by.maternal_last_name 
+                : "-"}
             </Typography>
           </Grid>
           <Grid size={{ lg: 3, xs: 12 }}>
@@ -73,7 +86,9 @@ const IncidentDetails: React.FC<Props> = ({ data }) => {
           </Grid>
           <Grid size={{ lg: 9, xs: 12 }}>
             <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-              -
+              {data.validated_by && Object.keys(data.validated_by).length > 0 ? 
+                data.validated_by.name + " " + data.validated_by.paternal_last_name + " " + data.validated_by.maternal_last_name 
+                : "-"}
             </Typography>
           </Grid>
         </Grid>

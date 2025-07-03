@@ -5,7 +5,12 @@ import { IncidentData, INCIDENT_COMPONENTS } from "./incidents/types";
 import { IncidentTypes } from "@/common/constants/IncidentTypes";
 import styles from "@/components/shared/pdfs/styles/IncidentStyle";
 
-const IncidentTemplate: React.FC<{ data: IncidentData }> = ({ data }) => {
+interface IncidentTemplateProps {
+  data: IncidentData & { directorName?: string };
+  directorName?: string;
+}
+
+const IncidentTemplate: React.FC<IncidentTemplateProps> = ({ data, directorName }) => {
   const qrData = JSON.stringify({
     oficio: data.oficio,
     empleado: data.employee?.name,
@@ -13,6 +18,7 @@ const IncidentTemplate: React.FC<{ data: IncidentData }> = ({ data }) => {
     tipo: data.incident?.display_name,
   });
   const qrBase64 = generateQRBase64(qrData);
+  const finalDirectorName = data.directorName || directorName || '';
 
   return (
     <Document>
@@ -201,7 +207,7 @@ const IncidentTemplate: React.FC<{ data: IncidentData }> = ({ data }) => {
           </View>
           <View style={[styles.signatureBox, { width: "40%" }]}>
             <Text style={{ fontSize: 8, fontWeight: "bold", marginBottom: 5 }}>
-              C. EDUARDO MAXIMILIANO GARCIA BETANZOS
+              {finalDirectorName}
             </Text>
             <Text>_____________________________</Text>
             <Text style={{ fontSize: 8, fontWeight: "bold" }}>Secretario y/o Director</Text>

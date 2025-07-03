@@ -131,5 +131,7 @@ export const HttpMessages = {
     notFoundByDirectorId: "No se encontró el director con el ID proporcionado",
     notFoundByDeputyDirectorId: "No se encontró el subdirector con el ID proporcionado",
     notFoundByDireccionId: "No se encontró el organismo administrativo con el ID proporcionado",
+    directorFound: "Director encontrado correctamente",
+    directorNotFound: "No se encontró un director para la dirección y fecha especificadas",
   },
 };

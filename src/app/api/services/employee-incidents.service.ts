@@ -6,8 +6,7 @@ import {
 } from "@/app/api/employee-incidents/types";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
-
-const MAX_VACATION_DAYS = 20;
+import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 export const EmployeeIncidentsService = {
   async getFolio() {
@@ -42,27 +41,35 @@ export const EmployeeIncidentsService = {
 
   async createEmployeeIncidents(employeeIncident: IEmployeeIncident) {
     return prisma.$transaction(async (tx) => {
-      const createEmployeeIncidents = await tx.employeeIncidents.create({
-        data: {
-          folio: employeeIncident.folio,
-          oficio: employeeIncident.oficio ?? "",
-          start_date: employeeIncident.startDate,
-          end_date: employeeIncident.endDate,
-          description: employeeIncident.description,
-          incident: {
-            connect: { id: Number(employeeIncident.incidentId) },
-          },
-          incident_status: {
-            connect: { id: Number(employeeIncident.incidentStatusId) },
-          },
-          employee: {
-            connect: { id: Number(employeeIncident.employeeId) },
-          },
-          created_by: {
-            connect: { id: Number(employeeIncident.createdBy) },
-          },
-          created_at: new Date(),
+      const createData: any = {
+        folio: employeeIncident.folio,
+        oficio: employeeIncident.oficio ?? "",
+        start_date: employeeIncident.startDate,
+        end_date: employeeIncident.endDate,
+        description: employeeIncident.description,
+        incident: {
+          connect: { id: Number(employeeIncident.incidentId) },
         },
+        incident_status: {
+          connect: { id: Number(employeeIncident.incidentStatusId) },
+        },
+        employee: {
+          connect: { id: Number(employeeIncident.employeeId) },
+        },
+        created_by: {
+          connect: { id: Number(employeeIncident.createdBy) },
+        },
+        created_at: new Date(),
+      };
+
+      if (employeeIncident.direccionId) {
+        createData.direccion = {
+          connect: { id: Number(employeeIncident.direccionId) },
+        };
+      }
+
+      const createEmployeeIncidents = await tx.employeeIncidents.create({
+        data: createData,
       });
 
       const createEmployeeIncidentsStatus = await tx.employeeIncidentsStatus.create({
@@ -203,139 +210,206 @@ export const EmployeeIncidentsService = {
     return { ...pagination, data };
   },
 
-  async getEmployeeIncidentById(id: number) {
-    return prisma.employeeIncidents.findFirst({
-      where: { id },
-      select: {
-        id: true,
-        folio: true,
-        oficio: true,
-        description: true,
-        employee_id: true,
-        incident_status_id: true,
-        start_date: true,
-        end_date: true,
-        active: true,
-        created_at: true,
-        incident: {
-          select: {
-            id: true,
-            name: true,
-            display_name: true,
-            display_calendar_dates: true,
-          },
+  async getEmployeeIncidentById(id: number, isPDF: boolean = false, incidentDate?: Date) {
+    const selectClause: any = {
+      id: true,
+      folio: true,
+      oficio: true,
+      description: true,
+      employee_id: true,
+      incident_status_id: true,
+      start_date: true,
+      end_date: true,
+      active: true,
+      created_at: true,
+      created_by_id: true,
+      direccion_id: true,
+      created_by: {
+        select: {
+          id: true,
+          name: true,
+          maternal_last_name: true,
+          paternal_last_name: true,
         },
-        incident_status: {
-          select: {
-            id: true,
-            name: true,
-            display_name: true,
-            btn_color: true,
-            btn_display_name: true,
-            btn_icon: true,
-          },
+      },
+      validated_by_id: true,
+      validated_by: {
+        select: {
+          id: true,
+          name: true,
+          maternal_last_name: true,
+          paternal_last_name: true,
         },
-        employee: {
-          select: {
-            id: true,
-            user_id: true,
-            name: true,
-            maternal_last_name: true,
-            paternal_last_name: true,
-            number_employee: true,
-            rfc: true,
-            curp: true,
-            employee_hiring: {
-              select: {
-                id: true,
-                category: {
-                  select: { id: true, name: true, display_name: true },
-                },
-                employee_type: {
-                  select: { id: true, name: true, display_name: true },
-                },
-                direccion: {
-                  select: {
-                    id: true,
-                    name: true,
-                    display_name: true,
-                    secretaria: {
-                      select: { id: true, name: true, display_name: true },
-                    },
+      },
+      incident: {
+        select: {
+          id: true,
+          name: true,
+          display_name: true,
+          display_calendar_dates: true,
+        },
+      },
+      incident_status: {
+        select: {
+          id: true,
+          name: true,
+          display_name: true,
+          btn_color: true,
+          btn_display_name: true,
+          btn_icon: true,
+        },
+      },
+      employee: {
+        select: {
+          id: true,
+          user_id: true,
+          name: true,
+          maternal_last_name: true,
+          paternal_last_name: true,
+          number_employee: true,
+          rfc: true,
+          curp: true,
+          employee_hiring: {
+            where: {
+              active: true,
+            },
+            take: 1,
+            select: {
+              id: true,
+              category: {
+                select: { id: true, name: true, display_name: true },
+              },
+              employee_type: {
+                select: { id: true, name: true, display_name: true },
+              },
+              direccion: {
+                select: {
+                  id: true,
+                  name: true,
+                  display_name: true,
+                  secretaria: {
+                    select: { id: true, name: true, display_name: true },
                   },
                 },
               },
             },
-            employee_location: {
-              where: {
-                active: true,
-              },
-              take: 1,
-              select: {
-                id: true,
-                location: {
-                  select: {
-                    id: true,
-                    name: true,
-                    display_name: true,
-                  },
+          },
+          employee_location: {
+            where: {
+              active: true,
+            },
+            take: 1,
+            select: {
+              id: true,
+              location: {
+                select: {
+                  id: true,
+                  name: true,
+                  display_name: true,
                 },
               },
             },
-            employee_attendance_type: {
-              select: {
-                id: true,
-              },
-            },
-            job_schedule_employee: {
-              where: {
-                active: true,
-              },
-              select: {
-                id: true,
-                start_day: true,
-                end_day: true,
-                start_hour: true,
-                end_hour: true,
-              },
+          },
+          employee_attendance_type: {
+            select: {
+              id: true,
             },
           },
-        },
-        employee_incidents_status: {
-          select: {
-            id: true,
-            created_at: true,
-            incident_status: {
-              select: {
-                id: true,
-                name: true,
-                display_name: true,
-                btn_color: true,
-                btn_display_name: true,
-                btn_icon: true,
-              },
+          job_schedule_employee: {
+            where: {
+              active: true,
             },
-            created_by: {
-              select: {
-                id: true,
-                name: true,
-                maternal_last_name: true,
-                paternal_last_name: true,
-              },
+            select: {
+              id: true,
+              start_day: true,
+              end_day: true,
+              start_hour: true,
+              end_hour: true,
             },
-          },
-        },
-        employee_incident_days: {
-          select: {
-            id: true,
-            date: true,
-            created_at: true,
-          },
-          orderBy: {
-            date: "asc",
           },
         },
       },
+      employee_incidents_status: {
+        select: {
+          id: true,
+          created_at: true,
+          incident_status: {
+            select: {
+              id: true,
+              name: true,
+              display_name: true,
+              btn_color: true,
+              btn_display_name: true,
+              btn_icon: true,
+            },
+          },
+          created_by: {
+            select: {
+              id: true,
+              name: true,
+              maternal_last_name: true,
+              paternal_last_name: true,
+            },
+          },
+        },
+      },
+      employee_incident_days: {
+        select: {
+          id: true,
+          date: true,
+          created_at: true,
+        },
+        orderBy: {
+          date: "asc",
+        },
+      },
+    };
+
+    if (isPDF && incidentDate) {
+      selectClause.direccion = {
+        select: {
+          id: true,
+          name: true,
+          display_name: true,
+          leaders: {
+            where: {
+              role_id: ROLES_ID_VALUES[ROLES.DIRECTOR],
+              active: true,
+              start_date: {
+                lte: incidentDate,
+              },
+              end_date: {
+                gte: incidentDate,
+              },
+            },
+            take: 1,
+            select: {
+              id: true,
+              employee: {
+                select: {
+                  id: true,
+                  name: true,
+                  paternal_last_name: true,
+                  maternal_last_name: true,
+                },
+              },
+              role: {
+                select: {
+                  name: true,
+                  display_name: true,
+                },
+              },
+              start_date: true,
+              end_date: true,
+            },
+          },
+        },
+      };
+    }
+
+    return prisma.employeeIncidents.findFirst({
+      where: { id },
+      select: selectClause,
     });
   },
 
@@ -374,6 +448,7 @@ export const EmployeeIncidentsService = {
         data: {
           incident_status_id: employeeIncident.incidentStatusId,
           validated_at: employeeIncident.incidentStatusId === INCIDENT_STATUS_ID.APROBADA ? new Date() : null,
+          validated_by_id: employeeIncident.validatedById || null,
         },
         where: {
           id: Number(employeeIncident.id),

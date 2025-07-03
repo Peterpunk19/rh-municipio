@@ -31,9 +31,23 @@ export const updateEmployeeIncident = async (data: object): Promise<IResponse> =
   }
 };
 
-export const getEmployeeIncidentById = async (id: string): Promise<IResponse> => {
+export const getEmployeeIncidentById = async (
+  id: string,
+  isPDF?: boolean,
+  incidentDate?: string,
+): Promise<IResponse> => {
   try {
-    const response = await http.get<IResponse>(`/api/employee-incidents/${id}`);
+    let url = `/api/employee-incidents/${id}`;
+
+    if (isPDF && incidentDate) {
+      const params = new URLSearchParams({
+        isPDF: isPDF.toString(),
+        incidentDate: incidentDate,
+      });
+      url += `?${params.toString()}`;
+    }
+
+    const response = await http.get<IResponse>(url);
     return response.data;
   } catch (error: any) {
     return error;

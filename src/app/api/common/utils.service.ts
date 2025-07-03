@@ -157,3 +157,18 @@ export const validateExistence = async (id: number, key: string, service: Functi
     });
   }
 };
+
+export const getEmployeeDireccion = async (employeeId: number) => {
+  const employee = await EmployeeService.getEmployeeById(employeeId);
+
+  if (!employee || !employee.employee_hiring || employee.employee_hiring.length === 0) {
+    return null;
+  }
+
+  const activeHiring = employee.employee_hiring.find((hiring) => hiring.active === true);
+  if (!activeHiring || !activeHiring.direccion_id) {
+    return null;
+  }
+
+  return activeHiring.direccion_id;
+};

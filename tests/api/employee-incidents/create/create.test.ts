@@ -2,15 +2,15 @@ import { POST } from "@/app/api/employee-incidents/create/route";
 import { testCases } from "./testCases";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
 
-const { getFolio, getIncidentStatus, validateEmployee, validateEmployeeIncident } = jest.requireMock(
-  "@/app/api/common/utils.service",
-);
+const { getFolio, getIncidentStatus, validateEmployee, validateEmployeeIncident, getEmployeeDireccion } =
+  jest.requireMock("@/app/api/common/utils.service");
 
 jest.mock("@/app/api/common/utils.service", () => ({
   getFolio: jest.fn(),
   getIncidentStatus: jest.fn(),
   validateEmployee: jest.fn(),
   validateEmployeeIncident: jest.fn(),
+  getEmployeeDireccion: jest.fn(),
 }));
 
 jest.mock("@/app/api/services/employee-incidents.service", () => ({
@@ -38,6 +38,7 @@ describe("API: /employee-incidents", () => {
         getIncidentStatus.mockResolvedValue(null);
         validateEmployee.mockResolvedValue(null);
         validateEmployeeIncident.mockResolvedValue(null);
+        getEmployeeDireccion.mockResolvedValue(1);
         authMiddleware.mockResolvedValue({ userId: 1 });
         (EmployeeIncidentsService.createEmployeeIncidents as jest.Mock).mockResolvedValueOnce([{}, {}]);
       }

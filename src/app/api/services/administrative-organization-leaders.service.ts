@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { ICreateLeader, IAdministrativeOrganizationsFilters } from "@/app/api/administrative-organizations/types";
-import { buildWhereClause, getPaginationData } from "@/common/utils";
+import { getPaginationData } from "@/common/utils";
 import { ROLES } from "@/common/constants/Roles";
 
 export const AdministrativeOrganizationLeadersService = {
