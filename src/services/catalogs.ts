@@ -34,7 +34,7 @@ export const fetchSecretariasData = async (): Promise<IResponseObject> => {
 };
 
 export const fetchDireccionesData = async (secretariaId: string): Promise<IResponseObject> => {
-  if (!secretariaId || secretariaId === "0") return null;
+  if (!secretariaId || secretariaId === "0") return { success: false, responseObject: [] };
 
   try {
     const response = await http.get<IResponseObject>(`/api/catalogs/direcciones?id=${secretariaId}`);

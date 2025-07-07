@@ -10,6 +10,8 @@ export interface IDireccion {
   name: string;
   director: IDirector;
   deputy_director: IDirector;
+  enlace?: IEnlace;
+  subenlace?: IEnlace;
 }
 
 export interface IAdministrativeOrganization {
@@ -33,4 +35,9 @@ export interface FormErrors {
   startDate?: string;
   endDate?: string;
   [key: string]: string | undefined;
+}
+
+export interface IEnlace {
+  id: number;
+  username: string;
 }

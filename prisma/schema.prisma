@@ -34,8 +34,8 @@ model User {
   employee_requests_by                EmployeeRequest[]                   @relation("requestedBy")
   leaders_by                          AdministrativeOrganizationLeaders[] @relation("createdBy")
   employee_attendance_type_created_by EmployeeAttendanceType[]            @relation("createdByEmployeeAttendanceType")
-
-  adscriptions                        EmployeeAdscriptions[] @relation("createdBy")
+  adscriptions                        EmployeeAdscriptions[]              @relation("createdBy")
+  user_direcciones                    UserDireccion[]
 }
 
 model Employee {
@@ -87,7 +87,7 @@ model Employee {
   identification_folio                 String?
   job_schedule_employee                JobScheduleEmployee[]
   leaders                              AdministrativeOrganizationLeaders[]
-  employee_adscriptions                          EmployeeAdscriptions[]
+  employee_adscriptions                EmployeeAdscriptions[]
 }
 
 model EmployeeAddress {
@@ -288,14 +288,14 @@ model EmployeeIncidentsStatus {
 }
 
 model Incident {
-  id                 Int                 @id @default(autoincrement())
-  name               String              @unique
-  display_name       String
-  type               Int
-  display_calendar_dates               Boolean           @default(false)
-  display_time_on_calendar               Boolean           @default(false)
-  active             Boolean
-  employee_incidents EmployeeIncidents[]
+  id                       Int                 @id @default(autoincrement())
+  name                     String              @unique
+  display_name             String
+  type                     Int
+  display_calendar_dates   Boolean             @default(false)
+  display_time_on_calendar Boolean             @default(false)
+  active                   Boolean
+  employee_incidents       EmployeeIncidents[]
 }
 
 model IncidentStatus {
@@ -389,10 +389,10 @@ model EmployeeRequestDetail {
   attendance_date     DateTime?
   employee_request_id Int
   employee_request    EmployeeRequest @relation(fields: [employee_request_id], references: [id])
-  direccion_id       Int?
-  direccion          Direccion?     @relation("currentDireccion", fields: [direccion_id], references: [id])
-  new_direccion_id       Int?
-  new_direccion          Direccion?     @relation("newDireccion", fields: [new_direccion_id], references: [id])
+  direccion_id        Int?
+  direccion           Direccion?      @relation("currentDireccion", fields: [direccion_id], references: [id])
+  new_direccion_id    Int?
+  new_direccion       Direccion?      @relation("newDireccion", fields: [new_direccion_id], references: [id])
   location_id         Int?
   location            Location?       @relation("currentLocation", fields: [location_id], references: [id])
   attendance_id       Int?
@@ -486,15 +486,15 @@ model Role {
 }
 
 model Module {
-  id           Int       @id @default(autoincrement())
-  name         String    @unique
+  id           Int          @id @default(autoincrement())
+  name         String       @unique
   display_name String
   route        String
   icon         String
-  active       Boolean   @default(true)
+  active       Boolean      @default(true)
   parent_id    Int?
-  parent       Module?   @relation("ModuleParent", fields: [parent_id], references: [id])
-  children     Module[]  @relation("ModuleParent")
+  parent       Module?      @relation("ModuleParent", fields: [parent_id], references: [id])
+  children     Module[]     @relation("ModuleParent")
   roleModules  RoleModule[]
 }
 
@@ -606,21 +606,22 @@ model Location {
 }
 
 model Direccion {
-  id                Int                  @id @default(autoincrement())
-  name              String
-  display_name      String
-  secretaria_id     Int
-  secretaria        Secretaria           @relation(fields: [secretaria_id], references: [id])
-  active            Boolean              @default(true)
-  created_at        DateTime?            @default(now())
-  updated_at        DateTime?            @updatedAt
-  employee_hiring   EmployeeHiring[]
-  director          Director[]
-  leaders           AdministrativeOrganizationLeaders[]
-  employee_request_detail     EmployeeRequestDetail[]  @relation("currentDireccion")
-  employee_request_detail_new EmployeeRequestDetail[]  @relation("newDireccion")
-  employee_adscriptions  EmployeeAdscriptions[]
-  employee_incidents EmployeeIncidents[] @relation("direccion")
+  id                          Int                                 @id @default(autoincrement())
+  name                        String
+  display_name                String
+  secretaria_id               Int
+  secretaria                  Secretaria                          @relation(fields: [secretaria_id], references: [id])
+  active                      Boolean                             @default(true)
+  created_at                  DateTime?                           @default(now())
+  updated_at                  DateTime?                           @updatedAt
+  employee_hiring             EmployeeHiring[]
+  director                    Director[]
+  leaders                     AdministrativeOrganizationLeaders[]
+  employee_request_detail     EmployeeRequestDetail[]             @relation("currentDireccion")
+  employee_request_detail_new EmployeeRequestDetail[]             @relation("newDireccion")
+  employee_adscriptions       EmployeeAdscriptions[]
+  employee_incidents          EmployeeIncidents[]                 @relation("direccion")
+  user_direcciones            UserDireccion[]
 }
 
 model Secretaria {
@@ -690,4 +691,16 @@ model EmployeeAdscriptions {
   direccion     Direccion @relation(fields: [direccion_id], references: [id])
   employee      Employee  @relation(fields: [employee_id], references: [id])
   created_by    User      @relation("createdBy", fields: [created_by_id], references: [id])
+}
+
+model UserDireccion {
+  id            Int       @id @default(autoincrement())
+  user          User      @relation(fields: [user_id], references: [id])
+  user_id       Int
+  direccion     Direccion @relation(fields: [direccion_id], references: [id])
+  direccion_id  Int
+  created_by_id Int
+  active        Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
 }

@@ -31,7 +31,7 @@ const direccion = [
     id: 5,
     name: "sindicatura",
     display_name: "SINDICATURA",
-    secretaria_id: 16,
+    secretaria_id: 15,
     active: true,
   },
   {
@@ -382,6 +382,34 @@ const direccion = [
     name: "secretaria_servicios_municipales",
     display_name: "SECRETARÍA DE SERVICIOS MUNICIPALES",
     secretaria_id: 13,
+    active: true,
+  },
+  {
+    id: 56,
+    name: "contraloria_social",
+    display_name: "CONTRALORÍA SOCIAL",
+    secretaria_id: 2,
+    active: true,
+  },
+  {
+    id: 57,
+    name: "medio_ambiente",
+    display_name: "SECRETARÍA DE MEDIO AMBIENTE Y MOVILIDAD URBANA",
+    secretaria_id: 3,
+    active: true,
+  },
+  {
+    id: 58,
+    name: "juventud",
+    display_name: "INSTITUTO DE LA JUVENTUD",
+    secretaria_id: 4,
+    active: true,
+  },
+  {
+    id: 59,
+    name: "tesoreria",
+    display_name: "TESORERÍA MUNICIPAL",
+    secretaria_id: 16,
     active: true,
   },
 ];

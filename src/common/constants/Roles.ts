@@ -27,6 +27,7 @@ export const ROLES_ID_VALUES = {
   [ROLES.REGIDOR]: 10,
   [ROLES.DIRECTOR]: 11,
   [ROLES.SUPLENTE]: 12,
+  [ROLES.SUBENLACE]: 13,
 } as const;
 
 export type RoleKey = keyof typeof ROLES;
@@ -45,4 +46,16 @@ export const ROLES_ID: Record<number, RoleKey> = {
   10: "REGIDOR",
   11: "DIRECTOR",
   12: "SUPLENTE",
+  13: "SUBENLACE",
+};
+export const ROLE_EXCLUSIONS = {
+  USER_CREATION: [ROLES.DIRECTOR, ROLES.EMPLEADO],
+};
+
+export const isRoleExcluded = (roleName: string, context: keyof typeof ROLE_EXCLUSIONS): boolean => {
+  if (!ROLE_EXCLUSIONS[context]) {
+    return false;
+  }
+
+  return ROLE_EXCLUSIONS[context].includes(roleName as any);
 };
