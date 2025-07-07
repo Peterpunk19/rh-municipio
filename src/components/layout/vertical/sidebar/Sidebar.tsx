@@ -2,12 +2,17 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { useEffect, useRef } from "react";
 import SidebarItems from "./SidebarItems";
 import Logo from "../../../shared/logo/Logo";
 import { useSelector, useDispatch } from "@/store/hooks";
 import { hoverSidebar, toggleMobileSidebar } from "@/store/customizer/CustomizerSlice";
 import Scrollbar from "@/app/components/custom-scroll/Scrollbar";
 import { AppState } from "@/store/store";
+import { transformMenuItems } from "@/utils/transformMenuItems";
+import { ROLES } from "@/common/constants/Roles";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useSession } from "next-auth/react";
 
 const Sidebar = () => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.down("lg"));
@@ -16,6 +21,21 @@ const Sidebar = () => {
   const theme = useTheme();
   const toggleWidth =
     customizer.isCollapse && !customizer.isSidebarHover ? customizer.MiniSidebarWidth : customizer.SidebarWidth;
+
+  const { user, menuItems } = useCurrentUser();
+  const { update: updateSession } = useSession();
+  const hasUpdated = useRef(false);
+
+  useEffect(() => {
+    if (!hasUpdated.current) {
+      hasUpdated.current = true;
+      updateSession();
+    }
+  }, []);
+
+  if ((user as any)?.role_name === ROLES.EMPLEADO) return null;
+
+  const processedMenu = transformMenuItems(menuItems || []);
 
   const onHoverEnter = () => {
     if (customizer.isCollapse) {
@@ -77,7 +97,7 @@ const Sidebar = () => {
                 {/* ------------------------------------------- */}
                 {/* Sidebar Items */}
                 {/* ------------------------------------------- */}
-                <SidebarItems />
+                <SidebarItems menuItems={processedMenu} />
               </Scrollbar>
             </Box>
           </Drawer>
@@ -105,7 +125,7 @@ const Sidebar = () => {
           {/* ------------------------------------------- */}
           {/* Sidebar For Mobile */}
           {/* ------------------------------------------- */}
-          <SidebarItems />
+          <SidebarItems menuItems={processedMenu} />
         </Drawer>
       )}
     </>
