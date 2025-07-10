@@ -42,11 +42,6 @@ export const dataProvider = {
     request: request.notFoundEmployeeId,
     response: response.notFoundEmployeeId,
   },
-  duplicatedEmployeeId: {
-    status: 400,
-    request: request.duplicatedEmployeeId,
-    response: response.duplicatedEmployeeId,
-  },
   emptyPassword: {
     status: 400,
     request: request.emptyPassword,

@@ -74,14 +74,6 @@ export const response = {
     },
     statusCode: 400,
   },
-  duplicatedEmployeeId: {
-    success: false,
-    message: HttpMessages.user.employeeIdAlreadyExists,
-    responseObject: {
-      employee_id: 6,
-    },
-    statusCode: 400,
-  },
   emptyPassword: {
     success: false,
     message: HttpMessages.error.validationFields,

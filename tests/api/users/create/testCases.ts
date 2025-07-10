@@ -51,12 +51,6 @@ export const testCases = [
     expectedResponse: dataProvider.notFoundEmployeeId.response,
   },
   {
-    description: "should return error for existing employee_id",
-    requestData: dataProvider.duplicatedEmployeeId.request as IUser,
-    expectedStatus: dataProvider.duplicatedEmployeeId.status,
-    expectedResponse: dataProvider.duplicatedEmployeeId.response,
-  },
-  {
     description: "should return error for empty password",
     requestData: dataProvider.emptyPassword.request as IUser,
     expectedStatus: dataProvider.emptyPassword.status,

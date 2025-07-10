@@ -112,8 +112,8 @@ describe("EmployeeIncidentsService", () => {
       checkOut: new Date(),
       employeeHiringId: 10,
       employeeLocationId: 20,
-      createdById: 40,
-      employeeId: 40,
+      createdById: 1,
+      employeeId: 1,
       employeeAttendanceTypeId: 1,
       employeeIncidentDays: [
         {
@@ -122,7 +122,7 @@ describe("EmployeeIncidentsService", () => {
           created_at: new Date(),
         },
       ],
-      validatedById: 40,
+      validatedById: 1,
     };
 
     it("should create attendance, update incident, and create incident status when status is APROBADA", async () => {

@@ -33,7 +33,7 @@ function mapToIEmployee(data: any): IEmployee {
     endJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     categoryId: getRandomNumber(1, 193),
     employeeTypeName: "base_no_sindicalizado",
-    direccionId: 1,
+    direccionId: getRandomNumber(1, 59),
     maritalStatusId: 1,
     schoolingId: getRandomNumber(1, 10),
     professionId: 110,

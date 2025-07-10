@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
@@ -39,8 +39,15 @@ import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import Link from "next/link";
 import { isRoleExcluded, ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
 import { logger } from "@/lib/logger";
+import EmployeeFinder from "@/components/shared/EmployeeFinder";
+import type { Employee } from "@/app/api/interfaces/Employee";
+import { resetForm, setEmployeeData, updateFormData } from "@/store/employees-attendances/CreateEmployeeAttendance";
+import { setSelectedEmployee } from "@/store/slices/employeeAttendanceSlice";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store/store";
 
 const UserCreateForm = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState(initialFormData);
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -139,6 +146,22 @@ const UserCreateForm = () => {
       ...prev,
       direcciones_ids: direccionesIds,
     }));
+  };
+
+  const handleSelectEmployee = async (employee: Employee) => {
+    dispatch(resetForm());
+    dispatch(setSelectedEmployee(employee));
+    dispatch(setEmployeeData(employee));
+
+    if (employee?.id) {
+      setFormData((prev) => ({
+        ...prev,
+        ["employee_id"]: employee.id,
+      }));
+      dispatch(updateFormData({ field: "employeeId", value: employee.id }));
+    } else {
+      dispatch(updateFormData({ field: "employeeId", value: "" }));
+    }
   };
 
   const { options: roles, isLoading, error } = useFetchOptions(fetchRolesData);
@@ -252,6 +275,9 @@ const UserCreateForm = () => {
                 />
                 <CustomLabelError field={errors.password} />
               </FormControl>
+            </Grid2>
+            <Grid2 size={{ lg: 12 }}>
+              <EmployeeFinder onEmployeeSelect={handleSelectEmployee} error={errors.employeeId} />
             </Grid2>
             <Grid2 mt={2} size={12}>
               <Divider sx={{ mx: "-24px" }} />
