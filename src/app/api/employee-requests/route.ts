@@ -9,8 +9,7 @@ import { logger } from "@/lib/logger";
 import type { IEmployeeRequestsFilters } from "./types";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { NextResponse } from "next/server";
-import { ROLES } from "@/common/constants/Roles";
-import { EmployeeService } from "@/app/api/services/employee.service";
+import { UserService } from "@/app/api/services/user.service";
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_PAGE = 1;
@@ -44,9 +43,9 @@ export async function GET(request: Request) {
 
     const authData = await authMiddleware();
     if (authData && !(authData instanceof NextResponse)) {
-      const { roleId, employeeId } = authData;
+      const { roleId, userId } = authData;
       const role = getRoleValueById(roleId);
-      await applyRoleFilters(role, employeeId as number, validRequestData, EmployeeService);
+      await applyRoleFilters(role, userId as number, validRequestData, UserService);
     }
 
     const employeeRequests = await EmployeeRequestService.getEmployeeRequestsByParams(validRequestData);

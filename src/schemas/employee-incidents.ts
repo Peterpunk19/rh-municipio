@@ -95,6 +95,10 @@ export const EmployeeIncidentsGetFilterSchema = z.object({
     ])
     .optional()
     .nullable(),
+  direccion_id: z
+    .union([z.number(), z.array(z.number())])
+    .optional()
+    .nullable(),
 });
 
 export const EmployeeIncidentsUpdateSchema = z.object({

@@ -16,6 +16,7 @@ export const HttpMessages = {
     inactive: "El empleado está deshabilitado",
     updatedSuccess: "Empleado actualizado correctamente",
     getScheduleSuccess: "Horario encontrado correctamente",
+    invalidEmployeeDireccion: "No se pudo determinar la dirección del usuario autenticado",
   },
   employeeIncidents: {
     invalidData: "Ya existe una incidencia con estos datos",
@@ -32,6 +33,8 @@ export const HttpMessages = {
     invalidUserToCancel: "La incidencia puede ser cancelada unicamente por el empleado que la creó.",
     employeeWithoutHiringOrLocation: "El empleado no tiene una contratación o una ubicación asignada.",
     foundById: "Incidencia encontrada correctamente",
+    notAllowedToCreateForDifferentDireccion:
+      "No tienes permiso para crear incidencias para empleados de otra dirección",
   },
   employeeAttendance: {
     invalidData: "Ya existe un dia registrado con estos datos",
@@ -71,6 +74,7 @@ export const HttpMessages = {
     validationFields: "Datos incorrectos, por favor revise de nuevo el formulario.",
     notAuthorized: "No autorizado: JWT inválido o ausente",
     invalidJSONFormat: "Invalid JSON format",
+    notAllowedToCreateForDifferentDireccion: "No tienes permiso para crear registros para empleados de otra dirección",
   },
   user: {
     usernameAlreadyExists: "El nombre de usuario ya existe",
@@ -124,6 +128,8 @@ export const HttpMessages = {
     invalidUpdateData: "No se puede actualizar al mismo estado",
     employeeWithoutHiringOrLocation: "El empleado no tiene contratación o ubicación activa",
     updatedSuccess: "Solicitud actualizada exitosamente",
+    notAllowedToCreateForDifferentDireccion:
+      "No tienes permiso para crear solicitudes para empleados de otra dirección",
   },
   administrativeOrganizations: {
     getSuccess: "Organismos administrativos encontrados correctamente",

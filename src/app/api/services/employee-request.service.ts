@@ -227,9 +227,11 @@ export const EmployeeRequestService = {
     if (employeeRequestsFilters.direccion_id) {
       whereClause.employee = {
         ...whereClause.employee,
-        employee_hiring: {
+        employee_ascriptions: {
           some: {
-            direccion_id: employeeRequestsFilters.direccion_id,
+            direccion_id: Array.isArray(employeeRequestsFilters.direccion_id)
+              ? { in: employeeRequestsFilters.direccion_id }
+              : employeeRequestsFilters.direccion_id,
             active: true,
           },
         },

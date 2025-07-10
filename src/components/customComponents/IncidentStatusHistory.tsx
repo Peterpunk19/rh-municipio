@@ -44,7 +44,7 @@ const IncidentStatusHistory: React.FC<Props> = ({ data }) => {
                         {formatDate(row.created_at, "dd/MM/yyyy HH:mm")}
                       </Typography>
                       <Typography variant="subtitle2" fontWeight={600} mb={2} component="div">
-                        {`INCIDENCIA ${row.incident_status.display_name} POR ${row.created_by.name} ${row.created_by.paternal_last_name} ${row.created_by.paternal_last_name}`}
+                        {`INCIDENCIA ${row.incident_status.display_name} POR ${row.created_by.name} ${row.created_by.paternal_last_name} ${row.created_by.maternal_last_name}`}
                       </Typography>
                     </Box>
                   </Box>

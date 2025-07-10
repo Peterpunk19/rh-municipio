@@ -81,7 +81,7 @@ export const EmployeeIncidentsService = {
             connect: { id: Number(employeeIncident.incidentStatusId) },
           },
           created_by: {
-            connect: { id: Number(employeeIncident.employeeId) },
+            connect: { id: Number(employeeIncident.createdBy) },
           },
           created_at: new Date(),
         },
@@ -120,9 +120,11 @@ export const EmployeeIncidentsService = {
     if (employeeIncidentsFilters.direccion_id) {
       whereClause.employee = {
         ...whereClause.employee,
-        employee_hiring: {
+        employee_ascriptions: {
           some: {
-            direccion_id: employeeIncidentsFilters.direccion_id,
+            direccion_id: Array.isArray(employeeIncidentsFilters.direccion_id)
+              ? { in: employeeIncidentsFilters.direccion_id }
+              : employeeIncidentsFilters.direccion_id,
             active: true,
           },
         },

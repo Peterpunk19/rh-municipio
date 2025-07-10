@@ -11,6 +11,7 @@ import { NextResponse } from "next/server";
 import { ROLES } from "@/common/constants/Roles";
 import { logger } from "@/lib/logger";
 import { EmployeeService } from "@/app/api/services/employee.service";
+import { UserService } from "@/app/api/services/user.service";
 
 export async function GET(request: Request) {
   try {
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
       return authData;
     }
 
-    const { roleId, employeeId } = authData;
+    const { roleId, employeeId, userId } = authData;
     const role = getRoleValueById(roleId);
 
     const validationRequest = await validateRequestByUrlParams<IEmployeeIncidentFilters>(
@@ -59,7 +60,7 @@ export async function GET(request: Request) {
       validRequestData.employee_id = Number(employeeId);
     }
 
-    await applyRoleFilters(role, employeeId as number, validRequestData, EmployeeService);
+    await applyRoleFilters(role, userId as number, validRequestData, UserService);
 
     const existingEmployees = await EmployeeIncidentsService.getEmployeesIncidentsByParams(validRequestData);
 

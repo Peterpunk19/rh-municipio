@@ -190,10 +190,7 @@ export const EmployeeGetByFilterSchema = z.object({
     .number({ message: validationMessages.number("La categoría del empleado") })
     .min(1, { message: validationMessages.minNumber("La categoría del empleado", 1) })
     .nullable(),
-  direccion: z
-    .number({ message: validationMessages.number("El id de direccion del empleado") })
-    .min(1, { message: validationMessages.minNumber("El id de direccion del empleado", 1) })
-    .nullable(),
+  direccion: z.union([z.number(), z.array(z.number())]).nullable(),
   secretaria: z
     .number({ message: validationMessages.number("El id de la secretaria del empleado") })
     .min(1, { message: validationMessages.minNumber("El id la secreatria del empleado", 1) })

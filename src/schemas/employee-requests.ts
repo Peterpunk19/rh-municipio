@@ -68,6 +68,10 @@ export const EmployeeRequestsGetFilterSchema = z.object({
     ])
     .optional()
     .nullable(),
+  direccion_id: z
+    .union([z.number(), z.array(z.number())])
+    .optional()
+    .nullable(),
 });
 
 export const EmployeeRequestsUpdateSchema = z.object({

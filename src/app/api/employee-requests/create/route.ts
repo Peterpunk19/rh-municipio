@@ -22,6 +22,8 @@ import { startOfDay } from "@/common/utils";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { DireccionService } from "@/app/api/services/direccion.service";
+import { getRoleValueById, validateDireccionAccess } from "@/common/utils";
+import { EmployeeService } from "@/app/api/services/employee.service";
 
 const requestValidations: IRequestValidations = {
   schedule_change_request: [
@@ -61,9 +63,22 @@ export async function POST(request: NextRequest) {
     return handleHttpResponse(HttpResponse.failure(HttpMessages.error.invalidRequest, {}));
   }
 
-  body.requestedById = authResponse.userId;
+  const { userId, roleId } = authResponse;
+  const role = getRoleValueById(roleId);
+
+  body.requestedById = userId;
 
   try {
+    const direccionValidation = await validateDireccionAccess(role, userId, Number(body.employeeId), EmployeeService);
+
+    if (!direccionValidation.allowed) {
+      const response = HttpResponse.failure(
+        direccionValidation.errorMessage || HttpMessages.employeeRequests.notAllowedToCreateForDifferentDireccion,
+        {},
+      );
+      return handleHttpResponse(response);
+    }
+
     const existingRequest = await RequestService.getRequestById(body.requestId);
 
     if (!existingRequest) {

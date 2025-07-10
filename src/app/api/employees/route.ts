@@ -7,8 +7,8 @@ import { HttpMessages } from "@/common/response/messages";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { NextResponse } from "next/server";
-import { ROLES } from "@/common/constants/Roles";
 import { getRoleValueById, applyRoleFilters } from "@/common/utils";
+import { UserService } from "@/app/api/services/user.service";
 
 export async function GET(request: Request) {
   try {
@@ -66,9 +66,9 @@ export async function GET(request: Request) {
 
     const authData = await authMiddleware();
     if (authData && !(authData instanceof NextResponse)) {
-      const { roleId, employeeId } = authData;
+      const { roleId, userId } = authData;
       const role = getRoleValueById(roleId);
-      await applyRoleFilters(role, employeeId as number, requestParams, EmployeeService, "direccion");
+      await applyRoleFilters(role, userId as number, requestParams, UserService, "direccion");
     }
     if (typeof requestParams.direccion === "number") {
       requestParams.direccion = requestParams.direccion;
