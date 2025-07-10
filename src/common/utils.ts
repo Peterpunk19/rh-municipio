@@ -106,7 +106,7 @@ export const getParamsFromUrl = async (request: any, requestParams: any) => {
 };
 
 export const getRandomNumber = (min: any, max: any) => {
-  return Math.random() * (max - min) + min;
+  return parseInt(Math.random() * (max - min) + min, 10);
 };
 
 export const getRandomDate = (start: any, end: any) => {

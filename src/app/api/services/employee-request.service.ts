@@ -56,7 +56,7 @@ export const EmployeeRequestService = {
         },
       });
 
-      const currentEmployeeAscriptions = await tx.employeeAdscriptions.findFirst({
+      const currentEmployeeAscriptions = await tx.employeeAscriptions.findFirst({
         where: {
           employee_id: Number(employeeRequest.employeeId),
           active: true,
@@ -424,7 +424,7 @@ export const EmployeeRequestService = {
                 },
               },
             },
-            employee_adscriptions: {
+            employee_ascriptions: {
               where: {
                 active: true,
               },
@@ -617,7 +617,7 @@ export const EmployeeRequestService = {
         publicOrganization: employeeRequest.employee.employee_hiring[0].direccion.secretaria.display_name,
         administrativeOrganization: employeeRequest.employee.employee_hiring[0].direccion.display_name,
         category: employeeRequest.employee.employee_hiring[0].category?.display_name,
-        employee_adscriptions: employeeRequest.employee.employee_adscriptions[0],
+        employee_ascriptions: employeeRequest.employee.employee_ascriptions[0],
       },
       request: {
         ...employeeRequest.request,

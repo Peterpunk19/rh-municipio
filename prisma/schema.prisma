@@ -24,7 +24,7 @@ model User {
   created_at                          DateTime?                           @default(now())
   updated_at                          DateTime?                           @updatedAt
   employee                            Employee?
-  employee_id                         Int?                                @unique
+  employee_id                         Int?
   role_id                             Int
   role                                Role                                @relation(fields: [role_id], references: [id])
   attendances_created_by              EmployeeAttendance[]
@@ -34,7 +34,7 @@ model User {
   employee_requests_by                EmployeeRequest[]                   @relation("requestedBy")
   leaders_by                          AdministrativeOrganizationLeaders[] @relation("createdBy")
   employee_attendance_type_created_by EmployeeAttendanceType[]            @relation("createdByEmployeeAttendanceType")
-  adscriptions                        EmployeeAdscriptions[]              @relation("createdBy")
+  employee_ascriptions                        EmployeeAscriptions[]              @relation("createdBy")
   user_direcciones                    UserDireccion[]
 }
 
@@ -87,7 +87,7 @@ model Employee {
   identification_folio                 String?
   job_schedule_employee                JobScheduleEmployee[]
   leaders                              AdministrativeOrganizationLeaders[]
-  employee_adscriptions                EmployeeAdscriptions[]
+  employee_ascriptions                EmployeeAscriptions[]
 }
 
 model EmployeeAddress {
@@ -619,7 +619,7 @@ model Direccion {
   leaders                     AdministrativeOrganizationLeaders[]
   employee_request_detail     EmployeeRequestDetail[]             @relation("currentDireccion")
   employee_request_detail_new EmployeeRequestDetail[]             @relation("newDireccion")
-  employee_adscriptions       EmployeeAdscriptions[]
+  employee_ascriptions       EmployeeAscriptions[]
   employee_incidents          EmployeeIncidents[]                 @relation("direccion")
   user_direcciones            UserDireccion[]
 }
@@ -678,7 +678,7 @@ model AdministrativeOrganizationLeaders {
   created_by    User      @relation("createdBy", fields: [created_by_id], references: [id])
 }
 
-model EmployeeAdscriptions {
+model EmployeeAscriptions {
   id            Int       @id @default(autoincrement())
   direccion_id  Int
   employee_id   Int

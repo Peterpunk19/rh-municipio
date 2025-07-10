@@ -43,12 +43,6 @@ export const request = {
     employee_id: 9999,
     role_id: 3,
   },
-  duplicatedEmployeeId: {
-    username: "carloszh",
-    password: "Pass123*",
-    employee_id: 6,
-    role_id: 3,
-  },
   emptyPassword: {
     username: "carloszh",
     password: "",

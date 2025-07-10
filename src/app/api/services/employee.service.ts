@@ -206,7 +206,7 @@ export const EmployeeService = {
         },
       });
 
-      const createEmployeeAscriptions = await tx.employeeAdscriptions.create({
+      const createEmployeeAscriptions = await tx.employeeAscriptions.create({
         data: {
           employee_id: createEmployee.id,
           start_date: employee.startJobDate,

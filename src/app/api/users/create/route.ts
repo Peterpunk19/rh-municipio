@@ -13,6 +13,7 @@ import { CatalogsService } from "../../services/catalogs.service";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { NextResponse } from "next/server";
 import { AdministrativeOrganizationLeadersService } from "../../services/administrative-organization-leaders.service";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const authResponse = await authMiddleware();
@@ -61,15 +62,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (body.employee_id) {
-      const existingEmployeeId = await UserService.getUserByEmployeeId(body.employee_id);
-
-      if (existingEmployeeId) {
-        const response = HttpResponse.failure(HttpMessages.user.employeeIdAlreadyExists, {
-          employee_id: body.employee_id,
-        });
-        return handleHttpResponse(response);
-      }
-
       const existingEmployee = await EmployeeService.getEmployeeById(body.employee_id);
 
       if (!existingEmployee) {
@@ -140,6 +132,8 @@ export async function POST(request: NextRequest) {
 
     return handleHttpResponse(response);
   } catch (error: any) {
+    logger.error({ error: error.message, stack: error.stack });
+
     const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message });
     return handleHttpResponse(response);
   }
