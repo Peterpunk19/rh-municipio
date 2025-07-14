@@ -644,7 +644,7 @@ export const EmployeeService = {
     });
   },
 
-  async getEmployeesAutocomplete(search: string | null) {
+  async getEmployeesAutocomplete(search: string | null, direccionIds?: number[]) {
     let baseQuery = `
         SELECT e.id,
                e.name,
@@ -663,7 +663,8 @@ export const EmployeeService = {
                at.display_name AS attendance_type_display_name
         FROM Employee AS e
                  JOIN EmployeeHiring AS eh ON eh.employee_id = e.id AND eh.active = 1
-                 JOIN Direccion AS d ON eh.direccion_id = d.id
+                 JOIN EmployeeAscriptions AS ea ON ea.employee_id = e.id AND ea.active = 1
+                 JOIN Direccion AS d ON ea.direccion_id = d.id
                  JOIN Secretaria AS s ON d.secretaria_id = s.id
                  JOIN Category AS c ON eh.category_id = c.id
                  JOIN EmployeeType AS et ON eh.employee_type_id = et.id
@@ -674,6 +675,10 @@ export const EmployeeService = {
                  LEFT JOIN Location AS l ON el.location_id = l.id
                  LEFT JOIN Attendance AS at ON eat.attendance_id = at.id
     `;
+
+    if (direccionIds && direccionIds.length > 0) {
+      baseQuery += ` WHERE ea.direccion_id IN (${direccionIds.map(() => "?").join(",")})`;
+    }
 
     let employees: {
       id: number;
@@ -694,26 +699,24 @@ export const EmployeeService = {
     }[];
 
     if (search) {
-      baseQuery += `
-            WHERE LOWER(e.name) LIKE LOWER(CONCAT('%', ?, '%'))
+      const searchCondition = `
+            ${direccionIds && direccionIds.length > 0 ? "AND" : "WHERE"} (LOWER(e.name) LIKE LOWER(CONCAT('%', ?, '%'))
                OR LOWER(e.paternal_last_name) LIKE LOWER(CONCAT('%', ?, '%'))
                OR LOWER(e.maternal_last_name) LIKE LOWER(CONCAT('%', ?, '%'))
                OR LOWER(e.number_employee) LIKE LOWER(CONCAT('%', ?, '%'))
                OR LOWER(e.rfc) LIKE LOWER(CONCAT('%', ?, '%'))
-               OR LOWER(e.curp) LIKE LOWER(CONCAT('%', ?, '%'))
+               OR LOWER(e.curp) LIKE LOWER(CONCAT('%', ?, '%')))
         `;
+      baseQuery += searchCondition;
 
-      employees = await prisma.$queryRawUnsafe(
-        `${baseQuery} ORDER BY e.id DESC`,
-        search,
-        search,
-        search,
-        search,
-        search,
-        search,
-      );
+      const params =
+        direccionIds && direccionIds.length > 0
+          ? [...direccionIds, search, search, search, search, search, search]
+          : [search, search, search, search, search, search];
+      employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`, ...params);
     } else {
-      employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`);
+      const params = direccionIds && direccionIds.length > 0 ? direccionIds : [];
+      employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`, ...params);
     }
 
     return employees.map((emp: any) => ({

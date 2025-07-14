@@ -3,6 +3,7 @@ import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
 import { auth } from "@/auth";
 import { EmployeeService } from "@/app/api/services/employee.service";
+import { getRoleValueById } from "@/common/utils";
 
 export async function authMiddleware() {
   const session = await auth();
@@ -20,6 +21,7 @@ export async function authMiddleware() {
     userId,
     employeeId: employee ? employee.employee_id : null,
     roleId,
+    roleName: getRoleValueById(roleId),
     session,
   };
 }
