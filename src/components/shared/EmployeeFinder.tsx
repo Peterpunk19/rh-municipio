@@ -52,7 +52,7 @@ const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
             }
           }}
         />
-        <CustomLabelError field={error} />
+        <CustomLabelError field={error || undefined} />
       </Grid2>
       <EmployeeDetailCard employee={selectedEmployee} />
     </Grid2>
