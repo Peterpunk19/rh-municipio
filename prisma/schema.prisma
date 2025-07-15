@@ -34,7 +34,7 @@ model User {
   employee_requests_by                EmployeeRequest[]                   @relation("requestedBy")
   leaders_by                          AdministrativeOrganizationLeaders[] @relation("createdBy")
   employee_attendance_type_created_by EmployeeAttendanceType[]            @relation("createdByEmployeeAttendanceType")
-  employee_ascriptions                        EmployeeAscriptions[]              @relation("createdBy")
+  employee_ascriptions                EmployeeAscriptions[]              @relation("createdBy")
   user_direcciones                    UserDireccion[]
 }
 
@@ -87,7 +87,7 @@ model Employee {
   identification_folio                 String?
   job_schedule_employee                JobScheduleEmployee[]
   leaders                              AdministrativeOrganizationLeaders[]
-  employee_ascriptions                EmployeeAscriptions[]
+  employee_ascriptions                 EmployeeAscriptions[]
 }
 
 model EmployeeAddress {
@@ -125,7 +125,6 @@ model EmployeeHiring {
   direccion           Direccion            @relation(fields: [direccion_id], references: [id])
   employee            Employee?            @relation(fields: [employee_id], references: [id])
   created_by_user     Employee?            @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
-  employee_attendance EmployeeAttendance[]
 
   @@unique([employee_id, category_id, direccion_id, employee_type_id, active])
 }
@@ -225,11 +224,10 @@ model Attendance {
 model EmployeeAttendance {
   id                          Int                    @id @default(autoincrement())
   check_in                    DateTime
-  check_out                   DateTime
+  check_out                   DateTime?
   active                      Boolean                @default(true)
-  is_vacation                 Boolean                @default(false)
   created_by_id               Int
-  employee_hiring_id          Int
+  employee_ascription_id          Int
   description                 String
   created_by                  User                   @relation(fields: [created_by_id], references: [id])
   employee_attendance_type_id Int
@@ -238,11 +236,11 @@ model EmployeeAttendance {
   employee_incident           EmployeeIncidents?     @relation(fields: [employee_incident_id], references: [id])
   employee_location_id        Int
   employee_location           EmployeeLocation       @relation(fields: [employee_location_id], references: [id])
-  employee_hiring             EmployeeHiring         @relation(fields: [employee_hiring_id], references: [id])
+  employee_ascriptions        EmployeeAscriptions         @relation(fields: [employee_ascription_id], references: [id])
   created_at                  DateTime?              @default(now())
   udpated_at                  DateTime?              @updatedAt
 
-  @@unique([check_in, check_out, employee_hiring_id, employee_location_id])
+  @@unique([check_in, check_out, employee_ascription_id, employee_location_id])
 }
 
 model EmployeeIncidents {
@@ -619,7 +617,7 @@ model Direccion {
   leaders                     AdministrativeOrganizationLeaders[]
   employee_request_detail     EmployeeRequestDetail[]             @relation("currentDireccion")
   employee_request_detail_new EmployeeRequestDetail[]             @relation("newDireccion")
-  employee_ascriptions       EmployeeAscriptions[]
+  employee_ascriptions        EmployeeAscriptions[]
   employee_incidents          EmployeeIncidents[]                 @relation("direccion")
   user_direcciones            UserDireccion[]
 }
@@ -691,6 +689,8 @@ model EmployeeAscriptions {
   direccion     Direccion @relation(fields: [direccion_id], references: [id])
   employee      Employee  @relation(fields: [employee_id], references: [id])
   created_by    User      @relation("createdBy", fields: [created_by_id], references: [id])
+
+  employee_attendance EmployeeAttendance[]
 }
 
 model UserDireccion {

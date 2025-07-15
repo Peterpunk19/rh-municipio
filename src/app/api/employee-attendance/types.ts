@@ -2,7 +2,7 @@ export interface IEmployeeAttendance {
   checkIn: string;
   checkOut: string;
   employeeId: number | string;
-  employeeHiringId: number;
+  employeeAscriptionId: number;
   employeeLocationId: number;
   employeeAttendanceTypeId: number;
   description: string;

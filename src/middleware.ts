@@ -18,6 +18,9 @@ import { HttpResponse } from "./common/response/model";
 
 const { auth } = NextAuth(authConfig);
 // @ts-ignore
+
+const excludedApiRoutes = ["/api/employee-attendance/bulk-import"];
+
 export default auth(async (req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
@@ -42,6 +45,11 @@ export default auth(async (req) => {
   }
 
   if (isApiRoute) {
+    const isExcludedApiRoute = excludedApiRoutes.includes(nextUrl.pathname);
+    if (isExcludedApiRoute) {
+      return null;
+    }
+
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,

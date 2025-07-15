@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const validationResponse = await validateEmployeeData(employee, body);
     if (validationResponse) return handleHttpResponse(validationResponse);
 
-    body.employeeHiringId = employee.employee_hiring[0].id;
+    body.employeeAscriptionId = employee.employee_ascriptions[0].id;
     body.employeeLocationId = employee.employee_location[0].id;
     body.employeeAttendanceTypeId = employee.employee_attendance_type[0].id;
     body.createdById = employee.user_id;
