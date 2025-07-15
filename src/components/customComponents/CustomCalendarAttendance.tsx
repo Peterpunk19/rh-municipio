@@ -278,7 +278,7 @@ const CustomCalendarAttendance = ()=> {
                     <Box display="flex" alignItems="center" gap={1}>
                       <IconClockDown size={14} />
                       <Typography variant="body2" fontWeight={500}>
-                        Salida: {Temporal.Instant.from(attendance.check_out).toZonedDateTimeISO("America/Mexico_City").toPlainTime().toString().slice(0, 5)}
+                        Salida: {attendance.check_out ? Temporal.Instant.from(attendance.check_out).toZonedDateTimeISO("America/Mexico_City").toPlainTime().toString().slice(0, 5) : ""}
                       </Typography>
                     </Box>
                   </Box>

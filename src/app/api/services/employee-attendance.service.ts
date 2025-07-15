@@ -13,6 +13,42 @@ export const EmployeeAttendanceService = {
     });
   },
 
+  async updateAttendanceById(
+    numberEmployee: string,
+    direccionId: number,
+    employeeLocationId: number,
+    dateTime: string,
+  ) {
+    const [datePart] = dateTime.split(" ");
+    const startOfDay = new Date(`${datePart}T00:00:00`);
+    const endOfDay = new Date(`${datePart}T23:59:59`);
+
+    const existing = await prisma.employeeAttendance.findFirst({
+      where: {
+        employee_ascription_id: direccionId,
+        employee_location_id: employeeLocationId,
+        check_out: null,
+        check_in: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      orderBy: { check_in: "asc" },
+    });
+
+    if (existing) {
+      return await prisma.employeeAttendance.update({
+        where: { id: existing.id },
+        data: {
+          check_out: new Date(dateTime),
+          udpated_at: new Date(),
+        },
+      });
+    } else {
+      throw new Error(`No se encontró entrada para empleado ${numberEmployee} en ${dateTime}`);
+    }
+  },
+
   async createEmployeeAttendance(employeeAttendance: IEmployeeAttendance) {
     return prisma.$transaction(async (tx) => {
       const createEmployeeAttendance = await tx.employeeAttendance.create({
@@ -21,8 +57,8 @@ export const EmployeeAttendanceService = {
           check_out: employeeAttendance.checkOut,
           active: employeeAttendance.active,
           description: employeeAttendance.description,
-          employee_hiring: {
-            connect: { id: employeeAttendance.employeeHiringId },
+          employee_ascriptions: {
+            connect: { id: employeeAttendance.employeeAscriptionId },
           },
           employee_location: {
             connect: { id: employeeAttendance.employeeLocationId },
@@ -41,6 +77,13 @@ export const EmployeeAttendanceService = {
     });
   },
 
+  async createEmployeeAttendanceByBulk(attendancesToCreate: any) {
+    return await prisma.employeeAttendance.createMany({
+      data: attendancesToCreate,
+      skipDuplicates: true,
+    });
+  },
+
   async getEmployeesAttendanceByParams(employeeAttendanceFilters: IEmployeeAttendanceFilters) {
     const limit = Number(employeeAttendanceFilters.limit);
     const page = Number(employeeAttendanceFilters.page);
@@ -48,7 +91,7 @@ export const EmployeeAttendanceService = {
 
     const filterMappings = {
       employeeId: {
-        path: "employee_hiring.employee.id",
+        path: "employee_ascriptions.employee.id",
       },
       typeAttendance: {
         path: "employee_attendance_type.attendance_id",
@@ -57,20 +100,20 @@ export const EmployeeAttendanceService = {
         path: "employee_location.location_id",
       },
       organismPublic: {
-        path: "employee_hiring.direccion.secretaria_id",
+        path: "employee_ascriptions.direccion.secretaria_id",
       },
       organismAdministrative: {
-        path: "employee_hiring.direccion_id",
+        path: "employee_ascriptions.direccion_id",
       },
     };
 
     const searchMappings = [
-      { path: ["employee_hiring", "employee", "name"], operators: ["is", "is", "contains"] },
-      { path: ["employee_hiring", "employee", "paternal_last_name"], operators: ["is", "is", "contains"] },
-      { path: ["employee_hiring", "employee", "maternal_last_name"], operators: ["is", "is", "contains"] },
-      { path: ["employee_hiring", "employee", "rfc"], operators: ["is", "is", "contains"] },
-      { path: ["employee_hiring", "employee", "curp"], operators: ["is", "is", "contains"] },
-      { path: ["employee_hiring", "employee", "number_employee"], operators: ["is", "is", "contains"] },
+      { path: ["employee_ascriptions", "employee", "name"], operators: ["is", "is", "contains"] },
+      { path: ["employee_ascriptions", "employee", "paternal_last_name"], operators: ["is", "is", "contains"] },
+      { path: ["employee_ascriptions", "employee", "maternal_last_name"], operators: ["is", "is", "contains"] },
+      { path: ["employee_ascriptions", "employee", "rfc"], operators: ["is", "is", "contains"] },
+      { path: ["employee_ascriptions", "employee", "curp"], operators: ["is", "is", "contains"] },
+      { path: ["employee_ascriptions", "employee", "number_employee"], operators: ["is", "is", "contains"] },
     ];
 
     const whereClause: any = await buildWhereClause(filterMappings, employeeAttendanceFilters, searchMappings);
@@ -88,7 +131,7 @@ export const EmployeeAttendanceService = {
 
       if (employeeAttendanceFilters.checkOut) {
         whereClause.AND.push({
-          check_out: {
+          check_in: {
             lte: new Date(employeeAttendanceFilters.checkOut),
           },
         });
@@ -102,7 +145,29 @@ export const EmployeeAttendanceService = {
       orderBy: {
         id: "desc",
       },
-      include: {
+      select: {
+        id: true,
+        check_in: true,
+        check_out: true,
+        active: true,
+        created_by_id: true,
+        employee_ascription_id: true,
+        description: true,
+        employee_attendance_type_id: true,
+        employee_attendance_type: {
+          select: {
+            attendance_id: true,
+            active: true,
+            attendance: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+          },
+        },
+        employee_incident_id: true,
         employee_incident: {
           select: {
             id: true,
@@ -117,6 +182,7 @@ export const EmployeeAttendanceService = {
             },
           },
         },
+        employee_location_id: true,
         employee_location: {
           select: {
             location_id: true,
@@ -130,21 +196,9 @@ export const EmployeeAttendanceService = {
             },
           },
         },
-        employee_attendance_type: {
+        employee_ascriptions: {
           select: {
-            attendance_id: true,
-            active: true,
-            attendance: {
-              select: {
-                id: true,
-                name: true,
-                display_name: true,
-              },
-            },
-          },
-        },
-        employee_hiring: {
-          select: {
+            id: true,
             employee: {
               select: {
                 id: true,
@@ -181,6 +235,9 @@ export const EmployeeAttendanceService = {
       },
     });
 
+    console.log("attendances");
+    console.log(attendances);
+
     const data = attendances.map((item: any) => ({
       id: item.id,
       employee_incident: item.employee_incident,
@@ -197,20 +254,20 @@ export const EmployeeAttendanceService = {
       },
       type_attendance: item.employee_attendance_type.attendance,
       employee: {
-        id: item.employee_hiring.employee.id,
-        number_employee: item.employee_hiring.employee.number_employee,
-        name: item.employee_hiring.employee.name,
-        paternal_last_name: item.employee_hiring.employee.paternal_last_name,
-        maternal_last_name: item.employee_hiring.employee.maternal_last_name,
-        fullName: `${item.employee_hiring.employee.name} ${item.employee_hiring.employee.paternal_last_name} ${item.employee_hiring.employee.maternal_last_name}`,
-        rfc: item.employee_hiring.employee.rfc,
-        curp: item.employee_hiring.employee.curp,
+        id: item.employee_ascriptions.employee.id,
+        number_employee: item.employee_ascriptions.employee.number_employee,
+        name: item.employee_ascriptions.employee.name,
+        paternal_last_name: item.employee_ascriptions.employee.paternal_last_name,
+        maternal_last_name: item.employee_ascriptions.employee.maternal_last_name,
+        fullName: `${item.employee_ascriptions.employee.name} ${item.employee_ascriptions.employee.paternal_last_name} ${item.employee_ascriptions.employee.maternal_last_name}`,
+        rfc: item.employee_ascriptions.employee.rfc,
+        curp: item.employee_ascriptions.employee.curp,
       },
-      organism_public: item.employee_hiring.direccion.secretaria,
+      organism_public: item.employee_ascriptions.direccion.secretaria,
       organism_administrative: {
-        id: item.employee_hiring.direccion.id,
-        name: item.employee_hiring.direccion.name,
-        display_name: item.employee_hiring.direccion.display_name,
+        id: item.employee_ascriptions.direccion.id,
+        name: item.employee_ascriptions.direccion.name,
+        display_name: item.employee_ascriptions.direccion.display_name,
       },
       created_by: {
         id: item.created_by.id,
@@ -254,7 +311,7 @@ export const EmployeeAttendanceService = {
             },
           },
         },
-        employee_hiring: {
+        employee_ascriptions: {
           select: {
             employee: {
               select: {
@@ -279,12 +336,6 @@ export const EmployeeAttendanceService = {
                     display_name: true,
                   },
                 },
-              },
-            },
-            category: {
-              select: {
-                id: true,
-                display_name: true,
               },
             },
           },
@@ -314,24 +365,14 @@ export const EmployeeAttendanceService = {
       },
       type_attendance: employeeAttendance.employee_attendance_type.attendance,
       employee: {
-        id: employeeAttendance.employee_hiring.employee?.id,
-        number_employee: employeeAttendance.employee_hiring.employee?.number_employee,
-        name: employeeAttendance.employee_hiring.employee?.name,
-        paternal_last_name: employeeAttendance.employee_hiring.employee?.paternal_last_name,
-        maternal_last_name: employeeAttendance.employee_hiring.employee?.maternal_last_name,
-        fullName: `${employeeAttendance.employee_hiring.employee?.name} ${employeeAttendance.employee_hiring.employee?.paternal_last_name} ${employeeAttendance.employee_hiring.employee?.maternal_last_name}`,
-        rfc: employeeAttendance.employee_hiring.employee?.rfc,
-        curp: employeeAttendance.employee_hiring.employee?.curp,
-        category: {
-          id: employeeAttendance.employee_hiring.category?.id,
-          name: employeeAttendance.employee_hiring.category?.display_name,
-        },
-      },
-      organism_public: employeeAttendance.employee_hiring.direccion.secretaria,
-      organism_administrative: {
-        id: employeeAttendance.employee_hiring.direccion.id,
-        name: employeeAttendance.employee_hiring.direccion.name,
-        display_name: employeeAttendance.employee_hiring.direccion.display_name,
+        id: employeeAttendance.employee_ascriptions.employee?.id,
+        number_employee: employeeAttendance.employee_ascriptions.employee?.number_employee,
+        name: employeeAttendance.employee_ascriptions.employee?.name,
+        paternal_last_name: employeeAttendance.employee_ascriptions.employee?.paternal_last_name,
+        maternal_last_name: employeeAttendance.employee_ascriptions.employee?.maternal_last_name,
+        fullName: `${employeeAttendance.employee_ascriptions.employee?.name} ${employeeAttendance.employee_ascriptions.employee?.paternal_last_name} ${employeeAttendance.employee_ascriptions.employee?.maternal_last_name}`,
+        rfc: employeeAttendance.employee_ascriptions.employee?.rfc,
+        curp: employeeAttendance.employee_ascriptions.employee?.curp,
       },
       created_by: {
         id: employeeAttendance.created_by.id,

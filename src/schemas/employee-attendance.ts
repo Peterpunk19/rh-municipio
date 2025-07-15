@@ -23,6 +23,22 @@ export const EmployeeAttendancePostSchema = z
     path: ["checkOut"],
   });
 
+export const EmployeeAttendanceItemSchema = z.object({
+  numberEmployee: z
+    .string({ message: "Número de empleado requerido" })
+    .min(1, { message: "Número de empleado requerido" }),
+
+  isEntry: z.number({ message: "El campo isEntry es requerido" }).refine((val) => val === 0 || val === 1, {
+    message: "El campo isEntry debe ser 0 (salida) o 1 (entrada)",
+  }),
+
+  dateTime: z.string({ message: "Fecha requerida" }).refine((val) => !isNaN(Date.parse(val.replace(" ", "T"))), {
+    message: "Formato de fecha inválido",
+  }),
+});
+
+export const EmployeeAttendanceBulkInsertSchema = z.array(EmployeeAttendanceItemSchema);
+
 export const EmployeeAttendanceGetFilterSchema = z.object({
   page: z
     .number({ message: validationMessages.number("Página") })

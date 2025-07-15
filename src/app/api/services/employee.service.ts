@@ -71,6 +71,15 @@ export const EmployeeService = {
             },
           },
         },
+        employee_ascriptions: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: "desc",
+          },
+        },
         employee_location: {
           where: {
             active: true,
@@ -564,6 +573,75 @@ export const EmployeeService = {
       totalPages,
       currentPage: pageNumber,
     };
+  },
+
+  async getEmployeesForBulkAttendance(employeeNumbers: any) {
+    return await prisma.employee.findMany({
+      where: {
+        number_employee: { in: employeeNumbers },
+      },
+      select: {
+        id: true,
+        number_employee: true,
+        name: true,
+        paternal_last_name: true,
+        maternal_last_name: true,
+        employee_ascriptions: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          select: {
+            id: true,
+            direccion_id: true,
+            active: true,
+            direccion: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+          },
+        },
+        employee_attendance_type: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          select: {
+            id: true,
+            attendance_id: true,
+            active: true,
+            attendance: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+          },
+        },
+        employee_location: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          select: {
+            id: true,
+            location_id: true,
+            active: true,
+            location: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+          },
+        },
+      },
+    });
   },
 
   async getEmployeesAutocomplete(search: string | null) {
