@@ -8,4 +8,5 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   requestDate: { renderType: "date" },
   createdAt: { renderType: "date" },
   actions: { renderType: "action", redirectPath: "/admin/employees-requests/" },
+  detail: { renderType: "detail" },
 };

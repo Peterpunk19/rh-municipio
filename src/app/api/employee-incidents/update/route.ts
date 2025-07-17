@@ -75,6 +75,7 @@ export async function PUT(request: NextRequest) {
       id: employeeIncidentId,
       incidentStatusId: incidentStatusId,
       employeeId: employeeIncident.employee.id,
+      employeeAscriptionId: employeeIncident.employee.employee_ascriptions[0].id,
       employeeHiringId: employeeIncident.employee.employee_hiring[0].id,
       employeeLocationId: employeeIncident.employee.employee_location[0].id,
       createdById:

@@ -1,33 +1,14 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
-import {
-  Grid2 as Grid,
-  Divider,
-  Typography,
-  Button,
-  Stack,
-  Chip,
-  Alert,
-  Grid2,
-  Box,
-  MenuItem,
-  Paper,
-} from "@mui/material";
+import React, { useState } from "react";
+import { Grid2 as Grid, Divider, Typography, Stack, Chip, Box, Paper } from "@mui/material";
 import BlankCard from "@/components/shared/BlankCard";
 import { StatusCodes } from "http-status-codes";
-import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { useParams, redirect } from "next/navigation";
-import { getEmployeeIncidentById, updateEmployeeIncident } from "@/services/employees-incidents";
-import { fetchCatalogData } from "@/services/catalogs";
-import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { getEmployeeIncidentById } from "@/services/employees-incidents";
 import { formatDate } from "@/utils/formatter";
 import { logger } from "@/lib/logger";
 import CardContent from "@mui/material/CardContent";
-import { generateUniqueKey } from "@/utils";
-import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import EmployeeDetails from "@/components/customComponents/EmployeeDetails";
 import IncidentStatusHistory from "@/components/customComponents/IncidentStatusHistory";
 import IncidentDetails from "@/components/customComponents/IncidentDetails";
 import LoadingComponent from "@/components/customComponents/LoadingComponent";
@@ -35,26 +16,11 @@ import PDFGenerator from "@/components/shared/pdfs/PDFGenerator";
 import IncidentTemplate from "@/components/shared/pdfs/templates/IncidentTemplate";
 import IncidentDays from "@/components/customComponents/IncidentDays";
 
-const BCrumb = [
-  {
-    to: "/admin/employees-incidents",
-    title: "Incidencias de empleados",
-  },
-  {
-    title: "Detalles de incidencia",
-  },
-];
-
 const EmployeeIncident = () => {
   const [loading, setLoading] = useState(false);
   const [employeeIncidentData, setEmployeeIncidentData] = useState<any>(null);
   const [directorName, setDirectorName] = useState<string>("");
   const { id } = useParams();
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [idStatus, setIdStatus] = React.useState(0);
-  const [responseMessage, setResponseMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<any>({});
 
   const fetchEmployeeIncidentById = (id: any) => {
     try {
@@ -63,9 +29,6 @@ const EmployeeIncident = () => {
         getEmployeeIncidentById(id as string).then((data) => {
           if (data.statusCode === StatusCodes.OK) {
             setEmployeeIncidentData(data.responseObject);
-            setData({
-              id: data.responseObject.id,
-            });
 
             getEmployeeIncidentById(id as string, true, data.responseObject.created_at)
               .then((pdfData) => {
@@ -99,80 +62,14 @@ const EmployeeIncident = () => {
     fetchEmployeeIncidentById(id);
   }, [id]);
 
-  const catalogName = "incidents-status";
-  const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
-
-  const { options: incidentStatus } = useFetchOptions(fetchData);
-
-  const handleChangeStatus = (e: { target: { value: any } }) => {
-    setIdStatus(e.target.value);
-    setData({ ...data, incidentStatusId: e.target.value });
-    setOpenDialog(true);
-  };
-
-  const handleCancel = () => {
-    setData({ ...data, incidentStatusId: 0 });
-    setOpenDialog(false);
-  };
-
-  const handleConfirm = async () => {
-    try {
-      const response = await updateEmployeeIncident(data);
-      if (!response.success) {
-        if (response && response.responseObject) {
-          setResponseMessage(response.message);
-          setIsSuccess(false);
-        } else {
-          throw new Error("Failed to submit form. Please try again.");
-        }
-        return;
-      } else {
-        setResponseMessage(response.message);
-        fetchEmployeeIncidentById(id);
-        setIsSuccess(true);
-      }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setData({ ...data, incidentStatusId: 0 });
-      setIdStatus(0);
-      setOpenDialog(false);
-    }
-  };
-
   if (!employeeIncidentData && !loading) return <LoadingComponent />;
 
   return (
     !loading && (
       <Grid container spacing={3}>
-        <Breadcrumb title="Detalles de incidencia" items={BCrumb} />
         <Grid size={12}>
           <Grid container>
-            <Grid size={{ lg: 6, xs: 12 }}>
-              <Box>
-                <CustomSelect
-                  value={data.incidentStatusId || 0}
-                  onChange={handleChangeStatus}
-                  sx={{
-                    height: "40px",
-                    "& .MuiSelect-select": {
-                      paddingTop: "8px",
-                      paddingBottom: "8px",
-                    },
-                  }}
-                >
-                  <MenuItem key={generateUniqueKey()} value={0}>
-                    Cambiar estatus de incidencia
-                  </MenuItem>
-                  {incidentStatus.map((item) => (
-                    <MenuItem key={generateUniqueKey()} value={item.id}>
-                      {item.display_name}
-                    </MenuItem>
-                  ))}
-                </CustomSelect>
-              </Box>
-            </Grid>
-            <Grid size={{ lg: 6, xs: 12 }}>
+            <Grid size={{ lg: 12, xs: 12 }}>
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
                 <Box display="flex" gap={1}>
                   <PDFGenerator
@@ -187,40 +84,11 @@ const EmployeeIncident = () => {
           </Grid>
         </Grid>
 
-        <Grid2 size={12}>
-          {responseMessage && (
-            <Alert severity={isSuccess ? "success" : "error"}>
-              <Typography variant="body1" fontWeight={600}>
-                {responseMessage}
-              </Typography>
-            </Alert>
-          )}
-        </Grid2>
-
         <Grid size={12}>
           <BlankCard>
             <CardContent>
               <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="space-between" mb={2}>
-                <Box
-                  sx={{
-                    textAlign: {
-                      xs: "center",
-                      sm: "left",
-                    },
-                  }}
-                >
-                  <Typography variant="h5">Oficio: {employeeIncidentData.folio}</Typography>
-                  <Box mt={1}>
-                    <Chip
-                      size="medium"
-                      color="secondary"
-                      variant="outlined"
-                      label={formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}
-                    ></Chip>
-                  </Box>
-                </Box>
-
-                <Box textAlign="right">
+                <Box textAlign="left">
                   <Typography variant="h5">Folio: {employeeIncidentData.oficio || "PM/OM/DRH/1511/2025"}</Typography>
                   <Box mt={1}>
                     <Chip
@@ -230,14 +98,29 @@ const EmployeeIncident = () => {
                     />
                   </Box>
                 </Box>
+
+                <Box
+                  sx={{
+                    textAlign: {
+                      xs: "center",
+                      sm: "left",
+                    },
+                  }}
+                >
+                  <Box mt={1}>
+                    <Chip
+                      size="medium"
+                      color="secondary"
+                      variant="outlined"
+                      label={formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}
+                    ></Chip>
+                  </Box>
+                </Box>
               </Stack>
               <Divider></Divider>
 
               <Grid container spacing={3} mt={2} mb={4}>
-                <Grid size={6}>
-                  <EmployeeDetails data={employeeIncidentData} />
-                </Grid>
-                <Grid size={6}>
+                <Grid size={12}>
                   <IncidentDetails data={employeeIncidentData} />
                 </Grid>
                 {employeeIncidentData.incident.display_calendar_dates ? (
@@ -273,25 +156,6 @@ const EmployeeIncident = () => {
             </CardContent>
           </BlankCard>
         </Grid>
-
-        <Dialog open={openDialog} maxWidth="md" disableEscapeKeyDown>
-          <DialogTitle id="alert-dialog-title" variant="h5">
-            Cambio de estatus de la incidencia
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              ¿Está completamente seguro de cambiar el estatus de la incidencia?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button color="error" variant="contained" onClick={handleCancel} disabled={idStatus === 0}>
-              Cancelar
-            </Button>
-            <Button color="primary" variant="contained" onClick={handleConfirm} autoFocus disabled={idStatus === 0}>
-              Continuar
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Grid>
     )
   );

@@ -272,11 +272,17 @@ const EmployeeRequest = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={handleConfirm} autoFocus disabled={idStatus === 0 || loading}>
-            {loading ? "Actualizando..." : "Continuar"}
-          </Button>
-          <Button color="error" onClick={handleCancel} disabled={idStatus === 0 || loading}>
+          <Button color="error" variant="contained" onClick={handleCancel} disabled={idStatus === 0 || loading}>
             Cancelar
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={handleConfirm}
+            autoFocus
+            disabled={idStatus === 0 || loading}
+          >
+            {loading ? "Actualizando..." : "Continuar"}
           </Button>
         </DialogActions>
       </Dialog>

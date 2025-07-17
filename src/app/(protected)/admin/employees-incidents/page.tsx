@@ -8,7 +8,7 @@ import { columnTypeConfig } from "./(list)/ColumnsConfig";
 import { useDispatch } from "react-redux";
 import { fetchEmployees } from "@/store/employees-incidents/EmployeesIncidentsSlice";
 import type { AppDispatch } from "@/store/store";
-import { header } from "./(list)/Header";
+import { header as adminHeader } from "./(list)/Header";
 import type { RootState } from "@/store/store";
 import PageContainer from "@/app/components/container/PageContainer";
 import CustomIncidentStatusComponent from "@/components/customComponents/CustomIncidentStatusComponent";
@@ -17,6 +17,11 @@ import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { IncidentCreateModal } from "./IncidentCreateModal";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { ROLES } from "@/common/constants/Roles";
+import { HeadCell } from "@/interfaces/HeadCell";
+import IncidentDetailModal from "@/app/(protected)/employee/incidents/IncidentDetailModal";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Dialog from "@mui/material/Dialog";
 
 const BCrumb = [
   {
@@ -25,7 +30,13 @@ const BCrumb = [
   },
 ];
 
-export default function EmployeesIncidents({ role = ROLES.ADMIN }: { role?: string }) {
+export default function EmployeesIncidents({
+  role = ROLES.ADMIN,
+  header = adminHeader,
+}: {
+  role?: string;
+  header?: readonly HeadCell[];
+}) {
   const ENTITY = "employeesIncidents";
   const dispatch = useDispatch<AppDispatch>();
   const { page, limit } = useSelector((state: RootState) => state.pagination);
@@ -35,6 +46,9 @@ export default function EmployeesIncidents({ role = ROLES.ADMIN }: { role?: stri
   const { user } = useCurrentUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  const [selectedIncident, setSelectedIncident] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -70,6 +84,16 @@ export default function EmployeesIncidents({ role = ROLES.ADMIN }: { role?: stri
     </Button>
   );
 
+  const handleOpenDetailModal = (incidentId: string) => {
+    setSelectedIncident(incidentId);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedIncident(null);
+  };
+
   return (
     <PageContainer title={title} description={title}>
       {showSearchBar && <Breadcrumb title={title} items={BCrumb} />}
@@ -82,6 +106,7 @@ export default function EmployeesIncidents({ role = ROLES.ADMIN }: { role?: stri
         entity={ENTITY}
         emptyMessage={emptyMessage}
         createLink={createLink}
+        onRowDetailClick={handleOpenDetailModal}
       >
         <CustomIncidentStatusComponent />
       </TableWithPagination>
@@ -91,6 +116,14 @@ export default function EmployeesIncidents({ role = ROLES.ADMIN }: { role?: stri
         employeeId={user?.employee_id}
         onSuccess={handleSuccess}
       />
+      {selectedIncident && (
+        <Dialog open={isDetailModalOpen} onClose={handleCloseDetailModal} fullWidth maxWidth="md">
+          <DialogTitle id="alert-dialog-title">Detalle de incidencia</DialogTitle>
+          <DialogContent>
+            <IncidentDetailModal id={selectedIncident} />
+          </DialogContent>
+        </Dialog>
+      )}
     </PageContainer>
   );
 }

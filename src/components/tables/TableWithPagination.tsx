@@ -28,6 +28,7 @@ import { getNestedValue } from "@/common/utils";
 import {IconCalendar, IconClock} from "@tabler/icons-react";
 import { format } from "date-fns";
 import { formatDate } from "@/utils/formatter";
+import {RowDetail} from "@/components/tables/RowDetail";
 
 interface TableProps<T> {
   title: string;
@@ -38,6 +39,7 @@ interface TableProps<T> {
   entity: string;
   emptyMessage: string;
   createLink?: React.ReactElement | React.ReactElement[];
+  onRowDetailClick?: (id: string) => void;
   children?: React.ReactNode;
 }
 
@@ -50,6 +52,7 @@ const TableWithPagination = <T,>({
   emptyMessage,
   createLink,
   children,
+  onRowDetailClick
 }: TableProps<T>) => {
   const dispatch = useDispatch();
   const { page, limit, total } = useSelector((state: RootState) => state.pagination);
@@ -153,6 +156,9 @@ const TableWithPagination = <T,>({
 
       case "action":
         return <RowMenu row={row} redirectPath={redirectPath} />;
+
+      case "detail":
+        return <RowDetail onClick={() => onRowDetailClick?.(row.id)} />;
 
       default:
         return headCell.numeric ? (

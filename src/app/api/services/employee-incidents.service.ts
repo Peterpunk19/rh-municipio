@@ -271,6 +271,25 @@ export const EmployeeIncidentsService = {
           number_employee: true,
           rfc: true,
           curp: true,
+          employee_ascriptions: {
+            where: {
+              active: true,
+            },
+            take: 1,
+            select: {
+              id: true,
+              direccion: {
+                select: {
+                  id: true,
+                  name: true,
+                  display_name: true,
+                  secretaria: {
+                    select: { id: true, name: true, display_name: true },
+                  },
+                },
+              },
+            },
+          },
           employee_hiring: {
             where: {
               active: true,
@@ -425,8 +444,8 @@ export const EmployeeIncidentsService = {
                 check_in: item.date,
                 check_out: item.date,
                 description: "Asistencia creada por incidencia",
-                employee_hiring: {
-                  connect: { id: employeeIncident.employeeHiringId },
+                employee_ascriptions: {
+                  connect: { id: employeeIncident.employeeAscriptionId },
                 },
                 employee_location: {
                   connect: { id: employeeIncident.employeeLocationId },
