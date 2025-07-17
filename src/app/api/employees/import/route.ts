@@ -7,6 +7,12 @@ import type { IEmployee } from "@/app/api/employees/interface";
 import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
 import { formatFolio, getRandomDate, getRandomNumber } from "@/common/utils";
 
+function getRandomDireccionId(): number {
+  const validDireccionIds = [1, 2, 3, 4, 11, 15, 17, 18];
+  const index = Math.floor(Math.random() * validDireccionIds.length);
+  return validDireccionIds[index];
+}
+
 function mapToIEmployee(data: any): IEmployee {
   const validateOrGenerateDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -33,7 +39,7 @@ function mapToIEmployee(data: any): IEmployee {
     endJobDate: getRandomDate(new Date("2000-01-01"), new Date("2025-01-01")),
     categoryId: getRandomNumber(1, 193),
     employeeTypeName: "base_no_sindicalizado",
-    direccionId: getRandomNumber(1, 59),
+    direccionId: getRandomDireccionId(),
     maritalStatusId: 1,
     schoolingId: getRandomNumber(1, 10),
     professionId: 110,
