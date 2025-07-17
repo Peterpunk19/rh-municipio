@@ -19,7 +19,7 @@ import { HttpResponse } from "./common/response/model";
 const { auth } = NextAuth(authConfig);
 // @ts-ignore
 
-const excludedApiRoutes = ["/api/employee-attendance/bulk-import"];
+const excludedApiRoutes = ["/api/employee-attendance/bulk-import", "api/employees/import"];
 
 export default auth(async (req) => {
   const { nextUrl } = req;
