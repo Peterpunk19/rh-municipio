@@ -8,7 +8,6 @@ import { columnTypeConfig } from "./(list)/ColumnsConfig";
 import { useDispatch } from "react-redux";
 import { fetchEmployeeRequests } from "@/store/employees-requests/EmployeesRequestsFiltersSlice";
 import type { AppDispatch } from "@/store/store";
-import { header } from "./(list)/Header";
 import type { RootState } from "@/store/store";
 import PageContainer from "@/app/components/container/PageContainer";
 import CustomRequestStatusComponent from "@/components/customComponents/CustomRequestStatusComponent";
@@ -18,6 +17,12 @@ import { formatDateStringFilters } from "@/utils/formatter";
 import RequestCreateModal from "./RequestCreateModal";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { ROLES } from "@/common/constants/Roles";
+import { header as adminHeader } from "@/app/(protected)/admin/employees-requests/(list)/Header";
+import { HeadCell } from "@/interfaces/HeadCell";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import RequestDetailModal from "@/app/(protected)/employee/requests/RequestDetailModal";
 
 const BCrumb = [
   {
@@ -26,7 +31,13 @@ const BCrumb = [
   },
 ];
 
-export default function EmployeeRequests({ role = ROLES.ADMIN }: { role?: string }) {
+export default function EmployeeRequests({
+  role = ROLES.ADMIN,
+  header = adminHeader,
+}: {
+  role?: string;
+  header?: readonly HeadCell[];
+}) {
   const ENTITY = "employeeRequests";
   const dispatch = useDispatch<AppDispatch>();
 
@@ -38,10 +49,23 @@ export default function EmployeeRequests({ role = ROLES.ADMIN }: { role?: string
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const [selectedIncident, setSelectedIncident] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
   const handleSuccess = () => {
     setRefreshKey((prev) => prev + 1);
+  };
+
+  const handleOpenDetailModal = (incidentId: string) => {
+    setSelectedIncident(incidentId);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedIncident(null);
   };
 
   useEffect(() => {
@@ -101,6 +125,7 @@ export default function EmployeeRequests({ role = ROLES.ADMIN }: { role?: string
         entity={ENTITY}
         emptyMessage={emptyMessage}
         createLink={createLink}
+        onRowDetailClick={handleOpenDetailModal}
       >
         <CustomRequestStatusComponent />
       </TableWithPagination>
@@ -110,6 +135,14 @@ export default function EmployeeRequests({ role = ROLES.ADMIN }: { role?: string
         employeeId={user?.employee_id}
         onSuccess={handleSuccess}
       />
+      {selectedIncident && (
+        <Dialog open={isDetailModalOpen} onClose={handleCloseDetailModal} fullWidth maxWidth="md">
+          <DialogTitle id="alert-dialog-title">Detalle de solicitud</DialogTitle>
+          <DialogContent>
+            <RequestDetailModal id={selectedIncident} />
+          </DialogContent>
+        </Dialog>
+      )}
     </PageContainer>
   );
 }

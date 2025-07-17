@@ -322,6 +322,17 @@ export const EmployeeAttendanceService = {
                 maternal_last_name: true,
                 rfc: true,
                 curp: true,
+                employee_hiring: {
+                  select: {
+                    category: {
+                      select: {
+                        id: true,
+                        name: true,
+                        display_name: true,
+                      },
+                    },
+                  },
+                },
               },
             },
             direccion: {
@@ -373,6 +384,20 @@ export const EmployeeAttendanceService = {
         fullName: `${employeeAttendance.employee_ascriptions.employee?.name} ${employeeAttendance.employee_ascriptions.employee?.paternal_last_name} ${employeeAttendance.employee_ascriptions.employee?.maternal_last_name}`,
         rfc: employeeAttendance.employee_ascriptions.employee?.rfc,
         curp: employeeAttendance.employee_ascriptions.employee?.curp,
+        category: {
+          id: employeeAttendance.employee_ascriptions.employee.employee_hiring.category?.id,
+          name: employeeAttendance.employee_ascriptions.employee.employee_hiring.category?.display_name,
+        },
+      },
+      organism_public: {
+        id: employeeAttendance.employee_ascriptions.direccion.secretaria.id,
+        name: employeeAttendance.employee_ascriptions.direccion.secretaria.name,
+        display_name: employeeAttendance.employee_ascriptions.direccion.secretaria.display_name,
+      },
+      organism_administrative: {
+        id: employeeAttendance.employee_ascriptions.direccion.id,
+        name: employeeAttendance.employee_ascriptions.direccion.name,
+        display_name: employeeAttendance.employee_ascriptions.direccion.display_name,
       },
       created_by: {
         id: employeeAttendance.created_by.id,
