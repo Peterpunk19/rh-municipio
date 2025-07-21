@@ -17,7 +17,7 @@ import CustomCalendar from "@/components/customComponents/CustomCalendar";
 import {
   Alert,
   Box,
-  Button,
+  Button, Card,
   Chip,
   Dialog,
   DialogActions,
@@ -219,6 +219,33 @@ const IncidentCreateForm = () => {
                 </CustomSelect>
                 <CustomLabelError field={errors.incidentId} />
               </FormControl>
+            </Grid2>
+
+            <Grid2 size={{ lg: 12 }}>
+              <Card
+                variant="outlined"
+                elevation={0}
+                sx={{
+                  backgroundColor: (theme) => theme.palette.primary.light,
+                  py: 0,
+                  mt: 2,
+                  p: 2,
+                  position: "relative",
+                }}>
+                <Box
+                  sx={{ display: "grid", alignItems: "center", justifyContent: "space-between", width: "100%" }}
+                >
+                  <Typography variant="subtitle2" fontWeight="600">
+                    Dias permitidos:
+                  </Typography>
+                  <Typography variant="subtitle2" fontWeight="600">
+                    Dias usados:
+                  </Typography>
+                  <Typography variant="subtitle2" fontWeight="600">
+                    Dias restantes:
+                  </Typography>
+                </Box>
+              </Card>
             </Grid2>
 
             <Dialog fullWidth maxWidth="lg" open={openCalendar} onClose={handleCalendarCancel} disableEscapeKeyDown>
