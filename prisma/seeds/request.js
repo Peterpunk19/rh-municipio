@@ -41,6 +41,12 @@ const requests = [
     display_name: "LICENCIA SINDICAL",
     description: "Solicitud de licencia sindical",
   },
+  {
+    id: 8,
+    name: "schedule_attendance_change_request",
+    display_name: "CAMBIO DE HORARIO EN LISTA DE ASISTENCIA",
+    description: "Solicitud de cambio de horario en lista de asistencia",
+  },
 ];
 
 module.exports = requests;

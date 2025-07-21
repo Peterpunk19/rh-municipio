@@ -47,6 +47,12 @@ export const response = {
             },
           },
         ],
+        employee_attendance_type: {
+          attendance: {
+            display_name: "RELOJ DIGITAL",
+          },
+        },
+        job_schedule_employee: [],
       },
       request: {
         display_name: "Cambio de Adscripción",
@@ -107,6 +113,12 @@ export const response = {
             },
           },
         ],
+        employee_attendance_type: {
+          attendance: {
+            display_name: "RELOJ DIGITAL",
+          },
+        },
+        job_schedule_employee: [],
       },
       request: {
         display_name: "Cambio de Adscripción",
@@ -167,6 +179,12 @@ export const response = {
             },
           },
         ],
+        employee_attendance_type: {
+          attendance: {
+            display_name: "RELOJ DIGITAL",
+          },
+        },
+        job_schedule_employee: [],
       },
       request: {
         display_name: "Cambio de Adscripción",

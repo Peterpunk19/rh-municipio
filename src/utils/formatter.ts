@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export const formatDate = (date: string | Date | null | undefined, dateFormat = "dd/MM/yyyy") => {
   if (!date) return "";
@@ -7,7 +8,7 @@ export const formatDate = (date: string | Date | null | undefined, dateFormat = 
     const d = typeof date === "string" ? new Date(date) : date;
     if (Number.isNaN(d.getTime())) return "";
     d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-    return format(d, dateFormat);
+    return format(d, dateFormat, { locale: es });
   } catch (e) {
     console.error("Invalid date format", e);
     return "";

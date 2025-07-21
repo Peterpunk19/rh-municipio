@@ -11,6 +11,7 @@ import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
 import REQUEST_TYPES from "@/common/constants/RequestTypes";
 import { ROLES_ID_VALUES, ROLES } from "@/common/constants/Roles";
+import { REQUEST_TYPES_NAME } from "@/common/constants/RequestTypes";
 
 export const EmployeeRequestService = {
   async getFolio() {
@@ -475,6 +476,49 @@ export const EmployeeRequestService = {
                     display_name: true,
                   },
                 },
+                employee_type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+              },
+            },
+            job_schedule_employee: {
+              where: {
+                active: true,
+              },
+              select: {
+                id: true,
+                start_day: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                end_day: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                start_hour: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                end_hour: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
               },
             },
           },
@@ -622,17 +666,24 @@ export const EmployeeRequestService = {
         administrativeOrganization: employeeRequest.employee.employee_hiring[0].direccion.display_name,
         category: employeeRequest.employee.employee_hiring[0].category?.display_name,
         employee_ascriptions: employeeRequest.employee.employee_ascriptions[0],
+        employee_attendance_type: employeeRequest.employee.employee_attendance_type[0],
+        employee_type: employeeRequest.employee.employee_hiring[0].employee_type,
       },
       request: {
         ...employeeRequest.request,
       },
       request_details: {
-        ...(["schedule_change_request", "location_change_request"].includes(employeeRequest.request.name) && {
+        ...(["schedule_change_request", "location_change_request", "schedule_attendance_change_request"].includes(
+          employeeRequest.request.name,
+        ) && {
           start_at: employeeRequest.employee_request_detail[0].start_date,
           end_at: employeeRequest.employee_request_detail[0].end_date,
         }),
-        ...(employeeRequest.request.name === "schedule_change_request" && {
+        ...(["schedule_change_request", "schedule_attendance_change_request"].includes(
+          employeeRequest.request.name,
+        ) && {
           schedule: Object.values(employeeRequest.EmployeeRequestSchedule),
+          prevSchedule: Object.values(employeeRequest.employee.job_schedule_employee),
         }),
         ...(employeeRequest.request.name === "checker_change_request" && {
           attendance_date: employeeRequest.employee_request_detail[0].attendance_date,
@@ -642,6 +693,7 @@ export const EmployeeRequestService = {
           new_attendance: employeeRequest.employee_request_detail[0].new_attendance
             ? { ...employeeRequest.employee_request_detail[0].new_attendance }
             : null,
+          schedule: Object.values(employeeRequest.employee.job_schedule_employee),
         }),
         ...(employeeRequest.request.name === "location_change_request" && {
           current_location: employeeRequest.employee_request_detail[0].location
@@ -651,7 +703,12 @@ export const EmployeeRequestService = {
             ? { ...employeeRequest.employee_request_detail[0].new_location }
             : null,
         }),
-        ...(employeeRequest.request.name === "fingerprint_registration_request" && {
+        ...([
+          "fingerprint_registration_request",
+          "schedule_change_request",
+          "checker_change_request",
+          "schedule_attendance_change_request",
+        ].includes(employeeRequest.request.name) && {
           location: {
             ...employeeRequest.employee_request_detail[0].location,
           },
@@ -916,6 +973,70 @@ export const EmployeeRequestService = {
                     },
                   },
                 },
+                employee_type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                category: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+              },
+            },
+            job_schedule_employee: {
+              where: {
+                active: true,
+              },
+              select: {
+                id: true,
+                start_day: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                end_day: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                start_hour: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+                end_hour: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+              },
+            },
+            employee_attendance_type: {
+              where: {
+                active: true,
+              },
+              select: {
+                attendance: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
               },
             },
           },
@@ -946,6 +1067,23 @@ export const EmployeeRequestService = {
                 },
               },
             },
+            location: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                active: true,
+              },
+            },
+          },
+        },
+        EmployeeRequestSchedule: {
+          select: {
+            id: true,
+            start_day: true,
+            end_day: true,
+            start_hour: true,
+            end_hour: true,
           },
         },
       },
@@ -955,7 +1093,14 @@ export const EmployeeRequestService = {
       return null;
     }
 
-    const requestDetail = employeeRequest.employee_request_detail?.[0];
+    const schedule = Object.values(employeeRequest.EmployeeRequestSchedule);
+    const prevSchedule = Object.values(employeeRequest.employee.job_schedule_employee);
+    const requestDetailFound = employeeRequest.employee_request_detail?.[0];
+    const requestDetail = {
+      ...requestDetailFound,
+      schedule,
+      prevSchedule,
+    };
     const direccionRH = await DireccionService.getDireccionByName("direccion_recursos_humanos");
 
     const rhDirector = await prisma.administrativeOrganizationLeaders.findFirst({
@@ -963,6 +1108,12 @@ export const EmployeeRequestService = {
         direccion_id: direccionRH?.id,
         role_id: ROLES_ID_VALUES[ROLES.DIRECTOR],
         active: true,
+        end_date: {
+          gte: employeeRequest.request_date,
+        },
+        start_date: {
+          lte: employeeRequest.request_date,
+        },
       },
       select: {
         employee: {
@@ -979,28 +1130,38 @@ export const EmployeeRequestService = {
       },
     });
 
-    const destinationDirector = requestDetail?.new_direccion?.id
-      ? await prisma.administrativeOrganizationLeaders.findFirst({
-          where: {
-            direccion_id: requestDetail.new_direccion.id,
-            role_id: ROLES_ID_VALUES[ROLES.DIRECTOR],
-            active: true,
-          },
-          select: {
-            employee: {
-              select: {
-                id: true,
-                name: true,
-                paternal_last_name: true,
-                maternal_last_name: true,
+    let destinationDirector = null;
+    const needDestinationDirector: string[] = [REQUEST_TYPES_NAME.ADSCRIPTION];
+    if (needDestinationDirector.includes(employeeRequest.request.name)) {
+      destinationDirector = requestDetail?.new_direccion?.id
+        ? await prisma.administrativeOrganizationLeaders.findFirst({
+            where: {
+              direccion_id: requestDetail.new_direccion.id,
+              role_id: ROLES_ID_VALUES[ROLES.DIRECTOR],
+              active: true,
+              end_date: {
+                gte: employeeRequest.request_date,
+              },
+              start_date: {
+                lte: employeeRequest.request_date,
               },
             },
-          },
-          orderBy: {
-            start_date: "desc",
-          },
-        })
-      : null;
+            select: {
+              employee: {
+                select: {
+                  id: true,
+                  name: true,
+                  paternal_last_name: true,
+                  maternal_last_name: true,
+                },
+              },
+            },
+            orderBy: {
+              start_date: "desc",
+            },
+          })
+        : null;
+    }
 
     return {
       ...employeeRequest,

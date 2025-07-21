@@ -37,6 +37,14 @@ describe("API: GET /employee-requests/:id/pdf", () => {
               },
             },
           ],
+          employee_attendance_type: [
+            {
+              attendance: {
+                display_name: "RELOJ DIGITAL",
+              },
+            },
+          ],
+          job_schedule_employee: [],
         },
         request: {
           display_name: "Cambio de Adscripción",
@@ -89,6 +97,24 @@ describe("API: GET /employee-requests/:id/pdf", () => {
             number_employee: "123456",
             rfc: "PEGJ850101ABC",
             curp: "PEGJ850101HCCRNN01",
+            employee_hiring: [
+              {
+                direccion: {
+                  display_name: "DIRECCIÓN DE RECURSOS HUMANOS",
+                  secretaria: {
+                    display_name: "OFICIALÍA MAYOR",
+                  },
+                },
+              },
+            ],
+            employee_attendance_type: [
+              {
+                attendance: {
+                  display_name: "RELOJ DIGITAL",
+                },
+              },
+            ],
+            job_schedule_employee: [],
           },
           request: {
             display_name: "Cambio de Adscripción",

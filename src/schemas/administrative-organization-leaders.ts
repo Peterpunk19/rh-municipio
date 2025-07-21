@@ -58,3 +58,51 @@ export const AdministrativeOrganizationsGetFilterSchema = z.object({
     .optional()
     .nullable(),
 });
+
+export const LeadersGetFilterSchema = z
+  .object({
+    page: z
+      .number({ message: validationMessages.number("Página") })
+      .min(1, { message: validationMessages.minNumber("Página", 1) })
+      .nullable(),
+    limit: z
+      .number({ message: validationMessages.number("Limite") })
+      .min(1, { message: validationMessages.minNumber("Limite", 1) })
+      .nullable(),
+    search: z
+      .union([
+        z
+          .string()
+          .min(1, { message: validationMessages.required("Búsqueda") })
+          .max(255, { message: validationMessages.maxLength("Búsqueda", 255) }),
+        z.number().transform((num) => num.toString()),
+      ])
+      .optional()
+      .nullable(),
+    active: z.preprocess(
+      (val) => (typeof val === "string" || val instanceof String ? val.toString().toLowerCase() : val),
+      z.enum(["true", "false"], { message: validationMessages.invalidBoolean("Activo") }).nullable(),
+    ),
+    startDate: z
+      .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }))
+      .optional()
+      .nullable(),
+    endDate: z
+      .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Fecha de fin") }))
+      .optional()
+      .nullable(),
+    direccionId: z.number().optional().nullable(),
+    roleId: z.number().optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.startDate && data.endDate) {
+        return data.endDate >= data.startDate;
+      }
+      return true;
+    },
+    {
+      message: validationMessages.invalidDateRange("Fecha de fin", "Fecha de inicio"),
+      path: ["endDate"],
+    },
+  );

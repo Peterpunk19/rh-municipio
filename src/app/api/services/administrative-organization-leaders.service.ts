@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import type { ICreateLeader, IAdministrativeOrganizationsFilters } from "@/app/api/administrative-organizations/types";
-import { getPaginationData } from "@/common/utils";
+import type {
+  ICreateLeader,
+  IAdministrativeOrganizationsFilters,
+  ILeadersFilters,
+} from "@/app/api/administrative-organizations/types";
+import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 export const AdministrativeOrganizationLeadersService = {
@@ -287,5 +291,81 @@ export const AdministrativeOrganizationLeadersService = {
         },
       },
     });
+  },
+
+  async getLeadersByParams(leadersFilters: ILeadersFilters) {
+    const { limit, page, startDate, endDate } = leadersFilters;
+    const offset = (Number(page) - 1) * Number(limit);
+    const filterMappings = {
+      active: "active",
+      direccionId: "direccion_id",
+      roleId: "role_id",
+    };
+
+    const whereClause = await buildWhereClause(filterMappings, leadersFilters);
+    if (startDate) {
+      whereClause.end_date = {
+        ...(whereClause.end_date || {}),
+        gte: startDate,
+      };
+    }
+
+    if (endDate) {
+      whereClause.start_date = {
+        ...(whereClause.start_date || {}),
+        lte: endDate,
+      };
+    }
+
+    const data = await prisma.administrativeOrganizationLeaders.findMany({
+      where: whereClause,
+      skip: offset,
+      take: Number(limit),
+      orderBy: {
+        start_date: "desc",
+      },
+      select: {
+        id: true,
+        direccion_id: true,
+        active: true,
+        start_date: true,
+        end_date: true,
+        employee: {
+          select: {
+            id: true,
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+          },
+        },
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    const total = await prisma.administrativeOrganizationLeaders.count({ where: whereClause });
+    const pagination = await getPaginationData(total, Number(limit), Number(page));
+
+    const leaders = data.map((leader) => ({
+      id: leader.id,
+      direccion_id: leader.direccion_id,
+      active: leader.active,
+      start_date: leader.start_date,
+      end_date: leader.end_date,
+      employee: {
+        id: leader.employee.id,
+        name: leader.employee.name,
+        paternal_last_name: leader.employee.paternal_last_name,
+        maternal_last_name: leader.employee.maternal_last_name,
+      },
+      role: {
+        name: leader.role.name,
+      },
+    }));
+
+    return { ...pagination, leaders };
   },
 };

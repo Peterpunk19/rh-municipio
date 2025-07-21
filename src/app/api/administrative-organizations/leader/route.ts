@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CreateUpdateLeaderSchema } from "@/schemas/administrative-organization-leaders";
+import { CreateUpdateLeaderSchema, LeadersGetFilterSchema } from "@/schemas/administrative-organization-leaders";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
-import { validateRequest } from "@/common/request/validateRequest";
+import { validateRequest, validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { DireccionService } from "@/app/api/services/direccion.service";
 import { AdministrativeOrganizationLeadersService } from "@/app/api/services/administrative-organization-leaders.service";
 import { HttpMessages } from "@/common/response/messages";
-import { ICreateUpdateLeader } from "@/app/api/administrative-organizations/types";
+import { ICreateUpdateLeader, ILeadersFilters } from "@/app/api/administrative-organizations/types";
 import { logger } from "@/lib/logger";
 import { ROLES } from "@/common/constants/Roles";
 import { RoleService } from "@/app/api/services/role.service";
 import { authMiddleware } from "@/middleware/authMiddleware";
+import { getParamsFromUrl } from "@/common/utils";
 
 export async function POST(request: NextRequest) {
   const authResponse = await authMiddleware();
@@ -127,6 +128,58 @@ export async function POST(request: NextRequest) {
 
     const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, {});
 
+    return handleHttpResponse(response);
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const params = {
+      page: 1,
+      limit: 5,
+      active: null,
+      search: null,
+      startDate: null,
+      endDate: null,
+      direccionId: null,
+      roleId: null,
+    };
+
+    const requestParams = await getParamsFromUrl(request, params);
+
+    const authData = await authMiddleware();
+    if (authData instanceof NextResponse) {
+      return authData;
+    }
+    const validationRequest = await validateRequestByUrlParams<ILeadersFilters>(requestParams, LeadersGetFilterSchema);
+    if (validationRequest.response) return validationRequest.response;
+
+    const validRequestData = validationRequest.data;
+
+    if (!validRequestData) {
+      const response = HttpResponse.failure(HttpMessages.error.validationFields, {});
+      return handleHttpResponse(response);
+    }
+
+    const leaders = await AdministrativeOrganizationLeadersService.getLeadersByParams(validRequestData);
+
+    if (leaders && leaders.total === 0) {
+      const response = HttpResponse.success(HttpMessages.administrativeOrganizations.leadersNotFound, {
+        leaders: [],
+        total: 0,
+        totalPages: 0,
+        currentPage: 1,
+      });
+
+      return handleHttpResponse(response);
+    }
+
+    const response = HttpResponse.success(HttpMessages.administrativeOrganizations.leadersGetSuccess, leaders);
+    return handleHttpResponse(response);
+  } catch (error: any) {
+    logger.error({ error: error.message, stack: error.stack });
+
+    const response = HttpResponse.failure(HttpMessages.error.internalServerError, error);
     return handleHttpResponse(response);
   }
 }

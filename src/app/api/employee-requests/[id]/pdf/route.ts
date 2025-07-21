@@ -4,7 +4,8 @@ import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
 import { formatDate } from "@/utils/formatter";
-import type { RequestChangeData } from "@/components/shared/pdfs/templates/requests/types";
+import type { RequestTemplateData } from "@/components/shared/pdfs/templates/requests/types";
+import { REQUEST_TYPES_NAME } from "@/common/constants/RequestTypes";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -23,12 +24,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return handleHttpResponse(response);
     }
 
-    if (!employeeRequest.rhDirector || !employeeRequest.destinationDirector || !employeeRequest.requestDetail) {
+    if (!employeeRequest.rhDirector || !employeeRequest.requestDetail) {
       const response = HttpResponse.notFound(HttpMessages.employeeRequests.incompleteDataForPDF, {});
       return handleHttpResponse(response);
     }
 
-    const pdfData: RequestChangeData = {
+    const needDestinationDirector: string[] = [REQUEST_TYPES_NAME.ADSCRIPTION];
+    if (needDestinationDirector.includes(employeeRequest.request.name) && !employeeRequest.destinationDirector) {
+      const response = HttpResponse.notFound(HttpMessages.employeeRequests.incompleteDataForPDF, {});
+      return handleHttpResponse(response);
+    }
+
+    const pdfData: RequestTemplateData = {
       folio: employeeRequest.folio,
       request_date: formatDate(employeeRequest.request_date, "dd/MM/yyyy"),
       created_at: formatDate(employeeRequest.created_at, "dd/MM/yyyy"),
@@ -51,9 +58,32 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                     : undefined,
                 }
               : undefined,
+            employee_type: hiring.employee_type
+              ? {
+                  display_name: hiring.employee_type.display_name,
+                }
+              : undefined,
+            category: hiring.category
+              ? {
+                  display_name: hiring.category.display_name,
+                }
+              : undefined,
           })) || [],
+        job_schedule_employee:
+          employeeRequest.employee.job_schedule_employee?.map((jobSchedule) => ({
+            start_day: jobSchedule.start_day,
+            end_day: jobSchedule.end_day,
+            start_hour: jobSchedule.start_hour,
+            end_hour: jobSchedule.end_hour,
+          })) || [],
+        employee_attendance_type: {
+          attendance: {
+            display_name: employeeRequest.employee.employee_attendance_type?.[0]?.attendance?.display_name ?? "",
+          },
+        },
       },
       request: {
+        name: employeeRequest.request.name,
         display_name: employeeRequest.request.display_name,
       },
       description: employeeRequest.description,
