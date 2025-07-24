@@ -31,6 +31,7 @@ import EmployeeDetails from "@/components/customComponents/EmployeeDetails";
 import LoadingComponent from "@/components/customComponents/LoadingComponent";
 import RequestDetails from "@/components/customComponents/RequestDetails";
 import RequestStatusHistory from "@/components/customComponents/RequestStatusHistory";
+import RequestPDFDropdown from "@/components/customComponents/RequestPDFDropdown";
 import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
 
 const BCrumb = [
@@ -170,11 +171,7 @@ const EmployeeRequest = () => {
           </Grid>
           <Grid size={{ lg: 6, xs: 12 }}>
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
-              <Box display="flex" gap={1}>
-                <Button variant="outlined" color="secondary" startIcon={<IconDownload width={18} />}>
-                  Descargar formato
-                </Button>
-              </Box>
+              <RequestPDFDropdown requestId={id as string} createdDate={employeeRequestData.created_at} />
             </Stack>
           </Grid>
         </Grid>
