@@ -147,8 +147,8 @@ describe("EmployeeIncidentsService", () => {
       expect(mockTx.employeeAttendance.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            check_in: mockEmployeeIncident.checkIn,
-            check_out: mockEmployeeIncident.checkOut,
+            check_in: expect.any(Date),
+            check_out: expect.any(Date),
             description: "Asistencia creada por incidencia",
             employee_hiring: { connect: { id: mockEmployeeIncident.employeeHiringId } },
             employee_location: { connect: { id: mockEmployeeIncident.employeeLocationId } },

@@ -8,4 +8,11 @@ export const DireccionService = {
       },
     });
   },
+  async getDireccionByName(name: string) {
+    return prisma.direccion.findFirst({
+      where: {
+        name,
+      },
+    });
+  },
 };

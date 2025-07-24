@@ -130,6 +130,11 @@ export const HttpMessages = {
     updatedSuccess: "Solicitud actualizada exitosamente",
     notAllowedToCreateForDifferentDireccion:
       "No tienes permiso para crear solicitudes para empleados de otra dirección",
+    invalidId: "ID de solicitud inválido",
+    requestNotFound: "Solicitud no encontrada",
+    incompleteDataForPDF: "Datos incompletos para generar PDF",
+    pdfDataObtainedSuccess: "Datos de solicitud obtenidos exitosamente",
+    internalServerError: "Error interno del servidor",
   },
   administrativeOrganizations: {
     getSuccess: "Organismos administrativos encontrados correctamente",

@@ -6,9 +6,11 @@ import type {
   IEmployeeRequestResponse,
 } from "@/app/api/employee-requests/types";
 import { RequestService } from "@/app/api/services/request.service";
+import { DireccionService } from "@/app/api/services/direccion.service";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
 import REQUEST_TYPES from "@/common/constants/RequestTypes";
+import { ROLES_ID_VALUES, ROLES } from "@/common/constants/Roles";
 
 export const EmployeeRequestService = {
   async getFolio() {
@@ -877,5 +879,135 @@ export const EmployeeRequestService = {
 
       return [createEmployeeRequestStatus];
     });
+  },
+
+  async getEmployeeRequestForPDF(id: number) {
+    const employeeRequest = await prisma.employeeRequest.findFirst({
+      where: { id },
+      select: {
+        id: true,
+        folio: true,
+        oficio: true,
+        description: true,
+        request_date: true,
+        created_at: true,
+        employee: {
+          select: {
+            id: true,
+            name: true,
+            maternal_last_name: true,
+            paternal_last_name: true,
+            number_employee: true,
+            rfc: true,
+            curp: true,
+            employee_hiring: {
+              select: {
+                direccion: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    secretaria: {
+                      select: {
+                        id: true,
+                        name: true,
+                        display_name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        request: {
+          select: {
+            id: true,
+            name: true,
+            display_name: true,
+          },
+        },
+        employee_request_detail: {
+          select: {
+            id: true,
+            start_date: true,
+            end_date: true,
+            new_direccion: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                secretaria: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!employeeRequest) {
+      return null;
+    }
+
+    const requestDetail = employeeRequest.employee_request_detail?.[0];
+    const direccionRH = await DireccionService.getDireccionByName("direccion_recursos_humanos");
+
+    const rhDirector = await prisma.administrativeOrganizationLeaders.findFirst({
+      where: {
+        direccion_id: direccionRH?.id,
+        role_id: ROLES_ID_VALUES[ROLES.DIRECTOR],
+        active: true,
+      },
+      select: {
+        employee: {
+          select: {
+            id: true,
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+          },
+        },
+      },
+      orderBy: {
+        start_date: "desc",
+      },
+    });
+
+    const destinationDirector = requestDetail?.new_direccion?.id
+      ? await prisma.administrativeOrganizationLeaders.findFirst({
+          where: {
+            direccion_id: requestDetail.new_direccion.id,
+            role_id: ROLES_ID_VALUES[ROLES.DIRECTOR],
+            active: true,
+          },
+          select: {
+            employee: {
+              select: {
+                id: true,
+                name: true,
+                paternal_last_name: true,
+                maternal_last_name: true,
+              },
+            },
+          },
+          orderBy: {
+            start_date: "desc",
+          },
+        })
+      : null;
+
+    return {
+      ...employeeRequest,
+      rhDirector: rhDirector?.employee || null,
+      destinationDirector: destinationDirector?.employee || null,
+      changeDate: requestDetail?.start_date || null,
+      requestDetail,
+    };
   },
 };

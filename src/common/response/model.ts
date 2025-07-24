@@ -36,4 +36,8 @@ export class HttpResponse<T = null> {
   static unauthorized<T>(message: string, responseObject: T, statusCode: number = StatusCodes.UNAUTHORIZED) {
     return new HttpResponse(false, message, responseObject, statusCode);
   }
+
+  static notFound<T>(message: string, responseObject: T, statusCode: number = StatusCodes.NOT_FOUND) {
+    return new HttpResponse(false, message, responseObject, statusCode);
+  }
 }

@@ -72,3 +72,54 @@ export const formatScheduleText = (schedule: string) => {
 
   return formattedText;
 };
+
+const MESES = [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
+];
+
+const formatDateTextHelper = (day: string, month: string, year: string, showYearNumber: boolean = false) => {
+  const mesIndex = parseInt(month) - 1;
+  const mesNombre = MESES[mesIndex];
+  if (!mesNombre) throw new Error("Mes inválido en la fecha");
+
+  const capitalizedMonth = mesNombre.charAt(0).toUpperCase() + mesNombre.slice(1);
+  const dayFormatted = parseInt(day).toString().padStart(2, "0");
+  const currentYear = new Date().getFullYear().toString();
+
+  if (year === currentYear && !showYearNumber) {
+    return `${dayFormatted} de ${capitalizedMonth} del presente año`;
+  } else {
+    return `${dayFormatted} de ${capitalizedMonth} del ${year}`;
+  }
+};
+
+export const formatDateToText = (date: string | Date | null | undefined, showYearNumber: boolean = false) => {
+  if (!date) throw new Error("Fecha requerida");
+
+  const dateStr = typeof date === "string" ? date : date.toString();
+
+  const ddmmyyyyMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (ddmmyyyyMatch) {
+    const [, day, month, year] = ddmmyyyyMatch;
+    return formatDateTextHelper(day, month, year, showYearNumber);
+  }
+
+  const yyyymmddMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (yyyymmddMatch) {
+    const [, year, month, day] = yyyymmddMatch;
+    return formatDateTextHelper(day, month, year, showYearNumber);
+  }
+
+  throw new Error("Formato de fecha inválido");
+};
