@@ -158,4 +158,10 @@ export const HttpMessages = {
     notFound: "No se datos con los filtros proporcionados",
     statusUpdatedSuccess: "Estado actualizado correctamente",
   },
+  incidentRules: {
+    getSuccess: "Validaciones encontradas correctamente",
+    notFound: "No se encontraron validaciones para esta incidencia",
+    notAvailableDays: "Se superó el numero de dias disponibles para esta incidencia",
+    notMinYears: "El empleado aún no cumple con los años mínimos para esta incidencia",
+  },
 };

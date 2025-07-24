@@ -295,6 +295,7 @@ model Incident {
   active                      Boolean
   employee_incidents          EmployeeIncidents[]
   incidents_roles_permissions IncidentsRolesPermissions[]
+  incident_rules           IncidentRules[]
 }
 
 model IncidentStatus {
@@ -320,9 +321,24 @@ model Vacation {
   active     Boolean @default(true)
 }
 
+model IncidentRules {
+  id               Int      @id @default(autoincrement())
+  incident_id      Int
+  incident         Incident @relation(fields: [incident_id], references: [id])
+  employee_type_id Int
+  employee_type    EmployeeType @relation(fields: [employee_type_id], references: [id])
+  days             Int
+  start_date       Int?
+  end_date         Int?
+  min_years        Int?
+  max_years        Int?
+  active           Boolean  @default(true)
+}
+
 model EmployeeIncidentDays {
   id                   Int               @id @default(autoincrement())
   date                 DateTime
+  value                Int               @default(1)
   employee_incident_id Int
   employee_incident    EmployeeIncidents @relation(fields: [employee_incident_id], references: [id])
   created_at           DateTime?         @default(now())
@@ -581,12 +597,13 @@ model TradeUnion {
 }
 
 model EmployeeType {
-  id                     Int                    @id @default(autoincrement())
-  name                   String                 @unique
+  id                     Int              @id @default(autoincrement())
+  name                   String           @unique
   display_name           String
-  active                 Boolean                @default(true)
+  active                 Boolean          @default(true)
   employees              EmployeeHiring[]
   category_employee_type CategoryEmployeeType[]
+  incident_rules         IncidentRules[]
 }
 
 model Category {
@@ -736,4 +753,13 @@ model CategoryEmployeeType {
   active           Boolean      @default(true)
   created_at       DateTime     @default(now())
   updated_at       DateTime     @updatedAt
+}
+
+model Holiday {
+  id              Int      @id @default(autoincrement())
+  name            String   @unique
+  display_name    String
+  holiday_date    DateTime @unique
+  validation_date DateTime @unique
+  active          Boolean  @default(true)
 }

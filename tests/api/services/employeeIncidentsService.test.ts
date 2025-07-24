@@ -12,6 +12,9 @@ jest.mock("@/lib/prisma", () => ({
     employeeIncidentsStatus: {
       create: jest.fn(),
     },
+    jobScheduleEmployee: {
+      findMany: jest.fn().mockResolvedValue([]),
+    },
     $transaction: jest.fn(),
   },
 }));
@@ -51,6 +54,7 @@ describe("EmployeeIncidentsService", () => {
         oficio: "",
         description: "Test",
         createdBy: 1,
+        incidentDates: ["2024-02-19", "2024-02-20"],
       };
 
       (prisma.employeeIncidents.findFirst as jest.Mock).mockResolvedValue(null);
@@ -81,6 +85,7 @@ describe("EmployeeIncidentsService", () => {
         oficio: "12345",
         description: "Test",
         createdBy: 1,
+        incidentDates: ["2024-02-19", "2024-02-20"],
       };
 
       const mockCreatedIncident = { id: 1, ...mockIncident };
@@ -93,6 +98,9 @@ describe("EmployeeIncidentsService", () => {
           },
           employeeIncidentsStatus: {
             create: jest.fn().mockResolvedValue(mockCreatedStatus),
+          },
+          employeeIncidentDays: {
+            createMany: jest.fn().mockResolvedValue({ count: mockIncident.incidentDates.length }),
           },
         }),
       );
@@ -111,7 +119,7 @@ describe("EmployeeIncidentsService", () => {
       checkIn: new Date(),
       checkOut: new Date(),
       employeeAscriptionId: 10,
-      employeeHiringId: 10,
+      employeeHiringId: 1,
       employeeLocationId: 20,
       createdById: 1,
       employeeId: 1,

@@ -1,37 +1,21 @@
 import { POST } from "@/app/api/employee-incidents/create/route";
 import { testCases } from "./testCases";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
+import { IncidentRulesService } from "@/app/api/services/incident-rules.service";
+import { EmployeeService } from "@/app/api/services/employee.service";
+import * as utilsService from "@/app/api/common/utils.service";
 
-const {
-  getFolio,
-  getIncidentStatus,
-  validateEmployee,
-  validateEmployeeIncident,
-  getEmployeeDireccion,
-  validateIncidentsRolesPermissions,
-} = jest.requireMock("@/app/api/common/utils.service");
-
-jest.mock("@/app/api/common/utils.service", () => ({
-  getFolio: jest.fn(),
-  getIncidentStatus: jest.fn(),
-  validateEmployee: jest.fn(),
-  validateEmployeeIncident: jest.fn(),
-  getEmployeeDireccion: jest.fn(),
-  validateIncidentsRolesPermissions: jest.fn().mockResolvedValue(true),
-}));
-
-jest.mock("@/app/api/services/employee-incidents.service", () => ({
-  EmployeeIncidentsService: {
-    createEmployeeIncidents: jest.fn(),
-  },
-}));
-
-// Mock authMiddleware
+jest.mock("@/app/api/services/employee-incidents.service");
+jest.mock("@/app/api/services/incident-rules.service");
+jest.mock("@/app/api/services/employee.service");
+jest.mock("@/app/api/common/utils.service");
 jest.mock("@/middleware/authMiddleware", () => ({
-  authMiddleware: jest.fn(),
+  authMiddleware: jest.fn().mockResolvedValue({
+    employeeId: 1,
+    roleId: 1,
+    userId: 1,
+  }),
 }));
-
-const { authMiddleware } = jest.requireMock("@/middleware/authMiddleware");
 
 describe("API: /employee-incidents", () => {
   afterEach(() => {
@@ -39,16 +23,46 @@ describe("API: /employee-incidents", () => {
   });
 
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
-    it(`POST /employees-incidents ${description}`, async () => {
-      if (description === "should successfully send message with valid data") {
-        validateIncidentsRolesPermissions.mockResolvedValue(true);
-        getFolio.mockResolvedValue(null);
-        getIncidentStatus.mockResolvedValue(null);
-        validateEmployee.mockResolvedValue(null);
-        validateEmployeeIncident.mockResolvedValue(null);
-        getEmployeeDireccion.mockResolvedValue(1);
-        authMiddleware.mockResolvedValue({ userId: 1 });
-        (EmployeeIncidentsService.createEmployeeIncidents as jest.Mock).mockResolvedValueOnce([{}, {}]);
+    it(`POST /employee-incidents ${description}`, async () => {
+      (utilsService.getFolio as jest.Mock).mockResolvedValue({
+        success: true,
+        message: "Incidencia creada correctamente",
+        responseObject: {},
+        statusCode: 200,
+      });
+      (utilsService.getIncidentStatus as jest.Mock).mockResolvedValue({ id: 1, name: "Pendiente" });
+      (utilsService.validateEmployee as jest.Mock).mockResolvedValue({ id: 1 });
+      (utilsService.validateEmployeeIncident as jest.Mock).mockResolvedValue(true);
+      (utilsService.getEmployeeDireccion as jest.Mock).mockResolvedValue({ id: 1 });
+      (utilsService.validateIncidentsRolesPermissions as jest.Mock).mockResolvedValue(true);
+      (EmployeeIncidentsService.createEmployeeIncidents as jest.Mock).mockResolvedValue({ id: 1 });
+      (IncidentRulesService.validateIncidentRules as jest.Mock).mockResolvedValue(null);
+      (EmployeeService.getCurrentJobSchedule as jest.Mock).mockResolvedValue([
+        {
+          day: 1,
+          entry_time: "09:00:00",
+          departure_time: "18:00:00",
+          is_active: true,
+        },
+      ]);
+
+      if (description === "should return error when employee validation fails") {
+        (utilsService.validateEmployee as jest.Mock).mockRejectedValueOnce(new Error("Employee validation failed"));
+      } else if (description === "should successfully send message with valid data") {
+        const createdIncident = {
+          id: 1,
+          folio: "TEST123",
+          employee_id: 1,
+          incident_id: 1,
+          incident_status_id: 1,
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          created_by_id: 1,
+          direccion_id: 1,
+        };
+
+        (EmployeeIncidentsService.createEmployeeIncidents as jest.Mock).mockResolvedValue(createdIncident);
       }
 
       const requestObj = {

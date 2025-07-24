@@ -92,25 +92,7 @@ describe("API: /employees/update", () => {
             name: "ABRAM",
             maternal_last_name: "GUTIERREZ",
             paternal_last_name: "ALFARO",
-            employee_ascriptions: [
-              // Add missing property
-              {
-                id: 1,
-                active: true,
-                created_at: new Date(),
-                updated_at: new Date(),
-                direccion: {
-                  id: 1,
-                  name: "rh",
-                  display_name: "Recursos Humanos",
-                  secretaria: {
-                    id: 1,
-                    name: "gobierno",
-                    display_name: "Secretaría de gobernación",
-                  },
-                },
-              },
-            ],
+            employee_ascriptions: [{ id: 31 }],
             employee_hiring: [
               {
                 id: 31,
