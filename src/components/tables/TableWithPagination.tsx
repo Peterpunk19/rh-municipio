@@ -27,7 +27,7 @@ import TableRenderCell from "./TableRenderCell";
 import { getNestedValue } from "@/common/utils";
 import {IconCalendar, IconClock} from "@tabler/icons-react";
 import { format } from "date-fns";
-import { formatDate } from "@/utils/formatter";
+import {formatDate, getMonthName} from "@/utils/formatter";
 import {RowDetail} from "@/components/tables/RowDetail";
 import {RowSwitch} from "@/components/tables/RowSwitch";
 
@@ -156,6 +156,9 @@ const TableWithPagination = <T extends TableItemBase>({
             ${value as number}
           </Typography>
         );
+
+      case "monthName":
+        return <Typography fontWeight={600} variant="h6">{(getMonthName(value as string))}</Typography>;
 
       case "avatar":
         return (

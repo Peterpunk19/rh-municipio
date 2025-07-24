@@ -1,5 +1,15 @@
 export interface ColumnTypeConfig {
-  renderType?: "date" | "boolean" | "currency" | "avatar" | "action" | "text" | "dateTime" | "detail" | "switch";
+  renderType?:
+    | "date"
+    | "boolean"
+    | "currency"
+    | "avatar"
+    | "action"
+    | "text"
+    | "dateTime"
+    | "detail"
+    | "switch"
+    | "monthName";
   format?: (value: any, row: any) => React.ReactNode;
   redirectPath?: string;
   switchConfig?: {
