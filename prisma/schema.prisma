@@ -34,7 +34,7 @@ model User {
   employee_requests_by                EmployeeRequest[]                   @relation("requestedBy")
   leaders_by                          AdministrativeOrganizationLeaders[] @relation("createdBy")
   employee_attendance_type_created_by EmployeeAttendanceType[]            @relation("createdByEmployeeAttendanceType")
-  employee_ascriptions                EmployeeAscriptions[]              @relation("createdBy")
+  employee_ascriptions                EmployeeAscriptions[]               @relation("createdBy")
   user_direcciones                    UserDireccion[]
 }
 
@@ -109,22 +109,22 @@ model EmployeeAddress {
 }
 
 model EmployeeHiring {
-  id                  Int                  @id @default(autoincrement())
-  employee_id         Int
-  start_job_date      DateTime
-  end_job_date        DateTime
-  category_id         Int?
-  employee_type_id    Int
-  direccion_id        Int
-  active              Boolean              @default(true)
-  created_by          Int?
-  created_at          DateTime?            @default(now())
-  updated_at          DateTime?            @updatedAt
-  category            Category?            @relation(fields: [category_id], references: [id])
-  employee_type       EmployeeType         @relation(fields: [employee_type_id], references: [id])
-  direccion           Direccion            @relation(fields: [direccion_id], references: [id])
-  employee            Employee?            @relation(fields: [employee_id], references: [id])
-  created_by_user     Employee?            @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
+  id               Int          @id @default(autoincrement())
+  employee_id      Int
+  start_job_date   DateTime
+  end_job_date     DateTime
+  category_id      Int?
+  employee_type_id Int
+  direccion_id     Int
+  active           Boolean      @default(true)
+  created_by       Int?
+  created_at       DateTime?    @default(now())
+  updated_at       DateTime?    @updatedAt
+  category         Category?    @relation(fields: [category_id], references: [id])
+  employee_type    EmployeeType @relation(fields: [employee_type_id], references: [id])
+  direccion        Direccion    @relation(fields: [direccion_id], references: [id])
+  employee         Employee?    @relation(fields: [employee_id], references: [id])
+  created_by_user  Employee?    @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
 
   @@unique([employee_id, category_id, direccion_id, employee_type_id, active])
 }
@@ -227,7 +227,7 @@ model EmployeeAttendance {
   check_out                   DateTime?
   active                      Boolean                @default(true)
   created_by_id               Int
-  employee_ascription_id          Int
+  employee_ascription_id      Int
   description                 String
   created_by                  User                   @relation(fields: [created_by_id], references: [id])
   employee_attendance_type_id Int
@@ -236,7 +236,7 @@ model EmployeeAttendance {
   employee_incident           EmployeeIncidents?     @relation(fields: [employee_incident_id], references: [id])
   employee_location_id        Int
   employee_location           EmployeeLocation       @relation(fields: [employee_location_id], references: [id])
-  employee_ascriptions        EmployeeAscriptions         @relation(fields: [employee_ascription_id], references: [id])
+  employee_ascriptions        EmployeeAscriptions    @relation(fields: [employee_ascription_id], references: [id])
   created_at                  DateTime?              @default(now())
   udpated_at                  DateTime?              @updatedAt
 
@@ -286,14 +286,14 @@ model EmployeeIncidentsStatus {
 }
 
 model Incident {
-  id                       Int                 @id @default(autoincrement())
-  name                     String              @unique
-  display_name             String
-  type                     Int
-  display_calendar_dates   Boolean             @default(false)
-  display_time_on_calendar Boolean             @default(false)
-  active                   Boolean
-  employee_incidents       EmployeeIncidents[]
+  id                          Int                         @id @default(autoincrement())
+  name                        String                      @unique
+  display_name                String
+  type                        Int
+  display_calendar_dates      Boolean                     @default(false)
+  display_time_on_calendar    Boolean                     @default(false)
+  active                      Boolean
+  employee_incidents          EmployeeIncidents[]
   incidents_roles_permissions IncidentsRolesPermissions[]
 }
 
@@ -581,20 +581,21 @@ model TradeUnion {
 }
 
 model EmployeeType {
-  id           Int              @id @default(autoincrement())
-  name         String           @unique
-  display_name String
-  active       Boolean          @default(true)
-  employees    EmployeeHiring[]
+  id                     Int                    @id @default(autoincrement())
+  name                   String                 @unique
+  display_name           String
+  active                 Boolean                @default(true)
+  employees              EmployeeHiring[]
+  category_employee_type CategoryEmployeeType[]
 }
 
 model Category {
-  id           Int              @id @default(autoincrement())
-  name         String           @unique
-  display_name String
-  salary       Decimal          @default(0)
-  active       Boolean          @default(true)
-  employees    EmployeeHiring[]
+  id                     Int                    @id @default(autoincrement())
+  name                   String                 @unique
+  display_name           String
+  active                 Boolean                @default(true)
+  employees              EmployeeHiring[]
+  category_employee_type CategoryEmployeeType[]
 }
 
 model Location {
@@ -710,17 +711,29 @@ model UserDireccion {
 }
 
 model IncidentsRolesPermissions {
-  id             Int      @id @default(autoincrement())
-  role_id        Int
-  role           Role                                @relation(fields: [role_id], references: [id])
-  incident_id    Int
-  incident       Incident @relation(fields: [incident_id], references: [id])
-  can_view       Boolean  @default(false)
-  can_create     Boolean  @default(false)
-  can_approve    Boolean  @default(false)
-  can_reject     Boolean  @default(false)
-  can_cancel     Boolean  @default(false)
-  can_delete     Boolean  @default(false)
-  can_edit       Boolean  @default(false)
-  active        Boolean   @default(true)
+  id          Int      @id @default(autoincrement())
+  role_id     Int
+  role        Role     @relation(fields: [role_id], references: [id])
+  incident_id Int
+  incident    Incident @relation(fields: [incident_id], references: [id])
+  can_view    Boolean  @default(false)
+  can_create  Boolean  @default(false)
+  can_approve Boolean  @default(false)
+  can_reject  Boolean  @default(false)
+  can_cancel  Boolean  @default(false)
+  can_delete  Boolean  @default(false)
+  can_edit    Boolean  @default(false)
+  active      Boolean  @default(true)
+}
+
+model CategoryEmployeeType {
+  id               Int          @id @default(autoincrement())
+  category_id      Int
+  employee_type_id Int
+  category         Category     @relation(fields: [category_id], references: [id])
+  employee_type    EmployeeType @relation(fields: [employee_type_id], references: [id])
+  salary           Decimal      @default(0)
+  active           Boolean      @default(true)
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
 }

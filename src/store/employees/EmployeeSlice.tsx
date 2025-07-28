@@ -56,6 +56,7 @@ const initialState: IEmployeeState = {
     municipalities: null,
     direcciones: null,
     categories: null,
+    employeeTypes: null,
   },
 };
 

@@ -235,31 +235,37 @@ export const EmployeeService = {
         },
       });
 
-      const createdEmployeeLocation = await tx.employeeLocation.create({
-        data: {
-          employee: {
-            connect: { id: Number(createEmployee.id) },
+      let createdEmployeeLocation;
+      if (employee.locationId) {
+        createdEmployeeLocation = await tx.employeeLocation.create({
+          data: {
+            employee: {
+              connect: { id: Number(createEmployee.id) },
+            },
+            location: {
+              connect: { id: Number(employee.locationId) },
+            },
+            active: employee.active,
+            created_at: new Date(),
           },
-          location: {
-            connect: { id: Number(employee.locationId) },
-          },
-          active: employee.active,
-          created_at: new Date(),
-        },
-      });
+        });
+      }
 
-      const createdEmployeeAttendanceType = await tx.employeeAttendanceType.create({
-        data: {
-          employee: {
-            connect: { id: Number(createEmployee.id) },
+      let createdEmployeeAttendanceType;
+      if (employee.attendanceId) {
+        createdEmployeeAttendanceType = await tx.employeeAttendanceType.create({
+          data: {
+            employee: {
+              connect: { id: Number(createEmployee.id) },
+            },
+            attendance: {
+              connect: { id: Number(employee.attendanceId) },
+            },
+            active: employee.active,
+            created_at: new Date(),
           },
-          attendance: {
-            connect: { id: Number(employee.attendanceId) },
-          },
-          active: employee.active,
-          created_at: new Date(),
-        },
-      });
+        });
+      }
 
       await tx.user.update({
         where: { id: createUser.id },

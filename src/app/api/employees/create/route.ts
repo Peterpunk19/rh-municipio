@@ -42,7 +42,15 @@ export async function POST(request: NextRequest) {
       return handleHttpResponse(response);
     }
     body.employeeTypeId = employeeType.id;
-    const [employee] = await EmployeeService.createEmployee(body);
+    const result = await EmployeeService.createEmployee(body);
+
+    const employee = result[1];
+
+    if (!employee || !employee.id) {
+      const response = HttpResponse.failure(HttpMessages.employee.notFoundById, {});
+      return handleHttpResponse(response);
+    }
+
     const response = HttpResponse.success(HttpMessages.employee.createdSuccess, {
       employeeId: employee.id,
     });

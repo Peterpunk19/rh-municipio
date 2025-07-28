@@ -12,6 +12,7 @@ import { createEmployee, updateEmployee } from "@/services/employees";
 import { FormHiringData } from "@/app/(protected)/admin/employees/create/form-employees/steps/FormHiringData";
 import { FormAddressData } from "@/app/(protected)/admin/employees/create/form-employees/steps/FormAddressData";
 import type { FormWizarStepsProps } from "@/interfaces/FormWizardStepsProps";
+import { useRouter } from "next/navigation";
 
 const steps = ["Datos Personales", "Datos de Domicilio", "Datos de Contratación", "Finalizar"];
 
@@ -19,6 +20,7 @@ const FormWizardSteps = <T,>({ isEdit }: FormWizarStepsProps<T>) => {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
   const dispatch = useDispatch();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -89,6 +91,9 @@ const FormWizardSteps = <T,>({ isEdit }: FormWizarStepsProps<T>) => {
       }
       setSuccess(response.message);
       setActiveStep(activeStep + 1);
+      setTimeout(() => {
+        router.push("/admin/employees");
+      }, 1500);
     } catch (err) {
       setError((err as Error).message);
     } finally {
