@@ -48,14 +48,38 @@ import CustomTextField from "@/components/theme-elements/CustomTextField";
 import { createEmployeeRequest } from "@/services/employees-requests";
 import REQUEST_TYPES from "@/common/constants/RequestTypes";
 import AdscriptionForm from "@/app/(protected)/admin/employees-requests/create/form-requests/adscription/page";
+import { EmployeeDetailCard } from "@/components/shared/EmployeeDetailCard";
 
-const CreateRequestForm = () => {
+type CreateRequestFormProps = {
+  selectedEmployee?: Employee;
+  onSuccess?: () => void;
+  onClose?: () => void;
+  isSubmitting?: boolean;
+};
+
+const CreateRequestForm = ({
+  selectedEmployee,
+  onSuccess,
+  onClose,
+  isSubmitting: externalSubmitting,
+}: CreateRequestFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { formData, currentJobSchedule, errors } = useSelector((state: RootState) => state.createEmployeeRequest);
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const submitting = externalSubmitting !== undefined ? externalSubmitting : isSubmitting;
+
+  React.useEffect(() => {
+    if (selectedEmployee && selectedEmployee.id) {
+      dispatch(resetForm());
+      dispatch(setSelectedEmployee(selectedEmployee));
+      dispatch(setEmployeeData(selectedEmployee));
+      dispatch(updateFormData({ field: "employeeId", value: selectedEmployee.id.toString() }));
+    }
+  }, [selectedEmployee, dispatch]);
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
@@ -77,6 +101,7 @@ const CreateRequestForm = () => {
   };
 
   const handleSelectEmployee = async (employee: Employee) => {
+    if (selectedEmployee) return;
     dispatch(resetForm());
     dispatch(setSelectedEmployee(employee));
     dispatch(setEmployeeData(employee));
@@ -107,7 +132,7 @@ const CreateRequestForm = () => {
   };
 
   const handleConfirm = async () => {
-    setIsSubmitting(true);
+    if (!selectedEmployee) setIsSubmitting(true);
     dispatch(clearErrors());
     try {
       const response = await createEmployeeRequest(formData);
@@ -132,13 +157,15 @@ const CreateRequestForm = () => {
       setIsSuccess(true);
       setResponseMessage(response.message);
       dispatch(resetForm());
+      if (onSuccess) onSuccess();
       setTimeout(() => {
-        window.location.href = "/admin/employees-requests";
+        if (onClose) onClose();
+        if (!onClose) window.location.href = "/admin/employees-requests";
       }, 3000);
     } catch (err) {
       setResponseMessage("Hubo un error inesperado.");
     } finally {
-      setIsSubmitting(false);
+      if (!selectedEmployee) setIsSubmitting(false);
       setOpenDialog(false);
     }
   };
@@ -156,11 +183,32 @@ const CreateRequestForm = () => {
   return (
     <ParentCard title="Ingrese los datos de la solicitud">
       <Box>
+        {selectedEmployee && (
+          <EmployeeDetailCard
+            employee={{
+              label: (selectedEmployee as any).label || "",
+              number_employee: selectedEmployee.number_employee || "",
+              birthday: selectedEmployee.birthday ? String(selectedEmployee.birthday) : "",
+              rfc: selectedEmployee.rfc || "",
+              curp: selectedEmployee.curp || "",
+              direccion_display_name: (selectedEmployee as any).direccion_display_name || "",
+              secretaria_display_name: (selectedEmployee as any).secretaria_display_name || "",
+              category_display_name: (selectedEmployee as any).category_display_name || "",
+              employee_type_display_name: (selectedEmployee as any).employee_type_display_name || "",
+              trade_union_display_name: (selectedEmployee as any).trade_union_display_name || "",
+              location_display_name:
+                selectedEmployee.location_display_name || (selectedEmployee as any).location_display_name || "",
+              attendance_type_display_name: (selectedEmployee as any).attendance_type_display_name || "",
+            }}
+          />
+        )}
         <form onSubmit={handleSubmit}>
           <Grid2 container spacing={2}>
-            <Grid2 size={{ lg: 12 }}>
-              <EmployeeFinder onEmployeeSelect={handleSelectEmployee} error={errors.employeeId} />
-            </Grid2>
+            {!selectedEmployee && (
+              <Grid2 size={{ lg: 12 }}>
+                <EmployeeFinder onEmployeeSelect={handleSelectEmployee} error={errors.employeeId} />
+              </Grid2>
+            )}
 
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
@@ -235,16 +283,22 @@ const CreateRequestForm = () => {
 
             <Grid2 size={12} sx={{ mt: 2 }}>
               <Stack direction="row" spacing={2} justifyContent="flex-end">
-                <Link href={"/admin/employees-requests"} passHref>
-                  <Button variant="contained" color="error" sx={{ display: "flex" }}>
-                    Salir
+                {onClose ? (
+                  <Button variant="contained" color="error" sx={{ display: "flex" }} onClick={onClose}>
+                    Cancelar
                   </Button>
-                </Link>
+                ) : (
+                  <Link href={"/admin/employees-requests"} passHref>
+                    <Button variant="contained" color="error" sx={{ display: "flex" }}>
+                      Salir
+                    </Button>
+                  </Link>
+                )}
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled={isSubmitting}
+                  disabled={submitting}
                   sx={{ display: "flex" }}
                 >
                   Guardar
@@ -278,10 +332,10 @@ const CreateRequestForm = () => {
             <DialogContentText id="alert-dialog-description">¿Desea continuar?</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button variant="text" onClick={handleCancel} color="error" disabled={isSubmitting}>
+            <Button variant="text" onClick={handleCancel} color="error" disabled={submitting}>
               Cancelar
             </Button>
-            <Button onClick={handleConfirm} color="primary" autoFocus disabled={isSubmitting}>
+            <Button onClick={handleConfirm} color="primary" autoFocus disabled={submitting}>
               Continuar
             </Button>
           </DialogActions>

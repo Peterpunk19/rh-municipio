@@ -40,8 +40,21 @@ import Link from "next/link";
 import EmployeeFinder from "@/components/shared/EmployeeFinder";
 import { AppDispatch, RootState } from "@/store/store";
 import { formatDate } from "@/utils/formatter";
+import { EmployeeDetailCard } from "@/components/shared/EmployeeDetailCard";
 
-const IncidentCreateForm = () => {
+type IncidentCreateFormProps = {
+  selectedEmployee?: any;
+  onSuccess?: () => void;
+  onClose?: () => void;
+  isSubmitting?: boolean;
+};
+
+const IncidentCreateForm = ({
+  selectedEmployee,
+  onSuccess,
+  onClose,
+  isSubmitting: externalSubmitting,
+}: IncidentCreateFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { formData, errors } = useSelector((state: RootState) => state.createEmployeeIncident);
   const [responseMessage, setResponseMessage] = useState("");
@@ -50,10 +63,27 @@ const IncidentCreateForm = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
 
+  const submitting = externalSubmitting !== undefined ? externalSubmitting : isSubmitting;
+
+  React.useEffect(() => {
+    if (selectedEmployee && selectedEmployee.id) {
+      dispatch(setSelectedEmployee(selectedEmployee));
+      dispatch(setEmployeeData(selectedEmployee));
+      dispatch(updateFormData({ field: "employeeId", value: selectedEmployee.id.toString() }));
+    }
+  }, [selectedEmployee, dispatch]);
+
   const handleChange = (event: any) => {
     const { name, value } = event.target;
     dispatch(updateFormData({ field: name, value }));
-    dispatch(setErrors({ field: name, value }));
+    if (name === "employeeId" && value && value !== "0") {
+      const newErrors = { ...errors };
+      delete newErrors.employeeId;
+      const filteredErrors = Object.fromEntries(
+        Object.entries(newErrors).filter(([_, v]) => typeof v === "string" && v !== undefined),
+      );
+      dispatch(setErrors(filteredErrors as { [key: string]: string }));
+    }
 
     if (name === "incidentId") {
       const isCalendarIncident = incidentTypes?.find((item) => item.id === value)?.display_calendar_dates;
@@ -83,11 +113,16 @@ const IncidentCreateForm = () => {
   };
 
   const handleSelectEmployee = async (employee: Employee) => {
-    dispatch(resetForm());
     dispatch(setSelectedEmployee(employee));
     dispatch(setEmployeeData(employee));
     if (employee?.id) {
-      dispatch(updateFormData({ field: "employeeId", value: employee.id }));
+      dispatch(updateFormData({ field: "employeeId", value: employee.id.toString() }));
+      const newErrors = { ...errors };
+      delete newErrors.employeeId;
+      const filteredErrors = Object.fromEntries(
+        Object.entries(newErrors).filter(([_, v]) => typeof v === "string" && v !== undefined),
+      );
+      dispatch(setErrors(filteredErrors as { [key: string]: string }));
     } else {
       dispatch(updateFormData({ field: "employeeId", value: "" }));
     }
@@ -139,6 +174,7 @@ const IncidentCreateForm = () => {
     try {
       const submitData = {
         ...formData,
+        employeeId: Number(formData.employeeId),
         ...(isVacationIncident && { incidentDates: formData.incidentDates }),
       };
 
@@ -162,8 +198,10 @@ const IncidentCreateForm = () => {
         setIsSuccess(true);
         setResponseMessage(response.message);
         dispatch(resetForm());
+        if (onSuccess) onSuccess();
         setTimeout(() => {
-          window.location.href = "/admin/employees-incidents";
+          if (onClose) onClose();
+          if (!onClose) window.location.href = "/admin/employees-incidents";
         }, 3000);
       }
     } catch (err) {
@@ -189,9 +227,34 @@ const IncidentCreateForm = () => {
       <Box>
         <form onSubmit={handleSubmit}>
           <Grid2 container spacing={2}>
-            <Grid2 size={{ lg: 12 }}>
-              <EmployeeFinder onEmployeeSelect={handleSelectEmployee} error={errors.employeeId || ""} />
-            </Grid2>
+            {selectedEmployee ? (
+              <Grid2 size={{ lg: 12 }}>
+                <EmployeeDetailCard
+                  employee={{
+                    label: selectedEmployee.label || "",
+                    number_employee: selectedEmployee.number_employee || "",
+                    birthday: selectedEmployee.birthday ? String(selectedEmployee.birthday) : "",
+                    rfc: selectedEmployee.rfc || "",
+                    curp: selectedEmployee.curp || "",
+                    direccion_display_name: selectedEmployee.direccion_display_name || "",
+                    secretaria_display_name: selectedEmployee.secretaria_display_name || "",
+                    category_display_name: selectedEmployee.category_display_name || "",
+                    employee_type_display_name: selectedEmployee.employee_type_display_name || "",
+                    trade_union_display_name: selectedEmployee.trade_union_display_name || "",
+                    location_display_name: selectedEmployee.location_display_name || "",
+                    attendance_type_display_name: selectedEmployee.attendance_type_display_name || "",
+                  }}
+                />
+              </Grid2>
+            ) : (
+              <Grid2 size={{ lg: 12 }}>
+                <EmployeeFinder
+                  onEmployeeSelect={handleSelectEmployee}
+                  error={errors.employeeId || ""}
+                  initialEmployee={selectedEmployee}
+                />
+              </Grid2>
+            )}
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
                 <CustomFormLabel sx={{ mt: 1 }}>Tipo de incidencia</CustomFormLabel>
@@ -395,7 +458,7 @@ const IncidentCreateForm = () => {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled={isSubmitting}
+                  disabled={submitting}
                   sx={{ display: "flex" }}
                 >
                   Guardar
