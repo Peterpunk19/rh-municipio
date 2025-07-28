@@ -8,4 +8,15 @@ export const IncidentsStatusService = {
       },
     });
   },
+
+  async getIncidentsStatus() {
+    return prisma.incidentStatus.findMany({
+      where: {
+        active: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+  },
 };

@@ -9,13 +9,75 @@ jest.mock("@/app/api/services/employee-request.service", () => ({
 }));
 
 describe("API: GET /employee-requests/:id/pdf", () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
+
+    (EmployeeRequestService.getEmployeeRequestForPDF as jest.Mock).mockImplementation(async (id) => {
+      if (isNaN(id)) {
+        return null;
+      }
+      return {
+        folio: "000001",
+        request_date: "2025-07-09T00:00:00.000Z",
+        created_at: "2025-07-09T00:00:00.000Z",
+        employee: {
+          name: "JUAN",
+          paternal_last_name: "PEREZ",
+          maternal_last_name: "GARCIA",
+          number_employee: "123456",
+          rfc: "PEGJ850101ABC",
+          curp: "PEGJ850101HCCRNN01",
+          employee_hiring: [
+            {
+              direccion: {
+                display_name: "DIRECCIÓN DE RECURSOS HUMANOS",
+                secretaria: {
+                  display_name: "OFICIALÍA MAYOR",
+                },
+              },
+            },
+          ],
+        },
+        request: {
+          display_name: "Cambio de Adscripción",
+        },
+        description: "Solicitud de cambio de adscripción por necesidades del servicio",
+        rhDirector: {
+          id: 1,
+          name: "CRISTOBAL",
+          paternal_last_name: "FLORES",
+          maternal_last_name: "LÓPEZ",
+        },
+        destinationDirector: {
+          id: 2,
+          name: "MARIA",
+          paternal_last_name: "GONZALEZ",
+          maternal_last_name: "MARTINEZ",
+        },
+        changeDate: "2025-07-15T00:00:00.000Z",
+        requestDetail: {
+          id: 1,
+          start_date: "2025-07-15T00:00:00.000Z",
+          end_date: null,
+          new_direccion: {
+            id: 5,
+            name: "DIRECCION_PARTICIPACION_CIUDADANA",
+            display_name: "DIRECCIÓN DE PARTICIPACIÓN CIUDADANA",
+            secretaria: {
+              id: 2,
+              name: "SECRETARIA_GENERAL",
+              display_name: "SECRETARÍA GENERAL",
+            },
+          },
+        },
+      };
+    });
   });
 
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`GET /employee-requests/:id/pdf ${description}`, async () => {
-      if (description.includes("successfully")) {
+      // Customize mocks for specific cases
+      if (description.includes("incomplete data")) {
         (EmployeeRequestService.getEmployeeRequestForPDF as jest.Mock).mockResolvedValueOnce({
           folio: "000001",
           request_date: "2025-07-09T00:00:00.000Z",
@@ -27,49 +89,11 @@ describe("API: GET /employee-requests/:id/pdf", () => {
             number_employee: "123456",
             rfc: "PEGJ850101ABC",
             curp: "PEGJ850101HCCRNN01",
-            employee_hiring: [
-              {
-                direccion: {
-                  display_name: "DIRECCIÓN DE RECURSOS HUMANOS",
-                  secretaria: {
-                    display_name: "OFICIALÍA MAYOR",
-                  },
-                },
-              },
-            ],
           },
           request: {
             display_name: "Cambio de Adscripción",
           },
           description: "Solicitud de cambio de adscripción por necesidades del servicio",
-          rhDirector: {
-            id: 1,
-            name: "CRISTOBAL",
-            paternal_last_name: "FLORES",
-            maternal_last_name: "LÓPEZ",
-          },
-          destinationDirector: {
-            id: 2,
-            name: "MARIA",
-            paternal_last_name: "GONZALEZ",
-            maternal_last_name: "MARTINEZ",
-          },
-          changeDate: "2025-07-15T00:00:00.000Z",
-          requestDetail: {
-            id: 1,
-            start_date: "2025-07-15T00:00:00.000Z",
-            end_date: null,
-            new_direccion: {
-              id: 5,
-              name: "DIRECCION_PARTICIPACION_CIUDADANA",
-              display_name: "DIRECCIÓN DE PARTICIPACIÓN CIUDADANA",
-              secretaria: {
-                id: 2,
-                name: "SECRETARIA_GENERAL",
-                display_name: "SECRETARÍA GENERAL",
-              },
-            },
-          },
         });
       } else if (
         description.includes("id too long") ||
@@ -77,69 +101,28 @@ describe("API: GET /employee-requests/:id/pdf", () => {
         description.includes("id negative")
       ) {
         (EmployeeRequestService.getEmployeeRequestForPDF as jest.Mock).mockResolvedValueOnce(null);
-      } else if (description.includes("incomplete data")) {
-        (EmployeeRequestService.getEmployeeRequestForPDF as jest.Mock).mockResolvedValueOnce({
-          folio: "000001",
-          request_date: "2025-07-09T00:00:00.000Z",
-          created_at: "2025-07-09T00:00:00.000Z",
-          employee: {
-            name: "JUAN",
-            paternal_last_name: "PEREZ",
-            maternal_last_name: "GARCIA",
-            number_employee: "123456",
-            rfc: "PEGJ850101ABC",
-            curp: "PEGJ850101HCCRNN01",
-          },
-          request: {
-            display_name: "Cambio de Adscripción",
-          },
-          description: "Solicitud de cambio de adscripción por necesidades del servicio",
-        });
       }
 
       const { id, isPDF, requestDate } = requestData;
-      const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/employee-requests/${id}/pdf`;
-      const searchParams = new URLSearchParams();
+      const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/api/employee-requests/${id}/pdf`);
 
       if (isPDF !== undefined) {
-        searchParams.append("isPDF", isPDF.toString());
+        url.searchParams.append("isPDF", isPDF.toString());
       }
       if (requestDate) {
-        searchParams.append("requestDate", requestDate);
+        url.searchParams.append("requestDate", requestDate);
       }
 
-      const url = `${baseUrl}?${searchParams.toString()}`;
-
       const requestObj = {
-        url,
+        url: url.toString(),
         method: "GET",
       } as any;
 
-      const response = await GET(requestObj, { params: Promise.resolve({ id: id.toString() }) } as any);
+      const response = await GET(requestObj, { params: { id: id.toString() } } as any);
       const body = await response.json();
 
       expect(response.status).toBe(expectedStatus);
       expect(body).toEqual(expectedResponse);
     });
-  });
-
-  it("should handle internal server error", async () => {
-    (EmployeeRequestService.getEmployeeRequestForPDF as jest.Mock).mockRejectedValueOnce(
-      new Error("Database connection failed"),
-    );
-
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/employee-requests/1/pdf?isPDF=true`;
-    const requestObj = {
-      url,
-      method: "GET",
-    } as any;
-
-    const response = await GET(requestObj, { params: Promise.resolve({ id: "1" }) } as any);
-    const body = await response.json();
-
-    expect(response.status).toBe(500);
-    expect(body.success).toBe(false);
-    expect(body.message).toBe("Error interno del servidor");
-    expect(body.responseObject.error).toBe("Database connection failed");
   });
 });

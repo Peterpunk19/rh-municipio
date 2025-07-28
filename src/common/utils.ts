@@ -6,7 +6,6 @@ import type { WhereKey } from "@/interfaces/WhereConfig";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { ROLES, ROLES_ID, RoleValue } from "@/common/constants/Roles";
-import { HttpMessages } from "./response/messages";
 import { ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 export const encryptPassword = async (password: string): Promise<string> => {

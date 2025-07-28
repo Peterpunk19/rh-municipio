@@ -135,7 +135,6 @@ export default function NavCollapse({
     <>
       <ListItemStyled
         onClick={handleClick}
-        selected={pathWithoutLastPart === menu.href}
         key={menu?.id}
       >
         <ListItemIcon

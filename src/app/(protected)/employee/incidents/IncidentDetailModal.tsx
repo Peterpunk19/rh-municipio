@@ -1,11 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import { Grid2 as Grid, Divider, Typography, Stack, Chip, Box, Paper } from "@mui/material";
+import {
+  Grid2 as Grid,
+  Divider,
+  Typography,
+  Stack,
+  Chip,
+  Box,
+  Paper,
+  MenuItem,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  Dialog,
+  Alert,
+} from "@mui/material";
 import BlankCard from "@/components/shared/BlankCard";
 import { StatusCodes } from "http-status-codes";
 import { redirect } from "next/navigation";
-import { getEmployeeIncidentById } from "@/services/employees-incidents";
+import { getEmployeeIncidentById, updateEmployeeIncident } from "@/services/employees-incidents";
 import { formatDate } from "@/utils/formatter";
 import { logger } from "@/lib/logger";
 import CardContent from "@mui/material/CardContent";
@@ -15,19 +31,32 @@ import LoadingComponent from "@/components/customComponents/LoadingComponent";
 import PDFGenerator from "@/components/shared/pdfs/PDFGenerator";
 import IncidentTemplate from "@/components/shared/pdfs/templates/IncidentTemplate";
 import IncidentDays from "@/components/customComponents/IncidentDays";
+import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
+import { generateUniqueKey } from "@/utils";
+import { fetchCatalogData } from "@/services/catalogs";
 
 const IncidentDetailModal = ({ id }: any) => {
   const [loading, setLoading] = useState(false);
   const [employeeIncidentData, setEmployeeIncidentData] = useState<any>(null);
   const [directorName, setDirectorName] = useState<string>("");
+  const [idStatus, setIdStatus] = React.useState(0);
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<any>({
+    id: id,
+  });
+  const [incidentStatus, setIncidentStatus] = useState<any>([]);
 
   const fetchEmployeeIncidentById = (id: any) => {
     try {
       if (id) {
         setLoading(true);
-        getEmployeeIncidentById(id as string).then((data) => {
+        getEmployeeIncidentById(id as string).then(async (data) => {
           if (data.statusCode === StatusCodes.OK) {
             setEmployeeIncidentData(data.responseObject);
+
+            await fetchStatus(data.responseObject.incident_id);
 
             getEmployeeIncidentById(id as string, true, data.responseObject.created_at)
               .then((pdfData) => {
@@ -57,9 +86,57 @@ const IncidentDetailModal = ({ id }: any) => {
     }
   };
 
+  const fetchStatus = async (incidentId: number) => {
+    try {
+      const result = await fetchCatalogData(`incidents-status/permission-validation?incident_id=${incidentId}`);
+
+      setIncidentStatus(result.responseObject);
+    } catch (error) {
+      console.error("Error fetching incident status:", error);
+      setIncidentStatus([]);
+    }
+  };
+
   React.useEffect(() => {
     fetchEmployeeIncidentById(id);
   }, [id]);
+
+  const handleChangeStatus = (e: { target: { value: any } }) => {
+    setIdStatus(e.target.value);
+    setData({ ...data, incidentStatusId: e.target.value });
+    setOpenDialog(true);
+  };
+
+  const handleCancel = () => {
+    setData({ ...data, incidentStatusId: 0 });
+    setOpenDialog(false);
+  };
+
+  const handleConfirm = async () => {
+    try {
+      const response = await updateEmployeeIncident(data);
+
+      if (!response.success && response?.responseObject) {
+        setResponseMessage(response.message);
+        setIsSuccess(false);
+        return;
+      }
+
+      if (!response.success) {
+        throw new Error("Failed to submit form. Please try again.");
+      }
+
+      setResponseMessage(response.message);
+      fetchEmployeeIncidentById(id);
+      setIsSuccess(true);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIdStatus(0);
+      setData({ ...data, incidentStatusId: 0 });
+      setOpenDialog(false);
+    }
+  };
 
   if (!employeeIncidentData && !loading) return <LoadingComponent />;
 
@@ -68,7 +145,34 @@ const IncidentDetailModal = ({ id }: any) => {
       <Grid container spacing={3}>
         <Grid size={12}>
           <Grid container>
-            <Grid size={{ lg: 12, xs: 12 }}>
+            <Grid size={{ lg: 6, xs: 12 }}>
+              {incidentStatus.length && employeeIncidentData.incident_status.name === "creada" ? (
+                <Box>
+                  <CustomSelect
+                    value={data.incidentStatusId || 0}
+                    onChange={handleChangeStatus}
+                    sx={{
+                      height: "40px",
+                      "& .MuiSelect-select": {
+                        paddingTop: "8px",
+                        paddingBottom: "8px",
+                      },
+                    }}
+                  >
+                    <MenuItem key={generateUniqueKey()} value={0}>
+                      Cambiar estatus de incidencia
+                    </MenuItem>
+                    {incidentStatus.map((item) => (
+                      <MenuItem key={generateUniqueKey()} value={item.id}>
+                        {item.display_name}
+                      </MenuItem>
+                    ))}
+                  </CustomSelect>
+                </Box>
+              ) : null}
+            </Grid>
+
+            <Grid size={{ lg: 6, xs: 12 }}>
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
                 <Box display="flex" gap={1}>
                   <PDFGenerator
@@ -81,6 +185,16 @@ const IncidentDetailModal = ({ id }: any) => {
               </Stack>
             </Grid>
           </Grid>
+        </Grid>
+
+        <Grid size={12}>
+          {responseMessage && (
+            <Alert severity={isSuccess ? "success" : "error"}>
+              <Typography variant="body1" fontWeight={600}>
+                {responseMessage}
+              </Typography>
+            </Alert>
+          )}
         </Grid>
 
         <Grid size={12}>
@@ -152,6 +266,30 @@ const IncidentDetailModal = ({ id }: any) => {
               <Grid mb={3} size={12}>
                 <IncidentStatusHistory data={employeeIncidentData} />
               </Grid>
+              <Dialog open={openDialog} maxWidth="md" disableEscapeKeyDown>
+                <DialogTitle id="alert-dialog-title" variant="h5">
+                  Cambio de estatus de la incidencia
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    ¿Está completamente seguro de cambiar el estatus de la incidencia?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button color="error" variant="contained" onClick={handleCancel} disabled={idStatus === 0}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={handleConfirm}
+                    autoFocus
+                    disabled={idStatus === 0}
+                  >
+                    Continuar
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </CardContent>
           </BlankCard>
         </Grid>

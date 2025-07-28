@@ -7,10 +7,21 @@ import { HttpMessages } from "@/common/response/messages";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
 import { failureResponse, successResponse } from "@/common/utils";
 import { logger } from "@/lib/logger";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { validateIncidentsRolesPermissions } from "@/app/api/common/utils.service";
+import { authMiddleware } from "@/middleware/authMiddleware";
+import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPermissions";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const authData = await authMiddleware();
+
+    if (authData instanceof NextResponse) {
+      return authData;
+    }
+
+    const { roleId } = authData;
+
     const id = Number.parseInt((await params).id);
     if (isNaN(id)) return failureResponse(HttpMessages.error.invalidId);
 
@@ -24,6 +35,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const existingEmployeeIncident = await EmployeeIncidentsService.getEmployeeIncidentById(id, isPDF, incidentDate);
     if (!existingEmployeeIncident) return failureResponse(HttpMessages.employeeIncidents.notFoundById);
+
+    const permissionValidation = await validateIncidentsRolesPermissions(
+      roleId,
+      Number(existingEmployeeIncident.incident_id),
+      INCIDENTS_ROLES_PERMISSIONS.CAN_VIEW,
+    );
+    if (!permissionValidation)
+      return failureResponse(HttpMessages.employeeIncidents.incidentsRolesPermissionsViewFailed);
 
     return successResponse(HttpMessages.employeeIncidents.foundById, existingEmployeeIncident);
   } catch (error: any) {

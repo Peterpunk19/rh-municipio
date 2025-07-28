@@ -143,6 +143,20 @@ export const CatalogsService = {
     });
   },
 
+  async getIncidentsByRoleCanCreate(roleId: number) {
+    return prisma.incident.findMany({
+      where: {
+        incidents_roles_permissions: {
+          some: {
+            role_id: roleId,
+            can_create: true,
+          },
+        },
+      },
+      orderBy: { display_name: "asc" },
+    });
+  },
+
   async getIncidentsStatus(params: any) {
     const {
       employee_attendance_id,

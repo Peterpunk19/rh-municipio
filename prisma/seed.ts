@@ -29,6 +29,7 @@ const employee = require("./seeds/employee");
 const user = require("./seeds/user");
 const modules = require("./seeds/modules");
 const roleModules = require("./seeds/roleModules");
+const incidentsRolesPermission = require("./seeds/incidents-roles-permissions");
 
 const prisma = new PrismaClient();
 
@@ -59,6 +60,7 @@ async function main() {
   await prisma.profession.createMany({ data: profession });
   await prisma.schooling.createMany({ data: schooling });
   await prisma.tradeUnion.createMany({ data: tradeUnion });
+  await prisma.incidentsRolesPermissions.createMany({ data: incidentsRolesPermission });
 
   await prisma.module.createMany({ data: modules });
 
