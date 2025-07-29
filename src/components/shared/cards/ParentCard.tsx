@@ -36,7 +36,7 @@ const ParentCard = ({ children, footer, codeModel, entity }: Props) => {
         }}
       >
         <Grid container spacing={3}>
-          <Grid key="search-field-toolbar" size={{ xs: 12, sm: 12, lg: 10 }}>
+          <Grid key="search-field-toolbar" size={{ xs: 12, sm: 12, lg: codeModel ? 10 : 12 }}>
             <CustomSearchTableField entity={entity} />
           </Grid>
           <Grid key="button-toolbar" size={{ xs: 12, sm: 12, lg: 2 }}>

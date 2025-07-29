@@ -13,11 +13,13 @@ import {
   getIncidentStatus,
   validateEmployee,
   validateEmployeeIncident,
+  validateIncidentsRolesPermissions,
   getEmployeeDireccion,
 } from "@/app/api/common/utils.service";
 import { logger } from "@/lib/logger";
-import { getRoleValueById, validateDireccionAccess } from "@/common/utils";
+import { failureResponse, getRoleValueById, validateDireccionAccess } from "@/common/utils";
 import { EmployeeService } from "@/app/api/services/employee.service";
+import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPermissions";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -46,6 +48,14 @@ export async function POST(request: NextRequest) {
       const response = HttpResponse.failure(HttpMessages.employeeIncidents.notAllowedToCreateForDifferentDireccion, {});
       return handleHttpResponse(response);
     }
+
+    const permissionValidation = await validateIncidentsRolesPermissions(
+      roleId,
+      Number(body.incidentId),
+      INCIDENTS_ROLES_PERMISSIONS.CAN_CREATE,
+    );
+    if (!permissionValidation)
+      return failureResponse(HttpMessages.employeeIncidents.incidentsRolesPermissionsCreateFailed);
 
     for (const validation of [getFolio, getIncidentStatus, validateEmployee, validateEmployeeIncident]) {
       const validationResponse = await validation(body);

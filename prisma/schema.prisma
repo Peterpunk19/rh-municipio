@@ -294,6 +294,7 @@ model Incident {
   display_time_on_calendar Boolean             @default(false)
   active                   Boolean
   employee_incidents       EmployeeIncidents[]
+  incidents_roles_permissions IncidentsRolesPermissions[]
 }
 
 model IncidentStatus {
@@ -308,6 +309,7 @@ model IncidentStatus {
   allowed_roles_to_update   String
   employee_incidents_status EmployeeIncidentsStatus[]
   employee_incidents        EmployeeIncidents[]
+  permission_name           String?
 }
 
 model Vacation {
@@ -481,6 +483,8 @@ model Role {
   users        User[]
   roleModules  RoleModule[]
   leaders      AdministrativeOrganizationLeaders[]
+
+  incidents_roles_permissions IncidentsRolesPermissions[]
 }
 
 model Module {
@@ -703,4 +707,20 @@ model UserDireccion {
   active        Boolean   @default(true)
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
+}
+
+model IncidentsRolesPermissions {
+  id             Int      @id @default(autoincrement())
+  role_id        Int
+  role           Role                                @relation(fields: [role_id], references: [id])
+  incident_id    Int
+  incident       Incident @relation(fields: [incident_id], references: [id])
+  can_view       Boolean  @default(false)
+  can_create     Boolean  @default(false)
+  can_approve    Boolean  @default(false)
+  can_reject     Boolean  @default(false)
+  can_cancel     Boolean  @default(false)
+  can_delete     Boolean  @default(false)
+  can_edit       Boolean  @default(false)
+  active        Boolean   @default(true)
 }

@@ -50,7 +50,7 @@ describe("EmployeeIncidentsService", () => {
         folio: "000124",
         oficio: "",
         description: "Test",
-        createdBy: "1",
+        createdBy: 1,
       };
 
       (prisma.employeeIncidents.findFirst as jest.Mock).mockResolvedValue(null);
@@ -80,7 +80,7 @@ describe("EmployeeIncidentsService", () => {
         folio: "000124",
         oficio: "12345",
         description: "Test",
-        createdBy: "1",
+        createdBy: 1,
       };
 
       const mockCreatedIncident = { id: 1, ...mockIncident };
@@ -110,6 +110,7 @@ describe("EmployeeIncidentsService", () => {
       incidentStatusId: INCIDENT_STATUS_ID.APROBADA,
       checkIn: new Date(),
       checkOut: new Date(),
+      employeeAscriptionId: 10,
       employeeHiringId: 10,
       employeeLocationId: 20,
       createdById: 1,
@@ -150,7 +151,7 @@ describe("EmployeeIncidentsService", () => {
             check_in: expect.any(Date),
             check_out: expect.any(Date),
             description: "Asistencia creada por incidencia",
-            employee_hiring: { connect: { id: mockEmployeeIncident.employeeHiringId } },
+            employee_ascriptions: { connect: { id: mockEmployeeIncident.employeeAscriptionId } },
             employee_location: { connect: { id: mockEmployeeIncident.employeeLocationId } },
             employee_attendance_type: { connect: { id: 1 } },
             created_by: { connect: { id: mockEmployeeIncident.createdById } },

@@ -29,8 +29,13 @@ import {IconCalendar, IconClock} from "@tabler/icons-react";
 import { format } from "date-fns";
 import { formatDate } from "@/utils/formatter";
 import {RowDetail} from "@/components/tables/RowDetail";
+import {RowSwitch} from "@/components/tables/RowSwitch";
 
-interface TableProps<T> {
+interface TableItemBase {
+  id: number;
+}
+
+interface TableProps<T extends TableItemBase> {
   title: string;
   headCells: readonly HeadCell[];
   items: T[];
@@ -43,7 +48,7 @@ interface TableProps<T> {
   children?: React.ReactNode;
 }
 
-const TableWithPagination = <T,>({
+const TableWithPagination = <T extends TableItemBase>({
   headCells,
   items,
   columnTypeConfig,
@@ -64,7 +69,7 @@ const TableWithPagination = <T,>({
     }
   }, [total, limit, page, dispatch]);
 
-  const labelDisplayedRows = ({ from, to, count }: { from: number; to: number; count: number }) => {
+  const labelDisplayedRows = ({ count }: { count: number }) => {
     if (count === 0) return "0-0 de 0";
 
     const adjustedFrom = (page - 1) * limit + 1;
@@ -93,6 +98,19 @@ const TableWithPagination = <T,>({
 
     if (config.format) {
       return <>{config.format(value, row)}</>;
+    }
+
+    if (config.renderType === "switch" && config.switchConfig) {
+      return (
+        <RowSwitch
+          id={row.id}
+          url={config.switchConfig.url}
+          checked={value}
+          entity={config.switchConfig.entity}
+          field={config.switchConfig.field}
+          fetchAction={config.switchConfig.fetchAction}
+        />
+      );
     }
 
     switch (config.renderType) {

@@ -9,6 +9,7 @@ const incidentStatus = [
     type: 1,
     active: true,
     allowed_roles_to_update: "1,2,3,4,5,6,7",
+    permission_name: "",
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ const incidentStatus = [
     type: 1,
     active: true,
     allowed_roles_to_update: "1,5,6,7",
+    permission_name: "can_approve",
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ const incidentStatus = [
     type: 1,
     active: true,
     allowed_roles_to_update: "1,5,6,7",
+    permission_name: "can_reject",
   },
   {
     id: 4,
@@ -42,6 +45,7 @@ const incidentStatus = [
     type: 1,
     active: true,
     allowed_roles_to_update: "1,2,3",
+    permission_name: "can_delete",
   },
   {
     id: 5,
@@ -53,6 +57,7 @@ const incidentStatus = [
     type: 1,
     active: true,
     allowed_roles_to_update: "1,2,3",
+    permission_name: "can_cancel",
   },
 ];
 

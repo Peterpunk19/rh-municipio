@@ -10,6 +10,7 @@ import type { IEmployeeAttendance } from "@/app/api/employee-attendance/types";
 import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
 import type { IEmployeeRequest } from "@/app/api/employee-requests/types";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
+import { IncidentsRolesPermissionsService } from "@/app/api/services/incidents-roles-permissions";
 
 let cachedIncidentStatus: Awaited<ReturnType<typeof CatalogsService.getIncidentStatusByName>> | null = null;
 let cachedRequestStatus: Awaited<ReturnType<typeof CatalogsService.getRequestStatusByName>> | null = null;
@@ -78,6 +79,14 @@ export const validateEmployeeIncident = async (body: IEmployeeIncident) => {
   }
 
   return null;
+};
+
+export const validateIncidentsRolesPermissions = async (roleId: number, incidentId: number, permissionType: string) => {
+  return await IncidentsRolesPermissionsService.validateIncidentsRolesPermissions(
+    roleId,
+    incidentId,
+    permissionType as any,
+  );
 };
 
 export const getEmployee = async (body: any) => {

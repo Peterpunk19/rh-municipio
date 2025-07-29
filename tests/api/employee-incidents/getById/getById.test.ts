@@ -8,13 +8,25 @@ jest.mock("@/app/api/services/employee-incidents.service", () => ({
   },
 }));
 
+jest.mock("@/middleware/authMiddleware", () => ({
+  authMiddleware: jest.fn(),
+}));
+
+const { authMiddleware } = jest.requireMock("@/middleware/authMiddleware");
+
 describe("API: GET /employee-incidents/:id", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`GET /employee-incidents/:id ${description}`, async () => {
+      authMiddleware.mockResolvedValue({ userId: 1, roleId: 1 });
+
       if (description === "should successfully send message with valid data") {
         (EmployeeIncidentsService.getEmployeeIncidentById as jest.Mock).mockResolvedValueOnce({
           id: 511,

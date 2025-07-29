@@ -71,15 +71,6 @@ export const EmployeeService = {
             },
           },
         },
-        employee_ascriptions: {
-          where: {
-            active: true,
-          },
-          take: 1,
-          orderBy: {
-            created_at: "desc",
-          },
-        },
         employee_location: {
           where: {
             active: true,

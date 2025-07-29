@@ -6,7 +6,7 @@ export const EmployeeAttendanceService = {
   async validateEmployeeAttendance(employeeAttendance: IEmployeeAttendance) {
     return await prisma.employeeAttendance.findFirst({
       where: {
-        employee_hiring_id: employeeAttendance.employeeHiringId,
+        employee_ascription_id: employeeAttendance.employeeAscriptionId,
         check_in: employeeAttendance.checkIn,
         check_out: employeeAttendance.checkOut,
       },
@@ -235,9 +235,6 @@ export const EmployeeAttendanceService = {
       },
     });
 
-    console.log("attendances");
-    console.log(attendances);
-
     const data = attendances.map((item: any) => ({
       id: item.id,
       employee_incident: item.employee_incident,
@@ -385,8 +382,8 @@ export const EmployeeAttendanceService = {
         rfc: employeeAttendance.employee_ascriptions.employee?.rfc,
         curp: employeeAttendance.employee_ascriptions.employee?.curp,
         category: {
-          id: employeeAttendance.employee_ascriptions.employee.employee_hiring.category?.id,
-          name: employeeAttendance.employee_ascriptions.employee.employee_hiring.category?.display_name,
+          id: employeeAttendance.employee_ascriptions.employee.employee_hiring[0].category?.id,
+          name: employeeAttendance.employee_ascriptions.employee.employee_hiring[0].category?.display_name,
         },
       },
       organism_public: {

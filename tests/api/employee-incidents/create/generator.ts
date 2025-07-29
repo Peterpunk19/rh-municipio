@@ -12,7 +12,7 @@ export const generator = {
     startDate: overrides?.startDate ?? "2025-01-22",
     endDate: overrides?.endDate ?? "2025-11-22",
     description: overrides?.description ?? "Carlos Ricardo",
-    createdBy: overrides?.createdBy ?? "1",
+    createdBy: overrides?.createdBy ?? 1,
   }),
   response: (overrides?: Partial<IResponse>): IResponse => ({
     success: overrides?.success ?? false,

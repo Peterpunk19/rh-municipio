@@ -17,7 +17,7 @@ import CustomCalendar from "@/components/customComponents/CustomCalendar";
 import {
   Alert,
   Box,
-  Button, Card,
+  Button,
   Chip,
   Dialog,
   DialogActions,
@@ -41,6 +41,7 @@ import EmployeeFinder from "@/components/shared/EmployeeFinder";
 import { AppDispatch, RootState } from "@/store/store";
 import { formatDate } from "@/utils/formatter";
 import { EmployeeDetailCard } from "@/components/shared/EmployeeDetailCard";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 type IncidentCreateFormProps = {
   selectedEmployee?: any;
@@ -56,6 +57,7 @@ const IncidentCreateForm = ({
   isSubmitting: externalSubmitting,
 }: IncidentCreateFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useCurrentUser();
   const { formData, errors } = useSelector((state: RootState) => state.createEmployeeIncident);
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -128,12 +130,12 @@ const IncidentCreateForm = ({
     }
   };
 
-  const catalogName = "incidents";
+  const catalogName = `incidents?roleId=${user?.role}`;
   const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
   const { options: incidentTypes, isLoading, error } = useFetchOptions(fetchData);
 
   const calendarIncidentIds = useMemo(() => {
-    return incidentTypes?.filter((item) => item.display_calendar_dates === 1).map((item) => item.id) || [];
+    return incidentTypes?.filter((item) => item.display_calendar_dates).map((item) => item.id) || [];
   }, [incidentTypes]);
 
   const isVacationIncident = useMemo(() => {
@@ -282,33 +284,6 @@ const IncidentCreateForm = ({
                 </CustomSelect>
                 <CustomLabelError field={errors.incidentId} />
               </FormControl>
-            </Grid2>
-
-            <Grid2 size={{ lg: 12 }}>
-              <Card
-                variant="outlined"
-                elevation={0}
-                sx={{
-                  backgroundColor: (theme) => theme.palette.primary.light,
-                  py: 0,
-                  mt: 2,
-                  p: 2,
-                  position: "relative",
-                }}>
-                <Box
-                  sx={{ display: "grid", alignItems: "center", justifyContent: "space-between", width: "100%" }}
-                >
-                  <Typography variant="subtitle2" fontWeight="600">
-                    Dias permitidos:
-                  </Typography>
-                  <Typography variant="subtitle2" fontWeight="600">
-                    Dias usados:
-                  </Typography>
-                  <Typography variant="subtitle2" fontWeight="600">
-                    Dias restantes:
-                  </Typography>
-                </Box>
-              </Card>
             </Grid2>
 
             <Dialog fullWidth maxWidth="lg" open={openCalendar} onClose={handleCalendarCancel} disableEscapeKeyDown>

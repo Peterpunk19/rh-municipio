@@ -25,6 +25,7 @@ import EmployeesRequestsFiltersSlice from "@/store/employees-requests/EmployeesR
 import CreateEmployeeRequestReducer from "@/store/employees-requests/CreateEmployeeRequest";
 import CreateEmployeeAttendanceReducer from "@/store/employees-attendances/CreateEmployeeAttendance";
 import EmployeesAttendancesSlice from "@/store/employees-attendances/EmployeesAttendancesSlice";
+import IncidentsRolesPermissionsListSlice from "@/store/reference/incidents-roles-permissions/ListSlice";
 
 const persistConfig = {
   key: "root",
@@ -56,6 +57,7 @@ export const store = configureStore({
     createEmployeeIncident: EmployeesIncidentsSlice,
     createEmployeeAttendance: CreateEmployeeAttendanceReducer,
     employeesAttendancesSlice: EmployeesAttendancesSlice,
+    incidentsRolesPermissions: IncidentsRolesPermissionsListSlice,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),

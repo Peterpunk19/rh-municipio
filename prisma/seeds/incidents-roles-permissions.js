@@ -1,0 +1,224 @@
+const roles = {
+  ADMIN: 1,
+  EMPLEADO: 3,
+  ENLACE: 4,
+  CAPTURISTA: 5,
+  ANALISTA: 6,
+  ADMIN_INCIDENCIAS: 7,
+  SERVICIO_SOCIAL: 9,
+  SUBENLACE: 13,
+};
+
+const basePermissions = [
+  {
+    incident_id: 1,
+    // name: "incapacidad",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 2,
+    // name: "justificacion_entrada",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 3,
+    // name: "justificacion_salida",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 4,
+    // name: "justificacion_entrada_salida",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 5,
+    // name: "lactancia",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 6,
+    // name: "paternidad",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 7,
+    // name: "permiso_especial",
+    can_view: true,
+    can_create: false,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 8,
+    // name: "permiso_economico",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 9,
+    // name: "permiso_sin_goce",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+  },
+  {
+    incident_id: 10,
+    // name: "vacaciones",
+    can_view: true,
+    can_create: false,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  },
+  {
+    incident_id: 11,
+    // name: "comision",
+    can_view: true,
+    can_create: false,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  },
+];
+
+const incidentsRolesPermission = [];
+
+for (const base of basePermissions) {
+  incidentsRolesPermission.push({
+    role_id: roles.ADMIN,
+    incident_id: base.incident_id,
+    can_view: true,
+    can_create: true,
+    can_approve: true,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: true,
+    can_edit: true,
+  });
+
+  incidentsRolesPermission.push({
+    role_id: roles.ADMIN_INCIDENCIAS,
+    incident_id: base.incident_id,
+    can_view: true,
+    can_create: true,
+    can_approve: true,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: true,
+    can_edit: true,
+  });
+
+  incidentsRolesPermission.push({
+    role_id: roles.ENLACE,
+    incident_id: base.incident_id,
+    ...base,
+  });
+
+  incidentsRolesPermission.push({
+    role_id: roles.SUBENLACE,
+    incident_id: base.incident_id,
+    ...base,
+  });
+
+  incidentsRolesPermission.push({
+    role_id: roles.CAPTURISTA,
+    incident_id: base.incident_id,
+    can_view: true,
+    can_create: true,
+    can_approve: true,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: true,
+    can_edit: false,
+  });
+
+  incidentsRolesPermission.push({
+    role_id: roles.ANALISTA,
+    incident_id: base.incident_id,
+    can_view: true,
+    can_create: false,
+    can_approve: true,
+    can_cancel: false,
+    can_delete: true,
+    can_reject: true,
+    can_edit: false,
+  });
+
+  incidentsRolesPermission.push({
+    role_id: roles.SERVICIO_SOCIAL,
+    incident_id: base.incident_id,
+    can_view: true,
+    can_create: false,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  });
+
+  incidentsRolesPermission.push({
+    role_id: roles.EMPLEADO,
+    incident_id: base.incident_id,
+    can_view: !(base.incident_id === 9 || base.incident_id === 10 || base.incident_id === 11),
+    can_create: true,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  });
+}
+
+module.exports = incidentsRolesPermission;

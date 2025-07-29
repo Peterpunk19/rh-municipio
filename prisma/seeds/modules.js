@@ -119,6 +119,22 @@ const modules = [
     icon: "IconPoint",
     parent_id: null,
   },
+  {
+    id: 16,
+    name: "reference",
+    display_name: "Cátalogos",
+    route: "/admin/reference",
+    icon: "IconPoint",
+    parent_id: null,
+  },
+  {
+    id: 17,
+    name: "reference_incidents_roles_permissions",
+    display_name: "Permisos de Incidencias",
+    route: "/admin/reference/incidents-roles-permissions",
+    icon: "IconPoint",
+    parent_id: 16,
+  },
 ];
 
 module.exports = modules;

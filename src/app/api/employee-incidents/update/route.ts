@@ -11,8 +11,8 @@ import { failureResponse } from "@/common/utils";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { CatalogsService } from "@/app/api/services/catalogs.service";
 import { EmployeeIncidentsStatusService } from "@/app/api/services/employee-incidents-status.service";
-import { IncidentsStatusService } from "@/app/api/services/incidents-status.service";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
+import { validateIncidentsRolesPermissions } from "@/app/api/common/utils.service";
 
 export async function PUT(request: NextRequest) {
   try {
@@ -33,19 +33,21 @@ export async function PUT(request: NextRequest) {
     const employeeIncidentId = Number(body.id);
     const incidentStatusId = Number(body.incidentStatusId);
 
-    const isAllowedToUpdate = await IncidentsStatusService.validateIncidentStatus(incidentStatusId);
+    const existingIncidentStatusId = await CatalogsService.getCatalogById("incidentStatus", incidentStatusId);
 
-    if (!isAllowedToUpdate) return failureResponse(HttpMessages.incidentStatus.idNotFound);
-
-    const rolesArray = isAllowedToUpdate.allowed_roles_to_update.split(",").map(Number);
-
-    if (!rolesArray.includes(roleId)) {
-      return failureResponse(HttpMessages.employeeIncidents.notAllowedToUpdate);
-    }
+    if (!existingIncidentStatusId) return failureResponse(HttpMessages.incidentStatus.idNotFound);
 
     const employeeIncident = await EmployeeIncidentsService.getEmployeeIncidentById(employeeIncidentId);
 
     if (!employeeIncident) return failureResponse(HttpMessages.employeeIncidents.notFoundById);
+
+    const permissionValidation = await validateIncidentsRolesPermissions(
+      roleId,
+      Number(employeeIncident.incident_id),
+      existingIncidentStatusId.permission_name,
+    );
+    if (!permissionValidation)
+      return failureResponse(HttpMessages.employeeIncidents.incidentsRolesPermissionsUpdateFailed);
 
     if (incidentStatusId === INCIDENT_STATUS_ID.CANCELADA && employeeIncident.employee.user_id !== userId) {
       return failureResponse(HttpMessages.employeeIncidents.invalidUserToCancel);
@@ -59,10 +61,6 @@ export async function PUT(request: NextRequest) {
 
     if (isInvalidEmployee(employeeIncident))
       return failureResponse(HttpMessages.employeeIncidents.employeeWithoutHiringOrLocation);
-
-    const existingIncidentStatusId = await CatalogsService.getCatalogById("incidentStatus", incidentStatusId);
-
-    if (!existingIncidentStatusId) return failureResponse(HttpMessages.incidentStatus.idNotFound);
 
     const validateEmployeeIncidentStatusId = await EmployeeIncidentsStatusService.validateEmployeeIncidentStatus(
       employeeIncidentId,

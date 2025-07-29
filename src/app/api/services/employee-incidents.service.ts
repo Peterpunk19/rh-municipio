@@ -3,6 +3,7 @@ import {
   IEmployeeIncident,
   IEmployeeIncidentUpdate,
   IEmployeeIncidentFilters,
+  IEmployeeIncidentGetById,
 } from "@/app/api/employee-incidents/types";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
@@ -212,13 +213,18 @@ export const EmployeeIncidentsService = {
     return { ...pagination, data };
   },
 
-  async getEmployeeIncidentById(id: number, isPDF: boolean = false, incidentDate?: Date) {
+  async getEmployeeIncidentById(
+    id: number,
+    isPDF: boolean = false,
+    incidentDate?: Date,
+  ): Promise<IEmployeeIncidentGetById | null> {
     const selectClause: any = {
       id: true,
       folio: true,
       oficio: true,
       description: true,
       employee_id: true,
+      incident_id: true,
       incident_status_id: true,
       start_date: true,
       end_date: true,
@@ -387,7 +393,7 @@ export const EmployeeIncidentsService = {
     };
 
     if (isPDF && incidentDate) {
-      selectClause.direccion = {
+      (selectClause as any).direccion = {
         select: {
           id: true,
           name: true,
@@ -431,7 +437,7 @@ export const EmployeeIncidentsService = {
     return prisma.employeeIncidents.findFirst({
       where: { id },
       select: selectClause,
-    });
+    }) as Promise<IEmployeeIncidentGetById | null>;
   },
 
   async updateEmployeeIncidents(employeeIncident: IEmployeeIncidentUpdate) {

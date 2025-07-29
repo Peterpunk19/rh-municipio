@@ -2,10 +2,14 @@ import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
 import { CatalogsService } from "@/app/api/services/catalogs.service";
+import { NextRequest } from "next/server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const data = await CatalogsService.getIncidents();
+    const roleId = request.nextUrl.searchParams.get("roleId");
+    const data = roleId
+      ? await CatalogsService.getIncidentsByRoleCanCreate(Number(roleId))
+      : await CatalogsService.getIncidents();
 
     const response = HttpResponse.success(HttpMessages.catalog.success, data);
 

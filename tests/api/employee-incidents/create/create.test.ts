@@ -2,8 +2,14 @@ import { POST } from "@/app/api/employee-incidents/create/route";
 import { testCases } from "./testCases";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
 
-const { getFolio, getIncidentStatus, validateEmployee, validateEmployeeIncident, getEmployeeDireccion } =
-  jest.requireMock("@/app/api/common/utils.service");
+const {
+  getFolio,
+  getIncidentStatus,
+  validateEmployee,
+  validateEmployeeIncident,
+  getEmployeeDireccion,
+  validateIncidentsRolesPermissions,
+} = jest.requireMock("@/app/api/common/utils.service");
 
 jest.mock("@/app/api/common/utils.service", () => ({
   getFolio: jest.fn(),
@@ -11,6 +17,7 @@ jest.mock("@/app/api/common/utils.service", () => ({
   validateEmployee: jest.fn(),
   validateEmployeeIncident: jest.fn(),
   getEmployeeDireccion: jest.fn(),
+  validateIncidentsRolesPermissions: jest.fn().mockResolvedValue(true),
 }));
 
 jest.mock("@/app/api/services/employee-incidents.service", () => ({
@@ -34,6 +41,7 @@ describe("API: /employee-incidents", () => {
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`POST /employees-incidents ${description}`, async () => {
       if (description === "should successfully send message with valid data") {
+        validateIncidentsRolesPermissions.mockResolvedValue(true);
         getFolio.mockResolvedValue(null);
         getIncidentStatus.mockResolvedValue(null);
         validateEmployee.mockResolvedValue(null);

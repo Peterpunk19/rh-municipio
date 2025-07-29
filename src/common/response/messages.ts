@@ -1,4 +1,5 @@
 import { login } from "@/services/authentication";
+import { IncidentsRolesPermissionsService } from "@/app/api/services/incidents-roles-permissions";
 
 export const HttpMessages = {
   catalog: {
@@ -20,6 +21,9 @@ export const HttpMessages = {
   },
   employeeIncidents: {
     invalidData: "Ya existe una incidencia con estos datos",
+    incidentsRolesPermissionsCreateFailed: "No puedes crear este tipo de incidencia",
+    incidentsRolesPermissionsViewFailed: "No puedes ver este tipo de incidencia",
+    incidentsRolesPermissionsUpdateFailed: "No puedes cambiar el estatus este tipo de incidencia",
     createdSuccess: "Incidencia creada correctamente",
     updatedSuccess: "Incidencia actualizada correctamente",
     notFound: "No se encontraron incidencias con los filtros proporcionados",
@@ -147,5 +151,9 @@ export const HttpMessages = {
     directorNotFound: "No se encontró un director para la dirección y fecha especificadas",
     secretariaNotFound: "No se encontró la secretaria con el ID proporcionado",
     direccionesNotFound: "Algunas direcciones no existen o no pertenecen a la secretaría seleccionada",
+  },
+  incidentsRolesPermissions: {
+    notFound: "No se datos con los filtros proporcionados",
+    statusUpdatedSuccess: "Estado actualizado correctamente",
   },
 };

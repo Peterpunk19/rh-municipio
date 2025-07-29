@@ -1,5 +1,11 @@
 export interface ColumnTypeConfig {
-  renderType?: "date" | "boolean" | "currency" | "avatar" | "action" | "text" | "dateTime" | "detail";
+  renderType?: "date" | "boolean" | "currency" | "avatar" | "action" | "text" | "dateTime" | "detail" | "switch";
   format?: (value: any, row: any) => React.ReactNode;
   redirectPath?: string;
+  switchConfig?: {
+    url: string;
+    field: string;
+    entity: string;
+    fetchAction?: (query: string) => any;
+  };
 }
