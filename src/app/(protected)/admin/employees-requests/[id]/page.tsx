@@ -26,13 +26,12 @@ import { logger } from "@/lib/logger";
 import CardContent from "@mui/material/CardContent";
 import { generateUniqueKey } from "@/utils";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
-import { IconDownload } from "@tabler/icons-react";
 import EmployeeDetails from "@/components/customComponents/EmployeeDetails";
 import LoadingComponent from "@/components/customComponents/LoadingComponent";
 import RequestDetails from "@/components/customComponents/RequestDetails";
 import RequestStatusHistory from "@/components/customComponents/RequestStatusHistory";
-import RequestPDFDropdown from "@/components/customComponents/RequestPDFDropdown";
 import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
+import RequestPDFDropdown from "@/components/customComponents/RequestPDFDropdown";
 
 const BCrumb = [
   {
@@ -125,8 +124,8 @@ const EmployeeRequest = () => {
         setResponseMessage(response.message || "Error al actualizar el estado");
         setIsSuccess(false);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error: any) {
+      logger.error({ error: error.message, stack: error.stack });
       setResponseMessage("Error al actualizar el estado");
       setIsSuccess(false);
     } finally {
@@ -170,9 +169,9 @@ const EmployeeRequest = () => {
             </Box>
           </Grid>
           <Grid size={{ lg: 6, xs: 12 }}>
-            <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
-              <RequestPDFDropdown requestId={id as string} createdDate={employeeRequestData.created_at} />
-            </Stack>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+              <RequestPDFDropdown requestId={employeeRequestData.id} createdDate={employeeRequestData.created_at} />
+            </Box>
           </Grid>
         </Grid>
       </Grid>

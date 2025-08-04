@@ -151,11 +151,11 @@ describe("EmployeeIncidentsService", () => {
             check_in: expect.any(Date),
             check_out: expect.any(Date),
             description: "Asistencia creada por incidencia",
-            employee_ascriptions: { connect: { id: mockEmployeeIncident.employeeAscriptionId } },
             employee_location: { connect: { id: mockEmployeeIncident.employeeLocationId } },
             employee_attendance_type: { connect: { id: 1 } },
             created_by: { connect: { id: mockEmployeeIncident.createdById } },
             employee_incident: { connect: { id: mockEmployeeIncident.id } },
+            employee_ascriptions: { connect: { id: mockEmployeeIncident.employeeAscriptionId } },
           }),
         }),
       );

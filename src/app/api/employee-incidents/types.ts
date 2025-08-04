@@ -32,9 +32,17 @@ export interface IEmployeeIncidentById {
   checkOut?: Date | string;
   employee?: {
     id: number;
+    user_id: number;
     employee_hiring: { id: number }[];
     employee_location: { id: number }[];
+    employee_ascriptions: { id: number }[];
+    employee_attendance_type: { id: number }[];
   };
+  start_date?: string | Date;
+  end_date?: string | Date;
+  incident_status_id?: number;
+  employee_id?: number;
+  employee_incident_days?: any[];
   createdById?: number;
   validatedById?: number;
 }

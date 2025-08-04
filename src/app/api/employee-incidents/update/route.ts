@@ -53,7 +53,8 @@ export async function PUT(request: NextRequest) {
       return failureResponse(HttpMessages.employeeIncidents.invalidUserToCancel);
     }
 
-    if (employeeIncident.incident_status_id === incidentStatusId)
+    const currentStatusId = employeeIncident.incident_status_id as unknown as number;
+    if (currentStatusId !== undefined && currentStatusId === incidentStatusId)
       return failureResponse(HttpMessages.employeeIncidents.invalidUpdateData);
 
     const isInvalidEmployee = (incident: any) =>
@@ -69,19 +70,44 @@ export async function PUT(request: NextRequest) {
 
     if (validateEmployeeIncidentStatusId) return failureResponse(HttpMessages.incidentStatus.invalidIncidentStatusId);
 
+    const employeeData = employeeIncident.employee as unknown as {
+      id: number;
+      employee_ascriptions: { id: number }[];
+      employee_hiring: { id: number }[];
+      employee_location: { id: number }[];
+      employee_attendance_type: { id: number }[];
+    };
+
+    const startDate = employeeIncident.start_date as unknown as string | Date;
+    const endDate = employeeIncident.end_date as unknown as string | Date;
+    const employeeId_value = employeeIncident.employee_id as unknown as number | undefined;
+    const incidentDays = employeeIncident.employee_incident_days as unknown as any[];
+
+    if (
+      !employeeData.employee_ascriptions?.length ||
+      !employeeData.employee_hiring?.length ||
+      !employeeData.employee_location?.length ||
+      !employeeData.employee_attendance_type?.length
+    ) {
+      return failureResponse(HttpMessages.error.invalidRequest);
+    }
     const updateData = {
       id: employeeIncidentId,
       incidentStatusId: incidentStatusId,
-      employeeId: employeeIncident.employee.id,
-      employeeAscriptionId: employeeIncident.employee.employee_ascriptions[0].id,
-      employeeHiringId: employeeIncident.employee.employee_hiring[0].id,
-      employeeLocationId: employeeIncident.employee.employee_location[0].id,
+      employeeId: employeeData.id,
+      employeeAscriptionId: employeeData.employee_ascriptions?.[0]?.id,
+      employeeHiringId: employeeData.employee_hiring?.[0]?.id,
+      employeeLocationId: employeeData.employee_location?.[0]?.id,
+      employeeAttendanceTypeId: employeeData.employee_attendance_type?.[0]?.id,
       createdById:
-        incidentStatusId === INCIDENT_STATUS_ID.CANCELADA ? employeeIncident.employee_id : Number(employeeId),
-      checkIn: employeeIncident.start_date,
-      checkOut: employeeIncident.end_date,
-      employeeAttendanceTypeId: employeeIncident.employee.employee_attendance_type[0].id,
-      employeeIncidentDays: employeeIncident.employee_incident_days,
+        incidentStatusId === INCIDENT_STATUS_ID.CANCELADA
+          ? employeeId_value
+            ? Number(employeeId_value)
+            : Number(employeeId)
+          : Number(employeeId),
+      checkIn: startDate ?? new Date(),
+      checkOut: endDate ?? new Date(),
+      employeeIncidentDays: incidentDays ?? [],
       validatedById: Number(employeeId),
     };
 

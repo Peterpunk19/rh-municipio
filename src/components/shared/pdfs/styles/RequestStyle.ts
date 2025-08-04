@@ -2,10 +2,55 @@ import { StyleSheet } from "@react-pdf/renderer";
 
 const style = StyleSheet.create({
   page: {
-    padding: 20,
+    paddingHorizontal: 30,
+    paddingVertical: 20,
     fontSize: 9,
     fontFamily: "Helvetica",
     position: "relative",
+  },
+  header: {
+    position: "relative",
+    height: 80,
+    marginBottom: 20,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  logoSection: {
+    width: "40%",
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  logoImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+  },
+  centerSection: {
+    width: "30%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
+  publicOrganization: {
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: "#c09429",
+    lineHeight: 1,
+  },
+  rightSection: {
+    width: "30%",
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  administrativeOrganization: {
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: "#333",
+    lineHeight: 1,
   },
   backgroundImage: {
     position: "absolute",
@@ -15,68 +60,57 @@ const style = StyleSheet.create({
     height: "100%",
     opacity: 0.8,
   },
-  header: {
+  boldText: {
+    fontWeight: "bold",
+  },
+  relative: {
     position: "relative",
-    height: 80,
-    marginBottom: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 15,
   },
-  bodyContainer: {
-    width: "90%",
-    marginLeft: "auto",
-    marginRight: "auto",
+  flexColumn: {
+    flexDirection: "column",
   },
-  logo: {
-    width: 200,
-    height: 60,
-    marginRight: -5,
+  alignItemsEnd: {
+    alignItems: "flex-end",
   },
-  headerTextContainer: {
-    flex: 1,
-    flexDirection: "row",
+  alignItemsStart: {
     alignItems: "flex-start",
-    justifyContent: "center",
-    marginRight: 50,
   },
-  leftTextContainer: {
-    marginRight: 0,
-  },
-  officialiaText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#c78e39",
+  textUpperCase: {
     textTransform: "uppercase",
-    textAlign: "center",
-    marginBottom: 2,
-    marginLeft: -20,
   },
-  mayorText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#C48B3A",
-    textTransform: "uppercase",
-    textAlign: "center",
-    marginLeft: -20,
+  row: {
+    flexDirection: "row",
   },
-  rightTextContainer: {
-    marginLeft: 20,
+  table: {
+    borderWidth: 1,
+    borderColor: "#000",
+    borderStyle: "solid",
   },
-  direccionRecursosText: {
-    fontSize: 12,
-    color: "#666",
-    textTransform: "uppercase",
+  cell: {
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: "#000",
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    fontSize: 9,
+  },
+  lastCell: {
+    borderRightWidth: 0,
+  },
+  lastRow: {
+    borderBottomWidth: 0,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    width: "65%",
+    paddingHorizontal: 30,
+    paddingBottom: 10,
     textAlign: "left",
-    marginBottom: 2,
-    marginLeft: -10,
-  },
-  humanosText: {
     fontSize: 12,
-    color: "#666",
-    textTransform: "uppercase",
-    textAlign: "center",
-    marginLeft: -10,
+    zIndex: 1,
+    color: "#000",
   },
   yearText: {
     fontSize: 11,
@@ -84,9 +118,14 @@ const style = StyleSheet.create({
     marginTop: 15,
     fontStyle: "italic",
   },
+  bodyContainer: {
+    width: "90%",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
   dateSection: {
     textAlign: "right",
-    marginTop: 10,
+    marginTop: 30,
     marginBottom: 20,
   },
   date: {
@@ -149,43 +188,11 @@ const style = StyleSheet.create({
     fontSize: 10,
     textTransform: "uppercase",
   },
-  footer: {
-    position: "absolute",
-    bottom: 15,
-    left: 20,
-    right: 20,
-    paddingTop: 8,
-  },
-  footerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  footerText: {
-    fontSize: 12,
-    color: "#878787",
-  },
-  footerLogo: {
-    width: 30,
-    height: 15,
-  },
   copyText: {
     fontSize: 8,
     color: "#000",
     marginTop: 50,
     marginBottom: 10,
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  italic: {
-    fontStyle: "italic",
-  },
-  uppercase: {
-    textTransform: "uppercase",
-  },
-  center: {
-    textAlign: "center",
   },
 });
 

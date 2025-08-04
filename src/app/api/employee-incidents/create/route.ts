@@ -64,8 +64,8 @@ export async function POST(request: NextRequest) {
     const direccionId = await getEmployeeDireccion(Number(body.employeeId));
     const createData = {
       ...body,
-      createdBy: employeeId,
-      direccionId: direccionId,
+      createdBy: employeeId ? Number(employeeId) : userId,
+      direccionId: direccionId ? Number(direccionId) : null,
     };
 
     const [createEmployeeIncidents] = await EmployeeIncidentsService.createEmployeeIncidents(createData);

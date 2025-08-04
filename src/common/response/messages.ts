@@ -151,6 +151,8 @@ export const HttpMessages = {
     directorNotFound: "No se encontró un director para la dirección y fecha especificadas",
     secretariaNotFound: "No se encontró la secretaria con el ID proporcionado",
     direccionesNotFound: "Algunas direcciones no existen o no pertenecen a la secretaría seleccionada",
+    leadersGetSuccess: "Directivos encontrados correctamente",
+    leadersNotFound: "No se encontraron directivos con los filtros proporcionados",
   },
   incidentsRolesPermissions: {
     notFound: "No se datos con los filtros proporcionados",
