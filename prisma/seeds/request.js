@@ -38,8 +38,8 @@ const requests = [
   {
     id: 7,
     name: "union_leave_request",
-    display_name: "LICENCIA SINDICAL",
-    description: "Solicitud de licencia sindical",
+    display_name: "LICENCIA POR COMISION SINDICAL",
+    description: "Solicitud de licencia por comision sindical",
   },
 ];
 
