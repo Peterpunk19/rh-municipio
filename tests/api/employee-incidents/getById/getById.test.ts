@@ -12,7 +12,14 @@ jest.mock("@/middleware/authMiddleware", () => ({
   authMiddleware: jest.fn(),
 }));
 
+jest.mock("@/app/api/services/incidents-roles-permissions", () => ({
+  IncidentsRolesPermissionsService: {
+    validateIncidentsRolesPermissions: jest.fn(),
+  },
+}));
+
 const { authMiddleware } = jest.requireMock("@/middleware/authMiddleware");
+const { IncidentsRolesPermissionsService } = jest.requireMock("@/app/api/services/incidents-roles-permissions");
 
 describe("API: GET /employee-incidents/:id", () => {
   afterEach(() => {
@@ -67,6 +74,12 @@ describe("API: GET /employee-incidents/:id", () => {
             identification_type_id: null,
             trade_union_id: null,
           },
+        });
+        (IncidentsRolesPermissionsService.validateIncidentsRolesPermissions as jest.Mock).mockResolvedValueOnce({
+          id: 1,
+          role_id: 1,
+          incident_id: 5,
+          can_view: true,
         });
       }
       const id = requestData.id;

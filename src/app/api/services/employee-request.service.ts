@@ -729,6 +729,7 @@ export const EmployeeRequestService = {
           attendance: employeeRequest.employee_request_detail[0].attendance
             ? { ...employeeRequest.employee_request_detail[0].attendance }
             : null,
+          start_date: employeeRequest.employee_request_detail[0].start_date,
         }),
         request_date: employeeRequest.request_date,
       },

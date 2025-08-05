@@ -168,6 +168,10 @@ const AscriptionChangeSchema = z.object({
   attendanceType: z
     .number({ message: validationMessages.required("Tipo de checado") })
     .positive({ message: validationMessages.required("Tipo de checado") }),
+  startDate: z.preprocess(
+    (val) => validateDate(val),
+    z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }),
+  ),
   ...EmployeeRequestPostBaseSchema,
 });
 

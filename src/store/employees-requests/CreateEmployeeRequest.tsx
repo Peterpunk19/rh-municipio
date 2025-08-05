@@ -32,9 +32,11 @@ interface StateType {
       applicationDate: string;
     };
     adscriptionForm: {
+      secretariaId: number;
       direccionId: number;
       locationId: number;
       attendanceType: string;
+      startDate: string;
     };
   };
   errors: {
@@ -71,9 +73,11 @@ const initialState: StateType = {
       applicationDate: "",
     },
     adscriptionForm: {
+      secretariaId: 0,
+      direccionId: 0,
       attendanceType: "",
       locationId: 0,
-      direccionId: 0,
+      startDate: "",
     },
   },
   errors: {},
