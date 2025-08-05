@@ -158,7 +158,9 @@ export const response = {
   validData: generator.response({
     success: true,
     message: "Empleado creado correctamente",
-    responseObject: {},
+    responseObject: {
+      employeeId: 123,
+    },
     statusCode: 200,
   }),
   emptyAddressLine1: generator.response({

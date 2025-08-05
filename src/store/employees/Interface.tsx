@@ -54,6 +54,7 @@ export interface IEmployeeState {
   catalogs: {
     municipalities: IResponseObject | null;
     direcciones: IResponseObject | null;
-    categories: any | null;
+    categories: IResponseObject | null;
+    employeeTypes: IResponseObject | null;
   };
 }

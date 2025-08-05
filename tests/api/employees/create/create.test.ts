@@ -30,8 +30,16 @@ describe("API: /employees", () => {
 
       if (description === "should successfully send message with valid data") {
         (EmployeeService.getEmployeeByRfcCurp as jest.Mock).mockResolvedValueOnce(null);
-        (EmployeeTypeService.getEmployeeTypeByName as jest.Mock).mockResolvedValueOnce({});
-        (EmployeeService.createEmployee as jest.Mock).mockResolvedValueOnce([{}, {}]);
+        (EmployeeTypeService.getEmployeeTypeByName as jest.Mock).mockResolvedValueOnce({ id: 1, name: "Test Type" });
+        (EmployeeService.createEmployee as jest.Mock).mockResolvedValueOnce([
+          { id: 1 },
+          { id: 123 },
+          {},
+          {},
+          {},
+          {},
+          {},
+        ]);
       }
 
       const requestObj = {

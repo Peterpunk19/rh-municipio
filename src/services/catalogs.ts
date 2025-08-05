@@ -1,5 +1,6 @@
 import http from "@/lib/http";
-import type { IResponseObject } from "@/utils/types";
+import { logger } from "@/lib/logger";
+import type { IResponse, IResponseObject } from "@/utils/types";
 
 export const fetchGenderData = async (): Promise<IResponseObject | null> => {
   try {
@@ -188,6 +189,18 @@ export const fetchRolesData = async (): Promise<IResponseObject | null> => {
     return response.data;
   } catch (error) {
     console.error("Failed to fetch role:", error);
+    return null;
+  }
+};
+
+export const fetchSalaryData = async (categoryId: number, employeeTypeId: number): Promise<IResponse | null> => {
+  try {
+    const response = await http.get<IResponse>(
+      `/api/catalogs/salary?categoryId=${categoryId}&employeeTypeId=${employeeTypeId}`,
+    );
+    return response.data;
+  } catch (error: any) {
+    logger.error({ error: error.message, stack: error.stack });
     return null;
   }
 };

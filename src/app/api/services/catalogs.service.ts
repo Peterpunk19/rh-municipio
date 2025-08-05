@@ -303,6 +303,16 @@ WHERE parent.active = 1 ORDER BY parent.id`;
     return prisma.attendance.findMany();
   },
 
+  async getSalaryByCategoryAndEmployeeType(categoryId: number, employeeTypeId: number) {
+    return prisma.categoryEmployeeType.findFirst({
+      where: {
+        category_id: categoryId,
+        employee_type_id: employeeTypeId,
+        active: true,
+      },
+    });
+  },
+
   async getRequestStatusByName(name: string) {
     return prisma.requestStatus.findFirst({
       where: { name },
