@@ -92,6 +92,7 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
                 attendance={request_details.attendance}
                 newDireccion={request_details.new_direccion}
                 newLocation={request_details.new_location}
+                start_date={request_details.start_date}
               />
             )}
 

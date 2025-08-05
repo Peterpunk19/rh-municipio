@@ -17,10 +17,11 @@ export interface RequestAdscriptionDetailsProps {
   attendance?: {
     display_name?: string;
   };
+  start_date?: string;
 }
 
 export const RequestAdscriptionDetails = (
-  { newDireccion, newLocation, attendance }: RequestAdscriptionDetailsProps
+  { newDireccion, newLocation, attendance, start_date }: RequestAdscriptionDetailsProps
 ) => {
 
   return (
@@ -61,6 +62,26 @@ export const RequestAdscriptionDetails = (
           </Typography>
         </Stack>
       </Grid>
+      {start_date && (
+        <>
+          <Grid size={{ lg: 5, xs: 12 }}>
+            <Typography variant="subtitle1" color="text.secondary">
+              Fecha de inicio
+            </Typography>
+          </Grid>
+          <Grid size={{ lg: 7, xs: 12 }}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography variant="subtitle1" fontWeight={600} mb={0.5}>
+                {new Date(start_date).toLocaleDateString('es-ES', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </Typography>
+            </Stack>
+          </Grid>
+        </>
+      )}
     </>
   );
 };

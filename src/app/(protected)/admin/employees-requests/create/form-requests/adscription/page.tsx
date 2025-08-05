@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Box, FormControl, FormControlLabel, Grid2, MenuItem, Radio, RadioGroup, Typography } from "@mui/material";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
+import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import { updateFormData } from "@/store/employees-requests/CreateEmployeeRequest";
 import type { RootState } from "@/store/store";
@@ -115,7 +116,7 @@ const AdscriptionForm = () => {
           </FormControl>
         </Grid2>
 
-        <Grid2 size={{ xs: 12, md: 4 }} sx={{ mt: 0, pt: 0 }}>
+        <Grid2 size={{ xs: 12, md: 6 }} sx={{ mt: 0, pt: 0 }}>
           <FormControl fullWidth sx={{ mt: 0, pt: 0 }}>
             <CustomFormLabel sx={{ m: 0, p: 0 }}>Seleccione la nueva ubicación</CustomFormLabel>
             <CustomSelect
@@ -154,6 +155,23 @@ const AdscriptionForm = () => {
           </FormControl>
         </Grid2>
 
+        <Grid2 size={{ xs: 12, md: 6 }} sx={{ mt: 0, pt: 0 }}>
+          <FormControl fullWidth sx={{ mt: 0, pt: 0 }}>
+            <CustomFormLabel sx={{ m: 0, p: 0 }}>Fecha de inicio</CustomFormLabel>
+            <CustomTextField
+              type="date"
+              name="startDate"
+              value={formData.adscriptionForm.startDate}
+              onChange={handleChange}
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <CustomLabelError field={errors.startDate} />
+          </FormControl>
+        </Grid2>
+
         <Grid2 size={{ xs: 12, md: 12 }}>
           <CustomFormLabel sx={{ m: 0, p: 0 }}> Registro de Asistencia</CustomFormLabel>
 
@@ -178,7 +196,7 @@ const AdscriptionForm = () => {
                   />
                 ))}
               </RadioGroup>
-              <CustomLabelError field={errors.attendanceId} />
+              <CustomLabelError field={errors.attendanceType} />
             </FormControl>
           )}
         </Grid2>

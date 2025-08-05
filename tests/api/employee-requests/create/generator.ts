@@ -44,6 +44,11 @@ export const generator = {
     ...(overrides?.requestId === 4 && {
       locationId: overrides?.locationId ?? 1,
     }),
+    ...(overrides?.requestId === 5 && {
+      startDate: overrides?.startDate ?? "2025-03-25",
+      locationId: overrides?.locationId ?? 1,
+      direccionId: overrides?.direccionId ?? 1,
+    }),
   }),
   response: (overrides?: Partial<IResponse>): IResponse => ({
     success: overrides?.success ?? false,
