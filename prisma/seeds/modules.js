@@ -135,6 +135,14 @@ const modules = [
     icon: "IconPoint",
     parent_id: 16,
   },
+  {
+    id: 18,
+    name: "reference_incidents_rules",
+    display_name: "Lineamientos de Incidencias",
+    route: "/admin/reference/incidents-rules",
+    icon: "IconPoint",
+    parent_id: 16,
+  },
 ];
 
 module.exports = modules;

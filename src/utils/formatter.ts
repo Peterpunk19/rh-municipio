@@ -124,3 +124,8 @@ export const formatDateToText = (date: string | Date | null | undefined, showYea
 
   throw new Error("Formato de fecha inválido");
 };
+
+export const getMonthName = (monthNumber: any) => {
+  const mesIndex = parseInt(monthNumber) - 1;
+  return MESES[mesIndex].toUpperCase();
+};
