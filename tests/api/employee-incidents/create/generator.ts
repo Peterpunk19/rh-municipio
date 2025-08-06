@@ -9,10 +9,11 @@ export const generator = {
     employeeId: overrides?.employeeId ?? 1,
     incidentId: overrides?.incidentId !== undefined ? overrides?.incidentId : 1,
     incidentStatusId: overrides?.incidentStatusId !== undefined ? overrides?.incidentStatusId : 1,
-    startDate: overrides?.startDate ?? "2025-01-22",
-    endDate: overrides?.endDate ?? "2025-11-22",
+    startDate: overrides?.startDate ?? "2025-08-25",
+    endDate: overrides?.endDate ?? "2025-08-29",
     description: overrides?.description ?? "Carlos Ricardo",
     createdBy: overrides?.createdBy ?? 1,
+    incidentDates: overrides?.incidentDates ?? ["2025-08-25", "2025-08-26", "2025-08-27", "2025-08-28", "2025-08-29"],
   }),
   response: (overrides?: Partial<IResponse>): IResponse => ({
     success: overrides?.success ?? false,

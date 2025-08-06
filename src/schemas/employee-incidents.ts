@@ -41,12 +41,14 @@ export const EmployeeIncidentsPostSchema = z
       .optional()
       .nullable(),
     incidentDates: z
-      .array(z.string())
+      .array(z.string(), {
+        required_error: validationMessages.required("Fechas de incidencia"),
+        invalid_type_error: validationMessages.required("Fechas de incidencia"),
+      })
+      .min(1, { message: validationMessages.required("Fechas de incidencia") })
       .max(Number(MAX_NUM_VACATION_DAYS), {
         message: `Fechas de incidencia no puede exceder de ${MAX_NUM_VACATION_DAYS} días`,
-      })
-      .optional()
-      .nullable(),
+      }),
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: validationMessages.invalidDateRange("Fecha de Terminación", "Fecha de Inicio"),

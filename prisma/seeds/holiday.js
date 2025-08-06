@@ -1,0 +1,88 @@
+const holidays = [
+  {
+    name: "new_year_2025",
+    display_name: "Año Nuevo",
+    holiday_date: "2025-01-01T00:00:00.000Z",
+    validation_date: "2025-01-01T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "constitution_day_2025",
+    display_name: "Día de la Constitución",
+    holiday_date: "2025-02-05T00:00:00.000Z",
+    validation_date: "2025-02-03T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "benito_juarez_2025",
+    display_name: "Natalicio de Benito Juárez",
+    holiday_date: "2025-03-21T00:00:00.000Z",
+    validation_date: "2025-03-17T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "workers_day_2025",
+    display_name: "Día del Trabajo",
+    holiday_date: "2025-05-01T00:00:00.000Z",
+    validation_date: "2025-05-01T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "independence_day_2025",
+    display_name: "Día de la Independencia",
+    holiday_date: "2025-09-16T00:00:00.000Z",
+    validation_date: "2025-09-16T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "revolution_day_2025",
+    display_name: "Revolución Mexicana",
+    holiday_date: "2025-11-20T00:00:00.000Z",
+    validation_date: "2025-11-18T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "new_year_2026",
+    display_name: "Año Nuevo",
+    holiday_date: "2026-01-01T00:00:00.000Z",
+    validation_date: "2026-01-01T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "constitution_day_2026",
+    display_name: "Día de la Constitución",
+    holiday_date: "2026-02-05T00:00:00.000Z",
+    validation_date: "2026-02-02T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "benito_juarez_2026",
+    display_name: "Natalicio de Benito Juárez",
+    holiday_date: "2026-03-21T00:00:00.000Z",
+    validation_date: "2026-03-16T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "workers_day_2026",
+    display_name: "Día del Trabajo",
+    holiday_date: "2026-05-01T00:00:00.000Z",
+    validation_date: "2026-05-01T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "independence_day_2026",
+    display_name: "Día de la Independencia",
+    holiday_date: "2026-09-16T00:00:00.000Z",
+    validation_date: "2026-09-16T00:00:00.000Z",
+    active: true,
+  },
+  {
+    name: "revolution_day_2026",
+    display_name: "Revolución Mexicana",
+    holiday_date: "2026-11-20T00:00:00.000Z",
+    validation_date: "2026-11-16T00:00:00.000Z",
+    active: true,
+  },
+];
+
+module.exports = holidays;

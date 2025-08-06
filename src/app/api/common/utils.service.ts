@@ -11,6 +11,8 @@ import { EmployeeAttendanceService } from "@/app/api/services/employee-attendanc
 import type { IEmployeeRequest } from "@/app/api/employee-requests/types";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
 import { IncidentsRolesPermissionsService } from "@/app/api/services/incidents-roles-permissions";
+import { VACATION_DAY_VALUE } from "@/common/constants/VacationDayValue";
+import { HolidayService } from "@/app/api/services/holiday.service";
 
 let cachedIncidentStatus: Awaited<ReturnType<typeof CatalogsService.getIncidentStatusByName>> | null = null;
 let cachedRequestStatus: Awaited<ReturnType<typeof CatalogsService.getRequestStatusByName>> | null = null;
@@ -180,4 +182,53 @@ export const getEmployeeDireccion = async (employeeId: number) => {
   }
 
   return activeHiring.direccion_id;
+};
+
+export const getVacationDayValue = (date: Date, isHoliday: boolean): number => {
+  const day = date.getDay();
+  if (isHoliday) return VACATION_DAY_VALUE.HOLIDAY;
+  if (day === 0) return VACATION_DAY_VALUE.SUNDAY;
+  if (day === 6) return VACATION_DAY_VALUE.SATURDAY;
+  return VACATION_DAY_VALUE.WEEKDAY;
+};
+
+export const getYearsOfService = (hireDate: Date): number => {
+  const now = new Date();
+  let years = now.getFullYear() - hireDate.getFullYear();
+  if (
+    now.getMonth() < hireDate.getMonth() ||
+    (now.getMonth() === hireDate.getMonth() && now.getDate() < hireDate.getDate())
+  ) {
+    years--;
+  }
+  return years;
+};
+
+export const validateTotalEmployeeIncidentDays = async (
+  incidentDates: (string | Date)[],
+  jobSchedules: any[],
+  usedDays: number,
+  allowedDays: number,
+): Promise<boolean> => {
+  const daysActive = getActiveDaysFromSchedules(jobSchedules);
+  const daysToInsert = await incidentDates.reduce(async (acc, dateStr) => {
+    const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
+    const isHoliday = await HolidayService.isHoliday(date);
+    let value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : 1;
+    return (await acc) + value;
+  }, Promise.resolve(0));
+  return (usedDays ?? 0) + daysToInsert <= (allowedDays ?? 0);
+};
+
+export const getActiveDaysFromSchedules = (jobSchedules: any[]): Set<number> => {
+  const daysActive = new Set<number>();
+  for (const schedule of jobSchedules) {
+    let start = schedule.start_day.id;
+    let end = schedule.end_day.id;
+    if (end < start) end += 7;
+    for (let i = start; i <= end; i++) {
+      daysActive.add(i % 7);
+    }
+  }
+  return daysActive;
 };

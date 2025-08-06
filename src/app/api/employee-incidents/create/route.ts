@@ -20,6 +20,7 @@ import { logger } from "@/lib/logger";
 import { failureResponse, getRoleValueById, validateDireccionAccess } from "@/common/utils";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPermissions";
+import { IncidentRulesService } from "@/app/api/services/incident-rules.service";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -61,6 +62,10 @@ export async function POST(request: NextRequest) {
       const validationResponse = await validation(body);
       if (validationResponse) return handleHttpResponse(validationResponse);
     }
+
+    const rulesValidation = await IncidentRulesService.validateIncidentRules(body);
+    if (rulesValidation) return handleHttpResponse(rulesValidation);
+
     const direccionId = await getEmployeeDireccion(Number(body.employeeId));
     const createData = {
       ...body,

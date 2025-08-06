@@ -9,7 +9,7 @@ export interface IEmployeeIncident {
   description: string;
   employeeAttendanceId?: number;
   createdBy: number | null;
-  incidentDates?: string[];
+  incidentDates: string[];
   direccionId?: number | null;
 }
 

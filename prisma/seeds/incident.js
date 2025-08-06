@@ -5,7 +5,7 @@ const incident = [
     display_name: "INCAPACIDADES",
     type: 1,
     active: true,
-    display_calendar_dates: false,
+    display_calendar_dates: true,
     display_time_on_calendar: false,
   },
   {
@@ -14,7 +14,7 @@ const incident = [
     display_name: "JUSTIFICACION DE ENTRADA",
     type: 1,
     active: true,
-    display_calendar_dates: false,
+    display_calendar_dates: true,
     display_time_on_calendar: true,
   },
   {
@@ -23,7 +23,7 @@ const incident = [
     display_name: "JUSTIFICACION DE SALIDA",
     type: 1,
     active: true,
-    display_calendar_dates: false,
+    display_calendar_dates: true,
     display_time_on_calendar: true,
   },
   {
@@ -32,7 +32,7 @@ const incident = [
     display_name: "JUSTIFICACION DE ENTRADA Y SALIDA",
     type: 1,
     active: true,
-    display_calendar_dates: false,
+    display_calendar_dates: true,
     display_time_on_calendar: true,
   },
   {
@@ -41,7 +41,7 @@ const incident = [
     display_name: "LACTANCIA",
     type: 1,
     active: true,
-    display_calendar_dates: false,
+    display_calendar_dates: true,
     display_time_on_calendar: false,
   },
   {
@@ -50,7 +50,7 @@ const incident = [
     display_name: "PATERNIDAD",
     type: 1,
     active: true,
-    display_calendar_dates: false,
+    display_calendar_dates: true,
     display_time_on_calendar: false,
   },
   {
@@ -95,7 +95,7 @@ const incident = [
     display_name: "COMISION",
     type: 1,
     active: true,
-    display_calendar_dates: false,
+    display_calendar_dates: true,
     display_time_on_calendar: false,
   },
 ];

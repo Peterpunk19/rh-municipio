@@ -8,6 +8,10 @@ import {
 import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
 import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
+import { getVacationDayValue, getActiveDaysFromSchedules } from "@/app/api/common/utils.service";
+import { HolidayService } from "@/app/api/services/holiday.service";
+import { EmployeeService } from "@/app/api/services/employee.service";
+import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 
 export const EmployeeIncidentsService = {
   async getFolio() {
@@ -89,15 +93,31 @@ export const EmployeeIncidentsService = {
       });
 
       if (employeeIncident.incidentDates && employeeIncident.incidentDates.length > 0) {
-        const vacationDayRecords = employeeIncident.incidentDates.map((dateStr) => ({
-          date: new Date(dateStr),
-          employee_incident_id: createEmployeeIncidents.id,
-          created_at: new Date(),
-        }));
+        const jobSchedules = await EmployeeService.getCurrentJobSchedule(Number(employeeIncident.employeeId));
+        const daysActive = getActiveDaysFromSchedules(jobSchedules);
+        const isVacationIncident = employeeIncident.incidentId === INCIDENT_TYPES_ID.VACACIONES;
+        const vacationDayRecords = await Promise.all(
+          employeeIncident.incidentDates.map(async (dateStr) => {
+            const date = new Date(dateStr);
+            let value = 1;
 
-        await tx.employeeIncidentDays.createMany({
-          data: vacationDayRecords,
-        });
+            if (isVacationIncident) {
+              const isHoliday = await HolidayService.isHoliday(date);
+              value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : value;
+            }
+            return {
+              date,
+              value,
+              employee_incident_id: createEmployeeIncidents.id,
+              created_at: new Date(),
+            };
+          }),
+        );
+        if (vacationDayRecords.length > 0) {
+          await tx.employeeIncidentDays.createMany({
+            data: vacationDayRecords as any[],
+          });
+        }
       }
 
       return [createEmployeeIncidents, createEmployeeIncidentsStatus];

@@ -31,6 +31,8 @@ const modules = require("./seeds/modules");
 const roleModules = require("./seeds/roleModules");
 const incidentsRolesPermission = require("./seeds/incidents-roles-permissions");
 const categoryEmployeeType = require("./seeds/category-employee-type");
+const incidentRulesVacations = require("./seeds/incidentRulesVacations");
+const holidays = require("./seeds/holiday");
 
 const prisma = new PrismaClient();
 
@@ -63,6 +65,9 @@ async function main() {
   await prisma.tradeUnion.createMany({ data: tradeUnion });
   await prisma.incidentsRolesPermissions.createMany({ data: incidentsRolesPermission });
   await prisma.categoryEmployeeType.createMany({ data: categoryEmployeeType });
+  await prisma.incidentRules.createMany({ data: incidentRulesVacations });
+  await prisma.holiday.createMany({ data: holidays });
+
   await prisma.module.createMany({ data: modules });
 
   for (const rm of roleModules) {
