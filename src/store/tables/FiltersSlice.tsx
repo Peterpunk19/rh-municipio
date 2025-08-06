@@ -60,7 +60,10 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
           state[entity].filterOpen = filterOpen;
         }
       },
-      updateConfigFilters: (state, action: PayloadAction<{ entity: string; title: string, showSearchBar: boolean }>) => {
+      updateConfigFilters: (
+        state,
+        action: PayloadAction<{ entity: string; title: string; showSearchBar: boolean }>,
+      ) => {
         const { entity, title, showSearchBar } = action.payload;
         if (state[entity]) {
           state[entity].title = title;
@@ -130,6 +133,13 @@ const employeesAttendancesConfig: EntityConfig = {
   showSearchBar: true,
 };
 
+const salariesConfig: EntityConfig = {
+  name: "salaries",
+  initialSortBy: "id",
+  title: "Salarios",
+  showSearchBar: true,
+};
+
 export const filtersSlice = createFiltersSlice([
   employeeConfig,
   userConfig,
@@ -138,7 +148,9 @@ export const filtersSlice = createFiltersSlice([
   employeesAttendancesConfig,
   incidentsRolesPermissionsConfig,
   incidentsRulesConfig,
+  salariesConfig,
 ]);
 
-export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen, updateConfigFilters } = filtersSlice.actions;
+export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen, updateConfigFilters } =
+  filtersSlice.actions;
 export default filtersSlice.reducer;

@@ -24,12 +24,12 @@ import { useDynamicFilters } from "../customHooks/useDinamycFilters";
 import ParentCard from "@/components/shared/cards/ParentCard";
 import RowMenu from "./RowMenu";
 import TableRenderCell from "./TableRenderCell";
-import { getNestedValue } from "@/common/utils";
-import {IconCalendar, IconClock} from "@tabler/icons-react";
+import { currencyFormatter, getNestedValue } from "@/common/utils";
+import { IconCalendar, IconClock } from "@tabler/icons-react";
 import { format } from "date-fns";
-import {formatDate, getMonthName} from "@/utils/formatter";
-import {RowDetail} from "@/components/tables/RowDetail";
-import {RowSwitch} from "@/components/tables/RowSwitch";
+import { formatDate, getMonthName } from "@/utils/formatter";
+import { RowDetail } from "@/components/tables/RowDetail";
+import { RowSwitch } from "@/components/tables/RowSwitch";
 
 interface TableItemBase {
   id: number;
@@ -57,7 +57,7 @@ const TableWithPagination = <T extends TableItemBase>({
   emptyMessage,
   createLink,
   children,
-  onRowDetailClick
+  onRowDetailClick,
 }: TableProps<T>) => {
   const dispatch = useDispatch();
   const { page, limit, total } = useSelector((state: RootState) => state.pagination);
@@ -118,20 +118,22 @@ const TableWithPagination = <T extends TableItemBase>({
         return <Typography>{formatDate(new Date(value as string), "dd/MM/yyyy")}</Typography>;
 
       case "dateTime":
-        return <Box display="flex" flexDirection="column" gap={0.5}>
-          <Box display="flex" alignItems="center" gap={1}>
-            <IconCalendar size="14" />
-            <Typography fontWeight={500} variant="body2">
-              {format(new Date(value as string), "dd/MM/yyyy")}
-            </Typography>
+        return (
+          <Box display="flex" flexDirection="column" gap={0.5}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <IconCalendar size="14" />
+              <Typography fontWeight={500} variant="body2">
+                {format(new Date(value as string), "dd/MM/yyyy")}
+              </Typography>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <IconClock size="14" />
+              <Typography fontWeight={500} variant="body2">
+                {format(new Date(value as string), "HH:mm")}
+              </Typography>
+            </Box>
           </Box>
-          <Box display="flex" alignItems="center" gap={1}>
-            <IconClock size="14" />
-            <Typography fontWeight={500} variant="body2">
-              {format(new Date(value as string), "HH:mm")}
-            </Typography>
-          </Box>
-        </Box>;
+        );
 
       case "boolean":
         return (
@@ -153,12 +155,16 @@ const TableWithPagination = <T extends TableItemBase>({
       case "currency":
         return (
           <Typography fontWeight={600} variant="h6">
-            ${value as number}
+            {currencyFormatter.format(value as number)}
           </Typography>
         );
 
       case "monthName":
-        return <Typography fontWeight={600} variant="h6">{(getMonthName(value as string))}</Typography>;
+        return (
+          <Typography fontWeight={600} variant="h6">
+            {getMonthName(value as string)}
+          </Typography>
+        );
 
       case "avatar":
         return (
@@ -220,21 +226,22 @@ const TableWithPagination = <T extends TableItemBase>({
             <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
               <EnhancedTableHead headCells={headCells} />
               <TableBody>
-                {items && items.map((row: any) => {
-                  return (
-                    <TableRow hover tabIndex={-1} key={row.id}>
-                      {headCells.map((headCell) => (
-                        <TableCell
-                          key={headCell.id}
-                          align={headCell.numeric ? "right" : "left"}
-                          padding={headCell.disablePadding ? "none" : "normal"}
-                        >
-                          <DynamicCell row={row} headCell={headCell} />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
+                {items &&
+                  items.map((row: any) => {
+                    return (
+                      <TableRow hover tabIndex={-1} key={row.id}>
+                        {headCells.map((headCell) => (
+                          <TableCell
+                            key={headCell.id}
+                            align={headCell.numeric ? "right" : "left"}
+                            padding={headCell.disablePadding ? "none" : "normal"}
+                          >
+                            <DynamicCell row={row} headCell={headCell} />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
 
                 {emptyMessage && items.length === 0 && (
                   <TableRow>

@@ -12,7 +12,8 @@ import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import { stepFormFields, IFieldConfig } from "@/app/(protected)/admin/employees/create/form-employees/steps/formConfig";
 import CustomHelperText from "@/components/theme-elements/CustomHelperText";
 import { currencyFormatter } from "@/common/utils";
-import { fetchCategoryData, fetchEmployeeTypesData, fetchSalaryData } from "@/services/catalogs";
+import { fetchCategoryData, fetchEmployeeTypesData } from "@/services/catalogs";
+import { getSalaryByCategoryAndEmployeeType } from "@/services/salaries";
 import { logger } from "@/lib/logger";
 
 export const FormHiringData = () => {
@@ -111,8 +112,8 @@ export const FormHiringData = () => {
     const employeeTypes = catalogsValues.employeeTypes?.responseObject || [];
     const employeeType = employeeTypes.find((type: any) => type.name === employeeTypeName);
     if (employeeType) {
-      const response = await fetchSalaryData(Number(categoryId), employeeType.id);
-      if (response?.success && response?.responseObject) {
+      const response = await getSalaryByCategoryAndEmployeeType(categoryId, employeeType.id);
+      if (response?.success && response?.responseObject && response.responseObject.salary) {
         const formattedAmount = currencyFormatter.format(response.responseObject.salary);
         dispatch(updateHelperText({ categoryId: `Salario: ${formattedAmount}` }));
       } else {

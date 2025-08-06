@@ -2,9 +2,8 @@ const employeeType = [
   { id: 1, name: "base_sindicalizado", display_name: "BASE SINDICALIZADO" },
   { id: 2, name: "base_no_sindicalizado", display_name: "BASE NO SINDICALIZADO" },
   { id: 3, name: "confianza", display_name: "CONFIANZA" },
-  { id: 4, name: "contrato", display_name: "CONTRATO" },
+  { id: 4, name: "contrato_gasto_corriente", display_name: "CONTRATO DE GASTO CORRIENTE" },
   { id: 5, name: "contrato_laudo", display_name: "CONTRATO POR LAUDO" },
-  { id: 6, name: "programa_fc", display_name: "PROGRAMAS GC" },
-  { id: 7, name: "programa_fed", display_name: "PROGRAMAS FED" },
+  { id: 6, name: "contrato_fondo_iv", display_name: "CONTRATO DE FONDO IV" },
 ];
 module.exports = employeeType;
