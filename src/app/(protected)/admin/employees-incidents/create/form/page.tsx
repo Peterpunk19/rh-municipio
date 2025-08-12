@@ -42,6 +42,10 @@ import { AppDispatch, RootState } from "@/store/store";
 import { formatDate } from "@/utils/formatter";
 import { EmployeeDetailCard } from "@/components/shared/EmployeeDetailCard";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { validateIncidentDays } from "@/services/incident-validation";
+import type { IResponse } from "@/utils/types";
+import IncidentDaysInfo from "@/components/customComponents/IncidentDaysInfo";
+import { HttpMessages } from "@/common/response/messages";
 
 type IncidentCreateFormProps = {
   selectedEmployee?: any;
@@ -64,6 +68,10 @@ const IncidentCreateForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [validationData, setValidationData] = useState<IResponse | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [maxSelections, setMaxSelections] = useState<number>(20);
 
   const submitting = externalSubmitting !== undefined ? externalSubmitting : isSubmitting;
 
@@ -75,16 +83,49 @@ const IncidentCreateForm = ({
     }
   }, [selectedEmployee, dispatch]);
 
-  const handleChange = (event: any) => {
+  const validateIncident = async (employeeId: string, incidentId: string, startDate?: string, endDate?: string) => {
+    if (!employeeId || !incidentId) {
+      setValidationData(null);
+      setValidationError(null);
+      return;
+    }
+
+    setIsValidating(true);
+    setValidationError(null);
+
+    try {
+      const response = await validateIncidentDays(employeeId, incidentId, startDate, endDate);
+      setValidationData(response);
+
+      if (response.success && response.responseObject) {
+        const maxDays = response.responseObject.hasRules === false ? 20 : response.responseObject.remaining_days;
+        setMaxSelections(maxDays);
+        return;
+      }
+      setValidationData(null);
+      setValidationError(HttpMessages.error.internalServerError);
+    } catch (error) {
+      setValidationData(null);
+      setValidationError(HttpMessages.error.internalServerError);
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleChange = async (event: any) => {
     const { name, value } = event.target;
+    const updatedFormData = { ...formData, [name]: value };
     dispatch(updateFormData({ field: name, value }));
-    if (name === "employeeId" && value && value !== "0") {
+
+    if (name === "employeeId") {
       const newErrors = { ...errors };
       delete newErrors.employeeId;
       const filteredErrors = Object.fromEntries(
         Object.entries(newErrors).filter(([_, v]) => typeof v === "string" && v !== undefined),
       );
       dispatch(setErrors(filteredErrors as { [key: string]: string }));
+      setValidationData(null);
+      setValidationError(null);
     }
 
     if (name === "incidentId") {
@@ -93,6 +134,19 @@ const IncidentCreateForm = ({
       if (isCalendarIncident) {
         setOpenCalendar(true);
       }
+
+      setValidationData(null);
+      setValidationError(null);
+    }
+
+    if ((name === "employeeId" || name === "incidentId") && updatedFormData.employeeId && updatedFormData.incidentId) {
+      const today = new Date().toISOString().split("T")[0];
+      validateIncident(
+        updatedFormData.employeeId,
+        updatedFormData.incidentId,
+        updatedFormData.startDate || today,
+        updatedFormData.endDate || today,
+      );
     }
 
     if (name === "endDate") {
@@ -108,6 +162,10 @@ const IncidentCreateForm = ({
           current.setDate(current.getDate() + 1);
         }
         dispatch(setIncidentDates(dates));
+
+        if (formData.employeeId && formData.incidentId) {
+          await validateIncident(formData.employeeId, formData.incidentId, formData.startDate, value);
+        }
       } else {
         dispatch(setIncidentDates([]));
       }
@@ -142,7 +200,7 @@ const IncidentCreateForm = ({
     return calendarIncidentIds.includes(formData.incidentId);
   }, [formData.incidentId, calendarIncidentIds]);
 
-  const handleCalendarSave = (selectedDates: string[]) => {
+  const handleCalendarSave = async (selectedDates: string[]) => {
     if (selectedDates.length > 0) {
       const startDate = selectedDates[0];
       const endDate = selectedDates[selectedDates.length - 1];
@@ -150,6 +208,10 @@ const IncidentCreateForm = ({
       dispatch(updateFormData({ field: "startDate", value: startDate }));
       dispatch(updateFormData({ field: "endDate", value: endDate }));
       dispatch(setIncidentDates(selectedDates));
+
+      if (formData.employeeId && formData.incidentId) {
+        await validateIncident(formData.employeeId, formData.incidentId, startDate, endDate);
+      }
     }
     setOpenCalendar(false);
   };
@@ -162,6 +224,10 @@ const IncidentCreateForm = ({
     dispatch(updateFormData({ field: "startDate", value: "" }));
     dispatch(updateFormData({ field: "endDate", value: "" }));
     dispatch(updateFormData({ field: "incidentDates", value: [] }));
+
+    if (formData.employeeId && formData.incidentId) {
+      validateIncident(formData.employeeId, formData.incidentId);
+    }
   };
 
   const handleSubmit = async (event: any) => {
@@ -266,6 +332,7 @@ const IncidentCreateForm = ({
                   value={formData.incidentId}
                   onChange={handleChange}
                   disabled={isLoading || error}
+                  error={!!errors.incidentId}
                 >
                   <MenuItem key="default" value="0">
                     Selecciona el tipo de incidencia
@@ -283,6 +350,25 @@ const IncidentCreateForm = ({
                   )}
                 </CustomSelect>
                 <CustomLabelError field={errors.incidentId} />
+
+                {formData.employeeId && formData.incidentId && formData.incidentId !== "0" && (
+                  <Box mt={2}>
+                    {isValidating && <Typography variant="caption">Validando...</Typography>}
+                    {validationError && (
+                      <Typography variant="caption" color="error">
+                        Error: {validationError}
+                      </Typography>
+                    )}
+
+                    <Box mt={2}>
+                      <IncidentDaysInfo
+                        validationData={validationData}
+                        isLoading={isValidating}
+                        error={validationError}
+                      />
+                    </Box>
+                  </Box>
+                )}
               </FormControl>
             </Grid2>
 
@@ -292,7 +378,7 @@ const IncidentCreateForm = ({
                 <CustomCalendar
                   onSave={handleCalendarSave}
                   onCancel={handleCalendarCancel}
-                  maxSelections={20}
+                  maxSelections={maxSelections}
                   daysSelected={formData.incidentDates}
                 />
               </DialogContent>
