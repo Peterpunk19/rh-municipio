@@ -204,7 +204,7 @@ export const successResponse = (message: string, data: object, statusCode?: numb
   handleHttpResponse(HttpResponse.success(message, data, statusCode));
 
 export const getRoleValueById = (id: number): RoleValue | undefined => {
-  const key = ROLES_ID[id as keyof typeof ROLES_ID]; // asegura que el índice es una clave válida
+  const key = ROLES_ID[id as keyof typeof ROLES_ID];
   return key ? ROLES[key] : undefined;
 };
 
@@ -282,4 +282,10 @@ export const normalizeText = (text: string): string => {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "_")
     .replace(/[^a-z0-9_]/g, "");
+};
+
+export const getFirstDayMonthString = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  return `${y}-${m}-01`;
 };

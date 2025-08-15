@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Paper, useTheme } from "@mui/material";
+import { Box, Typography, Paper } from "@mui/material";
 import type { IResponse } from "@/utils/types";
 import { IncidentValidationResponse } from "@/services/incident-validation";
 import { useSelector } from "react-redux";
@@ -61,7 +61,7 @@ const IncidentDaysInfo = ({ validationData, isLoading = false, error = null }: I
       elevation={0}
       sx={{ p: 2, mb: 2, bgcolor: "#f8f9fa", borderLeft: `4px solid ${borderColor}`, width: "100%", maxWidth: "350px" }}
     >
-      {rows.map(({ label, value, color }, index) => (
+      {rows.map(({ label, value }, index) => (
         <Box key={label} display="flex" justifyContent="space-between" mb={index < rows.length - 1 ? 1 : 0}>
           <Typography variant="body2" color="text.secondary">
             {label}

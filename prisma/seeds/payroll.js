@@ -1,5 +1,5 @@
 const payroll = [
-  { id: 1, name: "base", display_name: "BASE SINDICALIZADO" },
+  { id: 1, name: "base_sindicalizado", display_name: "BASE SINDICALIZADO" },
   { id: 2, name: "base_no_sindicalizado", display_name: "BASE NO SINDICALIZADO" },
   { id: 3, name: "confianza", display_name: "CONFIANZA" },
   { id: 4, name: "contrato_gasto_corriente", display_name: "CONTRATO DE GASTO CORRIENTE" },
