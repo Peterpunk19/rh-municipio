@@ -143,6 +143,14 @@ const modules = [
     icon: "IconPoint",
     parent_id: 16,
   },
+  {
+    id: 19,
+    name: "reference_salaries",
+    display_name: "Salarios",
+    route: "/admin/reference/salaries",
+    icon: "IconPoint",
+    parent_id: 16,
+  },
 ];
 
 module.exports = modules;

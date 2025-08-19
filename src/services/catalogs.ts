@@ -193,18 +193,6 @@ export const fetchRolesData = async (): Promise<IResponseObject | null> => {
   }
 };
 
-export const fetchSalaryData = async (categoryId: number, employeeTypeId: number): Promise<IResponse | null> => {
-  try {
-    const response = await http.get<IResponse>(
-      `/api/catalogs/salary?categoryId=${categoryId}&employeeTypeId=${employeeTypeId}`,
-    );
-    return response.data;
-  } catch (error: any) {
-    logger.error({ error: error.message, stack: error.stack });
-    return null;
-  }
-};
-
 export const catalogs = {
   requests: "requests",
   locations: "locations",

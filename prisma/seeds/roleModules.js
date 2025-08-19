@@ -1,4 +1,4 @@
-const adminRoleModules = Array.from({ length: 18 }, (_, index) => ({
+const adminRoleModules = Array.from({ length: 19 }, (_, index) => ({
   role_id: 1,
   module_id: index + 1,
   can_view: true,

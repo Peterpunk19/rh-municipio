@@ -164,4 +164,8 @@ export const HttpMessages = {
     notAvailableDays: "Se superó el numero de dias disponibles para esta incidencia",
     notMinYears: "El empleado aún no cumple con los años mínimos para esta incidencia",
   },
+  salaries: {
+    notFound: "No se encontraron salarios con los filtros proporcionados",
+    getSuccess: "Salarios encontrados correctamente",
+  },
 };
