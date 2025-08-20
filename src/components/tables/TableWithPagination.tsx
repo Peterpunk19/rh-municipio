@@ -95,6 +95,10 @@ const TableWithPagination = <T extends TableItemBase>({
     const empty_text = headCell.empty_text;
     const redirectPath = config.redirectPath;
 
+    if (value === null) {
+      return <></>;
+    }
+
     if (config.format) {
       return <>{config.format(value, row)}</>;
     }
