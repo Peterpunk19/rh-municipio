@@ -239,8 +239,6 @@ model EmployeeAttendance {
   employee_ascriptions        EmployeeAscriptions    @relation(fields: [employee_ascription_id], references: [id])
   created_at                  DateTime?              @default(now())
   udpated_at                  DateTime?              @updatedAt
-
-  @@unique([check_in, check_out, employee_ascription_id, employee_location_id])
 }
 
 model EmployeeIncidents {

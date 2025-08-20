@@ -151,6 +151,7 @@ export const EmployeeAttendanceService = {
         check_out: true,
         active: true,
         created_by_id: true,
+        created_at: true,
         employee_ascription_id: true,
         description: true,
         employee_attendance_type_id: true,

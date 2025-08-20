@@ -124,6 +124,8 @@ export async function POST(request: NextRequest) {
         employeeHiringId = employeeData.employee_hiring[0].id;
       }
 
+      let employeeAscriptionId = employeeData.employee_ascriptions[0].id;
+
       const employeeAttendances: IEmployeeAttendance[] = [];
 
       if (fromDate && toDate) {
@@ -138,7 +140,7 @@ export async function POST(request: NextRequest) {
             checkIn: checkInDateTime.toISOString(),
             checkOut: checkOutDateTime.toISOString(),
             employeeId: employeeData.id,
-            employeeHiringId: employeeHiringId,
+            employeeAscriptionId: employeeAscriptionId,
             employeeLocationId: employeeLocationId,
             employeeAttendanceTypeId: employeeAttendanceTypeId,
             createdById: createdById,

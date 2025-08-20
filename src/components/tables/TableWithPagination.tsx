@@ -26,7 +26,6 @@ import RowMenu from "./RowMenu";
 import TableRenderCell from "./TableRenderCell";
 import { currencyFormatter, getNestedValue } from "@/common/utils";
 import { IconCalendar, IconClock } from "@tabler/icons-react";
-import { format } from "date-fns";
 import { formatDate, getMonthName } from "@/utils/formatter";
 import { RowDetail } from "@/components/tables/RowDetail";
 import { RowSwitch } from "@/components/tables/RowSwitch";
@@ -123,13 +122,13 @@ const TableWithPagination = <T extends TableItemBase>({
             <Box display="flex" alignItems="center" gap={1}>
               <IconCalendar size="14" />
               <Typography fontWeight={500} variant="body2">
-                {format(new Date(value as string), "dd/MM/yyyy")}
+                {formatDate(new Date(value as string), "dd/MM/yyyy")}
               </Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={1}>
               <IconClock size="14" />
               <Typography fontWeight={500} variant="body2">
-                {format(new Date(value as string), "HH:mm")}
+                {formatDate(new Date(value as string), "HH:mm")}
               </Typography>
             </Box>
           </Box>
