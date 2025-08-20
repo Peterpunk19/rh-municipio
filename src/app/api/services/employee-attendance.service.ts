@@ -84,6 +84,31 @@ export const EmployeeAttendanceService = {
     });
   },
 
+  async createSingleAttendance(data: any) {
+    return await prisma.employeeAttendance.create({
+      data: {
+        check_in: data.check_in,
+        check_out: data.check_out,
+        active: true,
+        description: data.description,
+        created_at: new Date(),
+        udpated_at: new Date(),
+        created_by: {
+          connect: { id: data.created_by_id },
+        },
+        employee_ascriptions: {
+          connect: { id: data.employee_ascription_id },
+        },
+        employee_location: {
+          connect: { id: data.employee_location_id },
+        },
+        employee_attendance_type: {
+          connect: { id: data.employee_attendance_type_id },
+        },
+      },
+    });
+  },
+
   async getEmployeesAttendanceByParams(employeeAttendanceFilters: IEmployeeAttendanceFilters) {
     const limit = Number(employeeAttendanceFilters.limit);
     const page = Number(employeeAttendanceFilters.page);

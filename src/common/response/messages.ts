@@ -47,6 +47,7 @@ export const HttpMessages = {
     getSuccess: "Asistencias encontradas correctamente",
     notCreated: "Asistencia no creada",
     notFoundById: "Asistencia no encontrada",
+    processed: "Asistencias procesadas",
     foundById: "Asistencia encontrada correctamente",
   },
   employeeHiring: {

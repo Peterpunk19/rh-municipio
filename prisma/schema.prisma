@@ -223,7 +223,7 @@ model Attendance {
 
 model EmployeeAttendance {
   id                          Int                    @id @default(autoincrement())
-  check_in                    DateTime
+  check_in                    DateTime?
   check_out                   DateTime?
   active                      Boolean                @default(true)
   created_by_id               Int

@@ -8,117 +8,100 @@ import { EmployeeAttendanceService } from "@/app/api/services/employee-attendanc
 import { validateRequest } from "@/common/request/validateRequest";
 import { EmployeeAttendanceBulkInsertSchema } from "@/schemas/employee-attendance";
 
-interface IEmployeeAttendance {
+interface AttendanceRequest {
   numberEmployee: string;
   dateTime: string;
   isEntry: number;
 }
 
+interface AttendanceResponse extends AttendanceRequest {
+  status: "success" | "error";
+  errorMessage?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const validatedRequest = await validateRequest<IEmployeeAttendance[]>(request, EmployeeAttendanceBulkInsertSchema);
-
+    const validatedRequest = await validateRequest<AttendanceRequest[]>(request, EmployeeAttendanceBulkInsertSchema);
     if (validatedRequest.response) return validatedRequest.response;
 
     const body = validatedRequest.data;
-
-    if (!body) {
-      const response = HttpResponse.failure(HttpMessages.error.invalidRequest, {});
-      return handleHttpResponse(response);
+    if (!body || !Array.isArray(body)) {
+      return handleHttpResponse(HttpResponse.failure(HttpMessages.error.invalidRequest, {}));
     }
 
-    const employeeNumbers = body.map((emp: { numberEmployee: any }) => String(emp.numberEmployee));
+    const employeeNumbers = body.map((emp) => String(emp.numberEmployee));
     const employees = await EmployeeService.getEmployeesForBulkAttendance(employeeNumbers);
 
     const createdById = 1;
-    const attendancesToCreateSuccess = [];
-    const attendancesToCreateError: never[] = [];
-    const attendancesCheckOutSuccess = [];
-    const attendancesCheckOutError = [];
+    const processedRecords: AttendanceResponse[] = [];
 
     for (const record of body) {
-      const { numberEmployee, isEntry, dateTime } = record as IEmployeeAttendance;
+      const responseRecord: AttendanceResponse = {
+        ...record,
+        status: "success",
+      };
 
-      const employee = employees.find((e) => e.number_employee === numberEmployee);
+      try {
+        const { numberEmployee, isEntry, dateTime } = record;
+        const timestamp = new Date(dateTime);
 
-      if (!employee) {
-        attendancesCheckOutError.push({
-          message: `Empleado con número ${record.numberEmployee} no encontrado`,
-          ...record,
-        });
-      }
-
-      if (employee) {
-        const employeeAscriptions = employee.employee_ascriptions[0];
-        if (!employeeAscriptions) {
-          throw new Error(`Empleado ${record.numberEmployee} no tiene ascripción asignada`);
+        if (isNaN(timestamp.getTime())) {
+          throw new Error("Formato de fecha inválido");
         }
 
-        const employeeLocation = employee.employee_location[0];
-        if (!employeeLocation) {
-          throw new Error(`Empleado ${record.numberEmployee} no tiene ubicacion asignada`);
+        const employee = employees.find((e) => e.number_employee === numberEmployee);
+        if (!employee) {
+          throw new Error("Empleado no encontrado");
         }
 
-        const employeeAttendanceType = employee.employee_attendance_type[0];
-        if (!employeeAttendanceType) {
-          throw new Error(`Empleado ${record.numberEmployee} no tiene tipo de asistencia asignada`);
+        const [ascription, location, attendanceType] = [
+          employee.employee_ascriptions[0],
+          employee.employee_location[0],
+          employee.employee_attendance_type[0],
+        ];
+
+        if (!ascription || !location || !attendanceType) {
+          throw new Error("Datos incompletos del empleado");
         }
 
         if (isEntry === 1) {
-          attendancesToCreateSuccess.push({
-            check_in: new Date(dateTime),
+          await EmployeeAttendanceService.createSingleAttendance({
+            check_in: timestamp,
             check_out: null,
             active: true,
             created_by_id: createdById,
-            employee_ascription_id: employeeAscriptions.id,
-            employee_location_id: employeeLocation.id,
-            employee_attendance_type_id: employeeAttendanceType.id,
-            description: "Entrada automática",
+            employee_ascription_id: ascription.id,
+            employee_location_id: location.id,
+            employee_attendance_type_id: attendanceType.id,
+            description: "Entrada registrada",
           });
-        }
-
-        if (isEntry === 0) {
+        } else {
           try {
-            await EmployeeAttendanceService.updateAttendanceById(
-              employee.number_employee,
-              employeeAscriptions.id,
-              employeeLocation.id,
-              dateTime,
-            );
-
-            attendancesCheckOutSuccess.push(record);
-          } catch (err) {
-            attendancesCheckOutError.push({
-              message: `Error al registrar salida: ${(err as Error).message}`,
-              ...record,
+            await EmployeeAttendanceService.updateAttendanceById(numberEmployee, ascription.id, location.id, dateTime);
+          } catch (updateError) {
+            await EmployeeAttendanceService.createSingleAttendance({
+              check_in: null,
+              check_out: timestamp,
+              active: true,
+              created_by_id: createdById,
+              employee_ascription_id: ascription.id,
+              employee_location_id: location.id,
+              employee_attendance_type_id: attendanceType.id,
+              description: "Salida sin entrada previa",
             });
           }
         }
+      } catch (error) {
+        responseRecord.status = "error";
+        responseRecord.errorMessage = error instanceof Error ? error.message : "Error desconocido";
       }
+
+      processedRecords.push(responseRecord);
     }
 
-    if (attendancesToCreateSuccess.length > 0) {
-      await EmployeeAttendanceService.createEmployeeAttendanceByBulk(attendancesToCreateSuccess);
-    }
-
-    const response = HttpResponse.success(
-      attendancesToCreateSuccess.length
-        ? HttpMessages.employeeAttendance.createdSuccess
-        : HttpMessages.employeeAttendance.notCreated,
-      {
-        attendancesToCreateSuccess,
-        attendancesToCreateError,
-        attendancesCheckOutSuccess,
-        attendancesCheckOutError,
-      },
-    );
-
-    return handleHttpResponse(response);
-  } catch (error: any) {
-    logger.error({ error: error.message, stack: error.stack });
-    const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, {
-      error: HttpMessages.error.internalServerError,
-    });
-    return handleHttpResponse(response);
+    return handleHttpResponse(HttpResponse.success(HttpMessages.employeeAttendance.processed, processedRecords));
+  } catch (error) {
+    logger.error(error instanceof Error ? error : { error: "Unknown error" });
+    return handleHttpResponse(HttpResponse.internalServerError(HttpMessages.error.internalServerError, {}));
   }
 }
