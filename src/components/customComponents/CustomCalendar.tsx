@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import Divider from '@mui/material/Divider';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import Divider from "@mui/material/Divider";
 import { Grid2 as Grid, Box, Typography, Button, ButtonGroup, DialogActions } from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
-import {toUpper} from "lodash";
+import { toUpper } from "lodash";
 
 type CalendarDay = {
   date: Temporal.PlainDate;
@@ -16,9 +16,18 @@ interface CustomCalendarProps {
   onCancel?: () => void;
   maxSelections?: number;
   daysSelected?: string[];
+  onMonthVisibleChange?: (year: number, month: number) => void;
+  clearOnMonthChange?: boolean;
 }
 
-const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [] }: CustomCalendarProps) => {
+const CustomCalendar = ({
+  onSave,
+  onCancel,
+  maxSelections = 20,
+  daysSelected = [],
+  onMonthVisibleChange,
+  clearOnMonthChange = false,
+}: CustomCalendarProps) => {
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const today = Temporal.Now.plainDateISO();
 
@@ -26,43 +35,74 @@ const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [
   const [year, setYear] = useState(Temporal.Now.plainDateISO().year);
   const [monthCalendar, setMonthCalendar] = useState<CalendarDay[]>([]);
   const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
+  const selectionsByMonthRef = useRef<Map<string, Set<string>>>(new Map());
+
+  const monthKey = useCallback((y: number, m: number) => `${y}-${String(m).padStart(2, "0")}`, []);
 
   const next = useCallback(() => {
+    if (clearOnMonthChange) {
+      selectionsByMonthRef.current.set(monthKey(year, month), new Set(selectedDates));
+    }
     const { month: nextMonth, year: nextYear } = Temporal.PlainYearMonth.from({
       month,
       year,
     }).add({ months: 1 });
-
+    if (clearOnMonthChange) {
+      const restored = selectionsByMonthRef.current.get(monthKey(nextYear, nextMonth)) || new Set<string>();
+      setSelectedDates(new Set(restored));
+    }
     setMonth(nextMonth);
     setYear(nextYear);
-  }, [month, year]);
+    onMonthVisibleChange?.(nextYear, nextMonth);
+  }, [month, year, selectedDates, monthKey, clearOnMonthChange]);
 
   const previous = useCallback(() => {
+    if (clearOnMonthChange) {
+      selectionsByMonthRef.current.set(monthKey(year, month), new Set(selectedDates));
+    }
     const { month: prevMonth, year: prevYear } = Temporal.PlainYearMonth.from({
       month,
       year,
     }).subtract({ months: 1 });
+    if (clearOnMonthChange) {
+      const restored = selectionsByMonthRef.current.get(monthKey(prevYear, prevMonth)) || new Set<string>();
+      setSelectedDates(new Set(restored));
+    }
     setMonth(prevMonth);
     setYear(prevYear);
-  }, [month, year]);
+    onMonthVisibleChange?.(prevYear, prevMonth);
+  }, [month, year, selectedDates, monthKey, clearOnMonthChange]);
 
-  const handleDateClick = useCallback((dateStr: string) => {
-    setSelectedDates(prev => {
-      const newSelectedDates = new Set(prev);
-      
-      if (newSelectedDates.has(dateStr)) {
-        newSelectedDates.delete(dateStr);
-      } else {
-        if (newSelectedDates.size >= maxSelections) {
-          alert(`Solo puedes seleccionar máximo ${maxSelections} días`);
-          return prev;
-        }
-        newSelectedDates.add(dateStr);
+  const handleDateClick = useCallback(
+    (dateStr: string) => {
+      if (selectedDates.has(dateStr)) {
+        setSelectedDates((prev) => {
+          const next = new Set(prev);
+          next.delete(dateStr);
+          if (clearOnMonthChange) {
+            selectionsByMonthRef.current.set(monthKey(year, month), new Set(next));
+          }
+          return next;
+        });
+        return;
       }
-      
-      return newSelectedDates;
-    });
-  }, [maxSelections]);
+
+      if (selectedDates.size >= maxSelections) {
+        alert(`Solo puedes seleccionar máximo ${maxSelections} días`);
+        return;
+      }
+
+      setSelectedDates((prev) => {
+        const next = new Set(prev);
+        next.add(dateStr);
+        if (clearOnMonthChange) {
+          selectionsByMonthRef.current.set(monthKey(year, month), new Set(next));
+        }
+        return next;
+      });
+    },
+    [maxSelections, selectedDates, month, year, monthKey, clearOnMonthChange],
+  );
 
   const handleSave = useCallback(() => {
     const sortedDates = Array.from(selectedDates).sort();
@@ -70,9 +110,28 @@ const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [
   }, [selectedDates, onSave]);
 
   const handleCancel = useCallback(() => {
-    setSelectedDates(new Set());
     onCancel?.();
   }, [onCancel]);
+
+  useEffect(() => {
+    let targetYear = year;
+    let targetMonth = month;
+    if (daysSelected && daysSelected.length > 0) {
+      const first = Temporal.PlainDate.from(daysSelected[0]);
+      targetYear = first.year;
+      targetMonth = first.month;
+    } else {
+      const today = Temporal.Now.plainDateISO();
+      targetYear = today.year;
+      targetMonth = today.month;
+    }
+    setYear(targetYear);
+    setMonth(targetMonth);
+    onMonthVisibleChange?.(targetYear, targetMonth);
+    if (clearOnMonthChange) {
+      selectionsByMonthRef.current.set(monthKey(targetYear, targetMonth), new Set(daysSelected));
+    }
+  }, [daysSelected]);
 
   useEffect(() => {
     const fiveWeeks = 5 * 7;
@@ -80,33 +139,45 @@ const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [
     const startOfMonth = Temporal.PlainDate.from({ year, month, day: 1 });
     const monthLength = startOfMonth.daysInMonth;
     const dayOfWeekMonthStartedOn = startOfMonth.dayOfWeek % 7;
-    const length =
-      dayOfWeekMonthStartedOn + monthLength > fiveWeeks ? sixWeeks : fiveWeeks;
+    const length = dayOfWeekMonthStartedOn + monthLength > fiveWeeks ? sixWeeks : fiveWeeks;
 
-    const calendar = new Array(length)
-      .fill({})
-      .map((_, index) => {
-        const date = startOfMonth.add({
-          days: index - dayOfWeekMonthStartedOn,
-        });
-        return {
-          isInMonth: !(
-            index < dayOfWeekMonthStartedOn ||
-            index - dayOfWeekMonthStartedOn >= monthLength
-          ),
-          date,
-        };
+    const calendar = new Array(length).fill({}).map((_, index) => {
+      const date = startOfMonth.add({
+        days: index - dayOfWeekMonthStartedOn,
       });
+      return {
+        isInMonth: !(index < dayOfWeekMonthStartedOn || index - dayOfWeekMonthStartedOn >= monthLength),
+        date,
+      };
+    });
 
-    setMonthCalendar(calendar); 
+    setMonthCalendar(calendar);
+  }, [year, month]);
+
+  useEffect(() => {
     setSelectedDates(new Set(daysSelected));
-  }, [year, month, daysSelected]);
+    if (!clearOnMonthChange) return;
+    const grouped = new Map<string, Set<string>>();
+    for (const ds of daysSelected) {
+      const d = Temporal.PlainDate.from(ds);
+      const key = monthKey(d.year, d.month);
+      const set = grouped.get(key) || new Set<string>();
+      set.add(ds);
+      grouped.set(key, set);
+    }
+    const current = selectionsByMonthRef.current;
+    grouped.forEach((v, k) => {
+      current.set(k, v);
+    });
+  }, [daysSelected, monthKey, clearOnMonthChange]);
 
   const monthYearDisplay = useMemo(() => {
-    return toUpper(Temporal.PlainDate.from({ year, month, day: 1 }).toLocaleString("es", {
-      month: "long",
-      year: "numeric",
-    }));
+    return toUpper(
+      Temporal.PlainDate.from({ year, month, day: 1 }).toLocaleString("es", {
+        month: "long",
+        year: "numeric",
+      }),
+    );
   }, [year, month]);
 
   return (
@@ -120,11 +191,7 @@ const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [
         </Box>
 
         <Box flexGrow={1} display="flex" justifyContent="center">
-          <Typography
-            color="textSecondary"
-            variant="h3"
-            fontWeight="400"
-          >
+          <Typography color="textSecondary" variant="h3" fontWeight="400">
             {monthYearDisplay}
           </Typography>
         </Box>
@@ -138,8 +205,18 @@ const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [
 
       <Grid container columns={7}>
         {days.map((name, index) => (
-          <Grid size={{xs: 1}} key={index} border={1} borderColor="#f6f6f6" borderLeft={1} borderRight={1} sx={{ borderLeftColor: "#ddd", borderRightColor: "#ddd" }} >
-            <Typography align="center" fontWeight="bold">{name}</Typography>
+          <Grid
+            size={{ xs: 1 }}
+            key={index}
+            border={1}
+            borderColor="#f6f6f6"
+            borderLeft={1}
+            borderRight={1}
+            sx={{ borderLeftColor: "#ddd", borderRightColor: "#ddd" }}
+          >
+            <Typography align="center" fontWeight="bold">
+              {name}
+            </Typography>
           </Grid>
         ))}
       </Grid>
@@ -149,88 +226,81 @@ const CustomCalendar = ({ onSave, onCancel, maxSelections = 20, daysSelected = [
           const isSelected = selectedDates.has(dateStr);
           const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
 
-          let backgroundColor = '#fff';
-          let color = '#000';
-          
+          let backgroundColor = "#fff";
+          let color = "#000";
+
           if (!day.isInMonth) {
-            backgroundColor = '#f6f6f6';
-            color = '#999999';
+            backgroundColor = "#f6f6f6";
+            color = "#999999";
           } else if (isSelected) {
-            backgroundColor = '#1976d2';
-            color = '#fff';
+            backgroundColor = "#1976d2";
+            color = "#fff";
           }
 
           return (
-              <Grid
-                size={{xs: 1}}
-                key={index}
-                textAlign="right"
-                border={0.5}
-                borderColor="#eee"
+            <Grid
+              size={{ xs: 1 }}
+              key={index}
+              textAlign="right"
+              border={0.5}
+              borderColor="#eee"
+              sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                p: 2,
+                position: "relative",
+                minHeight: 112,
+                cursor: day.isInMonth ? "pointer" : "default",
+                "&:hover": day.isInMonth
+                  ? {
+                      backgroundColor: isSelected ? "#1565c0" : "#e3f2fd",
+                    }
+                  : {},
+              }}
+              onClick={() => handleDateClick(dateStr)}
+            >
+              <Box
+                fontWeight="bold"
                 sx={{
-                  backgroundColor: backgroundColor,
-                  color: color,
-                  p: 2,
-                  position: 'relative',
-                  minHeight: 112,
-                  cursor: day.isInMonth ? 'pointer' : 'default',
-                  '&:hover': day.isInMonth ? {
-                    backgroundColor: isSelected ? '#1565c0' : '#e3f2fd',
-                  } : {}
+                  width: 32,
+                  height: 32,
+                  lineHeight: "32px",
+                  borderRadius: "50%",
+                  textAlign: "center",
+                  position: "absolute",
+                  top: 5,
+                  right: 5,
+                  backgroundColor: isSelected ? "#fff" : backgroundColor,
+                  border: "1px solid #eee",
+                  borderColor: isSelected ? "#1976d2" : "#eee",
+                  color: isSelected ? "#1976d2" : color,
                 }}
-                onClick={() => handleDateClick(dateStr)}
               >
-                <Box
-                  fontWeight="bold"
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    lineHeight: '32px',
-                    borderRadius: '50%',
-                    textAlign: 'center',
-                    position: 'absolute',
-                    top: 5,
-                    right: 5,
-                    backgroundColor: isSelected ? '#fff' : backgroundColor,
-                    border: "1px solid #eee",
-                    borderColor: isSelected ? '#1976d2' : '#eee',
-                    color: isSelected ? '#1976d2' : color
-                  }}
-                >
-                  {day.date.day}
-                  {isToday ?
-                    <Divider sx={{marginTop: 0.5, border: 1.5, borderColor: 'orangered'}} />
-                    : null
-                  }
-                </Box>
-              </Grid>
-          )
+                {day.date.day}
+                {isToday ? <Divider sx={{ marginTop: 0.5, border: 1.5, borderColor: "orangered" }} /> : null}
+              </Box>
+            </Grid>
+          );
         })}
       </Grid>
 
-      <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
+      <DialogActions sx={{ p: 2, justifyContent: "space-between" }}>
         <Typography variant="body2" color="textSecondary">
           {selectedDates.size > 0
-            ? `${selectedDates.size} ${selectedDates.size === 1 ? 'día seleccionado' : 'días seleccionados'}`
-            : 'Selecciona las fechas de vacaciones'
-          }
+            ? `${selectedDates.size} ${selectedDates.size === 1 ? "día seleccionado" : "días seleccionados"}`
+            : "Selecciona las fechas de vacaciones"}
         </Typography>
         <Box>
           <Button onClick={handleCancel} color="error" sx={{ mr: 1 }}>
             Cancelar
           </Button>
-          <Button
-            onClick={handleSave}
-            variant="contained"
-            color="primary"
-            disabled={selectedDates.size === 0}
-          >
+          <Button onClick={handleSave} variant="contained" color="primary" disabled={selectedDates.size === 0}>
             Guardar Fechas
           </Button>
         </Box>
       </DialogActions>
     </Box>
   );
-}
+};
 
 export default CustomCalendar;

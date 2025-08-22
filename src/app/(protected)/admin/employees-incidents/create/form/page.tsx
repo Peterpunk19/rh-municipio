@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateFormData,
@@ -46,6 +46,8 @@ import { validateIncidentDays } from "@/services/incident-validation";
 import type { IResponse } from "@/utils/types";
 import IncidentDaysInfo from "@/components/customComponents/IncidentDaysInfo";
 import { HttpMessages } from "@/common/response/messages";
+import { getFirstDayMonthString } from "@/common/utils";
+import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 
 type IncidentCreateFormProps = {
   selectedEmployee?: any;
@@ -72,6 +74,7 @@ const IncidentCreateForm = ({
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [maxSelections, setMaxSelections] = useState<number>(20);
+  const [visibleMonthStart, setVisibleMonthStart] = useState<string>(getFirstDayMonthString(new Date()));
 
   const submitting = externalSubmitting !== undefined ? externalSubmitting : isSubmitting;
 
@@ -130,6 +133,9 @@ const IncidentCreateForm = ({
 
     if (name === "incidentId") {
       const isCalendarIncident = incidentTypes?.find((item) => item.id === value)?.display_calendar_dates;
+      dispatch(updateFormData({ field: "startDate", value: "" }));
+      dispatch(updateFormData({ field: "endDate", value: "" }));
+      dispatch(updateFormData({ field: "incidentDates", value: [] }));
 
       if (isCalendarIncident) {
         setOpenCalendar(true);
@@ -140,12 +146,12 @@ const IncidentCreateForm = ({
     }
 
     if ((name === "employeeId" || name === "incidentId") && updatedFormData.employeeId && updatedFormData.incidentId) {
-      const today = new Date().toISOString().split("T")[0];
+      const defaultDate = visibleMonthStart;
       validateIncident(
         updatedFormData.employeeId,
         updatedFormData.incidentId,
-        updatedFormData.startDate || today,
-        updatedFormData.endDate || today,
+        updatedFormData.startDate || defaultDate,
+        updatedFormData.endDate || defaultDate,
       );
     }
 
@@ -200,6 +206,13 @@ const IncidentCreateForm = ({
     return calendarIncidentIds.includes(formData.incidentId);
   }, [formData.incidentId, calendarIncidentIds]);
 
+  const isEntryOrExitIncident = useMemo(() => {
+    const incidentId = Number(formData.incidentId);
+    return (
+      incidentId === INCIDENT_TYPES_ID.JUSTIFICACION_ENTRADA || incidentId === INCIDENT_TYPES_ID.JUSTIFICACION_SALIDA
+    );
+  }, [formData.incidentId]);
+
   const handleCalendarSave = async (selectedDates: string[]) => {
     if (selectedDates.length > 0) {
       const startDate = selectedDates[0];
@@ -220,13 +233,56 @@ const IncidentCreateForm = ({
     setOpenCalendar(false);
   };
 
+  const lastValidationRef = useRef<string | null>(null);
+
+  const handleCalendarMonthChange = useCallback(
+    (year: number, month: number) => {
+      const m = String(month).padStart(2, "0");
+      const monthStart = `${year}-${m}-01`;
+
+      setVisibleMonthStart(monthStart);
+
+      const curIncidentId = Number(formData.incidentId);
+      const isEntryOrExit =
+        curIncidentId === INCIDENT_TYPES_ID.JUSTIFICACION_ENTRADA ||
+        curIncidentId === INCIDENT_TYPES_ID.JUSTIFICACION_SALIDA;
+
+      if (isEntryOrExit && formData.employeeId && formData.incidentId) {
+        const key = `${formData.employeeId}-${formData.incidentId}-${year}-${m}`;
+        if (lastValidationRef.current === key) return;
+        lastValidationRef.current = key;
+        validateIncident(formData.employeeId, formData.incidentId, monthStart, monthStart);
+      }
+    },
+    [formData.employeeId, formData.incidentId],
+  );
+
+  const selectedDatesForCalendar = useMemo(() => {
+    if (formData.incidentDates && formData.incidentDates.length > 0) {
+      return formData.incidentDates;
+    }
+    const { startDate, endDate } = formData as { startDate: string; endDate: string };
+    if (!startDate) return [] as string[];
+    const start = new Date(startDate);
+    const end = new Date(endDate || startDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) return [] as string[];
+
+    const dates: string[] = [];
+    const cur = new Date(start);
+    while (cur <= end) {
+      dates.push(cur.toISOString().split("T")[0]);
+      cur.setDate(cur.getDate() + 1);
+    }
+    return dates;
+  }, [formData.incidentDates, formData.startDate, formData.endDate]);
+
   const removeDates = () => {
     dispatch(updateFormData({ field: "startDate", value: "" }));
     dispatch(updateFormData({ field: "endDate", value: "" }));
     dispatch(updateFormData({ field: "incidentDates", value: [] }));
 
     if (formData.employeeId && formData.incidentId) {
-      validateIncident(formData.employeeId, formData.incidentId);
+      validateIncident(formData.employeeId, formData.incidentId, visibleMonthStart, visibleMonthStart);
     }
   };
 
@@ -376,10 +432,13 @@ const IncidentCreateForm = ({
               <DialogTitle>Seleccionar fechas de incidencia</DialogTitle>
               <DialogContent>
                 <CustomCalendar
+                  key={formData.incidentId}
                   onSave={handleCalendarSave}
                   onCancel={handleCalendarCancel}
                   maxSelections={maxSelections}
-                  daysSelected={formData.incidentDates}
+                  daysSelected={selectedDatesForCalendar}
+                  onMonthVisibleChange={handleCalendarMonthChange}
+                  clearOnMonthChange={isEntryOrExitIncident}
                 />
               </DialogContent>
             </Dialog>
