@@ -27,11 +27,10 @@ export const EmployeeService = {
     });
 
     if (!lastEmployee) {
-      return "000001";
+      return 1;
     }
 
-    const lastNumber = Number.parseInt(lastEmployee.number_employee, 10);
-    return (lastNumber + 1).toString().padStart(6, "0");
+    return Number.parseInt(lastEmployee.number_employee, 10) + 1;
   },
 
   async getEmployeeById(id: number) {

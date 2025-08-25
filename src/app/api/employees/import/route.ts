@@ -67,8 +67,6 @@ export async function POST(request: NextRequest) {
             employeeMapped.numberEmployee = await EmployeeService.getNumberEmployee();
           }
 
-          employeeMapped.numberEmployee = formatFolio(Number(employeeMapped.numberEmployee));
-
           if (employeeMapped.curp == "") employeeMapped.curp = employeeMapped.rfc;
 
           const employeeType = await EmployeeTypeService.getEmployeeTypeByName(body.employeeTypeName);
