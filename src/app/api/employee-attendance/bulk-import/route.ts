@@ -9,6 +9,7 @@ import { validateRequest } from "@/common/request/validateRequest";
 import { EmployeeAttendanceBulkInsertSchema } from "@/schemas/employee-attendance";
 
 interface AttendanceRequest {
+  id: Number;
   numberEmployee: string;
   dateTime: string;
   isEntry: number;

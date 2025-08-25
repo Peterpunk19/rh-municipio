@@ -24,6 +24,7 @@ export const EmployeeAttendancePostSchema = z
   });
 
 export const EmployeeAttendanceItemSchema = z.object({
+  id: z.number({ message: "El campo ID es requerido" }),
   numberEmployee: z
     .string({ message: "Número de empleado requerido" })
     .min(1, { message: "Número de empleado requerido" }),
