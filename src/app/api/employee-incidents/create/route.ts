@@ -66,6 +66,18 @@ export async function POST(request: NextRequest) {
     const rulesValidation = await IncidentRulesService.validateIncidentRules(body);
     if (rulesValidation) return handleHttpResponse(rulesValidation);
 
+    const datesToCheck = body.incidentDates || [];
+
+    if (datesToCheck.length > 0) {
+      const conflicts = await EmployeeIncidentsService.findDateConflicts(Number(body.employeeId), datesToCheck);
+      if (conflicts.length > 0) {
+        const response = HttpResponse.failure(HttpMessages.incidentRules.notSameDay, {
+          dates: conflicts.map((d) => d.toISOString().slice(0, 10)),
+        });
+        return handleHttpResponse(response);
+      }
+    }
+
     const direccionId = await getEmployeeDireccion(Number(body.employeeId));
     const createData = {
       ...body,

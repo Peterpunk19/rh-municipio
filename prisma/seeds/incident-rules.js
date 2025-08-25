@@ -119,6 +119,27 @@ const confianzaRules = [
     ...rule,
     employee_type_id: employeeTypes.CONFIANZA,
   })),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONFIANZA,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        min_years: 1,
+        days: 6,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONFIANZA,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        days: 3,
+      },
+    ],
+    months: monthlyMonths,
+  }),
 ];
 
 const contratoLaudoRules = [
@@ -171,6 +192,26 @@ const baseNoSindicalizadoRules = [
     ...rule,
     employee_type_id: employeeTypes.BASE_NO_SINDICALIZADO,
   })),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_NO_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        days: 6,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_NO_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        days: 3,
+      },
+    ],
+    months: monthlyMonths,
+  }),
 ];
 
 const contratoGastoCorrienteRules = [
@@ -219,11 +260,59 @@ const contratoFondoIVRules = [
   }),
 ];
 
+const baseSindicalizadoPermisoEconomico = [
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        days: 14,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        days: 5,
+      },
+    ],
+    months: monthlyMonths,
+  }),
+];
+
+const contratoLaudoPermisoEconomico = [
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_LAUDO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        days: 6,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_LAUDO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_ECONOMICO,
+        days: 3,
+      },
+    ],
+    months: monthlyMonths,
+  }),
+];
+
 module.exports = [
   ...baseRules,
+  ...baseSindicalizadoPermisoEconomico,
   ...baseNoSindicalizadoRules,
   ...confianzaRules,
   ...contratoLaudoRules,
+  ...contratoLaudoPermisoEconomico,
   ...contratoGastoCorrienteRules,
   ...contratoFondoIVRules,
 ];

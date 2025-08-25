@@ -232,3 +232,56 @@ export const getActiveDaysFromSchedules = (jobSchedules: any[]): Set<number> => 
   }
   return daysActive;
 };
+
+function combineAndSortDates(existingDates: Date[], newDates: (string | Date)[]): Date[] {
+  const newDateObjects = newDates.map((d) => (typeof d === "string" ? new Date(d) : d));
+
+  const allDates = [...existingDates, ...newDateObjects];
+
+  const uniqueDates = Array.from(new Set(allDates.map((date) => new Date(date).setHours(0, 0, 0, 0)))).map(
+    (timestamp) => new Date(timestamp),
+  );
+
+  return uniqueDates.sort((a, b) => a.getTime() - b.getTime());
+}
+
+export const exceedsConsecutiveLimit = (
+  existingDates: Date[],
+  newDates: (string | Date)[],
+  maxConsecutive: number,
+): boolean => {
+  if (!newDates?.length) return false;
+
+  const allDates = combineAndSortDates(existingDates, newDates);
+
+  if (allDates.length <= maxConsecutive) {
+    return false;
+  }
+
+  let maxStreak = 1;
+  let currentStreak = 1;
+
+  for (let i = 1; i < allDates.length; i++) {
+    const prevDate = new Date(allDates[i - 1]);
+    const currDate = new Date(allDates[i]);
+
+    prevDate.setHours(0, 0, 0, 0);
+    currDate.setHours(0, 0, 0, 0);
+
+    const diffTime = currDate.getTime() - prevDate.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      currentStreak++;
+      maxStreak = Math.max(maxStreak, currentStreak);
+
+      if (maxStreak > maxConsecutive) {
+        return true;
+      }
+    } else {
+      currentStreak = 1;
+    }
+  }
+
+  return maxStreak > maxConsecutive;
+};

@@ -1,5 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { getYearsOfService } from "@/app/api/common/utils.service";
+import {
+  getYearsOfService,
+  getActiveDaysFromSchedules,
+  exceedsConsecutiveLimit,
+  getVacationDayValue,
+} from "@/app/api/common/utils.service";
 import { HttpMessages } from "@/common/response/messages";
 import { HttpResponse } from "@/common/response/model";
 import { EmployeeService } from "@/app/api/services/employee.service";
@@ -7,6 +12,7 @@ import { validateTotalEmployeeIncidentDays } from "@/app/api/common/utils.servic
 import { logger } from "@/lib/logger";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
+import { HolidayService } from "@/app/api/services/holiday.service";
 
 interface IncidentRulesValidationResult {
   incident_id: number;
@@ -54,33 +60,49 @@ export const IncidentRulesService = {
       orderBy: [{ min_years: "desc" }],
     });
 
-    const matchingRule = allRules.find((rule) => {
-      const { start_date, end_date } = rule;
-
-      if (start_date === null && end_date === null) {
-        return true;
-      }
-
+    const matchingRule = allRules.filter((rule) => {
+      const { start_date, end_date } = rule as any;
+      if (start_date === null && end_date === null) return true;
       if (start_date !== null && end_date !== null) {
-        if (start_date <= end_date) {
-          return month >= start_date && month <= end_date;
-        } else {
-          return month >= start_date || month <= end_date;
-        }
+        if (start_date <= end_date) return month >= start_date && month <= end_date;
+        return month >= start_date || month <= end_date;
       }
-
-      if (start_date !== null && end_date === null) {
-        return month >= start_date;
-      }
-
-      if (start_date === null && end_date !== null) {
-        return month <= end_date;
-      }
-
+      if (start_date !== null && end_date === null) return month >= start_date;
+      if (start_date === null && end_date !== null) return month <= end_date;
       return false;
     });
 
-    return matchingRule || null;
+    if (matchingRule.length === 0) return null;
+
+    const monthBounded = matchingRule.find((r: any) => r.start_date !== null && r.end_date !== null);
+    if (monthBounded) return monthBounded;
+
+    const singleBound = matchingRule.find((r: any) => r.start_date !== null || r.end_date !== null);
+    if (singleBound) return singleBound;
+
+    return matchingRule.find((r: any) => r.start_date === null && r.end_date === null) || null;
+  },
+
+  async getEmployeeIncidentDates(employeeId: number, incidentTypeId: number): Promise<Date[]> {
+    const incidents = await prisma.employeeIncidentDays.findMany({
+      where: {
+        employee_incident: {
+          employee_id: employeeId,
+          incident_id: incidentTypeId,
+          active: true,
+          incident_status_id: {
+            in: [INCIDENT_STATUS_ID.APROBADA, INCIDENT_STATUS_ID.CREADA],
+          },
+        },
+      },
+      select: {
+        date: true,
+      },
+      orderBy: {
+        date: "asc",
+      },
+    });
+    return incidents.map((i) => i.date);
   },
 
   async validateIncidentRule({
@@ -121,13 +143,40 @@ export const IncidentRulesService = {
 
     let periodStart: Date | undefined;
     let periodEnd: Date | undefined;
-    if (rule.start_date && rule.end_date) {
-      const year = (startDate || new Date()).getFullYear();
-      periodStart = new Date(year, rule.start_date - 1, 1);
-      periodEnd = new Date(year, rule.end_date, 0);
+    const baseYear = (startDate || new Date()).getFullYear();
+    const setPeriodFromRuleWindow = (startMonth: number, endMonth: number) => {
+      periodStart = new Date(baseYear, startMonth - 1, 1);
+      periodEnd = new Date(baseYear, endMonth, 0);
+    };
+    let allowed_days = rule.days;
+
+    if (incidentId === INCIDENT_TYPES_ID.PERMISO_ECONOMICO) {
+      const annualRule = await prisma.incidentRules.findFirst({
+        where: {
+          incident_id: incidentId,
+          employee_type_id: employeeTypeId,
+          active: true,
+          min_years: { lte: yearsOfService },
+          OR: [{ max_years: null }, { max_years: { gte: yearsOfService } }],
+          start_date: null,
+          end_date: null,
+        },
+        orderBy: [{ min_years: "desc" }],
+      });
+      if (annualRule && (annualRule.days ?? 0) > (allowed_days ?? 0)) {
+        allowed_days = annualRule.days;
+        periodStart = undefined;
+        periodEnd = undefined;
+      } else if (rule.start_date && rule.end_date) {
+        setPeriodFromRuleWindow(rule.start_date, rule.end_date);
+      }
+    } else {
+      if (rule.start_date && rule.end_date) {
+        setPeriodFromRuleWindow(rule.start_date, rule.end_date);
+      }
     }
+
     const used_days = await this.getUsedIncidentDays(employeeId, incidentId, periodStart, periodEnd);
-    const allowed_days = rule.days;
     const remaining_days = allowed_days - used_days;
     return HttpResponse.success(HttpMessages.incidentRules.getSuccess, {
       incident_id: incidentId,
@@ -176,6 +225,112 @@ export const IncidentRulesService = {
 
       if (!hasAvailableDays) {
         return HttpResponse.failure(HttpMessages.incidentRules.notAvailableDays, {});
+      }
+
+      if (Number(body.incidentId) === INCIDENT_TYPES_ID.PERMISO_ECONOMICO) {
+        const employee = await EmployeeService.getEmployeeById(Number(body.employeeId));
+        if (!employee || !employee.employee_hiring?.length) {
+          return HttpResponse.failure(HttpMessages.employee.idNotFound, {});
+        }
+        const hiring = employee.employee_hiring[0];
+        const yearsOfService = getYearsOfService(hiring.start_job_date);
+        const employeeTypeId = hiring.employee_type_id;
+
+        const existingDates = await this.getEmployeeIncidentDates(Number(body.employeeId), Number(body.incidentId));
+        if (exceedsConsecutiveLimit(existingDates, body.incidentDates, 3)) {
+          return HttpResponse.failure(HttpMessages.incidentRules.notConsecutiveDays, {});
+        }
+
+        const dates = body.incidentDates
+          .map((d: string) => new Date(d))
+          .sort((a: Date, b: Date) => a.getTime() - b.getTime());
+        const daysActive = getActiveDaysFromSchedules(jobSchedules);
+        const monthGroups = new Map<string, Date[]>();
+
+        for (const d of dates) {
+          const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+          const arr = monthGroups.get(key) || [];
+          arr.push(d);
+          monthGroups.set(key, arr);
+        }
+
+        for (const [key, groupDates] of Array.from(monthGroups.entries())) {
+          const [yearStr, monthStr] = key.split("-");
+          const year = Number(yearStr);
+          const month = Number(monthStr);
+          const periodStart = new Date(year, month - 1, 1);
+          const periodEnd = new Date(year, month, 0);
+          const usedInMonth = await this.getUsedIncidentDays(
+            Number(body.employeeId),
+            INCIDENT_TYPES_ID.PERMISO_ECONOMICO,
+            periodStart,
+            periodEnd,
+          );
+          let toInsert = 0;
+          for (const d of groupDates) {
+            const isHoliday = await HolidayService.isHoliday(d);
+            const dayVal = daysActive.has(d.getDay()) ? getVacationDayValue(d, isHoliday) : 1;
+            toInsert += dayVal;
+          }
+
+          let monthlyCap = 3;
+          const monthlyRule = await this.getApplicableRule(
+            INCIDENT_TYPES_ID.PERMISO_ECONOMICO,
+            employeeTypeId,
+            yearsOfService,
+            month,
+          );
+          if (
+            monthlyRule &&
+            monthlyRule.start_date !== null &&
+            monthlyRule.end_date !== null &&
+            monthlyRule.start_date === month &&
+            monthlyRule.end_date === month
+          ) {
+            monthlyCap = monthlyRule.days;
+          }
+
+          if ((usedInMonth ?? 0) + toInsert > monthlyCap) {
+            return HttpResponse.failure(HttpMessages.incidentRules.notAvailableDays, {});
+          }
+        }
+
+        for (const d of dates) {
+          const prev = new Date(d);
+          prev.setDate(prev.getDate() - 1);
+          const next = new Date(d);
+          next.setDate(next.getDate() + 1);
+          if ((await HolidayService.isHoliday(prev)) || (await HolidayService.isHoliday(next))) {
+            return HttpResponse.failure(HttpMessages.incidentRules.notAdjacentHolidayDays, {});
+          }
+        }
+
+        const minDate = new Date(dates[0]);
+        minDate.setDate(minDate.getDate() - 1);
+        const maxDate = new Date(dates[dates.length - 1]);
+        maxDate.setDate(maxDate.getDate() + 1);
+        const vacationDays = await prisma.employeeIncidentDays.findMany({
+          where: {
+            date: { gte: minDate, lte: maxDate },
+            employee_incident: {
+              employee_id: Number(body.employeeId),
+              incident_id: INCIDENT_TYPES_ID.VACACIONES,
+              active: true,
+              incident_status_id: { lte: INCIDENT_STATUS_ID.APROBADA },
+            },
+          },
+          select: { date: true },
+        });
+        const vacDates = new Set(vacationDays.map((v) => new Date(v.date).toDateString()));
+        for (const d of dates) {
+          const prev = new Date(d);
+          prev.setDate(prev.getDate() - 1);
+          const next = new Date(d);
+          next.setDate(next.getDate() + 1);
+          if (vacDates.has(prev.toDateString()) || vacDates.has(next.toDateString())) {
+            return HttpResponse.failure(HttpMessages.incidentRules.notAdjacentVacationDays, {});
+          }
+        }
       }
 
       return null;
