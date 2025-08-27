@@ -305,3 +305,24 @@ export const exceedsConsecutiveLimit = (
 
   return maxStreak > maxConsecutive;
 };
+
+export const assignPercentageDays = (dates: (string | Date)[], dataIncident: any) => {
+  if (!dataIncident || !dates?.length) return [];
+
+  const sortedDates = [...dates].sort((a, b) => {
+    const dateA = typeof a === "string" ? new Date(a) : a;
+    const dateB = typeof b === "string" ? new Date(b) : b;
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  return sortedDates.map((date, index) => {
+    const allowedDays = dataIncident.allowed_days;
+    const remainingDays = dataIncident.remaining_days;
+    const fullSalaryDays = Math.floor(allowedDays / 2);
+    const usedDays = allowedDays - remainingDays;
+    const currentDayPosition = usedDays + index + 1;
+    const percentage = currentDayPosition <= fullSalaryDays ? 100 : 50;
+    const dateKey = typeof date === "string" ? date : date.toISOString().split("T")[0];
+    return { date: dateKey, percentage };
+  });
+};

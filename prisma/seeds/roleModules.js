@@ -48,10 +48,17 @@ const subEnlaceRoleModules = [
   { role_id: 13, module_id: 9, can_view: true },
 ];
 
+const licenciaMedicaRoleModules = [
+  { role_id: 14, module_id: 2, can_view: true, can_create: true, can_edit: true, can_delete: true },
+  { role_id: 14, module_id: 3, can_view: true },
+  { role_id: 14, module_id: 4, can_view: true, can_create: true },
+];
+
 module.exports = [
   ...adminRoleModules,
   ...adminIncidenciaRoleModules,
   ...empleadoRoleModules,
   ...enlaceRoleModules,
   ...subEnlaceRoleModules,
+  ...licenciaMedicaRoleModules,
 ];

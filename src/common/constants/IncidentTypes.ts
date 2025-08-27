@@ -11,6 +11,7 @@ export enum IncidentTypes {
   VACACIONES = "vacaciones",
   COMISION = "comision",
   LICENCIA_FALLECIMIENTO = "licencia_fallecimiento",
+  LICENCIA_MEDICA = "licencia_medica",
 }
 
 export const INCIDENT_TYPES_ID = {
@@ -27,4 +28,5 @@ export const INCIDENT_TYPES_ID = {
   COMISION: 11,
   RETARDO: 12,
   FALTA: 13,
+  LICENCIA_MEDICA: 14,
 };

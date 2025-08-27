@@ -97,18 +97,26 @@ export const EmployeeIncidentsService = {
         const daysActive = getActiveDaysFromSchedules(jobSchedules);
         const isVacationIncident = employeeIncident.incidentId === INCIDENT_TYPES_ID.VACACIONES;
         const isEconomicLeave = employeeIncident.incidentId === INCIDENT_TYPES_ID.PERMISO_ECONOMICO;
+        const isMedicalLeave = employeeIncident.incidentId === INCIDENT_TYPES_ID.LICENCIA_MEDICA;
         const vacationDayRecords = await Promise.all(
           employeeIncident.incidentDates.map(async (dateStr) => {
             const date = new Date(dateStr);
             let value = 1;
+            let percentage_salary = 0;
 
             if (isVacationIncident || isEconomicLeave) {
               const isHoliday = await HolidayService.isHoliday(date);
               value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : value;
             }
+
+            if (isMedicalLeave && employeeIncident.incidentDatesWithPercentage) {
+              const found = employeeIncident.incidentDatesWithPercentage.find((d) => d.date === dateStr);
+              percentage_salary = found?.percentage || 100;
+            }
             return {
               date,
               value,
+              percentage_salary,
               employee_incident_id: createEmployeeIncidents.id,
               created_at: new Date(),
             };
@@ -406,6 +414,7 @@ export const EmployeeIncidentsService = {
           id: true,
           date: true,
           created_at: true,
+          percentage_salary: true,
         },
         orderBy: {
           date: "asc",

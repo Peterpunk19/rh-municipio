@@ -15,12 +15,14 @@ import {
   validateEmployeeIncident,
   validateIncidentsRolesPermissions,
   getEmployeeDireccion,
+  assignPercentageDays,
 } from "@/app/api/common/utils.service";
 import { logger } from "@/lib/logger";
 import { failureResponse, getRoleValueById, validateDireccionAccess } from "@/common/utils";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPermissions";
 import { IncidentRulesService } from "@/app/api/services/incident-rules.service";
+import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -55,6 +57,7 @@ export async function POST(request: NextRequest) {
       Number(body.incidentId),
       INCIDENTS_ROLES_PERMISSIONS.CAN_CREATE,
     );
+
     if (!permissionValidation)
       return failureResponse(HttpMessages.employeeIncidents.incidentsRolesPermissionsCreateFailed);
 
@@ -64,7 +67,16 @@ export async function POST(request: NextRequest) {
     }
 
     const rulesValidation = await IncidentRulesService.validateIncidentRules(body);
-    if (rulesValidation) return handleHttpResponse(rulesValidation);
+
+    if (rulesValidation && !rulesValidation.success) {
+      return handleHttpResponse(rulesValidation);
+    }
+
+    if (rulesValidation && rulesValidation.success && body.incidentId === INCIDENT_TYPES_ID.LICENCIA_MEDICA) {
+      const licenciaMedicaData = rulesValidation.responseObject as any;
+      const assigned = assignPercentageDays(body.incidentDates, licenciaMedicaData);
+      body.incidentDatesWithPercentage = assigned;
+    }
 
     const datesToCheck = body.incidentDates || [];
 

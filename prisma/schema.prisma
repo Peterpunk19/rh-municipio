@@ -339,6 +339,7 @@ model EmployeeIncidentDays {
   id                   Int               @id @default(autoincrement())
   date                 DateTime
   value                Int               @default(1)
+  percentage_salary    Int               @default(0)
   employee_incident_id Int
   employee_incident    EmployeeIncidents @relation(fields: [employee_incident_id], references: [id])
   created_at           DateTime?         @default(now())

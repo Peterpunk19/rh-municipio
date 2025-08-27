@@ -10,6 +10,7 @@ export interface IEmployeeIncident {
   employeeAttendanceId?: number;
   createdBy: number | null;
   incidentDates: string[];
+  incidentDatesWithPercentage?: { date: string; percentage: number }[];
   direccionId?: number | null;
 }
 
