@@ -164,6 +164,10 @@ export const HttpMessages = {
     notFound: "No se encontraron validaciones para esta incidencia",
     notAvailableDays: "Se superó el numero de dias disponibles para esta incidencia",
     notMinYears: "El empleado aún no cumple con los años mínimos para esta incidencia",
+    notConsecutiveDays: "Se superó el numero de dias consecutivos para esta incidencia",
+    notAdjacentHolidayDays: "No se puede registrar la incidencia junto a un dia festivo",
+    notAdjacentVacationDays: "No se puede registrar la incidencia junto a un dia de vacaciones",
+    notSameDay: "Ya existe una incidencia con alguno de los dias proporcionados",
   },
   salaries: {
     notFound: "No se encontraron salarios con los filtros proporcionados",

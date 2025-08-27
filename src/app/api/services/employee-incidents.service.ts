@@ -96,12 +96,13 @@ export const EmployeeIncidentsService = {
         const jobSchedules = await EmployeeService.getCurrentJobSchedule(Number(employeeIncident.employeeId));
         const daysActive = getActiveDaysFromSchedules(jobSchedules);
         const isVacationIncident = employeeIncident.incidentId === INCIDENT_TYPES_ID.VACACIONES;
+        const isEconomicLeave = employeeIncident.incidentId === INCIDENT_TYPES_ID.PERMISO_ECONOMICO;
         const vacationDayRecords = await Promise.all(
           employeeIncident.incidentDates.map(async (dateStr) => {
             const date = new Date(dateStr);
             let value = 1;
 
-            if (isVacationIncident) {
+            if (isVacationIncident || isEconomicLeave) {
               const isHoliday = await HolidayService.isHoliday(date);
               value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : value;
             }
@@ -519,5 +520,29 @@ export const EmployeeIncidentsService = {
 
       return [createEmployeeIncidentsStatus];
     });
+  },
+
+  async findDateConflicts(employeeId: number, incidentDates: (string | Date)[]) {
+    if (!incidentDates || incidentDates.length === 0) return [] as Date[];
+    const dayWindows = incidentDates.map((d) => {
+      const date = d instanceof Date ? d : new Date(String(d).trim());
+      const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0));
+      const next = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0, 0));
+      return { start, next };
+    });
+
+    const conflicts = await prisma.employeeIncidentDays.findMany({
+      where: {
+        OR: dayWindows.map(({ start, next }) => ({
+          date: { gte: start, lt: next },
+          employee_incident: {
+            employee_id: Number(employeeId),
+            incident_status_id: { in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA] },
+          },
+        })),
+      },
+      select: { date: true },
+    });
+    return conflicts.map((c) => c.date);
   },
 };
