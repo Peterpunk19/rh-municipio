@@ -46,7 +46,7 @@ model Employee {
   maternal_last_name                   String
   birthday                             DateTime
   rfc                                  String                              @unique
-  curp                                 String                              @unique
+  curp                                 String
   active                               Boolean                             @default(true)
   created_at                           DateTime?                           @default(now())
   updated_at                           DateTime?                           @updatedAt
@@ -607,7 +607,7 @@ model EmployeeType {
 model Category {
   id                     Int                    @id @default(autoincrement())
   name                   String                 @unique
-  display_name           String
+  display_name           String                 @unique
   active                 Boolean                @default(true)
   employees              EmployeeHiring[]
   category_employee_type CategoryEmployeeType[]
@@ -616,7 +616,7 @@ model Category {
 model Location {
   id                          Int                     @id @default(autoincrement())
   name                        String                  @unique
-  display_name                String
+  display_name                String                  @unique
   active                      Boolean                 @default(true)
   employee_location           EmployeeLocation[]
   employee_request_detail     EmployeeRequestDetail[] @relation("currentLocation")

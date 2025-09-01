@@ -8,9 +8,15 @@ import { HttpMessages } from "@/common/response/messages";
 
 export const EmployeeService = {
   async getEmployeeByRfcCurp(rfc: string, curp: string, employeeId?: number) {
+    const orConditions: any[] = [{ rfc }];
+
+    if (curp && curp.trim() !== "") {
+      orConditions.push({ curp });
+    }
+
     return prisma.employee.findFirst({
       where: {
-        OR: [{ rfc }, { curp }],
+        OR: orConditions,
         NOT: employeeId ? { id: employeeId } : undefined,
       },
     });

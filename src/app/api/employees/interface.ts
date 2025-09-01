@@ -31,7 +31,7 @@ export interface IEmployee {
   employeeAddressId?: number | string;
   userId?: number;
   employeeId?: number;
-  stateId: number | string;
+  stateId?: number | string;
   secretariaId?: number | null;
   id?: number;
   active?: boolean;

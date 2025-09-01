@@ -8,4 +8,17 @@ export const LocationService = {
       },
     });
   },
+
+  async getLocationByDisplayNameToImport(display_name: string) {
+    const location = await prisma.location.upsert({
+      where: { display_name },
+      update: {},
+      create: {
+        display_name,
+        name: display_name.toLowerCase().replace(/\s+/g, "_"),
+      },
+    });
+
+    return location.id;
+  },
 };
