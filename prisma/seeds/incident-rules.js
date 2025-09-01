@@ -45,6 +45,69 @@ const incident = {
   COMISION: incidentData.find((i) => i.name === "comision").id,
 };
 
+const paternityRules = [
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PATERNIDAD,
+        days: 21,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_NO_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PATERNIDAD,
+        days: 21,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONFIANZA,
+    incidentConfigs: [
+      {
+        incident_id: incident.PATERNIDAD,
+        days: 21,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_GASTO_CORRIENTE,
+    incidentConfigs: [
+      {
+        incident_id: incident.PATERNIDAD,
+        days: 21,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_LAUDO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PATERNIDAD,
+        days: 21,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_FONDO_IV,
+    incidentConfigs: [
+      {
+        incident_id: incident.PATERNIDAD,
+        days: 21,
+        allMonths: true,
+      },
+    ],
+  }),
+];
+
 const baseRules = [
   ...generateRules({
     employee_type_id: employeeTypes.BASE_SINDICALIZADO,
@@ -307,6 +370,7 @@ const contratoLaudoPermisoEconomico = [
 ];
 
 module.exports = [
+  ...paternityRules,
   ...baseRules,
   ...baseSindicalizadoPermisoEconomico,
   ...baseNoSindicalizadoRules,

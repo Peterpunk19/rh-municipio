@@ -176,8 +176,21 @@ export const IncidentRulesService = {
       }
     }
 
+    if (incidentId === INCIDENT_TYPES_ID.PATERNIDAD) {
+      if (employee?.gender?.name !== "male") {
+        return HttpResponse.success(HttpMessages.incidentRules.getSuccess, {
+          incident_id: incidentId,
+          employee_id: employeeId,
+          allowed_days: 0,
+          used_days: 0,
+          remaining_days: 0,
+          hasRules: true,
+        });
+      }
+    }
+
     const used_days = await this.getUsedIncidentDays(employeeId, incidentId, periodStart, periodEnd);
-    const remaining_days = allowed_days - used_days;
+    const remaining_days = Math.max(0, allowed_days - used_days);
     return HttpResponse.success(HttpMessages.incidentRules.getSuccess, {
       incident_id: incidentId,
       employee_id: employeeId,
@@ -190,6 +203,7 @@ export const IncidentRulesService = {
 
   async validateIncidentRules(body: any) {
     try {
+      const employee = await EmployeeService.getEmployeeById(Number(body.employeeId));
       const ruleValidation = await this.validateIncidentRule({
         employeeId: Number(body.employeeId),
         incidentId: Number(body.incidentId),
@@ -221,6 +235,7 @@ export const IncidentRulesService = {
         jobSchedules,
         responseObject.used_days,
         responseObject.allowed_days,
+        Number(body.incidentId),
       );
 
       if (!hasAvailableDays) {
@@ -228,7 +243,6 @@ export const IncidentRulesService = {
       }
 
       if (Number(body.incidentId) === INCIDENT_TYPES_ID.PERMISO_ECONOMICO) {
-        const employee = await EmployeeService.getEmployeeById(Number(body.employeeId));
         if (!employee || !employee.employee_hiring?.length) {
           return HttpResponse.failure(HttpMessages.employee.idNotFound, {});
         }
@@ -330,6 +344,12 @@ export const IncidentRulesService = {
           if (vacDates.has(prev.toDateString()) || vacDates.has(next.toDateString())) {
             return HttpResponse.failure(HttpMessages.incidentRules.notAdjacentVacationDays, {});
           }
+        }
+      }
+
+      if (body.incidentId === INCIDENT_TYPES_ID.PATERNIDAD) {
+        if (employee?.gender?.name !== "male") {
+          return HttpResponse.failure(HttpMessages.incidentRules.notMaleEmployee, {});
         }
       }
 

@@ -28,6 +28,7 @@ import EmployeesAttendancesSlice from "@/store/employees-attendances/EmployeesAt
 import IncidentsRolesPermissionsListSlice from "@/store/reference/incidents-roles-permissions/ListSlice";
 import IncidentsRulesListSlice from "@/store/reference/incidents-rules/ListSlice";
 import SalariesListSlice from "@/store/reference/salaries/ListSlice";
+import employeeIncidentReducer from "@/store/slices/employeeIncidentSlice";
 
 const persistConfig = {
   key: "root",
@@ -47,6 +48,7 @@ export const store = configureStore({
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
     employeesReducer: EmployeesReducer,
+    employeeIncident: employeeIncidentReducer,
     filterEmployeesSlice: EmployeesFiltersReducer,
     employeesIncidentsSlice: EmployeesIncidentsSlice,
     employeeRequestsSlice: EmployeesRequestsFiltersSlice,

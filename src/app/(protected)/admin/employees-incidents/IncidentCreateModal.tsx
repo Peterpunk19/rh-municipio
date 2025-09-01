@@ -28,6 +28,8 @@ export const IncidentCreateModal = ({ open, onClose, employeeId, onSuccess }: In
       birthday: employeeData.birthday,
       rfc: employeeData.rfc,
       curp: employeeData.curp,
+      gender_id: employeeData.gender.id,
+      gender_name: employeeData.gender.name,
       direccion_display_name: employeeData.employee_hiring?.[0]?.direccion?.display_name,
       secretaria_display_name: employeeData.employee_hiring?.[0]?.direccion?.secretaria?.display_name,
       category_display_name: employeeData.employee_hiring?.[0]?.category?.display_name,
