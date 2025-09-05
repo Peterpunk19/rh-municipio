@@ -7,9 +7,10 @@ import type { NextRequest } from "next/server";
 import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
 import { validateRequest } from "@/common/request/validateRequest";
 import { EmployeeAttendanceBulkInsertSchema } from "@/schemas/employee-attendance";
+import { AttendanceValidator } from "@/app/api/common/attendance-validator.service";
 
 interface AttendanceRequest {
-  id: Number;
+  id: number;
   numberEmployee: string;
   dateTime: string;
   isEntry: number;
@@ -61,36 +62,41 @@ export async function POST(request: NextRequest) {
           employee.employee_attendance_type[0],
         ];
 
-        if (!ascription || !location || !attendanceType) {
-          throw new Error("Datos incompletos del empleado");
+        const shouldSave = await AttendanceValidator.shouldSaveAttendance(numberEmployee, isEntry, dateTime);
+
+        if (!shouldSave) {
+          continue;
         }
 
+        let existingRecord = null;
         if (isEntry === 1) {
-          await EmployeeAttendanceService.createSingleAttendance({
-            check_in: timestamp,
-            check_out: null,
+          existingRecord = await EmployeeAttendanceService.findMatchingRecordForCheckIn(numberEmployee, timestamp);
+        } else {
+          existingRecord = await EmployeeAttendanceService.findMatchingRecordForCheckOut(numberEmployee, timestamp);
+        }
+
+        const incidentId = await AttendanceValidator.validateAttendance(record, employee);
+
+        if (existingRecord) {
+          if (isEntry === 1) {
+            await EmployeeAttendanceService.updateAttendanceCheckIn(existingRecord.id, timestamp, incidentId);
+          } else {
+            await EmployeeAttendanceService.updateAttendanceCheckOut(existingRecord.id, timestamp);
+          }
+        } else {
+          const attendanceData = {
+            check_in: isEntry === 1 ? timestamp : null,
+            check_out: isEntry === 0 ? timestamp : null,
             active: true,
             created_by_id: createdById,
             employee_ascription_id: ascription.id,
             employee_location_id: location.id,
             employee_attendance_type_id: attendanceType.id,
-            description: "Entrada registrada",
-          });
-        } else {
-          try {
-            await EmployeeAttendanceService.updateAttendanceById(numberEmployee, ascription.id, location.id, dateTime);
-          } catch (updateError) {
-            await EmployeeAttendanceService.createSingleAttendance({
-              check_in: null,
-              check_out: timestamp,
-              active: true,
-              created_by_id: createdById,
-              employee_ascription_id: ascription.id,
-              employee_location_id: location.id,
-              employee_attendance_type_id: attendanceType.id,
-              description: "Salida sin entrada previa",
-            });
-          }
+            employee_incident_id: incidentId,
+            description: isEntry === 1 ? "Entrada registrada" : "Salida registrada",
+          };
+
+          await EmployeeAttendanceService.createSingleAttendance(attendanceData);
         }
       } catch (error) {
         responseRecord.status = "error";

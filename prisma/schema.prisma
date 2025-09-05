@@ -290,6 +290,8 @@ model Incident {
   type                        Int
   display_calendar_dates      Boolean                     @default(false)
   display_time_on_calendar    Boolean                     @default(false)
+  bgColorOnCalendar           String?
+  colorOnCalendar             String?
   active                      Boolean
   employee_incidents          EmployeeIncidents[]
   incidents_roles_permissions IncidentsRolesPermissions[]

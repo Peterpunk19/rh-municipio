@@ -2,23 +2,14 @@
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import Divider from "@mui/material/Divider";
-import { Grid2 as Grid, Box, Typography, Button, ButtonGroup, DialogActions } from "@mui/material";
+import { Grid2 as Grid, Box, Typography, Button, ButtonGroup, DialogActions, IconButton, Tooltip } from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
 import { toUpper } from "lodash";
-
-type CalendarDay = {
-  date: Temporal.PlainDate;
-  isInMonth: boolean;
-};
-
-interface CustomCalendarProps {
-  onSave?: (selectedDates: string[]) => void;
-  onCancel?: () => void;
-  maxSelections?: number;
-  daysSelected?: string[];
-  onMonthVisibleChange?: (year: number, month: number) => void;
-  clearOnMonthChange?: boolean;
-}
+import { IconClockUp, IconClockDown, IconClockCheck, IconEye, IconEyeOff } from "@tabler/icons-react";
+import {getEmployeesAttendances} from "@/services/employees-attendances";
+import {calculateDaysBetweenDates} from "@/common/utils";
+import {IAttendance, ICalendarDay, ICustomCalendarProps} from "@/components/types";
+import {formatDate} from "@/utils/formatter";
 
 const CustomCalendar = ({
   onSave,
@@ -27,19 +18,52 @@ const CustomCalendar = ({
   daysSelected = [],
   onMonthVisibleChange,
   clearOnMonthChange = false,
-}: CustomCalendarProps) => {
+  employeeId,
+}: ICustomCalendarProps) => {
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const today = Temporal.Now.plainDateISO();
 
   const [month, setMonth] = useState(Temporal.Now.plainDateISO().month);
   const [year, setYear] = useState(Temporal.Now.plainDateISO().year);
-  const [monthCalendar, setMonthCalendar] = useState<CalendarDay[]>([]);
+  const [monthCalendar, setMonthCalendar] = useState<ICalendarDay[]>([]);
   const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
+  const [showAttendanceDetails, setShowAttendanceDetails] = useState(false);
+  const [attendanceData, setAttendanceData] = useState<IAttendance[]>([]);
   const selectionsByMonthRef = useRef<Map<string, Set<string>>>(new Map());
 
   const monthKey = useCallback((y: number, m: number) => `${y}-${String(m).padStart(2, "0")}`, []);
 
-  const next = useCallback(() => {
+  const attendanceMap = useMemo(() => {
+    const map = new Map<string, IAttendance>();
+    if (!attendanceData || attendanceData.length === 0) return map;
+
+    for (const record of attendanceData) {
+      const dateString = record.check_in?.substring(0, 10) ||
+        record.check_out?.substring(0, 10);
+
+      if (!dateString) {
+        continue;
+      }
+
+      const attendance: IAttendance = {
+        id: record.id,
+        checkIn: record.check_in || null,
+        checkOut: record.check_out || null,
+        isIncident: !!record.employee_incident,
+        incidentId: record.employee_incident?.id || null,
+        incidentType: record.employee_incident?.incident?.display_name || undefined,
+        displayTimeOnCalendar: record.employee_incident?.incident?.display_time_on_calendar || undefined,
+        bgColorOnCalendar: record.employee_incident?.incident?.bgColorOnCalendar || undefined,
+        colorOnCalendar: record.employee_incident?.incident?.colorOnCalendar || "#FFF",
+      };
+
+      map.set(dateString, attendance);
+    }
+
+    return map;
+  }, [attendanceData]);
+
+  const next = useCallback(async () => {
     if (clearOnMonthChange) {
       selectionsByMonthRef.current.set(monthKey(year, month), new Set(selectedDates));
     }
@@ -56,7 +80,7 @@ const CustomCalendar = ({
     onMonthVisibleChange?.(nextYear, nextMonth);
   }, [month, year, selectedDates, monthKey, clearOnMonthChange]);
 
-  const previous = useCallback(() => {
+  const previous = useCallback(async () => {
     if (clearOnMonthChange) {
       selectionsByMonthRef.current.set(monthKey(year, month), new Set(selectedDates));
     }
@@ -64,6 +88,7 @@ const CustomCalendar = ({
       month,
       year,
     }).subtract({ months: 1 });
+
     if (clearOnMonthChange) {
       const restored = selectionsByMonthRef.current.get(monthKey(prevYear, prevMonth)) || new Set<string>();
       setSelectedDates(new Set(restored));
@@ -112,6 +137,29 @@ const CustomCalendar = ({
   const handleCancel = useCallback(() => {
     onCancel?.();
   }, [onCancel]);
+
+  const toggleAttendanceDetails = useCallback(async () => {
+    const newShowAttendanceDetails = !showAttendanceDetails;
+    setShowAttendanceDetails(newShowAttendanceDetails);
+
+    if (newShowAttendanceDetails) {
+      const startOfMonth = Temporal.PlainDate.from({ year, month, day: 1 });
+      const firstDay = startOfMonth;
+      const lastDay = startOfMonth.add({ days: startOfMonth.daysInMonth - 1 });
+
+      try {
+        const data = await getEmployeesAttendances({
+          employeeId: employeeId,
+          checkIn: firstDay.toString(),
+          checkOut: lastDay.toString(),
+          limit: calculateDaysBetweenDates(firstDay.toString(), lastDay.toString())
+        });
+        setAttendanceData(data.responseObject.data);
+      } catch (error) {
+        console.error("Error fetching attendance data:", error);
+      }
+    }
+  }, [showAttendanceDetails, year, month]);
 
   useEffect(() => {
     let targetYear = year;
@@ -196,7 +244,12 @@ const CustomCalendar = ({
           </Typography>
         </Box>
 
-        <Box>
+        <Box display="flex" alignItems="center" gap={2}>
+          <Tooltip title={showAttendanceDetails ? "Ocultar detalles de asistencia" : "Mostrar detalles de asistencia"}>
+            <IconButton onClick={toggleAttendanceDetails} color={showAttendanceDetails ? "primary" : "default"}>
+              {showAttendanceDetails ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+            </IconButton>
+          </Tooltip>
           <Typography variant="body2" color="textSecondary">
             Fechas seleccionadas: {selectedDates.size} / {maxSelections}
           </Typography>
@@ -225,17 +278,48 @@ const CustomCalendar = ({
           const dateStr = day.date.toString();
           const isSelected = selectedDates.has(dateStr);
           const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
+          const attendance = attendanceMap.get(dateStr);
 
+          // Determine attendance type and styling
+          let attendanceType = "";
+          let isCompleteAttendance = false;
+          let textColor = "#000";
           let backgroundColor = "#fff";
           let color = "#000";
+          let bgColor = "#fff";
 
-          if (!day.isInMonth) {
+          if (attendance) {
+            if (isSelected) {
+              backgroundColor = "#1976d2";
+              color = "#fff";
+            }
+            if (attendance.isIncident) {
+              attendanceType = attendance.incidentType || "";
+              bgColor = attendance.bgColorOnCalendar || "#f0f0f0";
+              textColor = attendance.colorOnCalendar || "#000";
+            } else if (attendance.checkIn && attendance.checkOut) {
+              attendanceType = "ASISTENCIA";
+              bgColor = attendance.bgColorOnCalendar || "success.attendance";
+              isCompleteAttendance = true;
+              textColor = isSelected ? "#fff" : "#000";
+            } else if (attendance.checkIn && !attendance.checkOut) {
+              attendanceType = "OMISIÓN DE SALIDA";
+              bgColor = attendance.bgColorOnCalendar || "warning.main";
+              textColor = isSelected ? "#fff" : "#000";
+            } else if (!attendance.checkIn && attendance.checkOut) {
+              attendanceType = "OMISIÓN DE ENTRADA";
+              bgColor = attendance.bgColorOnCalendar || "warning.main";
+              textColor = isSelected ? "#fff" : "#000";
+            }
+          } else if (!day.isInMonth) {
             backgroundColor = "#f6f6f6";
             color = "#999999";
           } else if (isSelected) {
             backgroundColor = "#1976d2";
             color = "#fff";
           }
+
+          const displayTime = attendance && (attendance.displayTimeOnCalendar || !attendance.isIncident);
 
           return (
             <Grid
@@ -247,9 +331,10 @@ const CustomCalendar = ({
               sx={{
                 backgroundColor: backgroundColor,
                 color: color,
-                p: 2,
+                pt: 2.4,
+                pl: 1,
                 position: "relative",
-                minHeight: 112,
+                minHeight: showAttendanceDetails ? 140 : 112,
                 cursor: day.isInMonth ? "pointer" : "default",
                 "&:hover": day.isInMonth
                   ? {
@@ -272,13 +357,56 @@ const CustomCalendar = ({
                   right: 5,
                   backgroundColor: isSelected ? "#fff" : backgroundColor,
                   border: "1px solid #eee",
-                  borderColor: isSelected ? "#1976d2" : "#eee",
-                  color: isSelected ? "#1976d2" : color,
+                  borderColor: isSelected ? "#1976d2" : "#f6f6f6",
+                  color: "#000",
                 }}
               >
                 {day.date.day}
-                {isToday ? <Divider sx={{ marginTop: 0.5, border: 1.5, borderColor: "orangered" }} /> : null}
+                {showAttendanceDetails && (<Divider sx={{marginTop: 0.2, border: 1.5, borderColor: isSelected ? "#1976d2" : bgColor}} />) }
               </Box>
+
+              {showAttendanceDetails && (
+                <>
+                  <Box sx={{ mt: 3 }}>
+                    {attendance ? (
+                      <Box sx={{ textAlign: 'left', mb: 2 }}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <IconClockCheck size={15}/>
+                          <Typography fontWeight={600} variant="body2" sx={{ fontSize: '0.7rem' }}>
+                            {attendanceType}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      ) : Temporal.PlainDate.compare(day.date, today) < 0 && day.isInMonth ? (
+                        <Box sx={{ textAlign: 'left' }}>
+                          <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
+                            <Typography fontWeight={600} variant="body2" sx={{ wordBreak: 'break-word', fontSize: '0.7rem' }}>
+                              SIN REGISTROS
+                            </Typography>
+                          </Box>
+                        </Box>
+                      ) : null
+                    }
+                  </Box>
+
+                  {displayTime && (
+                    <Box sx={{ mt: 1 }}>
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <IconClockUp size={15} />
+                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
+                          Entrada: {attendance.checkIn ? formatDate(new Date(attendance.checkIn), "HH:mm") : ''}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <IconClockDown size={15} />
+                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
+                          Salida: {attendance.checkOut ? formatDate(new Date(attendance.checkOut), "HH:mm") : ''}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  )}
+                </>
+              )}
             </Grid>
           );
         })}

@@ -29,6 +29,7 @@ import { IconCalendar, IconClock } from "@tabler/icons-react";
 import { formatDate, getMonthName } from "@/utils/formatter";
 import { RowDetail } from "@/components/tables/RowDetail";
 import { RowSwitch } from "@/components/tables/RowSwitch";
+import {Chip} from "@mui/material";
 
 interface TableItemBase {
   id: number;
@@ -138,6 +139,42 @@ const TableWithPagination = <T extends TableItemBase>({
           </Box>
         );
 
+      case "checkIn":
+        return (
+          <Box display="flex" flexDirection="column" gap={0.5}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <IconCalendar size="14" />
+              <Typography fontWeight={500} variant="body2">
+                {formatDate(new Date(value as string), "dd/MM/yyyy")}
+              </Typography>
+            </Box>
+            {(row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar) ? <Box display="flex" alignItems="center" gap={1}>
+              <IconClock size="14" />
+              <Typography fontWeight={500} variant="body2">
+                {formatDate(new Date(value as string), "HH:mm")}
+              </Typography>
+            </Box> : null}
+          </Box>
+        );
+
+      case "checkOut":
+        return (
+          <Box display="flex" flexDirection="column" gap={0.5}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <IconCalendar size="14" />
+              <Typography fontWeight={500} variant="body2">
+                {formatDate(new Date(value as string), "dd/MM/yyyy")}
+              </Typography>
+            </Box>
+            {(row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar) ? <Box display="flex" alignItems="center" gap={1}>
+              <IconClock size="14" />
+              <Typography fontWeight={500} variant="body2">
+                {formatDate(new Date(value as string), "HH:mm")}
+              </Typography>
+            </Box> : null}
+          </Box>
+        );
+
       case "boolean":
         return (
           <Box display="flex" alignItems="center">
@@ -160,6 +197,21 @@ const TableWithPagination = <T extends TableItemBase>({
           <Typography fontWeight={600} variant="h6">
             {currencyFormatter.format(value as number)}
           </Typography>
+        );
+
+      case "incidentType":
+        return (
+          <Chip
+            sx={{
+              bgcolor: row?.incident?.bgColorOnCalendar || "#fff" ,
+              color: row?.incident?.colorOnCalendar || '#FFF',
+              borderRadius: '10px',
+              width: 100,
+              fontSize: "13px",
+            }}
+            label={value}
+            size="small"
+          />
         );
 
       case "monthName":
