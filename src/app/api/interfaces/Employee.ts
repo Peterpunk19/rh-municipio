@@ -14,6 +14,7 @@ export interface Employee {
   user_id?: number;
   status_employee_id?: number;
   gender_id?: number;
+  gender_name?: string;
   marital_status_id?: number;
   schooling_id?: number;
   profession_id?: number;

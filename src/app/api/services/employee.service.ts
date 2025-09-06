@@ -662,7 +662,8 @@ export const EmployeeService = {
                et.display_name AS employee_type_display_name,
                tu.display_name AS trade_union_display_name,
                l.display_name AS location_display_name,
-               at.display_name AS attendance_type_display_name
+               at.display_name AS attendance_type_display_name,
+               g.name AS gender_name
         FROM Employee AS e
                  JOIN EmployeeHiring AS eh ON eh.employee_id = e.id AND eh.active = 1
                  JOIN EmployeeAscriptions AS ea ON ea.employee_id = e.id AND ea.active = 1
@@ -676,6 +677,7 @@ export const EmployeeService = {
                  LEFT JOIN EmployeeAttendanceType AS eat ON e.id = eat.employee_id AND eat.active = 1
                  LEFT JOIN Location AS l ON el.location_id = l.id
                  LEFT JOIN Attendance AS at ON eat.attendance_id = at.id
+                 LEFT JOIN Gender AS g ON e.gender_id = g.id
     `;
 
     if (direccionIds && direccionIds.length > 0) {
@@ -698,6 +700,7 @@ export const EmployeeService = {
       trade_union_display_name: string | null;
       location_display_name: string | null;
       attendance_type_display_name: string | null;
+      gender_name: string | null;
     }[];
 
     if (search) {
@@ -735,6 +738,7 @@ export const EmployeeService = {
       trade_union_display_name: emp.trade_union_display_name,
       location_display_name: emp.location_display_name,
       attendance_type_display_name: emp.attendance_type_display_name,
+      gender_name: emp.gender_name,
     }));
   },
 

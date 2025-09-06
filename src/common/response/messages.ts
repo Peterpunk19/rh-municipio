@@ -168,6 +168,7 @@ export const HttpMessages = {
     notAdjacentHolidayDays: "No se puede registrar la incidencia junto a un dia festivo",
     notAdjacentVacationDays: "No se puede registrar la incidencia junto a un dia de vacaciones",
     notSameDay: "Ya existe una incidencia con alguno de los dias proporcionados",
+    notMaleEmployee: "Esta incidencia solo está disponible para empleados de género masculino.",
   },
   salaries: {
     notFound: "No se encontraron salarios con los filtros proporcionados",

@@ -13,6 +13,7 @@ import { EmployeeRequestService } from "@/app/api/services/employee-request.serv
 import { IncidentsRolesPermissionsService } from "@/app/api/services/incidents-roles-permissions";
 import { VACATION_DAY_VALUE } from "@/common/constants/VacationDayValue";
 import { HolidayService } from "@/app/api/services/holiday.service";
+import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 
 let cachedIncidentStatus: Awaited<ReturnType<typeof CatalogsService.getIncidentStatusByName>> | null = null;
 let cachedRequestStatus: Awaited<ReturnType<typeof CatalogsService.getRequestStatusByName>> | null = null;
@@ -209,14 +210,33 @@ export const validateTotalEmployeeIncidentDays = async (
   jobSchedules: any[],
   usedDays: number,
   allowedDays: number,
+  incidentTypeId?: number
 ): Promise<boolean> => {
   const daysActive = getActiveDaysFromSchedules(jobSchedules);
+  
   const daysToInsert = await incidentDates.reduce(async (acc, dateStr) => {
     const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
+    console.log("********** DATE **********");
+    console.log(date);
+    console.log("********** INCIDENT TYPE ID **********");
+    console.log(incidentTypeId);
+    
+    if (incidentTypeId === INCIDENT_TYPES_ID.PATERNIDAD) {
+      const isWorkday = daysActive.has(date.getDay());
+      return (await acc) + (isWorkday ? 1 : 0);
+    }
+    
     const isHoliday = await HolidayService.isHoliday(date);
-    let value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : 1;
+    const value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : 1;
     return (await acc) + value;
   }, Promise.resolve(0));
+  console.log("********** Days To Insert **********");
+  console.log(daysToInsert);
+  console.log("********** Used Days **********");
+  console.log(usedDays);
+  console.log("********** Allowed Days **********");
+  console.log(allowedDays);
+
   return (usedDays ?? 0) + daysToInsert <= (allowedDays ?? 0);
 };
 

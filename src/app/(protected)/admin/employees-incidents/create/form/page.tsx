@@ -48,6 +48,7 @@ import IncidentDaysInfo from "@/components/customComponents/IncidentDaysInfo";
 import { HttpMessages } from "@/common/response/messages";
 import { getFirstDayMonthString } from "@/common/utils";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
+import { GENDER } from "@/common/constants/Gender";
 
 type IncidentCreateFormProps = {
   selectedEmployee?: any;
@@ -65,6 +66,8 @@ const IncidentCreateForm = ({
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useCurrentUser();
   const { formData, errors } = useSelector((state: RootState) => state.createEmployeeIncident);
+  const selectedEmployeeFromStore = useSelector((state: RootState) => state.employeeIncident.selectedEmployee);
+  const currentEmployee = selectedEmployee || selectedEmployeeFromStore;
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -178,11 +181,19 @@ const IncidentCreateForm = ({
     }
   };
 
+  const userRoleId = (user as any)?.role_id || "";
+  const catalogName = `incidents?roleId=${userRoleId}`;
+  const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
+  const { options: incidentTypes = [], isLoading, error: loadError } = useFetchOptions(fetchData);
+
   const handleSelectEmployee = async (employee: Employee) => {
     dispatch(setSelectedEmployee(employee));
     dispatch(setEmployeeData(employee));
+
     if (employee?.id) {
-      dispatch(updateFormData({ field: "employeeId", value: employee.id.toString() }));
+      const employeeId = employee.id.toString();
+      dispatch(updateFormData({ field: "employeeId", value: employeeId }));
+      dispatch(updateFormData({ field: "incidentId", value: "0" }));
       const newErrors = { ...errors };
       delete newErrors.employeeId;
       const filteredErrors = Object.fromEntries(
@@ -191,16 +202,33 @@ const IncidentCreateForm = ({
       dispatch(setErrors(filteredErrors as { [key: string]: string }));
     } else {
       dispatch(updateFormData({ field: "employeeId", value: "" }));
+      dispatch(updateFormData({ field: "incidentId", value: "0" }));
     }
   };
 
-  const catalogName = `incidents?roleId=${user?.role}`;
-  const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
-  const { options: incidentTypes, isLoading, error } = useFetchOptions(fetchData);
+  const error = loadError as string | null;
+
+  const filteredIncidentTypes = useMemo(() => {
+    if (!incidentTypes || !Array.isArray(incidentTypes)) return [];
+
+    if (!currentEmployee) {
+      return incidentTypes;
+    }
+
+    if (currentEmployee.gender_name === GENDER.MALE) {
+      return incidentTypes;
+    }
+    const filtered = incidentTypes.filter((type) => {
+      const shouldExclude = Number(type.id) === INCIDENT_TYPES_ID.PATERNIDAD;
+      return !shouldExclude;
+    });
+
+    return filtered;
+  }, [incidentTypes, currentEmployee]);
 
   const calendarIncidentIds = useMemo(() => {
-    return incidentTypes?.filter((item) => item.display_calendar_dates).map((item) => item.id) || [];
-  }, [incidentTypes]);
+    return filteredIncidentTypes?.filter((item) => item.display_calendar_dates).map((item) => item.id) || [];
+  }, [filteredIncidentTypes]);
 
   const isVacationIncident = useMemo(() => {
     return calendarIncidentIds.includes(formData.incidentId);
@@ -398,7 +426,7 @@ const IncidentCreateForm = ({
                   ) : error ? (
                     <MenuItem disabled>Error al cargar</MenuItem>
                   ) : (
-                    incidentTypes?.map((incident) => (
+                    filteredIncidentTypes?.map((incident) => (
                       <MenuItem key={incident.id} value={incident.id}>
                         {incident.display_name}
                       </MenuItem>
