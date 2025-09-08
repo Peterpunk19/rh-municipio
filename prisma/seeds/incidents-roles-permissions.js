@@ -131,6 +131,28 @@ const basePermissions = [
     can_reject: false,
     can_edit: false,
   },
+  {
+    incident_id: 12,
+    // name: "retardo",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  },
+  {
+    incident_id: 13,
+    // name: "falta",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  },
 ];
 
 const incidentsRolesPermission = [];

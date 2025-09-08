@@ -642,6 +642,42 @@ export const EmployeeService = {
             },
           },
         },
+        job_schedule_employee: {
+          where: {
+            active: true,
+          },
+          select: {
+            id: true,
+            start_day: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+            end_day: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+            start_hour: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+            end_hour: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+          },
+        },
       },
     });
   },

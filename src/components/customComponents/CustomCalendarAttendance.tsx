@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import Divider from '@mui/material/Divider';
-import { Grid2 as Grid, Box, Typography, Button, ButtonGroup } from "@mui/material";
+import {Grid2 as Grid, Box, Typography, Button, ButtonGroup, Card, CardContent} from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
 import {toUpper} from "lodash";
-import {IconClockUp, IconClockDown, IconClockCheck, IconClockCancel} from "@tabler/icons-react";
+import {IconClockUp, IconClockDown, IconClockCheck, IconX} from "@tabler/icons-react";
 import {getEmployeesAttendances} from "@/services/employees-attendances";
 import {StatusCodes} from "http-status-codes";
 import {logger} from "@/lib/logger";
@@ -13,20 +13,11 @@ import {useSelector} from "@/store/hooks";
 import type {RootState} from "@/store/store";
 import {formatDate} from "@/utils/formatter";
 import {calculateDaysBetweenDates} from "@/common/utils";
-
-type CalendarDay = {
-  date: Temporal.PlainDate;
-  isInMonth: boolean;
-};
-
-type Attendance = {
-  id: number;
-  check_in: string;
-  check_out: string;
-  isIncident?: boolean;
-  displayTimeOnCalendar?: boolean;
-  incidentType?: string;
-};
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import IncidentDetailModal from "@/app/(protected)/employee/incidents/IncidentDetailModal";
+import {IAttendance, ICalendarDay} from "@/components/types";
 
 const CustomCalendarAttendance = ()=> {
   const { values } = useSelector(
@@ -34,6 +25,8 @@ const CustomCalendarAttendance = ()=> {
   );
 
   const [attendanceData, setAttendanceData] = React.useState<any>([]);
+  const [selectedIncident, setSelectedIncident] = useState<number | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
@@ -59,22 +52,30 @@ const CustomCalendarAttendance = ()=> {
   }
 
   const attendanceMap = useMemo(() => {
-    const map = new Map<string, Attendance>();
-    if (!attendanceData) return map;
+    const map = new Map<string, IAttendance>();
+    if (!attendanceData || attendanceData.length === 0) return map;
 
     for (const record of attendanceData) {
-      const dateStr = Temporal.PlainDate.from(record.check_in.substring(0, 10)).toString();
+      const dateString = record.check_in?.substring(0, 10) ||
+        record.check_out?.substring(0, 10);
 
-      const attendance: Attendance = {
+      if (!dateString) {
+        continue;
+      }
+
+      const attendance: IAttendance = {
         id: record.id,
-        check_in: record.check_in,
-        check_out: record.check_out,
+        checkIn: record.check_in || null,
+        checkOut: record.check_out || null,
         isIncident: !!record.employee_incident,
+        incidentId: record.employee_incident?.id || null,
         incidentType: record.employee_incident?.incident?.display_name || undefined,
         displayTimeOnCalendar: record.employee_incident?.incident?.display_time_on_calendar || undefined,
+        bgColorOnCalendar: record.employee_incident?.incident?.bgColorOnCalendar || undefined,
+        colorOnCalendar: record.employee_incident?.incident?.colorOnCalendar || "#FFF",
       };
 
-      map.set(dateStr, attendance);
+      map.set(dateString, attendance);
     }
 
     return map;
@@ -84,7 +85,7 @@ const CustomCalendarAttendance = ()=> {
 
   const [month, setMonth] = useState(Temporal.Now.plainDateISO().month);
   const [year, setYear] = useState(Temporal.Now.plainDateISO().year);
-  const [monthCalendar, setMonthCalendar] = useState<CalendarDay[]>([]);
+  const [monthCalendar, setMonthCalendar] = useState<ICalendarDay[]>([]);
 
   const next = () => {
     const { month: nextMonth, year: nextYear } = Temporal.PlainYearMonth.from({
@@ -104,6 +105,19 @@ const CustomCalendarAttendance = ()=> {
     }).subtract({ months: 1 });
     setMonth(prevMonth);
     setYear(prevYear);
+  };
+
+  const handleDayClick = (attendance: IAttendance | undefined) => {
+    if (attendance?.isIncident) {
+      console.log("attendance", attendance.incidentId);
+      setSelectedIncident(attendance.incidentId);
+      setModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedIncident(null);
   };
 
   useEffect(() => {
@@ -175,8 +189,38 @@ const CustomCalendarAttendance = ()=> {
         {monthCalendar.map((day, index) => {
           const attendance = attendanceMap.get(day.date.toString());
           const isIncident = attendance?.isIncident;
+          const checkIn = attendance?.checkIn;
+          const checkOut = attendance?.checkOut;
           const incidentType = attendance?.incidentType;
+          const bgColorOnCalendar = attendance?.bgColorOnCalendar;
+          const colorOnCalendar = attendance?.colorOnCalendar;
           const displayTimeOnCalendar = attendance?.displayTimeOnCalendar;
+
+          let attendanceType = "";
+          let isCompleteAttendance = false;
+          let bgColor = "#fff";
+          let textColor = "#fff";
+
+          if (attendance) {
+            if (isIncident) {
+              attendanceType = incidentType || "";
+              bgColor = attendance.bgColorOnCalendar || "#f0f0f0";
+              textColor = attendance.colorOnCalendar || "#000";
+            } else if (checkIn && checkOut) {
+              attendanceType = "ASISTENCIA";
+              bgColor = attendance.bgColorOnCalendar || "success.attendance";
+              textColor = attendance.colorOnCalendar || "#000";
+              isCompleteAttendance = true;
+            } else if (checkIn && !checkOut) {
+              attendanceType = "OMISIÓN DE SALIDA";
+              bgColor = attendance.bgColorOnCalendar || "warning.main";
+              textColor = attendance.colorOnCalendar || "#fff";
+            } else if (!checkIn && checkOut) {
+              attendanceType = "OMISIÓN DE ENTRADA";
+              bgColor = attendance.bgColorOnCalendar || "warning.main";
+              textColor = attendance.colorOnCalendar || "#fff";
+            }
+          }
 
           const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
           const hasAttendance = !!attendance;
@@ -184,109 +228,112 @@ const CustomCalendarAttendance = ()=> {
           const backgroundColor =
             hasAttendance
               ? isIncident
-                ? 'warning.main'  // o 'warning.attendance', dependiendo de tu tema
-                : 'success.attendance'
+                ? bgColorOnCalendar
+                : isCompleteAttendance
+                  ? 'success.attendance'
+                  : '#FFAE1F'
               : isPast
-                ? 'error.attendance'
+                ? '#fff'
                 : '#fff';
 
           const color = hasAttendance
-            ? '#fff'
+            ? colorOnCalendar
             : isPast
-              ? '#fff'
+              ? '#000'
               : '#000';
 
           return (
-              <Grid
-                size={{xs: 1}}
-                key={index}
-                textAlign="right"
-                border={0.5}
-                borderColor="#eee"
+            <Grid
+              size={{xs: 1}}
+              key={index}
+              textAlign="right"
+              border={0.5}
+              borderColor="#eee"
+              onClick={() => handleDayClick(attendance)}
+              sx={{
+                backgroundColor: day.isInMonth ? "#fff" : "#f6f6f6",
+                color: day.isInMonth ? "#000" : "#999999",
+                // backgroundColor: day.isInMonth ? bgColor : "#f6f6f6",
+                // color: day.isInMonth ? attendance ? textColor : "#000" : "#999999",
+                pt: 2.4,
+                pl: 1,
+                position: 'relative',
+                minHeight: 140, // Aumenté la altura mínima
+                cursor: isIncident ? 'pointer' : 'auto'
+              }}
+            >
+              <Box
+                fontWeight="bold"
                 sx={{
-                  backgroundColor: day.isInMonth ? "#fff" : "#f6f6f6",
-                  color: day.isInMonth ? "#000" : "#999999",
-                  p: 2,
-                  position: 'relative',
-                  minHeight: 112
+                  width: 32,
+                  height: 32,
+                  lineHeight: '30px',
+                  borderRadius: '50%',
+                  textAlign: 'center',
+                  position: 'absolute',
+                  top: 5,
+                  right: 5,
+                  border: day.isInMonth ? Temporal.PlainDate.compare(day.date, today) === 0 ? '1px solid #000' : "1px solid #fff" : "1px solid #f6f6f6",
+                  borderColor: attendance ? 'danger.attendance' : '"1px solid #fff"',
+                  color: "#000"
                 }}
               >
+                {day.date.day}
+                <Divider sx={{marginTop: 0.2, border: 1.5, borderColor: day.isInMonth ? bgColor : "#f6f6f6"}} />
+              </Box>
+              <>
+              <Box sx={{mt: 3}}>
                 {attendance ?
-                  <Box
-                    fontWeight="bold"
-                    sx={{
-                      textAlign: 'left',
-                      mb: 2
-                    }}
-                  >
+                  <Box sx={{textAlign: 'left', mb: 2}}>
                     <Box display="flex" alignItems="center" gap={1}>
-                      <IconClockCheck size="16"/>
-                      <Typography fontWeight={600} variant="body2">
-                        {isIncident ? incidentType : "ASISTENCIA"}
+                      <IconClockCheck size={15}/>
+                      <Typography fontWeight={600} variant="body2" sx={{ fontSize: '0.8rem' }}>
+                        {attendanceType}
                       </Typography>
                     </Box>
                   </Box>
                   : isPast && (
-                  <Box
-                    fontWeight="bold"
-                    sx={{
-                      textAlign: 'left',
-                      mb: 2
-                    }}
-                  >
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <IconClockCancel size="16"/>
-                      <Typography fontWeight={600} variant="body2">
-                        FALTA
-                      </Typography>
-                    </Box>
-                  </Box>
-                )
-                }
-                <Box
-                  fontWeight="bold"
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    lineHeight: '32px',
-                    borderRadius: '50%',
-                    textAlign: 'center',
-                    position: 'absolute',
-                    top: 5,
-                    right: 5,
-                    backgroundColor: backgroundColor,
-                    border: attendance ? 'success.attendance' : "1px solid #eee",
-                    borderColor: attendance ? 'danger.attendance' : 'danger.attendance',
-                    color:  color
-                  }}
-                >
-                  {day.date.day}
-                  {Temporal.PlainDate.compare(day.date, today) === 0 ?
-                    <Divider sx={{marginTop: 0.5, border: 1.5, borderColor: 'orangered'}} />
-                    : null
-                  }
-                </Box>
-
-                {attendance && (displayTimeOnCalendar || !isIncident) && (
-                  <Box mt={4}>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <IconClockUp size={14} />
-                      <Typography variant="body2" fontWeight={500}>
-                        Entrada: {Temporal.Instant.from(attendance.check_in).toZonedDateTimeISO("America/Mexico_City").toPlainTime().toString().slice(0, 5)}
-                      </Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <IconClockDown size={14} />
-                      <Typography variant="body2" fontWeight={500}>
-                        Salida: {attendance.check_out ? Temporal.Instant.from(attendance.check_out).toZonedDateTimeISO("America/Mexico_City").toPlainTime().toString().slice(0, 5) : ""}
+                  <Box sx={{textAlign: 'left'}}>
+                    <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
+                      <Typography fontWeight={600} variant="body2" sx={{wordBreak: 'break-word'}}>
+                        SIN REGISTROS
                       </Typography>
                     </Box>
                   </Box>
                 )}
-              </Grid>
+              </Box>
+
+              {attendance && (displayTimeOnCalendar || !isIncident) && (
+                <Box >
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <IconClockUp size={15} />
+                    <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
+                      Entrada: {checkIn ? formatDate(new Date(checkIn), "HH:mm") : ''}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <IconClockDown size={15} />
+                    <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
+                      Salida: {checkOut ? formatDate(new Date(checkOut), "HH:mm") : ''}
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+
+                </>
+            </Grid>
           )
         })}
       </Grid>
+
+      {selectedIncident && (
+        <Dialog open={modalOpen} onClose={handleCloseModal} fullWidth maxWidth="md">
+          <DialogTitle id="alert-dialog-title">Detalle de incidencia</DialogTitle>
+          <DialogContent>
+            <IncidentDetailModal id={selectedIncident} />
+          </DialogContent>
+        </Dialog>
+      )}
     </Box>
   );
 }

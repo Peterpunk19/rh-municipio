@@ -13,40 +13,130 @@ export const EmployeeAttendanceService = {
     });
   },
 
-  async updateAttendanceById(
-    numberEmployee: string,
-    direccionId: number,
-    employeeLocationId: number,
-    dateTime: string,
-  ) {
-    const [datePart] = dateTime.split(" ");
-    const startOfDay = new Date(`${datePart}T00:00:00`);
-    const endOfDay = new Date(`${datePart}T23:59:59`);
+  async findMatchingRecordForCheckIn(numberEmployee: string, dateTime: Date) {
+    const startOfDay = new Date(dateTime);
+    startOfDay.setHours(0, 0, 0, 0);
 
-    const existing = await prisma.employeeAttendance.findFirst({
+    const endOfDay = new Date(dateTime);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return prisma.employeeAttendance.findFirst({
       where: {
-        employee_ascription_id: direccionId,
-        employee_location_id: employeeLocationId,
+        employee_ascriptions: {
+          employee: { number_employee: numberEmployee },
+        },
+        check_in: null,
+        check_out: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      orderBy: { check_out: "desc" },
+    });
+  },
+
+  async findMatchingRecordForCheckOut(numberEmployee: string, dateTime: Date) {
+    const startOfDay = new Date(dateTime);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(dateTime);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return prisma.employeeAttendance.findFirst({
+      where: {
+        employee_ascriptions: {
+          employee: { number_employee: numberEmployee },
+        },
         check_out: null,
         check_in: {
           gte: startOfDay,
           lte: endOfDay,
         },
       },
-      orderBy: { check_in: "asc" },
+      orderBy: { check_in: "desc" },
     });
+  },
 
-    if (existing) {
-      return await prisma.employeeAttendance.update({
-        where: { id: existing.id },
-        data: {
-          check_out: new Date(dateTime),
-          udpated_at: new Date(),
+  async findByEmployeeAndDateRange(numberEmployee: string, start: Date, end: Date) {
+    return prisma.employeeAttendance.findMany({
+      where: {
+        employee_ascriptions: {
+          employee: {
+            number_employee: numberEmployee,
+          },
         },
-      });
-    } else {
-      throw new Error(`No se encontró entrada para empleado ${numberEmployee} en ${dateTime}`);
-    }
+        check_in: {
+          gte: start,
+          lte: end,
+        },
+      },
+    });
+  },
+
+  async updateAttendanceCheckIn(attendanceId: number, date: Date, incidentId: number | null) {
+    return prisma.employeeAttendance.update({
+      where: { id: attendanceId },
+      data: { check_in: date, employee_incident_id: incidentId },
+    });
+  },
+
+  async updateAttendanceCheckOut(attendanceId: number, date: Date) {
+    return prisma.employeeAttendance.update({
+      where: { id: attendanceId },
+      data: {
+        check_out: date,
+        udpated_at: new Date(),
+      },
+    });
+  },
+
+  async findByEmployeeAndDateTime(numberEmployee: string, dateTime: Date) {
+    const startOfDay = new Date(dateTime);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(dateTime);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return prisma.employeeAttendance.findMany({
+      where: {
+        employee_ascriptions: {
+          employee: {
+            number_employee: numberEmployee,
+          },
+        },
+        OR: [
+          {
+            check_in: {
+              gte: startOfDay,
+              lte: endOfDay,
+            },
+          },
+          {
+            check_out: {
+              gte: startOfDay,
+              lte: endOfDay,
+            },
+          },
+          {
+            AND: [{ check_in: { lte: startOfDay } }, { check_out: null }],
+          },
+        ],
+      },
+      orderBy: {
+        check_in: "asc",
+      },
+      include: {
+        employee_ascriptions: {
+          select: {
+            employee: {
+              select: {
+                number_employee: true,
+              },
+            },
+          },
+        },
+      },
+    });
   },
 
   async createEmployeeAttendance(employeeAttendance: IEmployeeAttendance) {
@@ -77,13 +167,6 @@ export const EmployeeAttendanceService = {
     });
   },
 
-  async createEmployeeAttendanceByBulk(attendancesToCreate: any) {
-    return await prisma.employeeAttendance.createMany({
-      data: attendancesToCreate,
-      skipDuplicates: true,
-    });
-  },
-
   async createSingleAttendance(data: any) {
     return await prisma.employeeAttendance.create({
       data: {
@@ -105,6 +188,11 @@ export const EmployeeAttendanceService = {
         employee_attendance_type: {
           connect: { id: data.employee_attendance_type_id },
         },
+        ...(data.employee_incident_id && {
+          employee_incident: {
+            connect: { id: data.employee_incident_id },
+          },
+        }),
       },
     });
   },
@@ -144,21 +232,35 @@ export const EmployeeAttendanceService = {
     const whereClause: any = await buildWhereClause(filterMappings, employeeAttendanceFilters, searchMappings);
 
     if (employeeAttendanceFilters.checkIn || employeeAttendanceFilters.checkOut) {
-      whereClause.AND = [];
+      whereClause.AND = whereClause.AND || [];
 
       if (employeeAttendanceFilters.checkIn) {
+        const checkInDate = new Date(employeeAttendanceFilters.checkIn);
+        checkInDate.setHours(0, 0, 0, 0);
+
         whereClause.AND.push({
-          check_in: {
-            gte: new Date(employeeAttendanceFilters.checkIn),
-          },
+          OR: [
+            { check_in: { gte: checkInDate } },
+            { check_out: { gte: checkInDate } },
+            {
+              AND: [{ check_in: null }, { check_out: { gte: checkInDate } }],
+            },
+          ],
         });
       }
 
       if (employeeAttendanceFilters.checkOut) {
+        const checkOutDate = new Date(employeeAttendanceFilters.checkOut);
+        checkOutDate.setHours(23, 59, 59, 999);
+
         whereClause.AND.push({
-          check_in: {
-            lte: new Date(employeeAttendanceFilters.checkOut),
-          },
+          OR: [
+            { check_in: { lte: checkOutDate } },
+            { check_out: { lte: checkOutDate } },
+            {
+              AND: [{ check_out: null }, { check_in: { lte: checkOutDate } }],
+            },
+          ],
         });
       }
     }
@@ -204,6 +306,8 @@ export const EmployeeAttendanceService = {
                 name: true,
                 display_name: true,
                 display_time_on_calendar: true,
+                bgColorOnCalendar: true,
+                colorOnCalendar: true,
               },
             },
           },

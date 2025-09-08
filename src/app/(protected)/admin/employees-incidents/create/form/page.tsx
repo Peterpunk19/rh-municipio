@@ -459,15 +459,18 @@ const IncidentCreateForm = ({
             <Dialog fullWidth maxWidth="lg" open={openCalendar} onClose={handleCalendarCancel} disableEscapeKeyDown>
               <DialogTitle>Seleccionar fechas de incidencia</DialogTitle>
               <DialogContent>
-                <CustomCalendar
-                  key={formData.incidentId}
-                  onSave={handleCalendarSave}
-                  onCancel={handleCalendarCancel}
-                  maxSelections={maxSelections}
-                  daysSelected={selectedDatesForCalendar}
-                  onMonthVisibleChange={handleCalendarMonthChange}
-                  clearOnMonthChange={isEntryOrExitIncident}
-                />
+                {formData && formData.employeeId && (
+                  <CustomCalendar
+                    key={formData.incidentId}
+                    employeeId={formData.employeeId}
+                    onSave={handleCalendarSave}
+                    onCancel={handleCalendarCancel}
+                    maxSelections={maxSelections}
+                    daysSelected={selectedDatesForCalendar}
+                    onMonthVisibleChange={handleCalendarMonthChange}
+                    clearOnMonthChange={isEntryOrExitIncident}
+                  />
+                )}
               </DialogContent>
             </Dialog>
 

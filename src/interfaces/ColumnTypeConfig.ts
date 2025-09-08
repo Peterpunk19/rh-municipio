@@ -9,7 +9,10 @@ export interface ColumnTypeConfig {
     | "dateTime"
     | "detail"
     | "switch"
-    | "monthName";
+    | "monthName"
+    | "incidentType"
+    | "checkIn"
+    | "checkOut";
   format?: (value: any, row: any) => React.ReactNode;
   redirectPath?: string;
   switchConfig?: {

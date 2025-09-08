@@ -29,6 +29,12 @@ export const header: readonly HeadCell[] = [
     label: "Fecha de salida",
   },
   {
+    id: "employee_incident.incident.display_name",
+    numeric: false,
+    disablePadding: false,
+    label: "Incidencia",
+  },
+  {
     id: "type_attendance.display_name",
     numeric: false,
     disablePadding: false,

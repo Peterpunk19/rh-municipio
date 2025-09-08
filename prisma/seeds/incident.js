@@ -7,6 +7,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "secondary.main",
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 3,
@@ -25,6 +27,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 4,
@@ -34,6 +37,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 5,
@@ -43,6 +47,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 6,
@@ -52,6 +57,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 7,
@@ -61,6 +67,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 8,
@@ -70,6 +77,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 9,
@@ -79,6 +87,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 10,
@@ -88,6 +97,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
   },
   {
     id: 11,
@@ -97,6 +107,27 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
+  },
+  {
+    id: 12,
+    name: "retardo",
+    display_name: "RETARDO",
+    type: 1,
+    active: true,
+    display_calendar_dates: true,
+    display_time_on_calendar: true,
+    bgColorOnCalendar: "warning.main",
+  },
+  {
+    id: 13,
+    name: "falta",
+    display_name: "FALTA",
+    type: 1,
+    active: true,
+    display_calendar_dates: true,
+    display_time_on_calendar: false,
+    bgColorOnCalendar: "error.attendance",
   },
 ];
 module.exports = incident;
