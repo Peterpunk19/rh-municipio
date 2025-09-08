@@ -142,7 +142,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
           </Stack>
           <Box>
             <Button disabled={isPending} color="primary" variant="contained" size="large" fullWidth type="submit">
-              {loading ? "Cargando..." : "Iniciar Sesión"}
+              {loading ? "Cargando..." : "Iniciar sesión"}
             </Button>
           </Box>
           {subtitle}

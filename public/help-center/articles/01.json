@@ -1,0 +1,35 @@
+{
+  "title": "Acceder al sistema RH Municipio",
+  "introduction": "Guía para acceder al sistema...",
+  "sections": [
+    {
+      "type": "step-group",
+      "content": {
+        "title": "Pasos para iniciar sesión",
+        "steps": [
+          {
+            "text": "Abre tu navegador web preferido (Chrome, Firefox o Edge)"
+          },
+          {
+            "text": "Ingresa a la dirección: https://rhmunicipio.com",
+            "image": {
+              "src": "login.png",
+              "alt": "Pantalla de login de RH Municipio",
+              "caption": "Pantalla de inicio de sesión"
+            }
+          },
+          {
+            "text": "Introduce tus credenciales:",
+            "items": [
+              "Usuario: Tu correo corporativo",
+              "Contraseña: La proporcionada por el administrador"
+            ]
+          },
+          {
+            "text": "Haz clic en 'Iniciar sesión'"
+          }
+        ]
+      }
+    }
+  ]
+}
