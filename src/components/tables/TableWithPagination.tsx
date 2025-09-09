@@ -29,7 +29,7 @@ import { IconCalendar, IconClock } from "@tabler/icons-react";
 import { formatDate, getMonthName } from "@/utils/formatter";
 import { RowDetail } from "@/components/tables/RowDetail";
 import { RowSwitch } from "@/components/tables/RowSwitch";
-import {Chip} from "@mui/material";
+import { Chip } from "@mui/material";
 
 interface TableItemBase {
   id: number;
@@ -46,6 +46,7 @@ interface TableProps<T extends TableItemBase> {
   createLink?: React.ReactElement | React.ReactElement[];
   onRowDetailClick?: (id: string) => void;
   children?: React.ReactNode;
+  showSearchBar?: boolean;
 }
 
 const TableWithPagination = <T extends TableItemBase>({
@@ -58,6 +59,7 @@ const TableWithPagination = <T extends TableItemBase>({
   createLink,
   children,
   onRowDetailClick,
+  showSearchBar,
 }: TableProps<T>) => {
   const dispatch = useDispatch();
   const { page, limit, total } = useSelector((state: RootState) => state.pagination);
@@ -82,7 +84,8 @@ const TableWithPagination = <T extends TableItemBase>({
   const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newLimit = parseInt(event.target.value, 10);
+    const selected = parseInt(event.target.value, 10);
+    const newLimit = selected === -1 ? total : selected;
     dispatch(updateLimit(newLimit));
     dispatch(updatePage(1));
   };
@@ -148,12 +151,14 @@ const TableWithPagination = <T extends TableItemBase>({
                 {formatDate(new Date(value as string), "dd/MM/yyyy")}
               </Typography>
             </Box>
-            {(row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar) ? <Box display="flex" alignItems="center" gap={1}>
-              <IconClock size="14" />
-              <Typography fontWeight={500} variant="body2">
-                {formatDate(new Date(value as string), "HH:mm")}
-              </Typography>
-            </Box> : null}
+            {row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar ? (
+              <Box display="flex" alignItems="center" gap={1}>
+                <IconClock size="14" />
+                <Typography fontWeight={500} variant="body2">
+                  {formatDate(new Date(value as string), "HH:mm")}
+                </Typography>
+              </Box>
+            ) : null}
           </Box>
         );
 
@@ -166,12 +171,14 @@ const TableWithPagination = <T extends TableItemBase>({
                 {formatDate(new Date(value as string), "dd/MM/yyyy")}
               </Typography>
             </Box>
-            {(row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar) ? <Box display="flex" alignItems="center" gap={1}>
-              <IconClock size="14" />
-              <Typography fontWeight={500} variant="body2">
-                {formatDate(new Date(value as string), "HH:mm")}
-              </Typography>
-            </Box> : null}
+            {row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar ? (
+              <Box display="flex" alignItems="center" gap={1}>
+                <IconClock size="14" />
+                <Typography fontWeight={500} variant="body2">
+                  {formatDate(new Date(value as string), "HH:mm")}
+                </Typography>
+              </Box>
+            ) : null}
           </Box>
         );
 
@@ -203,9 +210,9 @@ const TableWithPagination = <T extends TableItemBase>({
         return (
           <Chip
             sx={{
-              bgcolor: row?.incident?.bgColorOnCalendar || "#fff" ,
-              color: row?.incident?.colorOnCalendar || '#FFF',
-              borderRadius: '10px',
+              bgcolor: row?.incident?.bgColorOnCalendar || "#fff",
+              color: row?.incident?.colorOnCalendar || "#FFF",
+              borderRadius: "10px",
               width: 100,
               fontSize: "13px",
             }}
@@ -253,7 +260,7 @@ const TableWithPagination = <T extends TableItemBase>({
 
   return (
     <Box>
-      <ParentCard codeModel={createLink} entity={entity}>
+      <ParentCard codeModel={createLink} entity={entity} showSearchBar={showSearchBar}>
         <EnhancedTableToolbar
           filters={filters.map((filter) => ({
             key: filter.key,
@@ -316,7 +323,7 @@ const TableWithPagination = <T extends TableItemBase>({
             </Box>
             <Box p={2} sx={{ width: "50%" }}>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[5, 10, 25, { label: "Ver todo", value: -1 }]}
                 component="div"
                 count={total}
                 rowsPerPage={limit}

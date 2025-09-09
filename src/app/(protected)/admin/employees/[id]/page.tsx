@@ -7,10 +7,11 @@ import {
   IconAlertCircle,
   IconArticle,
   IconFileInvoice,
-  IconAppWindow,
+  IconCalendar,
   IconMap2,
   IconUserCircle,
   IconClock,
+  IconFingerprint,
 } from "@tabler/icons-react";
 import { StatusCodes } from "http-status-codes";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
@@ -24,11 +25,12 @@ import { useParams } from "next/navigation";
 import { getEmployeeById } from "@/services/employees";
 import { redirect } from "next/navigation";
 import EmployeesIncidents from "@/app/(protected)/admin/employees-incidents/page";
-import { updateConfigFilters, updateFilter } from "@/store/tables/FiltersSlice";
+import { updateFilter } from "@/store/tables/FiltersSlice";
 import { useDispatch } from "@/store/hooks";
 import EmployeeRequests from "@/app/(protected)/admin/employees-requests/page";
 import { a11yPropsProfile } from "@/common/utils";
 import CustomCalendarAttendance from "@/components/customComponents/CustomCalendarAttendance";
+import EmployeesAttendances from "@/app/(protected)/admin/employees-attendances/page";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -95,8 +97,6 @@ const Profile = () => {
   }, [id]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    dispatch(updateConfigFilters({ entity: event.target.id, title: "", showSearchBar: false }));
-
     dispatch(
       updateFilter({
         entity: event.target.id,
@@ -155,9 +155,15 @@ const Profile = () => {
                 />
                 <Tab
                   iconPosition="start"
-                  icon={<IconAppWindow size="22" />}
+                  icon={<IconFingerprint size="22" />}
                   label="Asistencias"
                   {...a11yPropsProfile("employeesAttendances")}
+                />
+                <Tab
+                  iconPosition="start"
+                  icon={<IconCalendar size="22" />}
+                  label="Calendario"
+                  {...a11yPropsProfile("employeesCalendarAttendance")}
                 />
                 <Tab
                   iconPosition="start"
@@ -185,9 +191,16 @@ const Profile = () => {
                 <EmployeeRequests />
               </TabPanel>
               <TabPanel value={value} index={5}>
-                <CustomCalendarAttendance />
+                <EmployeesAttendances
+                  employeeData={employeeData}
+                  actionButtons={{ downloadPdf: true, createAttendance: false }}
+                  showSearchBar={false}
+                />
               </TabPanel>
               <TabPanel value={value} index={6}>
+                <CustomCalendarAttendance />
+              </TabPanel>
+              <TabPanel value={value} index={7}>
                 <LocationScheduleTab employeeData={employeeData} />
               </TabPanel>
             </CardContent>

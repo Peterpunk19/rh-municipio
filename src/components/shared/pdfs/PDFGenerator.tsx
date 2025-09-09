@@ -14,6 +14,7 @@ const PDFGenerator: React.FC<PDFGeneratorProps> = ({
   template: CustomTemplate,
   buttonProps = {},
   optionsConfig,
+  buttonLabel,
 }) => {
   const options = optionsConfig?.options || [];
   const displayMode = optionsConfig?.displayMode || (options.length === 1 ? "button" : "dropdown");
@@ -83,7 +84,7 @@ const PDFGenerator: React.FC<PDFGeneratorProps> = ({
         onClick={() => handleDownload(option)}
         {...buttonProps}
       >
-        Descargar formato
+        {buttonLabel || "Descargar formato"}
       </Button>
     );
   };
