@@ -210,22 +210,22 @@ export const validateTotalEmployeeIncidentDays = async (
   jobSchedules: any[],
   usedDays: number,
   allowedDays: number,
-  incidentTypeId?: number
+  incidentTypeId?: number,
 ): Promise<boolean> => {
   const daysActive = getActiveDaysFromSchedules(jobSchedules);
-  
+
   const daysToInsert = await incidentDates.reduce(async (acc, dateStr) => {
     const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
     console.log("********** DATE **********");
     console.log(date);
     console.log("********** INCIDENT TYPE ID **********");
     console.log(incidentTypeId);
-    
+
     if (incidentTypeId === INCIDENT_TYPES_ID.PATERNIDAD) {
       const isWorkday = daysActive.has(date.getDay());
       return (await acc) + (isWorkday ? 1 : 0);
     }
-    
+
     const isHoliday = await HolidayService.isHoliday(date);
     const value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : 1;
     return (await acc) + value;

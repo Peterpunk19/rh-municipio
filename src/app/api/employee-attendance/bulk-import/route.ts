@@ -65,6 +65,9 @@ export async function POST(request: NextRequest) {
         const shouldSave = await AttendanceValidator.shouldSaveAttendance(numberEmployee, isEntry, dateTime);
 
         if (!shouldSave) {
+          responseRecord.status = "error";
+          responseRecord.errorMessage = "Ya existe un registro con esta fecha";
+          processedRecords.push(responseRecord);
           continue;
         }
 
