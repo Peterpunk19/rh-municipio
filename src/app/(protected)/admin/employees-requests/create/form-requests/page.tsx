@@ -116,8 +116,7 @@ const CreateRequestForm = ({
         if (response?.success && response.responseObject) {
           dispatch(setCurrentJobSchedule(response.responseObject));
         }
-      } catch (error) {
-        console.error("Error fetching employee job schedule:", error);
+      } catch (error: any) {
         dispatch(setErrors({ jobSchedule: "Error al obtener el horario del empleado" }));
       }
     } else {
@@ -125,7 +124,7 @@ const CreateRequestForm = ({
     }
   };
 
-  const catalogName = "requests";
+  const catalogName = "requests/permission-validation";
   const fetchData = useCallback(() => fetchCatalogData(catalogName), []);
   const { options: requestsTypes, isLoading, error } = useFetchOptions(fetchData);
 

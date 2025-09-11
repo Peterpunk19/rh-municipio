@@ -35,6 +35,18 @@ jest.mock("@/app/api/services/employee-requests-status.service", () => ({
   },
 }));
 
+jest.mock("@/app/api/common/utils.service", () => ({
+  validateRequestsRolesPermissions: jest.fn(),
+}));
+
+jest.mock("@/app/api/services/requests-permissions-validator.service", () => ({
+  RequestsPermissionsValidator: {
+    validateStatusTransition: jest.fn(),
+  },
+}));
+
+const { validateRequestsRolesPermissions } = require("@/app/api/common/utils.service");
+
 describe("API: /employee-requests/update", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -141,6 +153,11 @@ describe("API: /employee-requests/update", () => {
         });
 
         (EmployeeRequestsStatusService.validateEmployeeRequestStatus as jest.Mock).mockResolvedValue(false);
+        validateRequestsRolesPermissions.mockResolvedValue({ can_edit: true });
+
+        const { RequestsPermissionsValidator } = require("@/app/api/services/requests-permissions-validator.service");
+        (RequestsPermissionsValidator.validateStatusTransition as jest.Mock).mockResolvedValue(true);
+
         (EmployeeRequestService.updateEmployeeRequests as jest.Mock).mockResolvedValueOnce([{}]);
       }
 

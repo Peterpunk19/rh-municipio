@@ -135,6 +135,9 @@ export const HttpMessages = {
     updatedSuccess: "Solicitud actualizada exitosamente",
     notAllowedToCreateForDifferentDireccion:
       "No tienes permiso para crear solicitudes para empleados de otra dirección",
+    requestsRolesPermissionsCreateFailed: "No puedes crear este tipo de solicitud",
+    requestsRolesPermissionsUpdateFailed: "No puedes cambiar el estatus de este tipo de solicitud",
+    invalidStatusTransition: "Transición de estado no válida para tu rol",
     invalidId: "ID de solicitud inválido",
     requestNotFound: "Solicitud no encontrada",
     incompleteDataForPDF: "Datos incompletos para generar PDF",
@@ -156,6 +159,10 @@ export const HttpMessages = {
     leadersNotFound: "No se encontraron directivos con los filtros proporcionados",
   },
   incidentsRolesPermissions: {
+    notFound: "No se datos con los filtros proporcionados",
+    statusUpdatedSuccess: "Estado actualizado correctamente",
+  },
+  requestsRolesPermissions: {
     notFound: "No se datos con los filtros proporcionados",
     statusUpdatedSuccess: "Estado actualizado correctamente",
   },

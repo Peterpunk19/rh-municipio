@@ -350,6 +350,7 @@ model Request {
   description       String
   active            Boolean           @default(true)
   employee_requests EmployeeRequest[]
+  requests_roles_permissions RequestsRolesPermissions[]
 }
 
 model RequestStatus {
@@ -363,6 +364,7 @@ model RequestStatus {
   type                    Int
   active                  Boolean                 @default(true)
   allowed_roles_to_update String
+  permission_name         String?
   employee_requests       EmployeeRequest[]
   employee_request_status EmployeeRequestStatus[]
 }
@@ -499,6 +501,7 @@ model Role {
   leaders      AdministrativeOrganizationLeaders[]
 
   incidents_roles_permissions IncidentsRolesPermissions[]
+  requests_roles_permissions RequestsRolesPermissions[]
 }
 
 model Module {
@@ -739,6 +742,22 @@ model IncidentsRolesPermissions {
   can_delete  Boolean  @default(false)
   can_edit    Boolean  @default(false)
   active      Boolean  @default(true)
+}
+
+model RequestsRolesPermissions {
+  id          Int     @id @default(autoincrement())
+  role_id     Int
+  role        Role    @relation(fields: [role_id], references: [id])
+  request_id  Int
+  request     Request @relation(fields: [request_id], references: [id])
+  can_view    Boolean @default(false)
+  can_create  Boolean @default(false)
+  can_approve Boolean @default(false)
+  can_reject  Boolean @default(false)
+  can_cancel  Boolean @default(false)
+  can_delete  Boolean @default(false)
+  can_edit    Boolean @default(false)
+  active      Boolean @default(true)
 }
 
 model CategoryEmployeeType {

@@ -10,6 +10,7 @@ jest.mock("@/app/api/common/utils.service", () => ({
   validateEmployee: jest.fn(),
   validateEmployeeRequest: jest.fn(),
   validateExistence: jest.fn(),
+  validateRequestsRolesPermissions: jest.fn(),
 }));
 
 jest.mock("@/app/api/services/request.service", () => ({
@@ -30,8 +31,14 @@ jest.mock("@/app/api/services/employee-request.service", () => ({
   },
 }));
 
-const { getEmployeeRequestFolio, getRequestStatus, validateEmployee, validateEmployeeRequest, validateExistence } =
-  require("@/app/api/common/utils.service");
+const {
+  getEmployeeRequestFolio,
+  getRequestStatus,
+  validateEmployee,
+  validateEmployeeRequest,
+  validateExistence,
+  validateRequestsRolesPermissions,
+} = require("@/app/api/common/utils.service");
 
 describe("API: /employee-requests", () => {
   afterEach(() => {
@@ -42,6 +49,7 @@ describe("API: /employee-requests", () => {
     it(`POST /employee-requests ${description}`, async () => {
       (authMiddleware as jest.Mock).mockResolvedValue({
         userId: 1,
+        roleId: 1,
       });
 
       if (description === "should successfully send message with valid data") {
@@ -50,6 +58,7 @@ describe("API: /employee-requests", () => {
         validateEmployee.mockResolvedValue(null);
         validateEmployeeRequest.mockResolvedValue(null);
         validateExistence.mockResolvedValue(null);
+        validateRequestsRolesPermissions.mockResolvedValue(true);
         (EmployeeRequestService.getFolio as jest.Mock).mockResolvedValue("00001");
         (EmployeeRequestService.validateEmployeeRequest as jest.Mock).mockResolvedValue(null);
         (RequestService.getRequestById as jest.Mock).mockResolvedValue({

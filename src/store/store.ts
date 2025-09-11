@@ -26,6 +26,7 @@ import CreateEmployeeRequestReducer from "@/store/employees-requests/CreateEmplo
 import CreateEmployeeAttendanceReducer from "@/store/employees-attendances/CreateEmployeeAttendance";
 import EmployeesAttendancesSlice from "@/store/employees-attendances/EmployeesAttendancesSlice";
 import IncidentsRolesPermissionsListSlice from "@/store/reference/incidents-roles-permissions/ListSlice";
+import RequestsRolesPermissionsListSlice from "@/store/reference/requests-roles-permissions/ListSlice";
 import IncidentsRulesListSlice from "@/store/reference/incidents-rules/ListSlice";
 import SalariesListSlice from "@/store/reference/salaries/ListSlice";
 
@@ -60,6 +61,7 @@ export const store = configureStore({
     createEmployeeAttendance: CreateEmployeeAttendanceReducer,
     employeesAttendancesSlice: EmployeesAttendancesSlice,
     incidentsRolesPermissions: IncidentsRolesPermissionsListSlice,
+    requestsRolesPermissions: RequestsRolesPermissionsListSlice,
     incidentsRules: IncidentsRulesListSlice,
     salaries: SalariesListSlice,
   },

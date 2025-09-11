@@ -151,6 +151,14 @@ const modules = [
     icon: "IconPoint",
     parent_id: 16,
   },
+  {
+    id: 20,
+    name: "reference_requests_roles_permissions",
+    display_name: "Permisos de Solicitudes",
+    route: "/admin/reference/requests-roles-permissions",
+    icon: "IconPoint",
+    parent_id: 16,
+  },
 ];
 
 module.exports = modules;
