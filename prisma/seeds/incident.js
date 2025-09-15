@@ -129,5 +129,15 @@ const incident = [
     display_time_on_calendar: false,
     bgColorOnCalendar: "error.attendance",
   },
+  {
+    id: 14,
+    name: "licencia_medica",
+    display_name: "LICENCIA MÉDICA",
+    type: 1,
+    active: true,
+    display_calendar_dates: true,
+    display_time_on_calendar: false,
+    bgColorOnCalendar: "warning.main",
+  },
 ];
 module.exports = incident;

@@ -24,4 +24,5 @@ export interface IEmployeeIncidentDetails {
   incident: {
     display_name?: string;
   };
+  incident_id: number;
 }

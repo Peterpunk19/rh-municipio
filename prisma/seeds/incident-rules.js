@@ -43,6 +43,7 @@ const incident = {
   PERMISO_SIN_GOCE: incidentData.find((i) => i.name === "permiso_sin_goce").id,
   VACACIONES: incidentData.find((i) => i.name === "vacaciones").id,
   COMISION: incidentData.find((i) => i.name === "comision").id,
+  LICENCIA_MEDICA: incidentData.find((i) => i.name === "licencia_medica").id,
 };
 
 const paternityRules = [
@@ -102,6 +103,55 @@ const paternityRules = [
       {
         incident_id: incident.PATERNIDAD,
         days: 21,
+        allMonths: true,
+      },
+    ],
+  }),
+];
+
+const licenciaMedicaRules = [
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.LICENCIA_MEDICA,
+        days: 30,
+        max_years: 1,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.LICENCIA_MEDICA,
+        days: 60,
+        min_years: 1,
+        max_years: 5,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.LICENCIA_MEDICA,
+        days: 90,
+        min_years: 5,
+        max_years: 10,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.LICENCIA_MEDICA,
+        days: 120,
+        min_years: 10,
         allMonths: true,
       },
     ],
@@ -175,6 +225,7 @@ const baseRules = [
     ],
     months: monthlyMonths,
   }),
+  ...licenciaMedicaRules,
 ];
 
 const confianzaRules = [
@@ -203,6 +254,10 @@ const confianzaRules = [
     ],
     months: monthlyMonths,
   }),
+  ...licenciaMedicaRules.map((rule) => ({
+    ...rule,
+    employee_type_id: employeeTypes.CONFIANZA,
+  })),
 ];
 
 const contratoLaudoRules = [
@@ -248,6 +303,10 @@ const contratoLaudoRules = [
     ],
     months: monthlyMonths,
   }),
+  ...licenciaMedicaRules.map((rule) => ({
+    ...rule,
+    employee_type_id: employeeTypes.CONTRATO_LAUDO,
+  })),
 ];
 
 const baseNoSindicalizadoRules = [
@@ -275,6 +334,10 @@ const baseNoSindicalizadoRules = [
     ],
     months: monthlyMonths,
   }),
+  ...licenciaMedicaRules.map((rule) => ({
+    ...rule,
+    employee_type_id: employeeTypes.BASE_NO_SINDICALIZADO,
+  })),
 ];
 
 const contratoGastoCorrienteRules = [
@@ -298,6 +361,10 @@ const contratoGastoCorrienteRules = [
     ],
     months: monthlyMonths,
   }),
+  ...licenciaMedicaRules.map((rule) => ({
+    ...rule,
+    employee_type_id: employeeTypes.CONTRATO_GASTO_CORRIENTE,
+  })),
 ];
 
 const contratoFondoIVRules = [
@@ -321,6 +388,10 @@ const contratoFondoIVRules = [
     ],
     months: monthlyMonths,
   }),
+  ...licenciaMedicaRules.map((rule) => ({
+    ...rule,
+    employee_type_id: employeeTypes.CONTRATO_FONDO_IV,
+  })),
 ];
 
 const baseSindicalizadoPermisoEconomico = [

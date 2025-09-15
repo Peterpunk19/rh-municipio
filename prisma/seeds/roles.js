@@ -69,5 +69,11 @@ const roles = [
     display_name: "Subenlace",
     description: "Subenlace es el usuario encargado de una Secretaria",
   },
+  {
+    id: 14,
+    name: "servicios_medicos",
+    display_name: "Servicios Médicos",
+    description: "Personal correspondiente a la Dirección de Servicios Médicos",
+  },
 ];
 module.exports = roles;

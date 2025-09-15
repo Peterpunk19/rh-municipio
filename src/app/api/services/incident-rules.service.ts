@@ -191,6 +191,7 @@ export const IncidentRulesService = {
 
     const used_days = await this.getUsedIncidentDays(employeeId, incidentId, periodStart, periodEnd);
     const remaining_days = Math.max(0, allowed_days - used_days);
+
     return HttpResponse.success(HttpMessages.incidentRules.getSuccess, {
       incident_id: incidentId,
       employee_id: employeeId,
@@ -240,6 +241,10 @@ export const IncidentRulesService = {
 
       if (!hasAvailableDays) {
         return HttpResponse.failure(HttpMessages.incidentRules.notAvailableDays, {});
+      }
+
+      if (Number(body.incidentId) === INCIDENT_TYPES_ID.LICENCIA_MEDICA) {
+        return HttpResponse.success(HttpMessages.incidentRules.getSuccess, responseObject);
       }
 
       if (Number(body.incidentId) === INCIDENT_TYPES_ID.PERMISO_ECONOMICO) {
