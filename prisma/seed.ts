@@ -30,6 +30,7 @@ const user = require("./seeds/user");
 const modules = require("./seeds/modules");
 const roleModules = require("./seeds/roleModules");
 const incidentsRolesPermission = require("./seeds/incidents-roles-permissions");
+const requestsRolesPermissions = require("./seeds/requests-roles-permissions");
 const categoryEmployeeType = require("./seeds/category-employee-type");
 const incidentRules = require("./seeds/incident-rules");
 const holidays = require("./seeds/holiday");
@@ -64,6 +65,7 @@ async function main() {
   await prisma.schooling.createMany({ data: schooling });
   await prisma.tradeUnion.createMany({ data: tradeUnion });
   await prisma.incidentsRolesPermissions.createMany({ data: incidentsRolesPermission });
+  await prisma.requestsRolesPermissions.createMany({ data: requestsRolesPermissions.allPermissions });
   await prisma.categoryEmployeeType.createMany({ data: categoryEmployeeType });
   await prisma.incidentRules.createMany({ data: incidentRules });
   await prisma.holiday.createMany({ data: holidays });

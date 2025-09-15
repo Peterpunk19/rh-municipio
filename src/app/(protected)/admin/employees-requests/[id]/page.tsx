@@ -32,6 +32,8 @@ import RequestDetails from "@/components/customComponents/RequestDetails";
 import RequestStatusHistory from "@/components/customComponents/RequestStatusHistory";
 import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
 import RequestPDFDropdown from "@/components/customComponents/RequestPDFDropdown";
+import { IconArrowBack } from "@tabler/icons-react";
+import Link from "next/link";
 
 const BCrumb = [
   {
@@ -65,9 +67,14 @@ const EmployeeRequest = () => {
               setData({
                 id: data.responseObject.id,
               });
+              fetchStatus(data.responseObject.request_id);
             } else {
-              setEmployeeRequestData(null);
-              router.push("/admin/employees-requests");
+              if (data.message && data.message.includes("permisos")) {
+                setErrorResponse(data.message);
+              } else {
+                setEmployeeRequestData(null);
+                router.push("/admin/employees-requests");
+              }
             }
           });
         }
@@ -90,10 +97,20 @@ const EmployeeRequest = () => {
     }
   }, [employeeRequestData]);
 
-  const catalogName = "requests-status";
-  const fetchData = useCallback(() => fetchCatalogData(catalogName), []);
+  const [requestStatus, setRequestStatus] = useState<any[]>([]);
+  const [errorResponse, setErrorResponse] = useState<string | null>(null);
 
-  const { options: requestStatus } = useFetchOptions(fetchData);
+  const fetchStatus = async (requestId: number) => {
+    try {
+      const result = await fetchCatalogData("requests-status/permission-validation", {
+        request_id: requestId,
+      });
+      setRequestStatus(result.responseObject);
+    } catch (error) {
+      logger.error("Error fetching request status:", error);
+      setRequestStatus([]);
+    }
+  };
 
   const handleChangeStatus = (e: { target: { value: any } }) => {
     setIdStatus(e.target.value);
@@ -136,6 +153,31 @@ const EmployeeRequest = () => {
     }
   };
 
+  if (errorResponse) {
+    return (
+      <Grid2 size={12}>
+        <Alert severity={isSuccess ? "success" : "error"}>
+          <Typography variant="body1" fontWeight={600}>
+            {errorResponse}
+          </Typography>
+        </Alert>
+        <Button
+          size="small"
+          variant="contained"
+          color="error"
+          component={Link}
+          href="/admin/employees-requests"
+          sx={{
+            mt: 2,
+          }}
+          startIcon={<IconArrowBack stroke={1.5} size="0.8rem" />}
+        >
+          Regresar
+        </Button>
+      </Grid2>
+    );
+  }
+
   if (loading || !employeeRequestData) return <LoadingComponent />;
 
   return (
@@ -144,29 +186,31 @@ const EmployeeRequest = () => {
       <Grid size={12}>
         <Grid container>
           <Grid size={{ lg: 6, xs: 12 }}>
-            <Box>
-              <CustomSelect
-                value={data.requestStatusId || 0}
-                onChange={handleChangeStatus}
-                disabled={loading || employeeRequestData?.request_status?.id !== REQUEST_STATUS_ID.CREADA}
-                sx={{
-                  height: "40px",
-                  "& .MuiSelect-select": {
-                    paddingTop: "8px",
-                    paddingBottom: "8px",
-                  },
-                }}
-              >
-                <MenuItem key={generateUniqueKey()} value={0}>
-                  Cambiar estatus de solicitud
-                </MenuItem>
-                {requestStatus.map((item) => (
-                  <MenuItem key={generateUniqueKey()} value={item.id}>
-                    {item.display_name}
+            {requestStatus.length ? (
+              <Box>
+                <CustomSelect
+                  value={data.requestStatusId || 0}
+                  onChange={handleChangeStatus}
+                  disabled={loading || employeeRequestData?.request_status?.id !== REQUEST_STATUS_ID.CREADA}
+                  sx={{
+                    height: "40px",
+                    "& .MuiSelect-select": {
+                      paddingTop: "8px",
+                      paddingBottom: "8px",
+                    },
+                  }}
+                >
+                  <MenuItem key={generateUniqueKey()} value={0}>
+                    Cambiar estatus de solicitud
                   </MenuItem>
-                ))}
-              </CustomSelect>
-            </Box>
+                  {requestStatus.map((item) => (
+                    <MenuItem key={generateUniqueKey()} value={item.id}>
+                      {item.display_name}
+                    </MenuItem>
+                  ))}
+                </CustomSelect>
+              </Box>
+            ) : null}
           </Grid>
           <Grid size={{ lg: 6, xs: 12 }}>
             <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>

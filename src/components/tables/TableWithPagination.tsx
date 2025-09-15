@@ -298,7 +298,7 @@ const TableWithPagination = <T extends TableItemBase>({
                     );
                   })}
 
-                {emptyMessage && items.length === 0 && (
+                {emptyMessage && items && items.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={headCells.length} style={{ width: "100%" }}>
                       <div className="w-full min-h-[200px] flex justify-center items-center">

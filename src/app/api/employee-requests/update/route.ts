@@ -9,9 +9,10 @@ import { EmployeeRequestService } from "@/app/api/services/employee-request.serv
 import { logger } from "@/lib/logger";
 import { failureResponse } from "@/common/utils";
 import { authMiddleware } from "@/middleware/authMiddleware";
+import { validateRequestsRolesPermissions } from "@/app/api/common/utils.service";
 import { CatalogsService } from "@/app/api/services/catalogs.service";
+import { RequestsPermissionsValidator } from "@/app/api/services/requests-permissions-validator.service";
 import { EmployeeRequestsStatusService } from "@/app/api/services/employee-requests-status.service";
-import { RequestsStatusService } from "@/app/api/services/requests-status.service";
 import { REQUEST_STATUS_ID } from "@/common/constants/RequestStatus";
 
 export async function PUT(request: NextRequest) {
@@ -36,19 +37,37 @@ export async function PUT(request: NextRequest) {
     if (!Object.values(REQUEST_STATUS_ID).includes(requestStatusId))
       return failureResponse(HttpMessages.requestStatus.invalidStatus);
 
-    const isAllowedToUpdate = await RequestsStatusService.getRequestStatusById(requestStatusId);
+    const existingRequestStatusId = await CatalogsService.getCatalogById("requestStatus", requestStatusId);
 
-    if (!isAllowedToUpdate) return failureResponse(HttpMessages.requestStatus.idNotFound);
-
-    const rolesArray = isAllowedToUpdate.allowed_roles_to_update.split(",").map(Number);
-
-    if (!rolesArray.includes(userAuthenticatedRoleId)) {
-      return failureResponse(HttpMessages.employeeRequests.notAllowedToUpdate);
-    }
+    if (!existingRequestStatusId) return failureResponse(HttpMessages.requestStatus.idNotFound);
 
     const employeeRequest = await EmployeeRequestService.getEmployeeRequestById(employeeRequestId);
 
     if (!employeeRequest) return failureResponse(HttpMessages.employeeRequests.notFoundById);
+
+    const permissionValidation = await validateRequestsRolesPermissions(
+      userAuthenticatedRoleId,
+      employeeRequest.request.id,
+      existingRequestStatusId.permission_name,
+    );
+    if (!permissionValidation)
+      return failureResponse(HttpMessages.employeeRequests.requestsRolesPermissionsUpdateFailed);
+
+    const currentStatus = employeeRequest.request_status.name;
+    const targetStatus = existingRequestStatusId.name;
+
+    const canTransition = await RequestsPermissionsValidator.validateStatusTransition(
+      userAuthenticatedRoleId,
+      employeeRequest.request.id,
+      currentStatus,
+      targetStatus,
+    );
+
+    if (!canTransition) {
+      return failureResponse(
+        HttpMessages.employeeRequests["invalidStatusTransition"] || "Transición de estado no válida para tu rol",
+      );
+    }
 
     if (requestStatusId === REQUEST_STATUS_ID.CANCELADA && employeeRequest.requestedBy.id !== userAuthenticatedId) {
       return failureResponse(HttpMessages.employeeRequests.invalidUserToCancel);
@@ -56,10 +75,6 @@ export async function PUT(request: NextRequest) {
 
     if (employeeRequest.request_status.id === requestStatusId)
       return failureResponse(HttpMessages.employeeRequests.invalidUpdateData);
-
-    const existingRequestStatusId = await CatalogsService.getCatalogById("requestStatus", requestStatusId);
-
-    if (!existingRequestStatusId) return failureResponse(HttpMessages.requestStatus.idNotFound);
 
     const validateEmployeeRequestStatusId = await EmployeeRequestsStatusService.validateEmployeeRequestStatus(
       employeeRequestId,

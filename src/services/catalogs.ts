@@ -132,7 +132,7 @@ export const fetchCatalogData = async (catalogName: string, params?: Record<stri
       });
       const queryString = urlParams.toString();
       if (queryString) {
-        url += `? ${queryString}`;
+        url += `?${queryString}`;
       }
     }
 

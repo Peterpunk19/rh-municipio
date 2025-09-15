@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Switch } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { updateStatus } from "@/services/generic";
+import { updateRequestsRolesPermissionsStatus } from "@/services/requests-roles-permissions";
 import { AppDispatch } from "@/store/store";
 import { useSelector } from "@/store/hooks";
 
@@ -39,7 +40,11 @@ export const RowSwitch = ({
     setLoading(true);
 
     try {
-      await updateStatus(url, id, { [field]: newValue });
+      if (entity === "requestsRolesPermissions") {
+        await updateRequestsRolesPermissionsStatus(id, { [field]: newValue });
+      } else {
+        await updateStatus(url, id, { [field]: newValue });
+      }
       setChecked(newValue);
 
       const queryParams = [];

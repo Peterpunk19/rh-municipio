@@ -8,4 +8,15 @@ export const RequestsStatusService = {
       },
     });
   },
+
+  async getRequestsStatus() {
+    return prisma.requestStatus.findMany({
+      where: {
+        active: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+  },
 };

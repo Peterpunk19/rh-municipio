@@ -17,13 +17,15 @@ import {
   validateEmployee,
   validateEmployeeRequest,
   validateExistence,
+  validateRequestsRolesPermissions,
 } from "@/app/api/common/utils.service";
-import { startOfDay } from "@/common/utils";
+import { startOfDay, failureResponse } from "@/common/utils";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { DireccionService } from "@/app/api/services/direccion.service";
 import { getRoleValueById, validateDireccionAccess } from "@/common/utils";
 import { EmployeeService } from "@/app/api/services/employee.service";
+import { REQUESTS_ROLES_PERMISSIONS } from "@/common/constants/RequestsRolesPermissions";
 
 const requestValidations: IRequestValidations = {
   schedule_change_request: [
@@ -90,6 +92,14 @@ export async function POST(request: NextRequest) {
         }),
       );
     }
+
+    const permissionValidation = await validateRequestsRolesPermissions(
+      roleId,
+      Number(body.requestId),
+      REQUESTS_ROLES_PERMISSIONS.CAN_CREATE,
+    );
+    if (!permissionValidation)
+      return failureResponse(HttpMessages.employeeRequests.requestsRolesPermissionsCreateFailed);
 
     const validations = requestValidations[existingRequest.name];
 

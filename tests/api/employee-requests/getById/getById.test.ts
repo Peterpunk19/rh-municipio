@@ -1,11 +1,20 @@
 import { GET } from "@/app/api/employee-requests/[id]/route";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
+import { authMiddleware } from "@/middleware/authMiddleware";
 import { testCases } from "./testCases";
 
 jest.mock("@/app/api/services/employee-request.service", () => ({
   EmployeeRequestService: {
     getEmployeeRequestById: jest.fn(),
   },
+}));
+
+jest.mock("@/middleware/authMiddleware", () => ({
+  authMiddleware: jest.fn(),
+}));
+
+jest.mock("@/app/api/common/utils.service", () => ({
+  validateRequestsRolesPermissions: jest.fn(),
 }));
 
 describe("API: GET /employee-requests/:id", () => {
@@ -15,7 +24,17 @@ describe("API: GET /employee-requests/:id", () => {
 
   testCases.forEach(({ description, requestData, expectedStatus, expectedResponse }) => {
     it(`GET /employee-requests/:id ${description}`, async () => {
+      // Mock authentication for all test cases
+      (authMiddleware as jest.Mock).mockResolvedValue({
+        userId: 1,
+        roleId: 1,
+      });
+
       if (description === "should successfully send message with valid data") {
+        // Mock permission validation for successful case
+        const { validateRequestsRolesPermissions } = require("@/app/api/common/utils.service");
+        (validateRequestsRolesPermissions as jest.Mock).mockResolvedValue(true);
+
         (EmployeeRequestService.getEmployeeRequestById as jest.Mock).mockResolvedValueOnce({
           id: 1,
           folio: "000001",

@@ -11,6 +11,7 @@ import { EmployeeAttendanceService } from "@/app/api/services/employee-attendanc
 import type { IEmployeeRequest } from "@/app/api/employee-requests/types";
 import { EmployeeRequestService } from "@/app/api/services/employee-request.service";
 import { IncidentsRolesPermissionsService } from "@/app/api/services/incidents-roles-permissions";
+import { RequestsRolesPermissionsService } from "@/app/api/services/requests-roles-permissions";
 import { VACATION_DAY_VALUE } from "@/common/constants/VacationDayValue";
 import { HolidayService } from "@/app/api/services/holiday.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
@@ -88,6 +89,14 @@ export const validateIncidentsRolesPermissions = async (roleId: number, incident
   return await IncidentsRolesPermissionsService.validateIncidentsRolesPermissions(
     roleId,
     incidentId,
+    permissionType as any,
+  );
+};
+
+export const validateRequestsRolesPermissions = async (roleId: number, requestId: number, permissionType: string) => {
+  return await RequestsRolesPermissionsService.validateRequestsRolesPermissions(
+    roleId,
+    requestId,
     permissionType as any,
   );
 };

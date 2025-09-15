@@ -121,6 +121,13 @@ const incidentsRulesConfig: EntityConfig = {
   showSearchBar: true,
 };
 
+const requestsRolesPermissionsConfig: EntityConfig = {
+  name: "requestsRolesPermissions",
+  initialSortBy: "id",
+  title: "Permisos de Solicitudes por Rol",
+  showSearchBar: true,
+};
+
 const userConfig: EntityConfig = {
   name: "user",
   initialSortBy: "email",
@@ -149,6 +156,7 @@ export const filtersSlice = createFiltersSlice([
   incidentsRolesPermissionsConfig,
   incidentsRulesConfig,
   salariesConfig,
+  requestsRolesPermissionsConfig,
 ]);
 
 export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen, updateConfigFilters } =
