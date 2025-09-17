@@ -11,6 +11,7 @@ interface StateType {
   page: number;
   limit: number;
   filters: {
+    employeeId: string;
     checkIn: string;
     checkOut: string;
   };
@@ -26,6 +27,7 @@ const initialState = {
   page: 1,
   limit: 10,
   filters: {
+    employeeId: "",
     checkIn: "",
     checkOut: "",
   },
@@ -42,6 +44,9 @@ export const EmployeesAttendancesSlice = createSlice({
     },
     getEmployees: (state, action) => {
       state.employeesAttendances = action.payload;
+    },
+    setEmployeeId: (state, action) => {
+      state.filters.employeeId = action.payload;
     },
     searchEmployee: (state, action) => {
       state.search = action.payload;
@@ -64,8 +69,16 @@ export const EmployeesAttendancesSlice = createSlice({
   },
 });
 
-export const { hasError, getEmployees, searchEmployee, sortById, filterEmployees, filterReset, emptyMessage } =
-  EmployeesAttendancesSlice.actions;
+export const {
+  hasError,
+  getEmployees,
+  searchEmployee,
+  sortById,
+  filterEmployees,
+  filterReset,
+  emptyMessage,
+  setEmployeeId,
+} = EmployeesAttendancesSlice.actions;
 
 export const fetchEmployees = (filters: string) => async (dispatch: AppDispatch) => {
   try {

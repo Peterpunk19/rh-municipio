@@ -270,7 +270,7 @@ export const EmployeeAttendanceService = {
       skip: offset,
       take: limit,
       orderBy: {
-        id: "desc",
+        check_in: "desc",
       },
       select: {
         id: true,

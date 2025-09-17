@@ -27,7 +27,7 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
       values: {},
       filterOpen: false,
       title: config.title || "",
-      showSearchBar: config.showSearchBar || true,
+      showSearchBar: config.showSearchBar ?? true,
     };
   });
 

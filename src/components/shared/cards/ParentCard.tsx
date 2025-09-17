@@ -14,11 +14,15 @@ type Props = {
   footer?: string | JSX.Element;
   codeModel?: JSX.Element | JSX.Element[];
   children: JSX.Element;
+  showSearchBar?: boolean;
 };
 
-const ParentCard = ({ children, footer, codeModel, entity }: Props) => {
+const ParentCard = ({ children, footer, codeModel, entity, showSearchBar: showSearchBarProp }: Props) => {
   const dispatch = useDispatch();
-  const { filterOpen } = useSelector((state: RootState) => state.filters[entity] || { filterOpen: false });
+  const { filterOpen, showSearchBar } = useSelector(
+    (state: RootState) => state.filters[entity] || { filterOpen: false, showSearchBar: true },
+  );
+  const enableSearchBar = typeof showSearchBarProp === "boolean" ? showSearchBarProp : showSearchBar;
 
   const customizer = useSelector((state: AppState) => state.customizer);
   const theme = useTheme();
@@ -37,9 +41,17 @@ const ParentCard = ({ children, footer, codeModel, entity }: Props) => {
       >
         <Grid container spacing={3}>
           <Grid key="search-field-toolbar" size={{ xs: 12, sm: 12, lg: codeModel ? 10 : 12 }}>
-            <CustomSearchTableField entity={entity} />
+            {enableSearchBar && <CustomSearchTableField entity={entity} />}
           </Grid>
-          <Grid key="button-toolbar" size={{ xs: 12, sm: 12, lg: 2 }}>
+          <Grid
+            key="button-toolbar"
+            size={{ xs: 12, sm: 12, lg: 2 }}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
             {codeModel}
           </Grid>
         </Grid>

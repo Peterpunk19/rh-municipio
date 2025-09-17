@@ -7,6 +7,7 @@ export interface PDFGeneratorProps {
   template: ComponentType<{ data: Record<string, any>; title?: string }>;
   buttonProps?: any;
   optionsConfig?: PDFOptionsConfig;
+  buttonLabel?: string;
 }
 
 export interface PDFOption {

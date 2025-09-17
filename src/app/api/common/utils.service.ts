@@ -225,10 +225,6 @@ export const validateTotalEmployeeIncidentDays = async (
 
   const daysToInsert = await incidentDates.reduce(async (acc, dateStr) => {
     const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
-    console.log("********** DATE **********");
-    console.log(date);
-    console.log("********** INCIDENT TYPE ID **********");
-    console.log(incidentTypeId);
 
     if (incidentTypeId === INCIDENT_TYPES_ID.PATERNIDAD) {
       const isWorkday = daysActive.has(date.getDay());
@@ -239,12 +235,6 @@ export const validateTotalEmployeeIncidentDays = async (
     const value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : 1;
     return (await acc) + value;
   }, Promise.resolve(0));
-  console.log("********** Days To Insert **********");
-  console.log(daysToInsert);
-  console.log("********** Used Days **********");
-  console.log(usedDays);
-  console.log("********** Allowed Days **********");
-  console.log(allowedDays);
 
   return (usedDays ?? 0) + daysToInsert <= (allowedDays ?? 0);
 };
