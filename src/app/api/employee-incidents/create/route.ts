@@ -66,8 +66,21 @@ export async function POST(request: NextRequest) {
       if (validationResponse) return handleHttpResponse(validationResponse);
     }
 
-    const rulesValidation = await IncidentRulesService.validateIncidentRules(body);
+    if (body.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+      const startDate = new Date(body.startDate);
+      const endDate = new Date(body.endDate);
+      const dates: string[] = [];
+      const currentDate = new Date(startDate);
 
+      while (currentDate <= endDate) {
+        dates.push(currentDate.toISOString().split("T")[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      body.incidentDates = dates;
+    }
+
+    const rulesValidation = await IncidentRulesService.validateIncidentRules(body);
     if (rulesValidation && !rulesValidation.success) {
       return handleHttpResponse(rulesValidation);
     }

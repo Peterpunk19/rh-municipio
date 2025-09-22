@@ -225,10 +225,13 @@ export const validateTotalEmployeeIncidentDays = async (
 
   const daysToInsert = await incidentDates.reduce(async (acc, dateStr) => {
     const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
-
     if (incidentTypeId === INCIDENT_TYPES_ID.PATERNIDAD) {
       const isWorkday = daysActive.has(date.getDay());
       return (await acc) + (isWorkday ? 1 : 0);
+    }
+
+    if (incidentTypeId === INCIDENT_TYPES_ID.LACTANCIA) {
+      return (await acc) + 1;
     }
 
     const isHoliday = await HolidayService.isHoliday(date);

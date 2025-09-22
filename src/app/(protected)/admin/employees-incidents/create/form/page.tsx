@@ -93,7 +93,7 @@ const IncidentCreateForm = ({
     if (!employeeId || !incidentId) {
       setValidationData(null);
       setValidationError(null);
-      return;
+      return null;
     }
 
     setIsValidating(true);
@@ -106,13 +106,15 @@ const IncidentCreateForm = ({
       if (response.success && response.responseObject) {
         const maxDays = response.responseObject.hasRules === false ? 20 : response.responseObject.remaining_days;
         setMaxSelections(maxDays);
-        return;
+        return maxDays;
       }
       setValidationData(null);
       setValidationError(HttpMessages.error.internalServerError);
+      return null;
     } catch (error) {
       setValidationData(null);
       setValidationError(HttpMessages.error.internalServerError);
+      return null;
     } finally {
       setIsValidating(false);
     }
@@ -148,7 +150,12 @@ const IncidentCreateForm = ({
       setValidationError(null);
     }
 
-    if ((name === "employeeId" || name === "incidentId") && updatedFormData.employeeId && updatedFormData.incidentId) {
+    if (
+      (name === "employeeId" || name === "incidentId") &&
+      updatedFormData.employeeId &&
+      updatedFormData.incidentId &&
+      Number(updatedFormData.incidentId) !== INCIDENT_TYPES_ID.LACTANCIA
+    ) {
       const defaultDate = visibleMonthStart;
       validateIncident(
         updatedFormData.employeeId,
@@ -156,6 +163,23 @@ const IncidentCreateForm = ({
         updatedFormData.startDate || defaultDate,
         updatedFormData.endDate || defaultDate,
       );
+    }
+
+    if (name === "startDate" && Number(updatedFormData.incidentId) === INCIDENT_TYPES_ID.LACTANCIA) {
+      const startDate = new Date(value);
+      const validationResult = await validateIncident(
+        updatedFormData.employeeId,
+        updatedFormData.incidentId,
+        value,
+        value,
+      );
+      const availableDays = validationResult !== null ? validationResult : maxSelections;
+      if (!isNaN(startDate.getTime()) && availableDays > 0) {
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + availableDays - 1);
+        const formattedEndDate = endDate.toISOString().split("T")[0];
+        dispatch(updateFormData({ field: "endDate", value: formattedEndDate }));
+      }
     }
 
     if (name === "endDate") {
@@ -216,14 +240,16 @@ const IncidentCreateForm = ({
     }
 
     if (currentEmployee.gender_name === GENDER.MALE) {
-      return incidentTypes;
+      return incidentTypes.filter((type) => {
+        const shouldExclude = Number(type.id) === INCIDENT_TYPES_ID.LACTANCIA;
+        return !shouldExclude;
+      });
+    } else {
+      return incidentTypes.filter((type) => {
+        const shouldExclude = Number(type.id) === INCIDENT_TYPES_ID.PATERNIDAD;
+        return !shouldExclude;
+      });
     }
-    const filtered = incidentTypes.filter((type) => {
-      const shouldExclude = Number(type.id) === INCIDENT_TYPES_ID.PATERNIDAD;
-      return !shouldExclude;
-    });
-
-    return filtered;
   }, [incidentTypes, currentEmployee]);
 
   const calendarIncidentIds = useMemo(() => {
@@ -233,6 +259,10 @@ const IncidentCreateForm = ({
   const isVacationIncident = useMemo(() => {
     return calendarIncidentIds.includes(formData.incidentId);
   }, [formData.incidentId, calendarIncidentIds]);
+
+  const isLactanciaIncident = useMemo(() => {
+    return Number(formData.incidentId) === INCIDENT_TYPES_ID.LACTANCIA;
+  }, [formData.incidentId]);
 
   const isEntryOrExitIncident = useMemo(() => {
     const incidentId = Number(formData.incidentId);
@@ -501,7 +531,7 @@ const IncidentCreateForm = ({
                   onChange={handleChange}
                   variant="outlined"
                   fullWidth
-                  disabled={isVacationIncident}
+                  disabled={isVacationIncident || isLactanciaIncident}
                 />
                 <CustomLabelError field={errors.endDate && errors.endDate} />
               </FormControl>

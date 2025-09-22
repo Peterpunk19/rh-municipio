@@ -112,6 +112,68 @@ const paternityRules = [
     ],
   }),
 ];
+const lactanciaRules = [
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.LACTANCIA,
+        days: 182,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_NO_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.LACTANCIA,
+        days: 182,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONFIANZA,
+    incidentConfigs: [
+      {
+        incident_id: incident.LACTANCIA,
+        days: 182,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_GASTO_CORRIENTE,
+    incidentConfigs: [
+      {
+        incident_id: incident.LACTANCIA,
+        days: 182,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_LAUDO,
+    incidentConfigs: [
+      {
+        incident_id: incident.LACTANCIA,
+        days: 182,
+        allMonths: true,
+      },
+    ],
+  }),
+  ...generateRules({
+    employee_type_id: employeeTypes.CONTRATO_FONDO_IV,
+    incidentConfigs: [
+      {
+        incident_id: incident.LACTANCIA,
+        days: 182,
+        allMonths: true,
+      },
+    ],
+  }),
+];
 
 const licenciaMedicaRules = [
   ...generateRules({
@@ -445,6 +507,7 @@ const contratoLaudoPermisoEconomico = [
 ];
 
 module.exports = [
+  ...lactanciaRules,
   ...paternityRules,
   ...baseRules,
   ...baseSindicalizadoPermisoEconomico,

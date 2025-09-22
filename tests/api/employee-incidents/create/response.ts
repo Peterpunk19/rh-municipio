@@ -20,9 +20,6 @@ export const response = {
       employeeId: {
         messages: [validationMessages.required("Empleado")],
       },
-      incidentDates: {
-        messages: [validationMessages.required("Fechas de incidencia")],
-      },
     },
   }),
   emptyEmployeeId: generator.response({
