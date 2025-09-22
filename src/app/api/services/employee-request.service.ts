@@ -834,6 +834,42 @@ export const EmployeeRequestService = {
             }
             break;
 
+          case REQUEST_TYPES.ADSCRIPTION:
+            if (employeeRequestFound.request_details?.new_direccion) {
+              const { new_direccion, start_at } = employeeRequestFound.request_details;
+              const now = new Date();
+
+              const startDate = start_at ? new Date(start_at) : now;
+              const endDate = new Date(startDate);
+              endDate.setFullYear(endDate.getFullYear() + 1);
+
+              await tx.employeeAscriptions.updateMany({
+                where: {
+                  employee_id: employeeId,
+                  active: true,
+                },
+                data: {
+                  active: false,
+                  end_date: now,
+                  updated_at: now,
+                },
+              });
+
+              await tx.employeeAscriptions.create({
+                data: {
+                  employee_id: employeeId,
+                  direccion_id: new_direccion.id,
+                  active: true,
+                  start_date: startDate,
+                  end_date: endDate,
+                  created_by_id: approvedBy,
+                  created_at: now,
+                  updated_at: now,
+                },
+              });
+            }
+            break;
+
           case REQUEST_TYPES.LOCATION:
             if (employeeRequestFound.request_details) {
               const requestDetail = employeeRequestFound.request_details;

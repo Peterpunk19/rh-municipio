@@ -224,6 +224,30 @@ export const EmployeeIncidentsService = {
                 },
               },
             },
+            employee_ascriptions: {
+              where: {
+                active: true,
+              },
+              select: {
+                id: true,
+                start_date: true,
+                end_date: true,
+                direccion: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    secretaria: {
+                      select: {
+                        id: true,
+                        name: true,
+                        display_name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
         incident_id: true,
