@@ -25,9 +25,11 @@ const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
         <Typography variant="body1" fontWeight={600}>
           {FULL_NAME}
         </Typography>
-        <Typography variant="body2">{employeeData?.employee_hiring[0]?.category?.display_name}</Typography>
-        <Typography variant="body2">{employeeData?.employee_hiring[0]?.direccion?.display_name}</Typography>
-        <Typography variant="body2">{employeeData?.employee_hiring[0]?.direccion?.secretaria?.display_name}</Typography>
+        <Typography variant="body2">{employeeData?.employee_ascriptions[0]?.category?.display_name}</Typography>
+        <Typography variant="body2">{employeeData?.employee_ascriptions[0]?.direccion?.display_name}</Typography>
+        <Typography variant="body2">
+          {employeeData?.employee_ascriptions[0]?.direccion?.secretaria?.display_name}
+        </Typography>
       </Box>
 
       <Button

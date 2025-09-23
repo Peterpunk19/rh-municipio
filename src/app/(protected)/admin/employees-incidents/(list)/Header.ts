@@ -35,13 +35,13 @@ export const header: readonly HeadCell[] = [
     ],
   },
   {
-    id: "employee.employee_hiring[0].direccion.display_name",
+    id: "employee.employee_ascriptions[0].direccion.display_name",
     numeric: false,
     disablePadding: false,
     label: "Organismo público y administrativo",
     children: [
       {
-        id: "employee.employee_hiring[0].direccion.secretaria.display_name",
+        id: "employee.employee_ascriptions[0].direccion.secretaria.display_name",
         numeric: false,
         disablePadding: false,
         label: "CURP",
