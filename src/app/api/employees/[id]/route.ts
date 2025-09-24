@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { handleHttpResponse } from "@/common/response/handler";
-import { EmployeeGetByIdSchema, EmployeePostSchema } from "@/schemas/employee";
+import { EmployeeGetByIdSchema, EmployeePutSchema } from "@/schemas/employee";
 import type { IEmployeeById, IEmployee } from "@/app/api/employees/interface";
 import { validateRequestByUrlParams, validateRequest } from "@/common/request/validateRequest";
 import { HttpResponse } from "@/common/response/model";
@@ -46,7 +46,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const employeeId = Number.parseInt((await params).id);
-    const validationRequest = await validateRequest<IEmployee>(request, EmployeePostSchema);
+    const validationRequest = await validateRequest<IEmployee>(request, EmployeePutSchema);
     if (validationRequest.response) return validationRequest.response;
     const body = validationRequest.data;
 

@@ -15,4 +15,11 @@ export const DireccionService = {
       },
     });
   },
+  async getDireccionByDisplayNameToImport(displayName: string) {
+    const direccion = await prisma.direccion.findFirst({
+      where: { display_name: displayName },
+    });
+
+    return direccion ? direccion.id : null;
+  },
 };

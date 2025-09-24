@@ -39,6 +39,16 @@ export const EmployeeService = {
     return (Number.parseInt(lastEmployee.number_employee, 10) + 1).toString();
   },
 
+  async getByNumberEmployee(numberEmployee: string) {
+    const employee = await prisma.employee.findFirst({
+      where: {
+        number_employee: numberEmployee,
+      },
+    });
+
+    return !!employee;
+  },
+
   async getEmployeeById(id: number) {
     return prisma.employee.findFirst({
       include: {
@@ -175,29 +185,21 @@ export const EmployeeService = {
           status_employee: {
             connect: { name: STATUS_EMPLOYEE.ACTIVO },
           },
-          gender: {
-            connect: { id: Number(employee.genderId) },
-          },
+          ...(employee.genderId ? { gender: { connect: { id: Number(employee.genderId) } } } : {}),
           user: {
             connect: {
               id: createUser.id,
             },
           },
-          marital_status: {
-            connect: { id: Number(employee.maritalStatusId) },
-          },
-          schooling: {
-            connect: { id: Number(employee.schoolingId) },
-          },
-          profession: {
-            connect: { id: Number(employee.professionId) },
-          },
-          occupation: {
-            connect: { id: Number(employee.occupationId) },
-          },
-          identification_type: {
-            connect: { id: Number(employee.identificationTypeId) },
-          },
+          ...(employee.maritalStatusId
+            ? { marital_status: { connect: { id: Number(employee.maritalStatusId) } } }
+            : {}),
+          ...(employee.schoolingId ? { schooling: { connect: { id: Number(employee.schoolingId) } } } : {}),
+          ...(employee.professionId ? { profession: { connect: { id: Number(employee.professionId) } } } : {}),
+          ...(employee.occupationId ? { occupation: { connect: { id: Number(employee.occupationId) } } } : {}),
+          ...(employee.identificationTypeId
+            ? { identification_type: { connect: { id: Number(employee.identificationTypeId) } } }
+            : {}),
           identification_folio: employee.identificationFolio,
         },
       });
@@ -211,7 +213,7 @@ export const EmployeeService = {
           address_line_4: employee.addressLine4,
           postal_code: employee.postalCode,
           postal_code_sat: employee.postalCodeSat,
-          municipality_id: Number(employee.municipalityId),
+          municipality_id: employee.municipalityId ? Number(employee.municipalityId) : null,
           created_at: new Date(),
         },
       });
@@ -221,9 +223,9 @@ export const EmployeeService = {
           employee_id: createEmployee.id,
           start_job_date: employee.startJobDate,
           end_job_date: employee.endJobDate,
-          category_id: Number(employee.categoryId),
-          employee_type_id: Number(employee.employeeTypeId),
-          direccion_id: Number(employee.direccionId),
+          category_id: employee.categoryId ? Number(employee.categoryId) : null,
+          employee_type_id: employee.employeeTypeId ? Number(employee.employeeTypeId) : null,
+          direccion_id: employee.direccionId ? Number(employee.direccionId) : null,
           created_at: new Date(),
         },
       });
@@ -233,7 +235,7 @@ export const EmployeeService = {
           employee_id: createEmployee.id,
           start_date: employee.startJobDate,
           end_date: employee.endJobDate,
-          direccion_id: Number(employee.direccionId),
+          direccion_id: employee.direccionId ? Number(employee.direccionId) : null,
           created_by_id: 1,
           created_at: new Date(),
           updated_at: new Date(),
@@ -820,29 +822,21 @@ export const EmployeeService = {
           status_employee: {
             connect: { name: STATUS_EMPLOYEE.ACTIVO },
           },
-          gender: {
-            connect: { id: Number(employee.genderId) },
-          },
+          ...(employee.genderId ? { gender: { connect: { id: Number(employee.genderId) } } } : {}),
           user: {
             connect: {
               id: updatedUser.id,
             },
           },
-          marital_status: {
-            connect: { id: Number(employee.maritalStatusId) },
-          },
-          schooling: {
-            connect: { id: Number(employee.schoolingId) },
-          },
-          profession: {
-            connect: { id: Number(employee.professionId) },
-          },
-          occupation: {
-            connect: { id: Number(employee.occupationId) },
-          },
-          identification_type: {
-            connect: { id: Number(employee.identificationTypeId) },
-          },
+          ...(employee.maritalStatusId
+            ? { marital_status: { connect: { id: Number(employee.maritalStatusId) } } }
+            : {}),
+          ...(employee.schoolingId ? { schooling: { connect: { id: Number(employee.schoolingId) } } } : {}),
+          ...(employee.professionId ? { profession: { connect: { id: Number(employee.professionId) } } } : {}),
+          ...(employee.occupationId ? { occupation: { connect: { id: Number(employee.occupationId) } } } : {}),
+          ...(employee.identificationTypeId
+            ? { identification_type: { connect: { id: Number(employee.identificationTypeId) } } }
+            : {}),
           identification_folio: employee.identificationFolio,
         },
         where: {
@@ -870,9 +864,9 @@ export const EmployeeService = {
         data: {
           start_job_date: employee.startJobDate,
           end_job_date: employee.endJobDate,
-          category_id: Number(employee.categoryId),
-          employee_type_id: Number(employee.employeeTypeId),
-          direccion_id: Number(employee.direccionId),
+          category_id: employee.categoryId ? Number(employee.categoryId) : null,
+          employee_type_id: employee.employeeTypeId ? Number(employee.employeeTypeId) : null,
+          direccion_id: employee.direccionId ? Number(employee.direccionId) : null,
           created_at: new Date(),
         },
         where: {

@@ -1,16 +1,23 @@
 import { prisma } from "@/lib/prisma";
 
 export const CategoryService = {
-  async getCategoryByDisplayNameToImport(displayName: string) {
-    const category = await prisma.category.upsert({
-      where: { display_name: displayName },
-      update: {},
-      create: {
-        display_name: displayName,
-        name: displayName.toLowerCase().replace(/\s+/g, "_"),
-      },
+  normalizeCategoryName(displayName: string): string {
+    return displayName
+      .trim()
+      .replace(/['"]/g, "") // elimina comillas simples y dobles
+      .normalize("NFD") // separa acentos
+      .replace(/[\u0300-\u036f]/g, "") // elimina acentos
+      .toLowerCase()
+      .replace(/\s+/g, "_"); // reemplaza espacios por guión bajo
+  },
+
+  async getCategoryByDisplayName(displayName: string) {
+    const normalizedName = this.normalizeCategoryName(displayName);
+
+    const category = await prisma.category.findUnique({
+      where: { name: normalizedName },
     });
 
-    return category.id;
+    return category ? category.id : null;
   },
 };

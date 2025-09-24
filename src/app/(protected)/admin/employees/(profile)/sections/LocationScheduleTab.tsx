@@ -19,6 +19,22 @@ const LocationScheduleTab = ({ employeeData }: EmployeePageProps) => {
       </Grid>
       <Grid size={3}>
         <Typography variant="subtitle1" color="text.secondary">
+          Tipo de asistencia:
+        </Typography>
+      </Grid>
+      <Grid size={9}>
+        {employeeData.employee_attendance_type.length ? (
+          <Typography variant="subtitle1" fontWeight={600} mb={0.5} sx={{ whiteSpace: "pre-line" }}>
+            {employeeData.employee_attendance_type[0].attendance.display_name}
+          </Typography>
+        ) : (
+          <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
+            No tiene asignado
+          </Typography>
+        )}
+      </Grid>
+      <Grid size={3}>
+        <Typography variant="subtitle1" color="text.secondary">
           Horario:
         </Typography>
       </Grid>

@@ -32,7 +32,7 @@ export const header: readonly HeadCell[] = [
     label: "CONTRATO DE GASTO CORRIENTE",
   },
   {
-    id: "contrato_laudo",
+    id: "contrato_por_laudo",
     numeric: true,
     disablePadding: false,
     label: "CONTRATO POR LAUDO",

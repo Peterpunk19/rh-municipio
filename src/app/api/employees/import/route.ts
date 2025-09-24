@@ -5,34 +5,42 @@ import { EmployeeService } from "@/app/api/services/employee.service";
 import { HttpMessages } from "@/common/response/messages";
 import type { IEmployee } from "@/app/api/employees/interface";
 import { EmployeeTypeService } from "@/app/api/services/employeeType.service";
-import { formatFolio, getRandomDate, getRandomNumber } from "@/common/utils";
+import { SchoolingService } from "@/app/api/services/schooling.service";
+import { ProfessionService } from "@/app/api/services/profession.service";
+import { OccupationService } from "@/app/api/services/occupation.service";
+import { MunicipalityService } from "@/app/api/services/municipality.service";
 import { LocationService } from "@/app/api/services/location.service";
 import { CategoryService } from "@/app/api/services/category.service";
-
-function getRandomDireccionId(): number {
-  const validDireccionIds = [1, 2, 3, 4, 11, 15, 17, 18];
-  const index = Math.floor(Math.random() * validDireccionIds.length);
-  return validDireccionIds[index];
-}
+import { DireccionService } from "@/app/api/services/direccion.service";
 
 async function mapToIEmployee(data: any): Promise<IEmployee> {
-  const validateOrGenerateDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
-  };
-
-  console.log("mapToIEmployee");
-  console.log(data);
-
-  const locationId = await LocationService.getLocationByDisplayNameToImport(data.location_display_name);
-  const categoryId = await CategoryService.getCategoryByDisplayNameToImport(data.category_display_name);
+  const locationId = data.location_display_name
+    ? await LocationService.getLocationByDisplayNameToImport(data.location_display_name)
+    : null;
+  const schoolingId = data.schooling_display_name
+    ? await SchoolingService.getSchoolingByDisplayName(data.schooling_display_name)
+    : null;
+  const municipalityId = data.municipality_code
+    ? await MunicipalityService.getMunicipalityByCveCode(String(data.municipality_code))
+    : null;
+  const categoryId = await CategoryService.getCategoryByDisplayName(data.category_display_name);
+  const profesionId = data.profession_code
+    ? await ProfessionService.getProfessionById(Number(data.profession_code))
+    : null;
+  const occupationId = data.occupation_code
+    ? await OccupationService.getOccupationById(Number(data.occupation_code))
+    : null;
+  const direccionId = data.secretaria_display_name
+    ? await DireccionService.getDireccionByDisplayNameToImport(data.secretaria_display_name)
+    : null;
+  const employeeTypeId = await EmployeeTypeService.getEmployeeTypeByDisplayName(data.employee_type_display_name);
 
   return {
-    numberEmployee: data.number_employee || "",
-    name: data.first_name || "",
-    paternalLastName: data.paternal_last_name || "",
-    maternalLastName: data.maternal_last_name || "",
-    birthday: validateOrGenerateDate(data.birthday || ""),
+    numberEmployee: String(data.number_employee),
+    name: data.first_name,
+    paternalLastName: data.paternal_last_name,
+    maternalLastName: data.maternal_last_name,
+    birthday: data.birthday ? new Date(data.birthday).toISOString() : null,
     rfc: data.rfc || "",
     curp: data.curp || "",
     addressLine1: data.address_line_1 || "",
@@ -41,19 +49,18 @@ async function mapToIEmployee(data: any): Promise<IEmployee> {
     addressLine4: data.address_line_4 || "",
     postalCode: data.postal_code || "",
     postalCodeSat: data.postal_code_sat || "",
-    municipalityId: data.municipality_id || "",
+    municipalityId: municipalityId || "",
     genderId: data.gender_id,
-    startJobDate: new Date(data.employment_start_date).toISOString(),
-    endJobDate: new Date(data.employment_end_date).toISOString(),
+    startJobDate: data.original_hire_date ? new Date(data.original_hire_date).toISOString() : new Date().toISOString(),
+    endJobDate: data.employment_end_date ? new Date(data.employment_end_date).toISOString() : null,
     categoryId: categoryId,
-    employeeTypeName: "base_no_sindicalizado",
-    employeeTypeId: data.employee_type_id,
-    direccionId: getRandomDireccionId(),
-    maritalStatusId: 1,
-    schoolingId: getRandomNumber(1, 10),
-    professionId: 110,
-    occupationId: getRandomNumber(1, 20),
-    identificationTypeId: 1,
+    employeeTypeId: employeeTypeId,
+    direccionId: direccionId,
+    maritalStatusId: data.marital_status_id,
+    schoolingId: schoolingId,
+    professionId: profesionId,
+    occupationId: occupationId,
+    identificationTypeId: data.identification_type_id || null,
     identificationFolio: data.identification_folio || null,
     locationId: locationId,
     attendanceId: data.attendance_id,
@@ -64,40 +71,50 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   try {
     const createdEmployees: IEmployee[] = [];
+    const errors: IEmployee[] = [];
 
-    await Promise.all(
-      body.map(async (employeeData: IEmployee) => {
-        const employeeMapped: IEmployee = await mapToIEmployee(employeeData);
+    for (const employeeData of body) {
+      const errorMessage = {
+        curp: employeeData.curp,
+      };
 
-        const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(employeeMapped.rfc, employeeMapped.curp);
+      const existingNumberEmployee = await EmployeeService.getByNumberEmployee(String(employeeData.number_employee));
+      if (existingNumberEmployee) {
+        errorMessage.success = false;
+        errorMessage.message = `Ya existe un empleado con el numero de empelado: ${employeeData.number_employee}`;
+        errors.push(errorMessage);
+        continue;
+      }
 
-        if (!existingEmployee) {
-          if (employeeMapped.numberEmployee == null || employeeMapped.numberEmployee === "") {
-            employeeMapped.numberEmployee = await EmployeeService.getNumberEmployee();
-          }
+      const employeeMapped: IEmployee = await mapToIEmployee(employeeData);
 
-          console.log(employeeMapped);
-          // if (employeeMappe  d.curp == "") employeeMapped.curp = employeeMapped.rfc;
+      const existingEmployee = await EmployeeService.getEmployeeByRfcCurp(employeeMapped.rfc, employeeMapped.curp);
 
-          await EmployeeService.createEmployee(employeeMapped);
-          employeeMapped.success = true;
-          createdEmployees.push(employeeMapped);
-        } else {
-          console.log("existingEmployee");
-          console.log(employeeMapped);
-          employeeMapped.success = false;
-          createdEmployees.push(employeeMapped);
+      if (!existingEmployee) {
+        if (employeeMapped.numberEmployee == null || employeeMapped.numberEmployee === "") {
+          employeeMapped.numberEmployee = await EmployeeService.getNumberEmployee();
         }
-      }),
-    );
+
+        console.log(employeeMapped);
+
+        await EmployeeService.createEmployee(employeeMapped);
+        employeeMapped.success = true;
+        createdEmployees.push(employeeMapped);
+      } else {
+        errorMessage.success = false;
+        errorMessage.message = `Ya existe un empleado con la curp: ${employeeMapped.curp} o rfc: ${employeeMapped.rfc}`;
+        errors.push(errorMessage);
+      }
+    }
 
     const response = HttpResponse.success(HttpMessages.employee.createdSuccess, {
       createdEmployees,
+      errors,
     });
 
     return handleHttpResponse(response);
   } catch (error: any) {
-    console.log(error.message);
+    console.log(error);
 
     const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message });
 
