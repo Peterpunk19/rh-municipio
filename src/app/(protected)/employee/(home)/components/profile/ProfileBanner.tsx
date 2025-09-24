@@ -68,8 +68,8 @@ const ProfileBanner = ({ employeeData }: { employeeData: any }) => {
                     {employeeData.name} {employeeData.paternal_last_name} {employeeData.maternal_last_name}
                   </Typography>
                   <Typography color="textSecondary" variant="overline" fontWeight={400}>
-                    {employeeData.employee_hiring?.[0]?.direccion?.secretaria?.display_name} -{" "}
-                    {employeeData.employee_hiring?.[0]?.direccion?.display_name}
+                    {employeeData.employee_ascriptions?.[0]?.direccion?.secretaria?.display_name} -{" "}
+                    {employeeData.employee_ascriptions?.[0]?.direccion?.display_name}
                   </Typography>
                   <Typography color="textSecondary" variant="h6" fontWeight={400}>
                     {employeeData.number_employee}

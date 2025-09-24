@@ -31,7 +31,7 @@ interface FormData {
   };
   adscriptionForm: {
     secretariaId: number;
-    attendanceType: string;
+    attendanceId: number | string;
     locationId: number;
     direccionId: number;
     startDate: string;
@@ -87,7 +87,7 @@ export const formatRequestData = (formData: FormData) => {
         secretariaId: formData.adscriptionForm.secretariaId,
         locationId: formData.adscriptionForm.locationId,
         direccionId: formData.adscriptionForm.direccionId,
-        attendanceType: Number(formData.adscriptionForm.attendanceType),
+        attendanceId: Number(formData.adscriptionForm.attendanceId),
         startDate: formData.adscriptionForm.startDate,
       };
 

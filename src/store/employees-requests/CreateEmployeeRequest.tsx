@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type {JobScheduleEmployee} from "@/app/api/interfaces/JobScheduleEmployee";
+import type { JobScheduleEmployee } from "@/app/api/interfaces/JobScheduleEmployee";
 
 interface StateType {
   employeeData: any;
@@ -35,7 +35,7 @@ interface StateType {
       secretariaId: number;
       direccionId: number;
       locationId: number;
-      attendanceType: string;
+      attendanceId: number | string;
       startDate: string;
     };
   };
@@ -75,7 +75,7 @@ const initialState: StateType = {
     adscriptionForm: {
       secretariaId: 0,
       direccionId: 0,
-      attendanceType: "",
+      attendanceId: 0,
       locationId: 0,
       startDate: "",
     },
@@ -95,13 +95,13 @@ export const CreateEmployeeRequestSlice = createSlice({
     },
     updateFormData(state, action: PayloadAction<{ field: string; value: any }>) {
       const { field, value } = action.payload;
-      const fields = field.split('.');
+      const fields = field.split(".");
       let current: any = state.formData;
-      
+
       for (let i = 0; i < fields.length - 1; i++) {
         current = current[fields[i]];
       }
-      
+
       current[fields[fields.length - 1]] = value;
     },
     removeSchedule(state, action: PayloadAction<number>) {
@@ -123,15 +123,14 @@ export const CreateEmployeeRequestSlice = createSlice({
   },
 });
 
-export const { 
-  setEmployeeData, 
-  updateFormData, 
+export const {
+  setEmployeeData,
+  updateFormData,
   removeSchedule,
   setCurrentJobSchedule,
   setErrors,
   clearErrors,
-  resetForm
+  resetForm,
 } = CreateEmployeeRequestSlice.actions;
-
 
 export default CreateEmployeeRequestSlice.reducer;
