@@ -9,7 +9,9 @@ type Props = {
 const Tab = ({ displayData, title }: Props) => {
   return (
     <>
-      <h3>{title}</h3>
+      <Typography fontWeight="700" variant="h6">
+        {title}
+      </Typography>
       {displayData.map((item, index) => (
         <Grid container item xs={12} key={index}>
           <Grid size={3}>

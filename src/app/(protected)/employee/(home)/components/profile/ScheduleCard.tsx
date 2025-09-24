@@ -13,7 +13,7 @@ const ScheduleCard = ({ employeeData }: { employeeData: any }) => {
     return (
       <Box p={3}>
         <Typography variant="subtitle1" color="error">
-          Información de domicilio no disponible.
+          Información de jornada y ubicación.
         </Typography>
       </Box>
     );

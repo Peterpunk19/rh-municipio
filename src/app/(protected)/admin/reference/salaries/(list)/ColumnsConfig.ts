@@ -6,6 +6,6 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   base_no_sindicalizado: { renderType: "currency" },
   confianza: { renderType: "currency" },
   contrato_gasto_corriente: { renderType: "currency" },
-  contrato_laudo: { renderType: "currency" },
+  contrato_por_laudo: { renderType: "currency" },
   contrato_fondo_iv: { renderType: "currency" },
 };

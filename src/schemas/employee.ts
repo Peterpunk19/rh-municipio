@@ -148,6 +148,152 @@ export const EmployeePostSchema = z
     },
   );
 
+export const EmployeePutSchema = z
+  .object({
+    numberEmployee: z
+      .string({ message: validationMessages.required("Número de empleado") })
+      .min(1, { message: validationMessages.required("Número de empleado") })
+      .max(6, { message: validationMessages.maxLength("Número de empleado", 6) })
+      .optional()
+      .nullable(),
+    name: z
+      .string({ message: validationMessages.required("Nombre(s)") })
+      .min(1, { message: validationMessages.required("Nombre(s)") })
+      .max(255, { message: validationMessages.maxLength("Nombre(s)", 255) }),
+    paternalLastName: z
+      .string({ message: validationMessages.required("Apellido paterno") })
+      .min(1, { message: validationMessages.required("Apellido paterno") })
+      .max(255, { message: validationMessages.maxLength("Apellido paterno", 255) }),
+    maternalLastName: z
+      .string({ message: validationMessages.required("Apellido materno") })
+      .min(1, { message: validationMessages.required("Apellido materno") })
+      .max(255, { message: validationMessages.maxLength("Apellido materno", 255) }),
+    birthday: z.preprocess(
+      (val) => {
+        if (typeof val === "string" || val instanceof String) {
+          const parsedDate = new Date(val as string);
+          return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+        }
+        return val;
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha de nacimiento") }),
+    ),
+    genderId: z.number({ message: validationMessages.required("Género") }),
+    rfc: z
+      .string({ message: validationMessages.required("RFC") })
+      .min(1, { message: validationMessages.required("RFC") })
+      .regex(rfcRegex, { message: validationMessages.invalidFormat("RFC") }),
+    curp: z
+      .string({ message: validationMessages.required("CURP") })
+      .min(1, { message: validationMessages.required("CURP") })
+      .regex(curpRegex, { message: validationMessages.invalidFormat("CURP") }),
+    startJobDate: z.preprocess(
+      (val) => {
+        if (typeof val === "string" || val instanceof String) {
+          const parsedDate = new Date(val as string);
+          return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+        }
+        return val;
+      },
+      z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }),
+    ),
+    endJobDate: z.preprocess(
+      (val) => {
+        if (typeof val === "string" || val instanceof String) {
+          const parsedDate = new Date(val as string);
+          return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+        }
+        return val;
+      },
+      z
+        .date({ message: validationMessages.invalidaFormat("Fecha de terminación") })
+        .optional()
+        .nullable(),
+    ),
+    addressLine1: z
+      .string({ message: validationMessages.required("Calle") })
+      .min(1, { message: validationMessages.required("Calle") })
+      .max(255, { message: validationMessages.maxLength("Calle", 255) }),
+    addressLine2: z
+      .string({ message: validationMessages.required("Número de casa") })
+      .min(1, { message: validationMessages.required("Número de casa") })
+      .max(255, { message: validationMessages.maxLength("Número de casa", 255) }),
+    addressLine3: z.string({ message: validationMessages.required("Número de Departamento") }),
+    addressLine4: z
+      .string({ message: validationMessages.required("Colonia") })
+      .min(1, { message: validationMessages.required("Colonia") })
+      .max(255, { message: validationMessages.maxLength("Colonia", 255) }),
+    postalCode: z
+      .string({ message: validationMessages.required("Código postal") })
+      .min(1, { message: validationMessages.required("Código postal") })
+      .max(255, { message: validationMessages.maxLength("Código postal", 255) }),
+    postalCodeSat: z
+      .string({ message: validationMessages.required("Código postal SAT") })
+      .min(1, { message: validationMessages.required("Código postal SAT") })
+      .max(255, { message: validationMessages.maxLength("Código postal SAT", 255) }),
+    municipalityId: z.number({ message: validationMessages.required("Municipio") }),
+    categoryId: z.number({ message: validationMessages.required("Categoria") }),
+    employeeTypeName: z
+      .string({ message: validationMessages.required("Tipo de empleado") })
+      .min(1, { message: validationMessages.required("Tipo de empleado") })
+      .refine(
+        (val) =>
+          val === "" ||
+          Object.values(EmployeeTypeName).includes(val as (typeof EmployeeTypeName)[keyof typeof EmployeeTypeName]),
+        {
+          message: validationMessages.invalid("Tipo de empleado"),
+        },
+      ),
+    direccionId: z
+      .number({ message: validationMessages.required("Órgano administrativo") })
+      .optional()
+      .nullable(),
+    maritalStatusId: z
+      .number({ message: validationMessages.required("Estado Civil") })
+      .optional()
+      .nullable(),
+    schoolingId: z
+      .number({ message: validationMessages.required("Escolaridad") })
+      .optional()
+      .nullable(),
+    occupationId: z
+      .number({ message: validationMessages.required("Ocupación") })
+      .optional()
+      .nullable(),
+    professionId: z
+      .number({ message: validationMessages.required("Profesión") })
+      .optional()
+      .nullable(),
+    identificationTypeId: z
+      .number({ message: validationMessages.required("Tipo de identificacion") })
+      .optional()
+      .nullable(),
+    identificationFolio: z
+      .string({ message: validationMessages.required("Folio de identificación") })
+      .optional()
+      .nullable(),
+    tradeUnionId: z
+      .string()
+      .optional()
+      .nullable()
+      .refine((val) => val === null || val === "" || val, {
+        message: validationMessages.required("Sindicato"),
+      }),
+  })
+  .refine(
+    (data) => {
+      return !(data.employeeTypeName === EmployeeTypeName.BASE_SINDICALIZADO && !data.tradeUnionId);
+    },
+    {
+      message: validationMessages.requiredIf(
+        "Sindicato",
+        "Tipo de empleado",
+        EmployeeTypeDisplayName[EmployeeTypeName.BASE_SINDICALIZADO],
+      ),
+      path: ["tradeUnionId"],
+    },
+  );
+
 export const EmployeeGetByFilterSchema = z.object({
   page: z
     .number({ message: validationMessages.number("Página") })

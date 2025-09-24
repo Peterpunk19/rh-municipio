@@ -517,14 +517,14 @@ export const EmployeeAttendanceService = {
         },
       },
       organism_public: {
-        id: employeeAttendance.employee_ascriptions.direccion.secretaria.id,
-        name: employeeAttendance.employee_ascriptions.direccion.secretaria.name,
-        display_name: employeeAttendance.employee_ascriptions.direccion.secretaria.display_name,
+        id: employeeAttendance.employee_ascriptions.direccion?.secretaria.id,
+        name: employeeAttendance.employee_ascriptions.direccion?.secretaria.name,
+        display_name: employeeAttendance.employee_ascriptions.direccion?.secretaria.display_name,
       },
       organism_administrative: {
-        id: employeeAttendance.employee_ascriptions.direccion.id,
-        name: employeeAttendance.employee_ascriptions.direccion.name,
-        display_name: employeeAttendance.employee_ascriptions.direccion.display_name,
+        id: employeeAttendance.employee_ascriptions.direccion?.id,
+        name: employeeAttendance.employee_ascriptions.direccion?.name,
+        display_name: employeeAttendance.employee_ascriptions.direccion?.display_name,
       },
       created_by: {
         id: employeeAttendance.created_by.id,

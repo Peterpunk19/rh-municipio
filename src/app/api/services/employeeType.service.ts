@@ -6,4 +6,11 @@ export const EmployeeTypeService = {
       where: { name },
     });
   },
+  async getEmployeeTypeByDisplayName(display_name: string) {
+    const employeeType = await prisma.employeeType.findFirst({
+      where: { display_name: display_name },
+    });
+
+    return employeeType ? employeeType.id : null;
+  },
 };

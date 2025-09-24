@@ -125,15 +125,8 @@ const Profile = () => {
                 <Tab
                   iconPosition="start"
                   icon={<IconUserCircle size="22" />}
-                  label="Datos personales"
+                  label="Datos Generales"
                   {...a11yPropsProfile("personalInformation")}
-                />
-
-                <Tab
-                  iconPosition="start"
-                  icon={<IconMap2 size="22" />}
-                  label="Datos de domicilio"
-                  {...a11yPropsProfile("addressInformation")}
                 />
                 <Tab
                   iconPosition="start"
@@ -177,30 +170,28 @@ const Profile = () => {
             <CardContent>
               <TabPanel value={value} index={0}>
                 <PersonalTab employeeData={employeeData} />
-              </TabPanel>
-              <TabPanel value={value} index={1}>
                 <AddressTab employeeData={employeeData} />
               </TabPanel>
-              <TabPanel value={value} index={2}>
+              <TabPanel value={value} index={1}>
                 <HiringTab employeeData={employeeData} />
               </TabPanel>
-              <TabPanel value={value} index={3}>
+              <TabPanel value={value} index={2}>
                 <EmployeesIncidents />
               </TabPanel>
-              <TabPanel value={value} index={4}>
+              <TabPanel value={value} index={3}>
                 <EmployeeRequests />
               </TabPanel>
-              <TabPanel value={value} index={5}>
+              <TabPanel value={value} index={4}>
                 <EmployeesAttendances
                   employeeData={employeeData}
                   actionButtons={{ downloadPdf: true, createAttendance: false }}
                   showSearchBar={false}
                 />
               </TabPanel>
-              <TabPanel value={value} index={6}>
+              <TabPanel value={value} index={5}>
                 <CustomCalendarAttendance />
               </TabPanel>
-              <TabPanel value={value} index={7}>
+              <TabPanel value={value} index={6}>
                 <LocationScheduleTab employeeData={employeeData} />
               </TabPanel>
             </CardContent>

@@ -123,6 +123,11 @@ export const IncidentRulesService = {
 
     const yearsOfService = getYearsOfService(employee.employee_hiring[0].start_job_date);
     const employeeTypeId = employee.employee_hiring[0].employee_type_id;
+
+    if (employeeTypeId === null) {
+      throw new Error("El empleado no tiene definido un tipo.");
+    }
+
     const month = (startDate || new Date()).getMonth() + 1;
     const rule = await this.getApplicableRule(incidentId, employeeTypeId, yearsOfService, month);
 
@@ -254,6 +259,10 @@ export const IncidentRulesService = {
         const hiring = employee.employee_hiring[0];
         const yearsOfService = getYearsOfService(hiring.start_job_date);
         const employeeTypeId = hiring.employee_type_id;
+
+        if (employeeTypeId === null) {
+          throw new Error("El empleado no tiene definido un tipo.");
+        }
 
         const existingDates = await this.getEmployeeIncidentDates(Number(body.employeeId), Number(body.incidentId));
         if (exceedsConsecutiveLimit(existingDates, body.incidentDates, 3)) {

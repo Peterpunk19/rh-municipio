@@ -27,7 +27,7 @@ const employeeTypes = {
   BASE_NO_SINDICALIZADO: employeeTypeData.find((et) => et.name === "base_no_sindicalizado").id,
   CONFIANZA: employeeTypeData.find((et) => et.name === "confianza").id,
   CONTRATO_GASTO_CORRIENTE: employeeTypeData.find((et) => et.name === "contrato_gasto_corriente").id,
-  CONTRATO_LAUDO: employeeTypeData.find((et) => et.name === "contrato_laudo").id,
+  CONTRATO_LAUDO: employeeTypeData.find((et) => et.name === "contrato_por_laudo").id,
   CONTRATO_FONDO_IV: employeeTypeData.find((et) => et.name === "contrato_fondo_iv").id,
 };
 

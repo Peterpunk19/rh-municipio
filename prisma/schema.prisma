@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id                                  Int                                 @id @default(autoincrement())
-  uuid                                String                              @unique
+  uuid                                String                              @unique @default(uuid())
   username                            String                              @unique
   password                            String
   set_password_key                    String?
@@ -44,7 +44,7 @@ model Employee {
   name                                 String
   paternal_last_name                   String
   maternal_last_name                   String
-  birthday                             DateTime
+  birthday                             DateTime?
   rfc                                  String                              @unique
   curp                                 String
   active                               Boolean                             @default(true)
@@ -54,8 +54,8 @@ model Employee {
   user_id                              Int                                 @unique
   status_employee                      StatusEmployee                      @relation(fields: [status_employee_id], references: [id])
   status_employee_id                   Int
-  gender                               Gender                              @relation(fields: [gender_id], references: [id])
-  gender_id                            Int
+  gender                               Gender?                              @relation(fields: [gender_id], references: [id])
+  gender_id                            Int?
   employee_hiring                      EmployeeHiring[]
   employee_location                    EmployeeLocation[]
   employee_attendance_type             EmployeeAttendanceType[]
@@ -93,13 +93,13 @@ model Employee {
 model EmployeeAddress {
   id              Int           @id @default(autoincrement())
   employee_id     Int
-  address_line_1  String
-  address_line_2  String
-  address_line_3  String
-  address_line_4  String
-  postal_code     String
-  postal_code_sat String
-  municipality_id Int
+  address_line_1  String?
+  address_line_2  String?
+  address_line_3  String?
+  address_line_4  String?
+  postal_code     String?
+  postal_code_sat String?
+  municipality_id Int?
   active          Boolean       @default(true)
   created_by      Int?
   created_at      DateTime?     @default(now())
@@ -112,17 +112,17 @@ model EmployeeHiring {
   id               Int          @id @default(autoincrement())
   employee_id      Int
   start_job_date   DateTime
-  end_job_date     DateTime
+  end_job_date     DateTime?
   category_id      Int?
-  employee_type_id Int
-  direccion_id     Int
+  employee_type_id Int?
+  direccion_id     Int?
   active           Boolean      @default(true)
   created_by       Int?
   created_at       DateTime?    @default(now())
   updated_at       DateTime?    @updatedAt
   category         Category?    @relation(fields: [category_id], references: [id])
-  employee_type    EmployeeType @relation(fields: [employee_type_id], references: [id])
-  direccion        Direccion    @relation(fields: [direccion_id], references: [id])
+  employee_type    EmployeeType? @relation(fields: [employee_type_id], references: [id])
+  direccion        Direccion?    @relation(fields: [direccion_id], references: [id])
   employee         Employee?    @relation(fields: [employee_id], references: [id])
   created_by_user  Employee?    @relation("EmployeeCreatedBy", fields: [created_by], references: [id])
 
@@ -562,6 +562,7 @@ model MaritalStatus {
 
 model Schooling {
   id           Int        @id @default(autoincrement())
+  cve_code         String?     @unique
   name         String     @unique
   display_name String
   active       Boolean    @default(true)
@@ -578,6 +579,7 @@ model Profession {
 
 model Occupation {
   id           Int        @id @default(autoincrement())
+  cve_code         String?     @unique
   name         String     @unique
   display_name String
   active       Boolean    @default(true)
@@ -631,7 +633,7 @@ model Location {
 
 model Direccion {
   id                          Int                                 @id @default(autoincrement())
-  name                        String
+  name                        String                              @unique
   display_name                String
   secretaria_id               Int
   secretaria                  Secretaria                          @relation(fields: [secretaria_id], references: [id])
@@ -658,6 +660,7 @@ model Secretaria {
 
 model Municipality {
   id                Int               @id @default(autoincrement())
+  cve_code          String?
   name              String
   display_name      String
   active            Boolean           @default(true)
@@ -704,15 +707,15 @@ model AdministrativeOrganizationLeaders {
 
 model EmployeeAscriptions {
   id            Int       @id @default(autoincrement())
-  direccion_id  Int
+  direccion_id  Int?
   employee_id   Int
   created_by_id Int
   active        Boolean   @default(true)
   start_date    DateTime
-  end_date      DateTime
+  end_date      DateTime?
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
-  direccion     Direccion @relation(fields: [direccion_id], references: [id])
+  direccion     Direccion? @relation(fields: [direccion_id], references: [id])
   employee      Employee  @relation(fields: [employee_id], references: [id])
   created_by    User      @relation("createdBy", fields: [created_by_id], references: [id])
 

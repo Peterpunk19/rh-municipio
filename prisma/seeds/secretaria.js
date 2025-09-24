@@ -95,6 +95,24 @@ const secretaria = [
     display_name: "TESORERÍA MUNICIPAL",
     active: true,
   },
+  {
+    id: 17,
+    name: "sala_de_regidores",
+    display_name: "SALA DE REGIDORES",
+    active: true,
+  },
+  {
+    id: 18,
+    name: "secretaria_de_desarrollo_urbano_municipal",
+    display_name: "SECRETARIA DE DESARROLLO URBANO MUNICIPAL",
+    active: true,
+  },
+  {
+    id: 19,
+    name: "secretaria_para_la_igualdad_de_las_mujeres",
+    display_name: "SECRETARIA PARA LA IGUALDAD DE LAS MUJERES",
+    active: true,
+  },
 ];
 
 module.exports = secretaria;

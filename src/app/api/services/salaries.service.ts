@@ -34,7 +34,7 @@ export const SalariesService = {
         MAX(CASE WHEN EmployeeType.name = 'base_no_sindicalizado' THEN CategoryEmployeeType.salary END) as base_no_sindicalizado,
         MAX(CASE WHEN EmployeeType.name = 'confianza' THEN CategoryEmployeeType.salary END) as confianza,
         MAX(CASE WHEN EmployeeType.name = 'contrato_gasto_corriente' THEN CategoryEmployeeType.salary END) as contrato_gasto_corriente,
-        MAX(CASE WHEN EmployeeType.name = 'contrato_laudo' THEN CategoryEmployeeType.salary END) as contrato_laudo,
+        MAX(CASE WHEN EmployeeType.name = 'contrato_por_laudo' THEN CategoryEmployeeType.salary END) as contrato_por_laudo,
         MAX(CASE WHEN EmployeeType.name = 'contrato_fondo_iv' THEN CategoryEmployeeType.salary END) as contrato_fondo_iv
       FROM CategoryEmployeeType
       INNER JOIN Category ON CategoryEmployeeType.category_id = Category.id

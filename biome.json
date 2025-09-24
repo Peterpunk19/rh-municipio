@@ -8,7 +8,8 @@
       "./tests/**/*.ts",
       "prisma/**/*.ts",
       "prisma/seeds/**/*.js"
-    ]
+    ],
+    "maxSize": 3000000
   },
   "formatter": {
     "indentStyle": "space",

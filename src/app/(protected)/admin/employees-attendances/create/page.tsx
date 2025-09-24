@@ -146,7 +146,7 @@ const CreateEmployee = () => {
 
               <Grid2 size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth>
-                  <CustomFormLabel>Fecha de inicio</CustomFormLabel>
+                  <CustomFormLabel>Fecha de alta</CustomFormLabel>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
                       slotProps={{
@@ -175,7 +175,7 @@ const CreateEmployee = () => {
               </Grid2>
               <Grid2 size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth>
-                  <CustomFormLabel>Fecha de terminacion</CustomFormLabel>
+                  <CustomFormLabel>Fecha de baja</CustomFormLabel>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker
                       slotProps={{
