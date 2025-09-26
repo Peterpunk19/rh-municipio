@@ -149,6 +149,16 @@ export interface IEmployeeRequestResponse {
       name: string;
       display_name: string;
     };
+    current_direccion?: {
+      id: number;
+      name: string;
+      display_name: string;
+    } | null;
+    new_direccion?: {
+      id: number;
+      name: string;
+      display_name: string;
+    } | null;
     request_date: Date | null;
   };
   requestedBy: {

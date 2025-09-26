@@ -729,6 +729,9 @@ export const EmployeeRequestService = {
           attendance: employeeRequest.employee_request_detail[0].attendance
             ? { ...employeeRequest.employee_request_detail[0].attendance }
             : null,
+          new_attendance: employeeRequest.employee_request_detail[0].new_attendance
+            ? { ...employeeRequest.employee_request_detail[0].new_attendance }
+            : null,
           start_date: employeeRequest.employee_request_detail[0].start_date,
         }),
         request_date: employeeRequest.request_date,
@@ -836,7 +839,7 @@ export const EmployeeRequestService = {
 
           case REQUEST_TYPES.ADSCRIPTION:
             if (employeeRequestFound.request_details?.new_direccion) {
-              const { new_direccion, start_at } = employeeRequestFound.request_details;
+              const { new_direccion, new_location, new_attendance, start_at } = employeeRequestFound.request_details;
               const now = new Date();
 
               const startDate = start_at ? new Date(start_at) : now;
@@ -867,6 +870,58 @@ export const EmployeeRequestService = {
                   updated_at: now,
                 },
               });
+
+              if (new_location) {
+                await tx.employeeLocation.updateMany({
+                  where: {
+                    employee_id: employeeId,
+                    active: true,
+                  },
+                  data: {
+                    active: false,
+                    updated_at: now,
+                    applied_at: now,
+                  },
+                });
+
+                await tx.employeeLocation.create({
+                  data: {
+                    employee_id: employeeId,
+                    location_id: new_location.id,
+                    active: true,
+                    created_by: approvedBy,
+                    created_at: now,
+                    updated_at: now,
+                    applied_at: now,
+                  },
+                });
+              }
+
+              if (new_attendance) {
+                await tx.employeeAttendanceType.updateMany({
+                  where: {
+                    employee_id: employeeId,
+                    active: true,
+                  },
+                  data: {
+                    active: false,
+                    updated_at: now,
+                    applied_at: now,
+                  },
+                });
+
+                await tx.employeeAttendanceType.create({
+                  data: {
+                    employee_id: employeeId,
+                    attendance_id: new_attendance.id,
+                    active: true,
+                    created_by_id: approvedBy,
+                    created_at: now,
+                    updated_at: now,
+                    applied_at: now,
+                  },
+                });
+              }
             }
             break;
 

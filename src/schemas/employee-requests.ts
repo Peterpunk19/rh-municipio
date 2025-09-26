@@ -165,7 +165,7 @@ const AscriptionChangeSchema = z.object({
   locationId: z
     .number({ message: validationMessages.required("Ubicación") })
     .positive({ message: validationMessages.required("Ubicación") }),
-  attendanceType: z
+  attendanceId: z
     .number({ message: validationMessages.required("Tipo de checado") })
     .positive({ message: validationMessages.required("Tipo de checado") }),
   startDate: z.preprocess(

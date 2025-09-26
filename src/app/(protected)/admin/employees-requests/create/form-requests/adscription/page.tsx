@@ -183,8 +183,8 @@ const AdscriptionForm = () => {
             <FormControl component="fieldset">
               <RadioGroup
                 row
-                name="attendanceType"
-                value={formData.adscriptionForm.attendanceType}
+                name="attendanceId"
+                value={formData.adscriptionForm.attendanceId || ""}
                 onChange={handleChange}
               >
                 {attendanceTypes.map((attendanceType) => (
@@ -196,7 +196,7 @@ const AdscriptionForm = () => {
                   />
                 ))}
               </RadioGroup>
-              <CustomLabelError field={errors.attendanceType} />
+              <CustomLabelError field={errors.attendanceId} />
             </FormControl>
           )}
         </Grid2>

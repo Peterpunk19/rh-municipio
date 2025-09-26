@@ -43,7 +43,12 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
         return;
       }
 
-      setSuccess("Login exitoso!");
+      if (result?.success && result.redirectTo) {
+        window.location.href = result.redirectTo;
+        return;
+      }
+
+      setSuccess(result?.success || "Login exitoso!");
     } catch (error) {
       console.error("Error durante el login:", error);
       setError(error instanceof Error ? error.message : "Error inesperado durante el login");
