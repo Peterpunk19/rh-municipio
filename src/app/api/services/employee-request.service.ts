@@ -1145,6 +1145,20 @@ export const EmployeeRequestService = {
             id: true,
             start_date: true,
             end_date: true,
+            direccion: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+                secretaria: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
+              },
+            },
             new_direccion: {
               select: {
                 id: true,
@@ -1222,6 +1236,50 @@ export const EmployeeRequestService = {
       },
     });
 
+    const leaders = await prisma.administrativeOrganizationLeaders.findMany({
+      where: {
+        direccion_id: employeeRequest?.employee_request_detail?.[0]?.direccion?.id,
+        OR: [
+          {
+            role_id: ROLES_ID_VALUES[ROLES.RESPONSABLE_INMEDIATO],
+            active: true,
+          },
+          {
+            role_id: {
+              in: [
+                ROLES_ID_VALUES[ROLES.DIRECTOR],
+                ROLES_ID_VALUES[ROLES.SECRETARIO],
+                ROLES_ID_VALUES[ROLES.COORDINADOR],
+              ],
+            },
+            active: true,
+            start_date: { lte: employeeRequest.request_date },
+            end_date: { gte: employeeRequest.request_date },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        employee: {
+          select: {
+            id: true,
+            name: true,
+            paternal_last_name: true,
+            maternal_last_name: true,
+          },
+        },
+        role: {
+          select: {
+            name: true,
+            display_name: true,
+          },
+        },
+        role_id: true,
+        sign_incidents: true,
+        sign_requests: true,
+      },
+    });
+
     let destinationDirector = null;
     const needDestinationDirector: string[] = [REQUEST_TYPES_NAME.ADSCRIPTION];
     if (needDestinationDirector.includes(employeeRequest.request.name)) {
@@ -1258,6 +1316,11 @@ export const EmployeeRequestService = {
     return {
       ...employeeRequest,
       rhDirector: rhDirector?.employee || null,
+      signatory: leaders.find((l: any) => l.sign_requests) || null,
+      vobo:
+        leaders.find(
+          (l: any) => l.role_id === ROLES_ID_VALUES[ROLES.RESPONSABLE_INMEDIATO as keyof typeof ROLES_ID_VALUES],
+        ) || null,
       destinationDirector: destinationDirector?.employee || null,
       changeDate: requestDetail?.start_date || null,
       requestDetail,

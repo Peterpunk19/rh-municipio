@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography, Button, Stack, Chip } from "@mui/material";
 import { useState } from "react";
-import DirectorFormDialog from "./DirectorFormDialog";
+import LeaderFormDialog from "./LeaderFormDialog";
 import { IDireccion } from "@/interfaces/AdministrativeOrganization";
 import { EditIcon } from "lucide-react";
 import { formatDate } from "@/utils/formatter";
@@ -9,7 +9,7 @@ export default function DireccionesList({
   secretaria,
   direcciones,
   onUpdateDirector,
-}: { secretaria: string; direcciones: IDireccion[]; onUpdateDirector: (id: number, data: any) => void }) {
+}: { secretaria: string; direcciones: IDireccion[]; onUpdateDirector: () => void }) {
   const [selected, setSelected] = useState<IDireccion | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -23,9 +23,7 @@ export default function DireccionesList({
   };
 
   const handleSaveDirector = (data: any) => {
-    if (selected) {
-      onUpdateDirector(selected.id, data);
-    }
+    onUpdateDirector();
     setIsDialogOpen(false);
   };
 
@@ -48,9 +46,28 @@ export default function DireccionesList({
 
               <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
                 <Typography variant="body2" fontWeight="bold">
-                  Suplente:
+                  Secretario:
                 </Typography>
-                <Typography variant="body2">{direccion.deputy_director?.name || "No asignado"}</Typography>
+                <Typography variant="body2">{direccion.secretary?.name || "No asignado"}</Typography>
+                {direccion.secretary?.name && <Chip size="small" label="Activo" color="primary" variant="outlined" />}
+              </Stack>
+
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Coordinador:
+                </Typography>
+                <Typography variant="body2">{direccion.coordinator?.name || "No asignado"}</Typography>
+                {direccion.coordinator?.name && <Chip size="small" label="Activo" color="primary" variant="outlined" />}
+              </Stack>
+
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Responsable inmediato:
+                </Typography>
+                <Typography variant="body2">{direccion.immediateResponsible?.name || "No asignado"}</Typography>
+                {direccion.immediateResponsible?.name && (
+                  <Chip size="small" label="Activo" color="primary" variant="outlined" />
+                )}
               </Stack>
 
               <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
@@ -86,14 +103,14 @@ export default function DireccionesList({
                 startIcon={<EditIcon />}
                 variant="outlined"
               >
-                Editar Director
+                Editar Cargos
               </Button>
             </CardContent>
           </Card>
         ))}
       </Stack>
 
-      <DirectorFormDialog
+      <LeaderFormDialog
         open={isDialogOpen}
         onClose={handleCloseDialog}
         onSave={handleSaveDirector}

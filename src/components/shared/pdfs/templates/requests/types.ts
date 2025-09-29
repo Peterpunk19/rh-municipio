@@ -75,6 +75,32 @@ export interface RequestTemplateData {
     paternal_last_name: string;
     maternal_last_name: string;
   } | null;
+  signatory?: {
+    employee: {
+      id: number;
+      name: string;
+      paternal_last_name: string;
+      maternal_last_name: string;
+    };
+    role_id: number;
+    role: {
+      name: string;
+      display_name: string;
+    };
+  } | null;
+  vobo?: {
+    employee: {
+      id: number;
+      name: string;
+      paternal_last_name: string;
+      maternal_last_name: string;
+    };
+    role_id: number;
+    role: {
+      name: string;
+      display_name: string;
+    };
+  } | null;
   destinationDirector?: {
     id: number;
     name: string;

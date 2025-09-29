@@ -33,23 +33,81 @@ export async function POST(request: NextRequest) {
   body.createdById = authResponse.userId;
 
   try {
-    const [directorRole, deputyDirectorRole] = await Promise.all([
+    const [directorRole, secretaryRole, coordinatorRole, immediateResponsibleRole] = await Promise.all([
       RoleService.getRoleByName(ROLES.DIRECTOR),
-      RoleService.getRoleByName(ROLES.SUPLENTE),
+      RoleService.getRoleByName(ROLES.SECRETARIO),
+      RoleService.getRoleByName(ROLES.COORDINADOR),
+      RoleService.getRoleByName(ROLES.RESPONSABLE_INMEDIATO),
     ]);
 
     if (!directorRole) {
       return handleHttpResponse(HttpResponse.failure(HttpMessages.role.notFound, { role: ROLES.DIRECTOR }, 404));
     }
 
-    if (body.deputyDirector && !deputyDirectorRole) {
-      return handleHttpResponse(HttpResponse.failure(HttpMessages.role.notFound, { role: ROLES.SUPLENTE }, 404));
+    const employeeRoles: Record<number, number> = {} as Record<number, number>;
+    if (body.director) {
+      employeeRoles[body.director] = directorRole.id;
     }
 
-    const [existingDirector, existingDireccion, existingDeputyDirector] = await Promise.all([
-      EmployeeService.getEmployeeById(body.director),
+    if (body.secretary) {
+      if (!secretaryRole) {
+        return handleHttpResponse(HttpResponse.failure(HttpMessages.role.notFound, { role: ROLES.SECRETARIO }, 404));
+      }
+      employeeRoles[body.secretary] = secretaryRole.id;
+    }
+
+    if (body.coordinator) {
+      if (!coordinatorRole) {
+        return handleHttpResponse(HttpResponse.failure(HttpMessages.role.notFound, { role: ROLES.COORDINADOR }, 404));
+      }
+      employeeRoles[body.coordinator] = coordinatorRole.id;
+    }
+
+    if (body.immediateResponsible) {
+      if (!immediateResponsibleRole) {
+        return handleHttpResponse(
+          HttpResponse.failure(HttpMessages.role.notFound, { role: ROLES.RESPONSABLE_INMEDIATO }, 404),
+        );
+      }
+      employeeRoles[body.immediateResponsible] = immediateResponsibleRole.id;
+    }
+
+    if (body.signIncidentsRole && !Object.values(employeeRoles).includes(body.signIncidentsRole)) {
+      return handleHttpResponse(
+        HttpResponse.failure(
+          HttpMessages.administrativeOrganizations.signIncidentsRoleNotMatch,
+          { sign_incidents_role: body.signIncidentsRole },
+          400,
+        ),
+      );
+    }
+
+    if (body.signRequestsRole && !Object.values(employeeRoles).includes(body.signRequestsRole)) {
+      return handleHttpResponse(
+        HttpResponse.failure(
+          HttpMessages.administrativeOrganizations.signRequestsRoleNotMatch,
+          { sign_requests_role: body.signRequestsRole },
+          400,
+        ),
+      );
+    }
+
+    const [
+      existingDirector,
+      existingDireccion,
+      existingSecretary,
+      existingCoordinator,
+      existingImmediateResponsible,
+      existingSignIncidentsRole,
+      existingSignRequestsRole,
+    ] = await Promise.all([
+      body.director ? EmployeeService.getEmployeeById(body.director) : Promise.resolve(null),
       DireccionService.getDireccionById(body.direccionId),
-      body.deputyDirector ? EmployeeService.getEmployeeById(body.deputyDirector) : Promise.resolve(null),
+      body.secretary ? EmployeeService.getEmployeeById(body.secretary) : Promise.resolve(null),
+      body.coordinator ? EmployeeService.getEmployeeById(body.coordinator) : Promise.resolve(null),
+      body.immediateResponsible ? EmployeeService.getEmployeeById(body.immediateResponsible) : Promise.resolve(null),
+      body.signIncidentsRole ? RoleService.getRoleById(body.signIncidentsRole) : Promise.resolve(null),
+      body.signRequestsRole ? RoleService.getRoleById(body.signRequestsRole) : Promise.resolve(null),
     ]);
 
     if (!existingDireccion) {
@@ -64,7 +122,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!existingDirector) {
+    if (body.director && !existingDirector) {
       return handleHttpResponse(
         HttpResponse.failure(
           HttpMessages.administrativeOrganizations.notFoundByDirectorId,
@@ -76,58 +134,140 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!existingDeputyDirector && body.deputyDirector) {
+    if (!existingSecretary && body.secretary) {
       return handleHttpResponse(
         HttpResponse.failure(
-          HttpMessages.administrativeOrganizations.notFoundByDeputyDirectorId,
+          HttpMessages.administrativeOrganizations.notFoundSecretaryId,
           {
-            deputyDirector: body.deputyDirector,
+            secretary: body.secretary,
           },
           404,
         ),
       );
     }
 
-    const directorData = {
-      direccionId: body.direccionId,
-      employeeId: body.director,
-      roleId: directorRole.id,
-      startDate: body.startDate,
-      endDate: body.endDate,
-      createdById: body.createdById,
-    };
-    const directorLeader = await AdministrativeOrganizationLeadersService.createLeader(directorData);
-    let deputyDirectorLeader = null;
-
-    if (body.deputyDirector) {
-      const deputyDirectorData = {
-        direccionId: body.direccionId,
-        employeeId: body.deputyDirector,
-        roleId: deputyDirectorRole!.id,
-        startDate: body.startDate,
-        endDate: body.endDate,
-        createdById: body.createdById,
-      };
-      deputyDirectorLeader = await AdministrativeOrganizationLeadersService.createLeader(deputyDirectorData);
-    } else {
-      await AdministrativeOrganizationLeadersService.deactivateLeader(
-        body.direccionId,
-        deputyDirectorRole!.id,
-        body.createdById,
+    if (!existingCoordinator && body.coordinator) {
+      return handleHttpResponse(
+        HttpResponse.failure(
+          HttpMessages.administrativeOrganizations.notFoundCoordinatorId,
+          {
+            coordinator: body.coordinator,
+          },
+          404,
+        ),
       );
     }
 
-    const response = HttpResponse.success(HttpMessages.administrativeOrganizations.leadersCreatedSuccess, {
-      director: directorLeader,
-      ...(deputyDirectorLeader && { deputyDirector: deputyDirectorLeader }),
+    if (!existingImmediateResponsible && body.immediateResponsible) {
+      return handleHttpResponse(
+        HttpResponse.failure(
+          HttpMessages.administrativeOrganizations.notFoundImmediateResponsibleId,
+          {
+            immediateResponsible: body.immediateResponsible,
+          },
+          404,
+        ),
+      );
+    }
+
+    if (!existingDireccion) {
+      return handleHttpResponse(
+        HttpResponse.failure(
+          HttpMessages.administrativeOrganizations.notFoundByDireccionId,
+          {
+            direccionId: body.direccionId,
+          },
+          404,
+        ),
+      );
+    }
+
+    if (body.signIncidentsRole && !existingSignIncidentsRole) {
+      return handleHttpResponse(
+        HttpResponse.failure(
+          HttpMessages.administrativeOrganizations.signIncidentsRoleNotFound,
+          {
+            sign_incidents_role: body.signIncidentsRole,
+          },
+          404,
+        ),
+      );
+    }
+
+    if (body.signRequestsRole && !existingSignRequestsRole) {
+      return handleHttpResponse(
+        HttpResponse.failure(
+          HttpMessages.administrativeOrganizations.signRequestsRoleNotFound,
+          {
+            sign_requests_role: body.signRequestsRole,
+          },
+          404,
+        ),
+      );
+    }
+
+    const rolesToCreate: Array<{ roleId: number; employeeId: number; signIncidents: boolean; signRequests: boolean }> =
+      [];
+
+    if (body.director) {
+      rolesToCreate.push({
+        roleId: directorRole.id,
+        employeeId: body.director,
+        signIncidents: body.signIncidentsRole === directorRole.id,
+        signRequests: body.signRequestsRole === directorRole.id,
+      });
+    }
+
+    if (body.secretary) {
+      rolesToCreate.push({
+        roleId: secretaryRole!.id,
+        employeeId: body.secretary,
+        signIncidents: body.signIncidentsRole === secretaryRole!.id,
+        signRequests: body.signRequestsRole === secretaryRole!.id,
+      });
+    }
+
+    if (body.coordinator) {
+      rolesToCreate.push({
+        roleId: coordinatorRole!.id,
+        employeeId: body.coordinator,
+        signIncidents: body.signIncidentsRole === coordinatorRole!.id,
+        signRequests: body.signRequestsRole === coordinatorRole!.id,
+      });
+    }
+
+    if (body.immediateResponsible) {
+      rolesToCreate.push({
+        roleId: immediateResponsibleRole!.id,
+        employeeId: body.immediateResponsible,
+        signIncidents: body.signIncidentsRole === immediateResponsibleRole!.id,
+        signRequests: body.signRequestsRole === immediateResponsibleRole!.id,
+      });
+    }
+
+    const createdLeaders = await AdministrativeOrganizationLeadersService.createLeaders({
+      direccionId: body.direccionId,
+      startDate: body.startDate,
+      endDate: body.endDate,
+      createdById: body.createdById,
+      roles: rolesToCreate,
     });
-    return handleHttpResponse(response);
+
+    const activeRoleIds = rolesToCreate.map((role) => role.roleId);
+    await AdministrativeOrganizationLeadersService.deactivateOtherLeaders(
+      body.direccionId,
+      activeRoleIds,
+      body.createdById,
+    );
+
+    return handleHttpResponse(
+      HttpResponse.success(HttpMessages.administrativeOrganizations.leadersCreatedSuccess, createdLeaders),
+    );
   } catch (error: any) {
     logger.error("Failed to create leaders");
     logger.error(error.message);
 
     const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, {});
-
     return handleHttpResponse(response);
   }
 }

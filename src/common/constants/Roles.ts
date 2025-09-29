@@ -3,7 +3,6 @@ export const ROLES = {
   USER: "user",
   EMPLEADO: "empleado",
   ENLACE: "enlace",
-  SUBENLACE: "subenlace",
   CAPTURISTA: "capturista",
   ANALISTA: "analista",
   ADMIN_INCIDENCIA: "admin_incidencias",
@@ -12,6 +11,11 @@ export const ROLES = {
   REGIDOR: "regidor",
   DIRECTOR: "director",
   SUPLENTE: "suplente",
+  SUBENLACE: "subenlace",
+  SERVICIOS_MEDICOS: "servicios_medicos",
+  SECRETARIO: "secretario",
+  COORDINADOR: "coordinador",
+  RESPONSABLE_INMEDIATO: "responsable_inmediato",
 } as const;
 
 export const ROLES_ID_VALUES = {
@@ -28,6 +32,10 @@ export const ROLES_ID_VALUES = {
   [ROLES.DIRECTOR]: 11,
   [ROLES.SUPLENTE]: 12,
   [ROLES.SUBENLACE]: 13,
+  [ROLES.SERVICIOS_MEDICOS]: 14,
+  [ROLES.SECRETARIO]: 15,
+  [ROLES.COORDINADOR]: 16,
+  [ROLES.RESPONSABLE_INMEDIATO]: 17,
 } as const;
 
 export type RoleKey = keyof typeof ROLES;
@@ -47,6 +55,10 @@ export const ROLES_ID: Record<number, RoleKey> = {
   11: "DIRECTOR",
   12: "SUPLENTE",
   13: "SUBENLACE",
+  14: "SERVICIOS_MEDICOS",
+  15: "SECRETARIO",
+  16: "COORDINADOR",
+  17: "RESPONSABLE_INMEDIATO",
 };
 export const ROLE_EXCLUSIONS = {
   USER_CREATION: [ROLES.DIRECTOR, ROLES.EMPLEADO],

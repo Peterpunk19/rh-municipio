@@ -25,59 +25,18 @@ export default function AdministrativesOrganizations() {
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<string | false>(false);
 
-  const updateDirector = (secretariaId: number, direccionId: number, data: any) => {
-    if (!secretarias) return;
-
-    const secretaria = secretarias.find((sec) => sec.id === secretariaId);
-    if (!secretaria || !secretaria.direcciones) {
-      logger.error("No se encontró la secretaría con ID:", secretariaId);
-      return;
-    }
-
-    const direccion = secretaria.direcciones.find((dir) => dir.id === direccionId);
-    if (!direccion) {
-      logger.error("No se encontró la dirección con ID:", direccionId);
-      return;
-    }
-
-    const updatedSecretarias = secretarias.map((sec) => {
-      if (sec.id === secretariaId) {
-        const updatedDirecciones = (sec.direcciones || []).map((dir) => {
-          if (dir.id === direccionId) {
-            const directorData = data.director;
-            const deputyDirectorData = data.deputyDirector;
-
-            const updatedDir = {
-              ...dir,
-              director: {
-                ...dir.director,
-                name: directorData.employee
-                  ? `${directorData.employee.name} ${directorData.employee.paternal_last_name} ${directorData.employee.maternal_last_name}`
-                  : dir.director?.name || "Director",
-                id: directorData.employee_id || dir.director?.id,
-                startDate: directorData.start_date || dir.director?.startDate,
-                endDate: directorData.end_date || dir.director?.endDate,
-              },
-              ...(deputyDirectorData && {
-                deputy_director: {
-                  ...dir.deputy_director,
-                  name: deputyDirectorData.employee
-                    ? `${deputyDirectorData.employee.name} ${deputyDirectorData.employee.paternal_last_name} ${deputyDirectorData.employee.maternal_last_name}`
-                    : dir.deputy_director?.name || "Suplente",
-                  id: deputyDirectorData.employee_id || dir.deputy_director?.id,
-                },
-              }),
-            };
-            return updatedDir;
-          }
-          return dir;
-        });
-        return { ...sec, direcciones: updatedDirecciones };
+  const updateDirector = async () => {
+    try {
+      const response = await getAdministrativesOrganizations();
+      if (response.statusCode === StatusCodes.OK && response.responseObject?.administrativeOrganizations) {
+        setSecretarias(response.responseObject.administrativeOrganizations);
+      } else {
+        setSecretarias([]);
       }
-      return sec;
-    });
-
-    setSecretarias(updatedSecretarias);
+    } catch (error: any) {
+      logger.error({ error: error.message, stack: error.stack });
+      setSecretarias([]);
+    }
   };
 
   useEffect(() => {
@@ -126,7 +85,7 @@ export default function AdministrativesOrganizations() {
             <DireccionesList
               secretaria={secretaria.display_name}
               direcciones={secretaria.direcciones || []}
-              onUpdateDirector={(direccionId, data) => updateDirector(secretaria.id, direccionId, data)}
+              onUpdateDirector={updateDirector}
             />
           </AccordionDetails>
         </Accordion>

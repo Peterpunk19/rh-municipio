@@ -460,16 +460,25 @@ export const EmployeeIncidentsService = {
           display_name: true,
           leaders: {
             where: {
-              role_id: ROLES_ID_VALUES[ROLES.DIRECTOR],
-              active: true,
-              start_date: {
-                lte: incidentDate,
-              },
-              end_date: {
-                gte: incidentDate,
-              },
+              OR: [
+                {
+                  role_id: ROLES_ID_VALUES[ROLES.RESPONSABLE_INMEDIATO],
+                  active: true,
+                },
+                {
+                  role_id: {
+                    in: [
+                      ROLES_ID_VALUES[ROLES.DIRECTOR],
+                      ROLES_ID_VALUES[ROLES.SECRETARIO],
+                      ROLES_ID_VALUES[ROLES.COORDINADOR],
+                    ],
+                  },
+                  active: true,
+                  start_date: { lte: incidentDate },
+                  end_date: { gte: incidentDate },
+                },
+              ],
             },
-            take: 1,
             select: {
               id: true,
               employee: {
@@ -480,14 +489,11 @@ export const EmployeeIncidentsService = {
                   maternal_last_name: true,
                 },
               },
-              role: {
-                select: {
-                  name: true,
-                  display_name: true,
-                },
-              },
+              role_id: true,
               start_date: true,
               end_date: true,
+              sign_incidents: true,
+              sign_requests: true,
             },
           },
         },
