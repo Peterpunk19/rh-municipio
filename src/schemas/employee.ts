@@ -273,10 +273,10 @@ export const EmployeePutSchema = z
       .optional()
       .nullable(),
     tradeUnionId: z
-      .string()
+      .number({ message: validationMessages.required("Sindicato") })
       .optional()
       .nullable()
-      .refine((val) => val === null || val === "" || val, {
+      .refine((val) => val === null || val, {
         message: validationMessages.required("Sindicato"),
       }),
   })
@@ -331,6 +331,10 @@ export const EmployeeGetByFilterSchema = z.object({
   employee_type: z
     .number({ message: validationMessages.number("El id del tipo de empleado") })
     .min(1, { message: validationMessages.minNumber("El id del tipo de empleado", 1) })
+    .nullable(),
+  trade_union: z
+    .number({ message: validationMessages.number("El id del sindicato") })
+    .min(1, { message: validationMessages.minNumber("El id del sindicato", 1) })
     .nullable(),
   category: z
     .number({ message: validationMessages.number("La categoría del empleado") })

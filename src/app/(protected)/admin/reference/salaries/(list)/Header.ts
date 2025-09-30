@@ -43,4 +43,28 @@ export const header: readonly HeadCell[] = [
     disablePadding: false,
     label: "CONTRATO DE FONDO IV",
   },
+  {
+    id: "eventual",
+    numeric: true,
+    disablePadding: false,
+    label: "EVENTUAL",
+  },
+  {
+    id: "base_por_laudo",
+    numeric: true,
+    disablePadding: false,
+    label: "BASE POR LAUDO",
+  },
+  {
+    id: "confianza_fondo_iv",
+    numeric: true,
+    disablePadding: false,
+    label: "CONFIANZA FONDO IV",
+  },
+  {
+    id: "pensionado",
+    numeric: true,
+    disablePadding: false,
+    label: "PENSIONADO",
+  },
 ];

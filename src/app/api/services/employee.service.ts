@@ -98,6 +98,7 @@ export const EmployeeService = {
             location: true,
           },
         },
+        identification_type: true,
         employee_attendance_type: {
           where: {
             active: true,
@@ -117,6 +118,13 @@ export const EmployeeService = {
         marital_status: true,
         schooling: true,
         employee_trade_union: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: "desc",
+          },
           include: {
             trade_union: true,
           },
@@ -313,6 +321,10 @@ export const EmployeeService = {
       whereClause.gender_id = employeeFilters.gender;
     }
 
+    if (employeeFilters.trade_union) {
+      whereClause.trade_union_id = employeeFilters.trade_union;
+    }
+
     const employeeHiringConditions: any[] = [];
     const employeeAscriptionsConditions: any[] = [];
 
@@ -492,6 +504,13 @@ export const EmployeeService = {
             start_job_date: true,
             end_job_date: true,
             employee_type_id: true,
+            employee_type: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
             direccion: {
               select: {
                 id: true,
@@ -530,6 +549,18 @@ export const EmployeeService = {
                 display_name: true,
               },
             },
+          },
+        },
+        employee_trade_union: {
+          where: {
+            active: true,
+          },
+          take: 1,
+          orderBy: {
+            created_at: "desc",
+          },
+          include: {
+            trade_union: true,
           },
         },
         employee_ascriptions: {

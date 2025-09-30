@@ -62,6 +62,7 @@ export interface IEmployeeFilters {
   category: number | null | undefined;
   direccion: number | null | undefined;
   secretaria: number | null | undefined;
+  trade_union: number | null | undefined;
   start_job_date_start: string | null | undefined;
   start_job_date_end: string | null | undefined;
   end_job_date_start: string | null | undefined;

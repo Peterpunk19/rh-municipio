@@ -1,5 +1,5 @@
 const tradeUnion = [
-  { id: 1, name: "sutsum", display_name: "SUTSUM" },
+  { id: 1, name: "sutsm", display_name: "SUTSM" },
   { id: 2, name: "sutesa", display_name: "SUTESA" },
   { id: 3, name: "sitrachisa", display_name: "SITRACHISA" },
   { id: 4, name: "sutra", display_name: "SUTRA" },

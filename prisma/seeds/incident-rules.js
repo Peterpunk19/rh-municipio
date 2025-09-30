@@ -29,6 +29,10 @@ const employeeTypes = {
   CONTRATO_GASTO_CORRIENTE: employeeTypeData.find((et) => et.name === "contrato_gasto_corriente").id,
   CONTRATO_LAUDO: employeeTypeData.find((et) => et.name === "contrato_por_laudo").id,
   CONTRATO_FONDO_IV: employeeTypeData.find((et) => et.name === "contrato_fondo_iv").id,
+  EVENTUAL: employeeTypeData.find((et) => et.name === "eventual").id,
+  BASE_POR_LAUDO: employeeTypeData.find((et) => et.name === "base_por_laudo").id,
+  CONFIANZA_FONDO_IV: employeeTypeData.find((et) => et.name === "confianza_fondo_iv").id,
+  PENSIONADO: employeeTypeData.find((et) => et.name === "pensionado").id,
 };
 
 const incident = {

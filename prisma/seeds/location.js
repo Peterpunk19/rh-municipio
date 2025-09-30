@@ -201,6 +201,7 @@ const locations = [
   { id: 120, name: "vivero_municipal_caña_hueca", display_name: "VIVERO MUNICIPAL CAñA HUECA" },
   { id: 121, name: "vp_hospital_torre_medica", display_name: "VP HOSPITAL - TORRE MEDICA" },
   { id: 122, name: "zona_de_tolerancia", display_name: "ZONA DE TOLERANCIA" },
+  { id: 123, name: "parque_tuchtlan", display_name: "PARQUE TUCHTLAN" },
 ];
 
 module.exports = locations;

@@ -49,8 +49,8 @@ const secretaria = [
   },
   {
     id: 9,
-    name: "obras_publicas",
-    display_name: "SECRETARÍA DE OBRAS PÚBLICAS",
+    name: "obras_publicas_municipal",
+    display_name: "SECRETARÍA DE OBRAS PÚBLICAS MUNICIPAL",
     active: true,
   },
   {
@@ -111,6 +111,30 @@ const secretaria = [
     id: 19,
     name: "secretaria_para_la_igualdad_de_las_mujeres",
     display_name: "SECRETARIA PARA LA IGUALDAD DE LAS MUJERES",
+    active: true,
+  },
+  {
+    id: 20,
+    name: "instituto_del_deporte_tuxtleco",
+    display_name: "INSTITUTO DEL DEPORTE TUXTLECO",
+    active: true,
+  },
+  {
+    id: 21,
+    name: "secretaria_de_proteccion_civil",
+    display_name: "SECRETARIA DE PROTECCION CIVIL",
+    active: true,
+  },
+  {
+    id: 22,
+    name: "centro_de_cumplimiento_de_sanciones_administrativas",
+    display_name: "CENTRO DE CUMPLIMIENTO DE SANCIONES ADMINISTRATIVAS",
+    active: true,
+  },
+  {
+    id: 23,
+    name: "instituto_tuxtleco_de_arte_y_cultura",
+    display_name: "INSTITUTO TUXTLECO DE ARTE Y CULTURA",
     active: true,
   },
 ];

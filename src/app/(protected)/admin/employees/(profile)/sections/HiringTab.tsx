@@ -4,13 +4,11 @@ import * as React from "react";
 import { formatDate } from "@/utils/formatter";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import { Grid2 as Grid } from "@mui/material";
 
 const HiringTab = ({ employeeData }: EmployeePageProps) => {
   const displayData = {
     statusEmployeeDisplayName: employeeData?.status_employee?.display_name,
-    locationDisplayName: employeeData?.employee_location[0]?.location?.display_name,
     startJobDate: formatDate(employeeData?.employee_hiring[0]?.start_job_date),
     endJobDate: formatDate(employeeData?.employee_hiring[0]?.end_job_date),
     categoryDisplayName: employeeData?.employee_hiring[0]?.category?.display_name,
@@ -80,7 +78,7 @@ const HiringTab = ({ employeeData }: EmployeePageProps) => {
         <Grid
           mt={4}
           size={{
-            lg: 4,
+            lg: 3,
             xs: 12,
           }}
         >
@@ -94,15 +92,15 @@ const HiringTab = ({ employeeData }: EmployeePageProps) => {
         <Grid
           mt={4}
           size={{
-            lg: 2,
+            lg: 3,
             xs: 12,
           }}
         >
           <Typography variant="body2" color="text.secondary">
-            Ubicación
+            SINDICATO
           </Typography>
           <Typography variant="subtitle1" fontWeight={600} mb={0.5}>
-            {displayData.locationDisplayName}
+            {displayData.tradeUnionDisplayName}
           </Typography>
         </Grid>
       </Grid>

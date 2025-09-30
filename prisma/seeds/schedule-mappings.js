@@ -5,6 +5,12 @@ const scheduleMappings = {
       end_day: "friday",
     },
   ],
+  "Lunes a Viernes Nocturno": [
+    {
+      start_day: "monday",
+      end_day: "friday",
+    },
+  ],
   "Lunes a Domingo": [
     {
       start_day: "monday",
@@ -17,7 +23,23 @@ const scheduleMappings = {
       end_day: "saturday",
     },
   ],
+  "Lunes a Sabado": [
+    {
+      start_day: "monday",
+      end_day: "saturday",
+    },
+  ],
   "Fines de semana y Dias festivos": [
+    {
+      start_day: "saturday",
+      end_day: "sunday",
+    },
+    {
+      start_day: "holidays",
+      end_day: "holidays",
+    },
+  ],
+  "Fines de semana y Dias festivos Nocturno": [
     {
       start_day: "saturday",
       end_day: "sunday",
@@ -48,6 +70,12 @@ const scheduleMappings = {
     },
   ],
   Intercalados: [
+    {
+      start_day: "intercalated",
+      end_day: "intercalated",
+    },
+  ],
+  "Intercalado Nocturno": [
     {
       start_day: "intercalated",
       end_day: "intercalated",
