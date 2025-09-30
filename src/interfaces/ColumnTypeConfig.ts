@@ -12,7 +12,8 @@ export interface ColumnTypeConfig {
     | "monthName"
     | "incidentType"
     | "checkIn"
-    | "checkOut";
+    | "checkOut"
+    | "statusEmployee";
   format?: (value: any, row: any) => React.ReactNode;
   redirectPath?: string;
   switchConfig?: {

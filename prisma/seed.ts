@@ -39,20 +39,66 @@ const { scheduleMappings } = require("./seeds/schedule-mappings");
 const prisma = new PrismaClient();
 
 const normalizeName = (displayName: string) => {
+  if (displayName === undefined) return "";
   return displayName
     .trim()
-    .replace(/['"]/g, "")
+    .replace(/['".(),`´]/g, "") // quita ' " . ( ) , ` ´
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "") // quita acentos combinados
     .toLowerCase()
     .replace(/\s+/g, "_");
+};
+
+const normalizeCategoryName = (displayName: string) => {
+  return (
+    displayName
+      .trim()
+      // expandir abreviaturas ANTES de limpiar comillas
+      .replace(/\b(ALBAÑILPENS\.?)\b/gi, "ALBAÑIL")
+      .replace(/\b(ELECTROMEC\.?)\b/gi, "ELECTROMECANICO ")
+      .replace(/\b(OF\.?)\b/gi, "OFICIAL ")
+      .replace(/\b(OPER\.?)\b/gi, "OPERADOR ")
+      .replace(/\b(ADMVO\.?)\b/gi, "ADMINISTRATIVO ")
+      .replace(/\b(ESP\.?)\b/gi, "ESPECIALIZADO ")
+      .replace(/\b(ESPEC\.?)\b/gi, "ESPECIALIZADO ")
+      .replace(/\b(AUX\.?)\b/gi, "AUXILIAR ")
+      .replace(/\b(TEC\.?)\b/gi, "TECNICO ")
+      .replace(/\b(EJEC\.?)\b/gi, "EJECUTIVA ")
+      .replace(/\b(AYUD\.?)\b/gi, "AYUDANTE ")
+      .replace(/\b(SEC\.?)\b/gi, "SECRETARIA ")
+      // quitar variantes de "PENSIONADO"
+      .replace(/\b(pens(?:ion\w*|i\w*|\.?)?|pns\.?)\b/gi, "")
+      .replace(/\b(pesionado?)\b/gi, "")
+      .replace(/\b(pen)\b/gi, "")
+      // limpiar caracteres extraños
+      .replace(/['".(),`´]/g, " ")
+      // normalizar acentos
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      // bajar a minúsculas
+      .toLowerCase()
+      // colapsar espacios múltiples
+      .replace(/\s+/g, "_")
+      // quitar guiones bajos sobrantes
+      .replace(/^_+|_+$/g, "")
+  );
 };
 
 const timeToHourName = (time: string) => {
   return time.replace(":", "_");
 };
 
+interface Reference {
+  id: number;
+  name: string;
+}
+
 async function main() {
+  const employeesArg = process.argv.find((arg) => arg.startsWith("--employees="));
+  let employeesCount = employeesArg ? parseInt(employeesArg.split("=")[1], 10) : 0;
+
+  console.log(`Seeding ${employeesCount} employees...`);
+
   console.log("Start seeding...");
 
   await prisma.attendance.createMany({ data: attendance });
@@ -100,145 +146,236 @@ async function main() {
     });
   }
 
-  for (const e of employee) {
+  const direcciones = await prisma.direccion.findMany();
+  const direccionMap = Object.fromEntries(direcciones.map((d: Reference) => [d.name, d]));
+
+  const municipalities = await prisma.municipality.findMany();
+  const municipalityMap = Object.fromEntries(
+    municipalities.map((m: { id: number; cve_code: string }) => [m.cve_code, m]),
+  );
+
+  const professions = await prisma.profession.findMany();
+  const professionMap = Object.fromEntries(professions.map((p: Reference) => [String(p.id), p]));
+
+  const categories = await prisma.category.findMany();
+  const categoriesMap = Object.fromEntries(categories.map((c: Reference) => [c.name, c]));
+
+  const employeeTypes = await prisma.employeeType.findMany();
+  const employeeTypesMap = Object.fromEntries(employeeTypes.map((e: Reference) => [e.name, e]));
+
+  const hoursDB = await prisma.hour.findMany();
+  const hourMap = Object.fromEntries(hoursDB.map((h: Reference) => [h.name, h]));
+
+  const daysDB = await prisma.day.findMany();
+  const dayMap = Object.fromEntries(daysDB.map((d: Reference) => [d.name, d]));
+
+  const tradeUnionDB = await prisma.tradeUnion.findMany();
+  const tradeUnionMap = Object.fromEntries(tradeUnionDB.map((t: Reference) => [t.name, t]));
+
+  const direccionesNotFound = new Set();
+  const categoriesNotFound = new Set();
+  const employeesDuplicated = new Set();
+  const limitedEmployees = employeesCount ? employee.slice(0, employeesCount) : employee;
+
+  for (const e of limitedEmployees) {
     const hashedPassword = await bcrypt.hash(e.password ? e.password : String(e.numberEmployee), 10);
 
     if (!e.curp) continue;
 
-    const createUser = await prisma.user.create({
-      data: {
+    const validateCurp = await prisma.user.findUnique({
+      where: {
         username: e.curp,
-        password: hashedPassword,
-        active: true,
-        created_at: new Date(),
-        updated_at: new Date(),
-        role: {
-          connect: { id: e.roleId ? e.roleId : 3 },
-        },
       },
     });
 
-    let profession = null;
-    if (e.professionCode) {
-      profession = await prisma.profession.findUnique({
-        where: { id: Number(e.professionCode) },
-      });
-    }
+    if (validateCurp) continue;
 
-    const createEmployee = await prisma.employee.create({
-      data: {
-        number_employee: String(e.numberEmployee),
-        name: e.name,
-        paternal_last_name: e.paternalLastName,
-        maternal_last_name: e.maternalLastName,
-        birthday: new Date(e.birthday),
-        rfc: e.rfc,
-        curp: e.curp,
-        status_employee: {
-          connect: { id: 1 },
-        },
-        ...(e.genderId ? { gender: { connect: { id: Number(e.genderId) } } } : {}),
-        user: {
-          connect: {
-            id: createUser.id,
-          },
-        },
-        ...(e.maritalStatusId ? { marital_status: { connect: { id: Number(e.maritalStatusId) } } } : {}),
-        ...(e.schoolingCode ? { schooling: { connect: { cve_code: e.schoolingCode } } } : {}),
-        ...(profession ? { profession: { connect: { id: Number(e.professionCode) } } } : {}),
-        ...(e.occupationId ? { occupation: { connect: { id: Number(e.occupationId) } } } : {}),
-        ...(e.identificationTypeId ? { identification_type: { connect: { id: Number(e.identificationTypeId) } } } : {}),
-        ...(e.identificationTypeId ? { identification_type: { connect: { id: Number(e.identificationTypeId) } } } : {}),
-        identification_folio: e.identificationFolio,
-      },
-    });
-
-    if (e.roleId === 3) {
-      const categoryName = normalizeName(e.categoryDisplayName);
-      const employeeTypeName = normalizeName(e.employeeTypeDisplayName);
-      const direccionName = normalizeName(e.direccionDisplayName);
-
-      let direccion = null;
-      if (e.direccionDisplayName) {
-        direccion = await prisma.direccion.findUnique({
-          where: { name: direccionName },
-        });
-      }
-
-      let municipality = null;
-      if (e.municipalityCode) {
-        municipality = await prisma.municipality.findFirst({
-          where: {
-            cve_code: String(e.municipalityCode),
-          },
-        });
-      }
-
-      await prisma.employeeAddress.create({
+    let createUser;
+    try {
+      createUser = await prisma.user.create({
         data: {
-          employee: { connect: { id: createEmployee.id } },
-          address_line_1: e.addressLine1,
-          address_line_2: e.addressLine2,
-          address_line_3: e.addressLine3 ?? "",
-          address_line_4: e.addressLine4,
-          postal_code: e.postalCode,
-          postal_code_sat: e.postalCodeSat,
-          ...(municipality ? { municipality: { connect: { id: municipality.id } } } : {}),
-          created_at: new Date(),
-        },
-      });
-
-      await prisma.employeeHiring.create({
-        data: {
-          employee: { connect: { id: createEmployee.id } },
-          start_job_date: new Date(e.startJobDate),
-          end_job_date: e.endJobDate ? new Date(e.endJobDate) : null,
-          ...(e.categoryDisplayName ? { category: { connect: { name: categoryName } } } : {}),
-          ...(e.employeeTypeDisplayName ? { employee_type: { connect: { name: employeeTypeName } } } : {}),
-          ...(direccion ? { direccion: { connect: { name: direccionName } } } : {}),
-          created_at: new Date(),
-        },
-      });
-
-      await prisma.employeeAscriptions.create({
-        data: {
-          employee: { connect: { id: createEmployee.id } },
-          start_date: new Date(e.startJobDate),
-          end_date: e.endJobDate ? new Date(e.endJobDate) : null,
-          ...(direccion ? { direccion: { connect: { name: direccionName } } } : {}),
-          created_by: { connect: { id: 1 } },
+          username: e.curp,
+          password: hashedPassword,
+          active: true,
           created_at: new Date(),
           updated_at: new Date(),
+          role: {
+            connect: { id: e.roleId ? Number(e.roleId) : 3 },
+          },
         },
       });
+    } catch (error) {
+      console.error(`Error creating user for ${e.numberEmployee}:`, error);
+    }
+
+    const profession = e.professionCode ? professionMap[String(e.professionCode)] : null;
+    if (e.professionCode && !profession) {
+      console.log(`Profession Code ${e.professionCode} - not found for Employee ${e.numberEmployee}`);
+    }
+
+    const tradeUnionName = normalizeName(e.tradeUnionDisplayName);
+    const tradeUnion = e.tradeUnionDisplayName ? tradeUnionMap[tradeUnionName] : null;
+
+    let createEmployee;
+    try {
+      createEmployee = await prisma.employee.create({
+        data: {
+          number_employee: String(e.numberEmployee),
+          name: e.name,
+          paternal_last_name: e.paternalLastName,
+          maternal_last_name: e.maternalLastName,
+          birthday: new Date(e.birthday),
+          rfc: e.rfc,
+          curp: e.curp,
+          status_employee: {
+            connect: { id: 1 },
+          },
+          ...(e.genderId ? { gender: { connect: { id: Number(e.genderId) } } } : {}),
+          user: {
+            connect: {
+              id: createUser.id,
+            },
+          },
+          ...(e.maritalStatusId ? { marital_status: { connect: { id: Number(e.maritalStatusId) } } } : {}),
+          ...(e.schoolingCode ? { schooling: { connect: { cve_code: e.schoolingCode } } } : {}),
+          ...(profession ? { profession: { connect: { id: Number(e.professionCode) } } } : {}),
+          ...(e.occupationId ? { occupation: { connect: { id: Number(e.occupationId) } } } : {}),
+          ...(e.identificationTypeId
+            ? { identification_type: { connect: { id: Number(e.identificationTypeId) } } }
+            : {}),
+          ...(e.identificationTypeId
+            ? { identification_type: { connect: { id: Number(e.identificationTypeId) } } }
+            : {}),
+          ...(tradeUnion ? { trade_union_id: tradeUnion.id } : {}),
+          identification_folio: e.identificationFolio,
+        },
+      });
+
+      console.log(`Employee created with number: ${e.numberEmployee}`);
+    } catch (error) {
+      console.error(`Error creating employee for ${e.numberEmployee}:`, error);
+      employeesDuplicated.add(e.numberEmployee);
+      continue;
+    }
+
+    if (Number(e.roleId) === 3) {
+      const direccionName = normalizeName(e.direccionDisplayName);
+      const direccionObj = e.direccionDisplayName ? direccionMap[direccionName] : null;
+      const municipalityObj = e.municipalityCode ? municipalityMap[String(e.municipalityCode)] : null;
+
+      const categoryName = normalizeCategoryName(e.categoryDisplayName);
+      const categoryObj = e.categoryDisplayName ? categoriesMap[categoryName] : null;
+
+      const employeeTypeName = normalizeName(e.employeeTypeDisplayName);
+      const employeeTypeObj = e.employeeTypeDisplayName ? employeeTypesMap[employeeTypeName] : null;
+
+      if (e.categoryDisplayName && !categoryObj) {
+        categoriesNotFound.add(e.categoryDisplayName);
+        console.log(
+          `CategoryDisplayName: ${e.categoryDisplayName} name: ${categoryName} - not found for Employee with Number: ${e.numberEmployee}`,
+        );
+      }
+
+      if (e.employeeTypeDisplayName && !employeeTypeObj) {
+        console.log(
+          `EmployeeTypeDisplayName: ${e.employeeTypeDisplayName} - not found for Employee with Number: ${e.numberEmployee}`,
+        );
+      }
+
+      if (e.direccionDisplayName && !direccionObj) {
+        direccionesNotFound.add(e.direccionDisplayName);
+        console.log(
+          `DireccionDisplayName: ${e.direccionDisplayName} - not found for Employee with Number: ${e.numberEmployee}`,
+        );
+      }
+
+      if (e.municipalityCode && !municipalityObj) {
+        console.log(`Municipality Code ${e.municipalityCode} - not found for Employee ${e.numberEmployee}`);
+      }
+
+      try {
+        await prisma.employeeAddress.create({
+          data: {
+            employee: { connect: { id: createEmployee.id } },
+            address_line_1: e.addressLine1,
+            address_line_2: e.addressLine2,
+            address_line_3: e.addressLine3 ?? "",
+            address_line_4: e.addressLine4,
+            postal_code: e.postalCode,
+            postal_code_sat: e.postalCodeSat,
+            ...(municipalityObj ? { municipality: { connect: { id: municipalityObj.id } } } : {}),
+            created_at: new Date(),
+          },
+        });
+      } catch (error) {
+        console.error(`Error creating employee address for ${e.numberEmployee}:`, error);
+      }
+
+      if (tradeUnion) {
+        try {
+          await prisma.employeeTradeUnion.create({
+            data: {
+              employee: { connect: { id: createEmployee.id } },
+              trade_union: { connect: { id: tradeUnion.id } },
+              created_at: new Date(),
+            },
+          });
+        } catch (error) {
+          console.error(`Error creating employee trade union for ${e.numberEmployee}:`, error);
+        }
+      }
+
+      try {
+        await prisma.employeeHiring.create({
+          data: {
+            employee: { connect: { id: createEmployee.id } },
+            start_job_date: new Date(e.startJobDate),
+            end_job_date: e.endJobDate ? new Date(e.endJobDate) : null,
+            ...(categoryObj ? { category: { connect: { name: categoryName } } } : {}),
+            ...(employeeTypeObj ? { employee_type: { connect: { name: employeeTypeName } } } : {}),
+            ...(direccionObj ? { direccion: { connect: { name: direccionName } } } : {}),
+            created_at: new Date(),
+          },
+        });
+      } catch (error) {
+        console.error(`Error creating employee hiring for ${e.numberEmployee}:`, error);
+      }
+      try {
+        await prisma.employeeAscriptions.create({
+          data: {
+            employee: { connect: { id: createEmployee.id } },
+            start_date: new Date(e.startJobDate),
+            end_date: e.endJobDate ? new Date(e.endJobDate) : null,
+            ...(direccionObj ? { direccion: { connect: { name: direccionName } } } : {}),
+            created_by: { connect: { id: 1 } },
+            created_at: new Date(),
+            updated_at: new Date(),
+          },
+        });
+      } catch (error) {
+        console.error(`Error creating employee ascriptions for ${e.numberEmployee}:`, error);
+      }
 
       const schedule = jobSchedulesEmployees.find(
         (js: { numberEmployee: string }) => js.numberEmployee === String(e.numberEmployee),
       );
 
       if (schedule) {
-        console.log(`Found schedule for employee ${e.numberEmployee}:`, schedule);
-
-        if (schedule.locationId && schedule.locationId !== "0" && schedule.locationId !== 0) {
+        if (schedule.locationDisplayName && schedule.locationDisplayName !== "") {
           try {
             await prisma.employeeLocation.create({
               data: {
                 employee: { connect: { id: createEmployee.id } },
                 location: { connect: { display_name: schedule.locationDisplayName } },
                 active: true,
-                created_by: 1, // Usuario administrador
+                created_by: 1,
                 created_at: new Date(),
                 updated_at: new Date(),
               },
             });
-            console.log(`EmployeeLocation created for employee ${e.numberEmployee} at location ${schedule.locationId}`);
           } catch (error) {
             console.error(`Error creating EmployeeLocation for employee ${e.numberEmployee}:`, error);
           }
-        } else {
-          console.log(
-            `Skipping EmployeeLocation for employee ${e.numberEmployee} - invalid locationId: ${schedule.locationId}`,
-          );
         }
 
         if (schedule.attendanceId && schedule.attendanceId !== "" && schedule.attendanceId !== "0") {
@@ -253,14 +390,10 @@ async function main() {
                 updated_at: new Date(),
               },
             });
-            console.log(
-              `EmployeeAttendanceType created for employee ${e.numberEmployee} with attendance ${schedule.attendanceId}`,
-            );
           } catch (error) {
             console.error(`Error creating EmployeeAttendanceType for employee ${e.numberEmployee}:`, error);
           }
 
-          // INSERTAR JOB SCHEDULE (solo si tiene jornada válida y horas válidas)
           if (
             schedule.jornada &&
             schedule.jornada.trim() !== "" &&
@@ -276,21 +409,14 @@ async function main() {
             if (!jornadaMapping) {
               console.log(`Jornada mapping not found: ${schedule.jornada}`);
             } else {
-              console.log(`Processing jornada mapping for: ${schedule.jornada}`);
-
               // Procesar cada rango de días en la jornada
               for (const range of jornadaMapping) {
                 try {
                   // Buscar los días en la base de datos
-                  const startDay = await prisma.day.findUnique({
-                    where: { name: range.start_day },
-                  });
+                  const startDayObj = range.start_day ? dayMap[String(range.start_day)] : null;
+                  const endDayObj = range.end_day ? dayMap[String(range.end_day)] : null;
 
-                  const endDay = await prisma.day.findUnique({
-                    where: { name: range.end_day },
-                  });
-
-                  if (!startDay || !endDay) {
+                  if (!startDayObj || !endDayObj) {
                     console.log(`Days not found for range: ${range.start_day} - ${range.end_day}`);
                     continue;
                   }
@@ -299,15 +425,10 @@ async function main() {
                   const startHourName = timeToHourName(schedule.checkin);
                   const endHourName = timeToHourName(schedule.checkout);
 
-                  const startHour = await prisma.hour.findUnique({
-                    where: { name: startHourName },
-                  });
+                  const startHourObj = startHourName ? hourMap[String(startHourName)] : null;
+                  const endHourObj = endHourName ? hourMap[String(endHourName)] : null;
 
-                  const endHour = await prisma.hour.findUnique({
-                    where: { name: endHourName },
-                  });
-
-                  if (!startHour || !endHour) {
+                  if (!startHourObj || !endHourObj) {
                     console.log(`Hours not found: ${startHourName} or ${endHourName}`);
                     continue;
                   }
@@ -319,28 +440,20 @@ async function main() {
                       name: `Jornada ${schedule.jornada} - ${e.numberEmployee}`,
                       description: `Jornada laboral migrada - ${schedule.FechaCambioOficio}`,
                       active: true,
-                      start_day: { connect: { id: startDay.id } },
-                      end_day: { connect: { id: endDay.id } },
-                      start_hour: { connect: { id: startHour.id } },
-                      end_hour: { connect: { id: endHour.id } },
+                      start_day: { connect: { id: startDayObj.id } },
+                      end_day: { connect: { id: endDayObj.id } },
+                      start_hour: { connect: { id: startHourObj.id } },
+                      end_hour: { connect: { id: endHourObj.id } },
                       created_at: new Date(),
                       updated_at: new Date(),
                     },
                   });
-
-                  console.log(
-                    `Job schedule created for employee ${e.numberEmployee}: ${range.start_day} to ${range.end_day}`,
-                  );
                 } catch (error) {
                   console.error(`Error creating job schedule for employee ${e.numberEmployee}:`, error);
                 }
               }
             }
           }
-        } else {
-          console.log(
-            `Skipping EmployeeAttendanceType for employee ${e.numberEmployee} - invalid attendanceId: ${schedule.attendanceId}`,
-          );
         }
       }
     }
@@ -355,6 +468,9 @@ async function main() {
   }
 
   console.log("Seeding finished.");
+  console.log("direccionesNotFound");
+  console.log(direccionesNotFound);
+  console.log(categoriesNotFound);
 }
 
 main()

@@ -8,4 +8,8 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   contrato_gasto_corriente: { renderType: "currency" },
   contrato_por_laudo: { renderType: "currency" },
   contrato_fondo_iv: { renderType: "currency" },
+  eventual: { renderType: "currency" },
+  base_por_laudo: { renderType: "currency" },
+  confianza_fondo_iv: { renderType: "currency" },
+  pensionado: { renderType: "currency" },
 };

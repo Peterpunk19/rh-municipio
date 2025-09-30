@@ -40,6 +40,7 @@ export async function GET(request: Request) {
     const start_job_date_end = searchParams.has("start_job_date_end") ? searchParams.get("start_job_date_end") : null;
     const end_job_date_start = searchParams.has("end_job_date_start") ? searchParams.get("end_job_date_start") : null;
     const end_job_date_end = searchParams.has("end_job_date_end") ? searchParams.get("end_job_date_end") : null;
+    const trade_union = searchParams.has("trade_union") ? Number.parseInt(searchParams.get("trade_union")!, 10) : null;
     const search = searchParams.has("search") ? searchParams.get("search") : null;
     const employeeAttendanceType = searchParams.has("employeeAttendanceType")
       ? Number(searchParams.get("employeeAttendanceType"))
@@ -62,6 +63,7 @@ export async function GET(request: Request) {
       end_job_date_end,
       search,
       employeeAttendanceType,
+      trade_union,
     };
 
     const authData = await authMiddleware();

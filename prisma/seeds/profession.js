@@ -1,5 +1,10 @@
 const profession = [
   {
+    id: 162,
+    display_name: "undefined",
+    name: "NO DEFINIDO",
+  },
+  {
     id: 163,
     display_name: "MAESTRÍA EN DERECHO CONSTITUCIONAL Y AMPARO",
     name: "maestria_en_derecho_constitucional_y_amparo",

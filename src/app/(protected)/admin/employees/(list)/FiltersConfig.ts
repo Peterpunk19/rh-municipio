@@ -8,6 +8,7 @@ import {
   fetchSecretariasData,
   fetchDireccionesData,
   fetchAttendanceData,
+  fetchTradeUnionData,
 } from "@/services/catalogs";
 
 export const tableFiltersConfig = (): FiltersConfig[] => [
@@ -16,7 +17,7 @@ export const tableFiltersConfig = (): FiltersConfig[] => [
     label: "Tipo de empleado",
     type: "select",
     fetchOptions: fetchEmployeeTypesData,
-    gridSize: { xs: 12, sm: 4, lg: 4 },
+    gridSize: { xs: 12, sm: 4, lg: 3 },
   },
   {
     key: "employee_status",
@@ -37,14 +38,14 @@ export const tableFiltersConfig = (): FiltersConfig[] => [
     label: "Categoría",
     type: "select",
     fetchOptions: fetchCategoryData,
-    gridSize: { xs: 12, sm: 4, lg: 4 },
+    gridSize: { xs: 12, sm: 4, lg: 3 },
   },
   {
     key: "location",
     label: "Ubicación",
     type: "select",
     fetchOptions: fetchLocationsData,
-    gridSize: { xs: 12, sm: 4, lg: 3 },
+    gridSize: { xs: 12, sm: 4, lg: 2 },
   },
   {
     key: "attendance",
@@ -66,6 +67,13 @@ export const tableFiltersConfig = (): FiltersConfig[] => [
     type: "select",
     fetchOptions: (secretaria) => fetchDireccionesData(secretaria),
     dependsOn: "secretaria",
+    gridSize: { xs: 12, sm: 4, lg: 3 },
+  },
+  {
+    key: "trade_union",
+    label: "Sindicato",
+    type: "select",
+    fetchOptions: fetchTradeUnionData,
     gridSize: { xs: 12, sm: 4, lg: 3 },
   },
   {

@@ -41,16 +41,24 @@ export const header: readonly HeadCell[] = [
     label: "Género",
   },
   {
-    id: "status_employee.display_name",
+    id: "employee_hiring[0].employee_type.display_name",
     numeric: false,
     disablePadding: false,
-    label: "Estatus",
-  },
-  {
-    id: "employee_hiring[0].category.display_name",
-    numeric: false,
-    disablePadding: false,
-    label: "Categoría",
+    label: "Tipo de Empleado y Categoría",
+    children: [
+      {
+        id: "employee_hiring[0].category.display_name",
+        numeric: false,
+        disablePadding: false,
+        label: "Categoría",
+      },
+      {
+        id: "employee_trade_union[0].trade_union.display_name",
+        numeric: false,
+        disablePadding: false,
+        label: "",
+      },
+    ],
   },
   {
     id: "employee_hiring[0].start_job_date",
@@ -92,5 +100,11 @@ export const header: readonly HeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: "Acciones",
+  },
+  {
+    id: "status_employee.display_name",
+    numeric: false,
+    disablePadding: false,
+    label: "Estatus",
   },
 ];

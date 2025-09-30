@@ -10,6 +10,8 @@ import {
   CircularProgress,
   Alert,
   Stack,
+  Box,
+  FormControlLabel,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useEffect } from "react";
@@ -24,6 +26,7 @@ import { logger } from "@/lib/logger";
 import { DirectorFormProps, FormErrors } from "@/interfaces/AdministrativeOrganization";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import { getEmployeeById } from "@/services/employees";
+import CustomRadio from "@/app/components/forms/theme-elements/CustomRadio";
 dayjs.extend(utc);
 dayjs.locale("es");
 
@@ -278,7 +281,7 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth disableEscapeKeyDown>
+    <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth disableEscapeKeyDown>
       <DialogTitle>
         {secretaria} - {direccion?.name}
       </DialogTitle>
@@ -293,7 +296,16 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
         <>
           <DialogContent>
             <Grid container spacing={2}>
-              <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
+                <EmployeeFinder
+                  onEmployeeSelect={handleDirectorSelect}
+                  error={""}
+                  label="Secretario"
+                  initialEmployee={directorEmployee}
+                />
+                <CustomLabelError field={errors.director && errors.director} />
+              </Grid>
+              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
                 <EmployeeFinder
                   onEmployeeSelect={handleDirectorSelect}
                   error={""}
@@ -302,14 +314,69 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
                 />
                 <CustomLabelError field={errors.director && errors.director} />
               </Grid>
-              <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
                 <EmployeeFinder
                   onEmployeeSelect={handleDeputyDirectorSelect}
                   error=""
-                  label="Suplente"
+                  label="Coordinador"
                   initialEmployee={deputyDirectorEmployee}
                 />
                 <CustomLabelError field={errors.deputyDirector && errors.deputyDirector} />
+              </Grid>
+              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
+                <EmployeeFinder
+                  onEmployeeSelect={handleDirectorSelect}
+                  error={""}
+                  label="Responsable inmediato"
+                  initialEmployee={directorEmployee}
+                />
+                <CustomLabelError field={errors.director && errors.director} />
+              </Grid>
+              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
+                <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
+                  ¿Quien firma las incidencias?
+                </Typography>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
+                  <FormControlLabel control={<CustomRadio color="primary" />} label="Secretario" labelPlacement="end" />
+                  <FormControlLabel control={<CustomRadio color="primary" />} label="Director" labelPlacement="end" />
+                  <FormControlLabel
+                    control={<CustomRadio color="primary" />}
+                    label="Coordinador"
+                    labelPlacement="end"
+                  />
+                  <FormControlLabel
+                    control={<CustomRadio color="primary" />}
+                    label="Responsable inmediato"
+                    labelPlacement="end"
+                  />
+                </Box>
+              </Grid>
+              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
+                <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
+                  ¿Quien firma las solicitudes?
+                </Typography>
+                <Box
+                  sx={{
+                    textAlign: "left",
+                  }}
+                >
+                  <FormControlLabel control={<CustomRadio color="primary" />} label="Secretario" labelPlacement="end" />
+                  <FormControlLabel control={<CustomRadio color="primary" />} label="Director" labelPlacement="end" />
+                  <FormControlLabel
+                    control={<CustomRadio color="primary" />}
+                    label="Coordinador"
+                    labelPlacement="end"
+                  />
+                  <FormControlLabel
+                    control={<CustomRadio color="primary" />}
+                    label="Responsable inmediato"
+                    labelPlacement="end"
+                  />
+                </Box>
               </Grid>
             </Grid>
             <Divider sx={{ my: 2 }} />

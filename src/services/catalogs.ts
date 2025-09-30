@@ -56,6 +56,16 @@ export const fetchEmployeeTypesData = async (): Promise<IResponseObject | null> 
   }
 };
 
+export const fetchTradeUnionData = async (): Promise<IResponseObject | null> => {
+  try {
+    const response = await http.get<IResponseObject>("/api/catalogs/trade-union");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch employeeType:", error);
+    return null;
+  }
+};
+
 export const fetchLocationsData = async (): Promise<IResponseObject | null> => {
   try {
     const response = await http.get<IResponseObject>("/api/catalogs/location");

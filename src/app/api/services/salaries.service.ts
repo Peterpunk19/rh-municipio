@@ -35,7 +35,10 @@ export const SalariesService = {
         MAX(CASE WHEN EmployeeType.name = 'confianza' THEN CategoryEmployeeType.salary END) as confianza,
         MAX(CASE WHEN EmployeeType.name = 'contrato_gasto_corriente' THEN CategoryEmployeeType.salary END) as contrato_gasto_corriente,
         MAX(CASE WHEN EmployeeType.name = 'contrato_por_laudo' THEN CategoryEmployeeType.salary END) as contrato_por_laudo,
-        MAX(CASE WHEN EmployeeType.name = 'contrato_fondo_iv' THEN CategoryEmployeeType.salary END) as contrato_fondo_iv
+        MAX(CASE WHEN EmployeeType.name = 'eventual' THEN CategoryEmployeeType.salary END) as eventual
+        MAX(CASE WHEN EmployeeType.name = 'base_por_laudo' THEN CategoryEmployeeType.salary END) as base_por_laudo
+        MAX(CASE WHEN EmployeeType.name = 'confianza_fondo_iv' THEN CategoryEmployeeType.salary END) as confianza_fondo_iv
+        MAX(CASE WHEN EmployeeType.name = 'pensionado' THEN CategoryEmployeeType.salary END) as pensionado
       FROM CategoryEmployeeType
       INNER JOIN Category ON CategoryEmployeeType.category_id = Category.id
       INNER JOIN EmployeeType ON CategoryEmployeeType.employee_type_id = EmployeeType.id

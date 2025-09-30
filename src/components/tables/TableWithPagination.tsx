@@ -206,6 +206,28 @@ const TableWithPagination = <T extends TableItemBase>({
           </Typography>
         );
 
+      case "statusEmployee":
+        return (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ width: "100%" }}
+          >
+            <Box
+              sx={{
+                backgroundColor:
+                  row.status_employee.name === "activo"
+                    ? (theme) => theme.palette.success.main
+                    : (theme) => theme.palette.error.main,
+                borderRadius: "100%",
+                height: "10px",
+                width: "10px",
+              }}
+            />
+          </Box>
+        );
+
       case "incidentType":
         return (
           <Chip
