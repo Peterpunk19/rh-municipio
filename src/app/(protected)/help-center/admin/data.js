@@ -5,7 +5,7 @@ const helpCategories = [
   articles: [
    {
     displayName: "Acceder al sistema RH Municipio",
-    url: "01"  // ← Añade el slash inicial
+    url: "01"
    },
   ]
  },
@@ -15,15 +15,15 @@ const helpCategories = [
   articles: [
    {
     displayName: "Articulo 02",
-    url: "02"  // ← Cambiado de admin a articles
+    url: "02"
    },
    {
     displayName: "Articulo 03",
-    url: "03",  // ← Cambiado de admin a articles
+    url: "03",
     children: [
      {
       displayName: "Articulo 03.1",
-      url: "031",  // ← Cambiado de admin a articles
+      url: "031",
      },
     ]
    },

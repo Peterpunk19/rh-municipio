@@ -39,6 +39,18 @@ const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps
     "login.png": loginImage,
   };
 
+  const videoMap: Record<string, any> = {
+    "login.mp4": "/videos/login.mp4",
+  };
+
+  const getVideoPath = (videoSrc: string): string => {
+    if (videoSrc.startsWith("http") || videoSrc.startsWith("/")) {
+      return videoSrc;
+    }
+
+    return videoMap[videoSrc] || `/videos/${videoSrc}`;
+  };
+
   return (
     <>
       <Typography variant="h2" gutterBottom>
@@ -188,7 +200,7 @@ const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps
                       poster={imageMap[section.content.poster]}
                       aria-label={section.content.caption || "Video tutorial"}
                     >
-                      <source src={`${process.env.NEXT_PUBLIC_S3_URL}${section.content.src}`} type="video/mp4" />
+                      <source src={getVideoPath(section.content.src)} type="video/mp4" />
                       <track kind="captions" srcLang="es" label="Spanish captions" />
                       Tu navegador no soporta el elemento de video.
                     </video>

@@ -3,1742 +3,1742 @@ const category = [
     id: 1,
     name: "abogado_municipal",
     display_name: "ABOGADO MUNICIPAL",
-    active: true
+    active: true,
   },
   {
     id: 2,
     name: "administrador",
     display_name: "ADMINISTRADOR",
-    active: true
+    active: true,
   },
   {
     id: 3,
     name: "administrador_a",
     display_name: "ADMINISTRADOR A",
-    active: true
+    active: true,
   },
   {
     id: 4,
     name: "administrador_b",
     display_name: "ADMINISTRADOR B",
-    active: true
+    active: true,
   },
   {
     id: 5,
     name: "administrador_c",
     display_name: "ADMINISTRADOR C",
-    active: true
+    active: true,
   },
   {
     id: 6,
     name: "administrador_d",
     display_name: "ADMINISTRADOR D",
-    active: true
+    active: true,
   },
   {
     id: 7,
     name: "administrativo",
     display_name: "ADMINISTRATIVO",
-    active: true
+    active: true,
   },
   {
     id: 8,
     name: "administrativo_a",
     display_name: "ADMINISTRATIVO A",
-    active: true
+    active: true,
   },
   {
     id: 9,
     name: "administrativo_b",
     display_name: "ADMINISTRATIVO B",
-    active: true
+    active: true,
   },
   {
     id: 10,
     name: "administrativo_c",
     display_name: "ADMINISTRATIVO C",
-    active: true
+    active: true,
   },
   {
     id: 11,
     name: "administrativo_d",
     display_name: "ADMINISTRATIVO D",
-    active: true
+    active: true,
   },
   {
     id: 12,
     name: "administrativo_e",
     display_name: "ADMINISTRATIVO E",
-    active: true
+    active: true,
   },
   {
     id: 13,
     name: "administrativo_f",
     display_name: "ADMINISTRATIVO F",
-    active: true
+    active: true,
   },
   {
     id: 14,
     name: "administrativo_f-l",
     display_name: "ADMINISTRATIVO F-L",
-    active: true
+    active: true,
   },
   {
     id: 15,
     name: "administrativo_g",
     display_name: "ADMINISTRATIVO G",
-    active: true
+    active: true,
   },
   {
     id: 16,
     name: "administrativo_h",
     display_name: "ADMINISTRATIVO H",
-    active: true
+    active: true,
   },
   {
     id: 17,
     name: "agente",
     display_name: "AGENTE",
-    active: true
+    active: true,
   },
   {
     id: 18,
     name: "agente_a",
     display_name: "AGENTE A",
-    active: true
+    active: true,
   },
   {
     id: 19,
     name: "agente_e",
     display_name: "AGENTE E",
-    active: true
+    active: true,
   },
   {
     id: 20,
     name: "agente_municipal_c",
     display_name: "AGENTE MUNICIPAL C",
-    active: true
+    active: true,
   },
   {
     id: 21,
     name: "albanil",
     display_name: "ALBAÑIL",
-    active: true
+    active: true,
   },
   {
     id: 22,
     name: "albanil_a",
     display_name: "ALBAÑIL A",
-    active: true
+    active: true,
   },
   {
     id: 23,
     name: "albanil_b",
     display_name: "ALBAÑIL B",
-    active: true
+    active: true,
   },
   {
     id: 24,
     name: "alcaide",
     display_name: "ALCAIDE",
-    active: true
+    active: true,
   },
   {
     id: 25,
     name: "almacenista",
     display_name: "ALMACENISTA",
-    active: true
+    active: true,
   },
   {
     id: 26,
     name: "analista_a",
     display_name: "ANALISTA A",
-    active: true
+    active: true,
   },
   {
     id: 27,
     name: "analista_b",
     display_name: "ANALISTA B",
-    active: true
+    active: true,
   },
   {
     id: 28,
     name: "analista_c",
     display_name: "ANALISTA C",
-    active: true
+    active: true,
   },
   {
     id: 29,
     name: "analista_d",
     display_name: "ANALISTA D",
-    active: true
+    active: true,
   },
   {
     id: 30,
     name: "analista_e",
     display_name: "ANALISTA E",
-    active: true
+    active: true,
   },
   {
     id: 31,
     name: "analista_e-1",
     display_name: "ANALISTA E-1",
-    active: true
+    active: true,
   },
   {
     id: 32,
     name: "analista_tecnico",
     display_name: "ANALISTA TECNICO",
-    active: true
+    active: true,
   },
   {
     id: 33,
     name: "analista_tecnico_a",
     display_name: "ANALISTA TECNICO A",
-    active: true
+    active: true,
   },
   {
     id: 34,
     name: "analista_tecnico_b",
     display_name: "ANALISTA TECNICO B",
-    active: true
+    active: true,
   },
   {
     id: 35,
     name: "analista_tecnico_c",
     display_name: "ANALISTA TECNICO C",
-    active: true
+    active: true,
   },
   {
     id: 36,
     name: "analista_tecnico_d",
     display_name: "ANALISTA TECNICO D",
-    active: true
+    active: true,
   },
   {
     id: 37,
     name: "analista_tecnico_e",
     display_name: "ANALISTA TECNICO E",
-    active: true
+    active: true,
   },
   {
     id: 38,
     name: "aseador",
     display_name: "ASEADOR",
-    active: true
+    active: true,
   },
   {
     id: 39,
     name: "aseador_b",
     display_name: "ASEADOR B",
-    active: true
+    active: true,
   },
   {
     id: 40,
     name: "aseador_c",
     display_name: "ASEADOR C",
-    active: true
+    active: true,
   },
   {
     id: 41,
     name: "auditor_c",
     display_name: "AUDITOR C",
-    active: true
+    active: true,
   },
   {
     id: 42,
     name: "auditor_tecnico",
     display_name: "AUDITOR TECNICO",
-    active: true
+    active: true,
   },
   {
     id: 43,
     name: "auxiliar",
     display_name: "AUXILIAR",
-    active: true
+    active: true,
   },
   {
     id: 44,
     name: "auxiliar_a",
     display_name: "AUXILIAR A",
-    active: true
+    active: true,
   },
   {
     id: 45,
     name: "auxiliar_administrativo",
     display_name: "AUXILIAR ADMINISTRATIVO",
-    active: true
+    active: true,
   },
   {
     id: 46,
     name: "auxiliar_administrativo_a",
     display_name: "AUXILIAR ADMINISTRATIVO A",
-    active: true
+    active: true,
   },
   {
     id: 47,
     name: "auxiliar_administrativo_b",
     display_name: "AUXILIAR ADMINISTRATIVO B",
-    active: true
+    active: true,
   },
   {
     id: 48,
     name: "auxiliar_administrativo_c",
     display_name: "AUXILIAR ADMINISTRATIVO C",
-    active: true
+    active: true,
   },
   {
     id: 49,
     name: "auxiliar_administrativo_d",
     display_name: "AUXILIAR ADMINISTRATIVO D",
-    active: true
+    active: true,
   },
   {
     id: 50,
     name: "auxiliar_b",
     display_name: "AUXILIAR B",
-    active: true
+    active: true,
   },
   {
     id: 51,
     name: "auxiliar_c",
     display_name: "AUXILIAR C",
-    active: true
+    active: true,
   },
   {
     id: 52,
     name: "auxiliar_d",
     display_name: "AUXILIAR D",
-    active: true
+    active: true,
   },
   {
     id: 53,
     name: "auxiliar_de_enfermera_a",
     display_name: "AUXILIAR DE ENFERMERA A",
-    active: true
+    active: true,
   },
   {
     id: 54,
     name: "auxiliar_de_enfermeria",
     display_name: "AUXILIAR DE ENFERMERIA",
-    active: true
+    active: true,
   },
   {
     id: 55,
     name: "auxiliar_de_enfermeria_a",
     display_name: "AUXILIAR DE ENFERMERIA A",
-    active: true
+    active: true,
   },
   {
     id: 56,
     name: "auxiliar_de_mantenimiento",
     display_name: "AUXILIAR DE MANTENIMIENTO",
-    active: true
+    active: true,
   },
   {
     id: 57,
     name: "auxiliar_de_presidencia",
     display_name: "AUXILIAR DE PRESIDENCIA",
-    active: true
+    active: true,
   },
   {
     id: 58,
     name: "auxiliar_de_topografo_a",
     display_name: "AUXILIAR DE TOPOGRAFO A",
-    active: true
+    active: true,
   },
   {
     id: 59,
     name: "auxiliar_e",
     display_name: "AUXILIAR E",
-    active: true
+    active: true,
   },
   {
     id: 60,
     name: "auxiliar_f",
     display_name: "AUXILIAR F",
-    active: true
+    active: true,
   },
   {
     id: 61,
     name: "auxiliar_operativo",
     display_name: "AUXILIAR OPERATIVO",
-    active: true
+    active: true,
   },
   {
     id: 62,
     name: "ayudante",
     display_name: "AYUDANTE",
-    active: true
+    active: true,
   },
   {
     id: 63,
     name: "ayudante_a",
     display_name: "AYUDANTE A",
-    active: true
+    active: true,
   },
   {
     id: 64,
     name: "ayudante_b",
     display_name: "AYUDANTE B",
-    active: true
+    active: true,
   },
   {
     id: 65,
     name: "ayudante_de_albanil",
     display_name: "AYUDANTE DE ALBAÑIL",
-    active: true
+    active: true,
   },
   {
     id: 66,
     name: "ayudante_de_mecanico_b",
     display_name: "AYUDANTE DE MECANICO B",
-    active: true
+    active: true,
   },
   {
     id: 67,
     name: "ayudante_de_operador",
     display_name: "AYUDANTE DE OPERADOR",
-    active: true
+    active: true,
   },
   {
     id: 68,
     name: "barrendero",
     display_name: "BARRENDERO",
-    active: true
+    active: true,
   },
   {
     id: 69,
     name: "barrendero_a",
     display_name: "BARRENDERO A",
-    active: true
+    active: true,
   },
   {
     id: 70,
     name: "barrendero_b",
     display_name: "BARRENDERO B",
-    active: true
+    active: true,
   },
   {
     id: 71,
     name: "barrendero_c",
     display_name: "BARRENDERO C",
-    active: true
+    active: true,
   },
   {
     id: 72,
     name: "barrendero_d",
     display_name: "BARRENDERO D",
-    active: true
+    active: true,
   },
   {
     id: 73,
     name: "barrendero_e",
     display_name: "BARRENDERO E",
-    active: true
+    active: true,
   },
   {
     id: 74,
     name: "barrendero_f",
     display_name: "BARRENDERO F",
-    active: true
+    active: true,
   },
   {
     id: 75,
     name: "bibliotecario_b",
     display_name: "BIBLIOTECARIO B",
-    active: true
+    active: true,
   },
   {
     id: 76,
     name: "brigadista",
     display_name: "BRIGADISTA",
-    active: true
+    active: true,
   },
   {
     id: 77,
     name: "cajero",
     display_name: "CAJERO",
-    active: true
+    active: true,
   },
   {
     id: 78,
     name: "cajero_a",
     display_name: "CAJERO A",
-    active: true
+    active: true,
   },
   {
     id: 79,
     name: "campanero",
     display_name: "CAMPANERO",
-    active: true
+    active: true,
   },
   {
     id: 80,
     name: "capturista_a",
     display_name: "CAPTURISTA A",
-    active: true
+    active: true,
   },
   {
     id: 81,
     name: "capturista_b",
     display_name: "CAPTURISTA B",
-    active: true
+    active: true,
   },
   {
     id: 82,
     name: "capturista_c",
     display_name: "CAPTURISTA C",
-    active: true
+    active: true,
   },
   {
     id: 83,
     name: "capturista_d",
     display_name: "CAPTURISTA D",
-    active: true
+    active: true,
   },
   {
     id: 84,
     name: "carpintero_a",
     display_name: "CARPINTERO A",
-    active: true
+    active: true,
   },
   {
     id: 85,
     name: "chofer",
     display_name: "CHOFER",
-    active: true
+    active: true,
   },
   {
     id: 86,
     name: "chofer_a",
     display_name: "CHOFER A",
-    active: true
+    active: true,
   },
   {
     id: 87,
     name: "chofer_b",
     display_name: "CHOFER B",
-    active: true
+    active: true,
   },
   {
     id: 88,
     name: "chofer_c",
     display_name: "CHOFER C",
-    active: true
+    active: true,
   },
   {
     id: 89,
     name: "chofer_d",
     display_name: "CHOFER D",
-    active: true
+    active: true,
   },
   {
     id: 90,
     name: "chofer_e",
     display_name: "CHOFER E",
-    active: true
+    active: true,
   },
   {
     id: 91,
     name: "chofer_f",
     display_name: "CHOFER F",
-    active: true
+    active: true,
   },
   {
     id: 92,
     name: "cobrador",
     display_name: "COBRADOR",
-    active: true
+    active: true,
   },
   {
     id: 93,
     name: "cobrador_a",
     display_name: "COBRADOR A",
-    active: true
+    active: true,
   },
   {
     id: 94,
     name: "cobrador_b",
     display_name: "COBRADOR B",
-    active: true
+    active: true,
   },
   {
     id: 95,
     name: "comandante_operativo",
     display_name: "COMANDANTE OPERATIVO",
-    active: true
+    active: true,
   },
   {
     id: 96,
     name: "comisario",
     display_name: "COMISARIO",
-    active: true
+    active: true,
   },
   {
     id: 97,
     name: "consejero_juridico",
     display_name: "CONSEJERO JURIDICO",
-    active: true
+    active: true,
   },
   {
     id: 98,
     name: "conserje",
     display_name: "CONSERJE",
-    active: true
+    active: true,
   },
   {
     id: 99,
     name: "contralor",
     display_name: "CONTRALOR",
-    active: true
+    active: true,
   },
   {
     id: 100,
     name: "coordinador",
     display_name: "COORDINADOR",
-    active: true
+    active: true,
   },
   {
     id: 101,
     name: "coordinador_a",
     display_name: "COORDINADOR A",
-    active: true
+    active: true,
   },
   {
     id: 102,
     name: "coordinador_administrativo",
     display_name: "COORDINADOR ADMINISTRATIVO",
-    active: true
+    active: true,
   },
   {
     id: 103,
     name: "coordinador_b",
     display_name: "COORDINADOR B",
-    active: true
+    active: true,
   },
   {
     id: 104,
     name: "coordinador_c",
     display_name: "COORDINADOR C",
-    active: true
+    active: true,
   },
   {
     id: 105,
     name: "coordinador_d",
     display_name: "COORDINADOR D",
-    active: true
+    active: true,
   },
   {
     id: 106,
     name: "coordinador_de_comunicacion_social",
     display_name: "COORDINADOR DE COMUNICACION SOCIAL",
-    active: true
+    active: true,
   },
   {
     id: 107,
     name: "coordinador_de_obra",
     display_name: "COORDINADOR DE OBRA",
-    active: true
+    active: true,
   },
   {
     id: 108,
     name: "coordinador_e",
     display_name: "COORDINADOR E",
-    active: true
+    active: true,
   },
   {
     id: 109,
     name: "coordinador_operativo",
     display_name: "COORDINADOR OPERATIVO",
-    active: true
+    active: true,
   },
   {
     id: 110,
     name: "dibujante_b",
     display_name: "DIBUJANTE B",
-    active: true
+    active: true,
   },
   {
     id: 111,
     name: "director_a",
     display_name: "DIRECTOR A",
-    active: true
+    active: true,
   },
   {
     id: 112,
     name: "director_b",
     display_name: "DIRECTOR B",
-    active: true
+    active: true,
   },
   {
     id: 113,
     name: "director_c",
     display_name: "DIRECTOR C",
-    active: true
+    active: true,
   },
   {
     id: 114,
     name: "director_d",
     display_name: "DIRECTOR D",
-    active: true
+    active: true,
   },
   {
     id: 115,
     name: "director_de_recursos_humanos",
     display_name: "DIRECTOR DE RECURSOS HUMANOS",
-    active: true
+    active: true,
   },
   {
     id: 116,
     name: "director_e",
     display_name: "DIRECTOR E",
-    active: true
+    active: true,
   },
   {
     id: 117,
     name: "director_f",
     display_name: "DIRECTOR F",
-    active: true
+    active: true,
   },
   {
     id: 118,
     name: "director_g",
     display_name: "DIRECTOR G",
-    active: true
+    active: true,
   },
   {
     id: 119,
     name: "electricista",
     display_name: "ELECTRICISTA",
-    active: true
+    active: true,
   },
   {
     id: 120,
     name: "electricista_a",
     display_name: "ELECTRICISTA A",
-    active: true
+    active: true,
   },
   {
     id: 121,
     name: "enfermera_a",
     display_name: "ENFERMERA A",
-    active: true
+    active: true,
   },
   {
     id: 122,
     name: "inspector",
     display_name: "INSPECTOR",
-    active: true
+    active: true,
   },
   {
     id: 123,
     name: "inspector_b",
     display_name: "INSPECTOR B",
-    active: true
+    active: true,
   },
   {
     id: 124,
     name: "inspector_c",
     display_name: "INSPECTOR C",
-    active: true
+    active: true,
   },
   {
     id: 125,
     name: "inspector_d",
     display_name: "INSPECTOR D",
-    active: true
+    active: true,
   },
   {
     id: 126,
     name: "inspector_de_limpia",
     display_name: "INSPECTOR DE LIMPIA",
-    active: true
+    active: true,
   },
   {
     id: 127,
     name: "inspector_e",
     display_name: "INSPECTOR E",
-    active: true
+    active: true,
   },
   {
     id: 128,
     name: "inspector_limpia",
     display_name: "INSPECTOR LIMPIA",
-    active: true
+    active: true,
   },
   {
     id: 129,
     name: "intendente",
     display_name: "INTENDENTE",
-    active: true
+    active: true,
   },
   {
     id: 130,
     name: "jardinero",
     display_name: "JARDINERO",
-    active: true
+    active: true,
   },
   {
     id: 131,
     name: "jardinero_a",
     display_name: "JARDINERO A",
-    active: true
+    active: true,
   },
   {
     id: 132,
     name: "jardinero_b",
     display_name: "JARDINERO B",
-    active: true
+    active: true,
   },
   {
     id: 133,
     name: "jardinero_c",
     display_name: "JARDINERO C",
-    active: true
+    active: true,
   },
   {
     id: 134,
     name: "jardinero_d",
     display_name: "JARDINERO D",
-    active: true
+    active: true,
   },
   {
     id: 135,
     name: "jardinero_e",
     display_name: "JARDINERO E",
-    active: true
+    active: true,
   },
   {
     id: 136,
     name: "jardinero_f",
     display_name: "JARDINERO F",
-    active: true
+    active: true,
   },
   {
     id: 137,
     name: "jardinero_g",
     display_name: "JARDINERO G",
-    active: true
+    active: true,
   },
   {
     id: 138,
     name: "jefe_de_area",
     display_name: "JEFE DE AREA",
-    active: true
+    active: true,
   },
   {
     id: 139,
     name: "jefe_de_area_b",
     display_name: "JEFE DE AREA B",
-    active: true
+    active: true,
   },
   {
     id: 140,
     name: "jefe_de_area_c",
     display_name: "JEFE DE AREA C",
-    active: true
+    active: true,
   },
   {
     id: 141,
     name: "jefe_de_area_d",
     display_name: "JEFE DE AREA D",
-    active: true
+    active: true,
   },
   {
     id: 142,
     name: "jefe_de_departamento",
     display_name: "JEFE DE DEPARTAMENTO",
-    active: true
+    active: true,
   },
   {
     id: 143,
     name: "jefe_de_departamento_a",
     display_name: "JEFE DE DEPARTAMENTO A",
-    active: true
+    active: true,
   },
   {
     id: 144,
     name: "jefe_de_departamento_b-2",
     display_name: "JEFE DE DEPARTAMENTO B-2",
-    active: true
+    active: true,
   },
   {
     id: 145,
     name: "jefe_de_departamento_c",
     display_name: "JEFE DE DEPARTAMENTO C",
-    active: true
+    active: true,
   },
   {
     id: 146,
     name: "jefe_de_departamento_d",
     display_name: "JEFE DE DEPARTAMENTO D",
-    active: true
+    active: true,
   },
   {
     id: 147,
     name: "jefe_de_departamento_e",
     display_name: "JEFE DE DEPARTAMENTO E",
-    active: true
+    active: true,
   },
   {
     id: 148,
     name: "jefe_de_departamento_f",
     display_name: "JEFE DE DEPARTAMENTO F",
-    active: true
+    active: true,
   },
   {
     id: 149,
     name: "jefe_de_seccion_b",
     display_name: "JEFE DE SECCION B",
-    active: true
+    active: true,
   },
   {
     id: 150,
     name: "jefe_de_seccion_c",
     display_name: "JEFE DE SECCION C",
-    active: true
+    active: true,
   },
   {
     id: 151,
     name: "jefe_de_seccion_d",
     display_name: "JEFE DE SECCION D",
-    active: true
+    active: true,
   },
   {
     id: 152,
     name: "jefe_de_sector",
     display_name: "JEFE DE SECTOR",
-    active: true
+    active: true,
   },
   {
     id: 153,
     name: "juez_calificador_b",
     display_name: "JUEZ CALIFICADOR B",
-    active: true
+    active: true,
   },
   {
     id: 154,
     name: "maestro_albanil",
     display_name: "MAESTRO ALBAÑIL",
-    active: true
+    active: true,
   },
   {
     id: 155,
     name: "maestro_de_ceremonia",
     display_name: "MAESTRO DE CEREMONIA",
-    active: true
+    active: true,
   },
   {
     id: 156,
     name: "maestro_de_obra",
     display_name: "MAESTRO DE OBRA",
-    active: true
+    active: true,
   },
   {
     id: 157,
     name: "maestro_de_obra_a",
     display_name: "MAESTRO DE OBRA A",
-    active: true
+    active: true,
   },
   {
     id: 158,
     name: "marimbista_a",
     display_name: "MARIMBISTA A",
-    active: true
+    active: true,
   },
   {
     id: 159,
     name: "mecanico_a",
     display_name: "MECANICO A",
-    active: true
+    active: true,
   },
   {
     id: 160,
     name: "mecanico_b",
     display_name: "MECANICO B",
-    active: true
+    active: true,
   },
   {
     id: 161,
     name: "mecanico_c",
     display_name: "MECANICO C",
-    active: true
+    active: true,
   },
   {
     id: 162,
     name: "mecanico_e",
     display_name: "MECANICO E",
-    active: true
+    active: true,
   },
   {
     id: 163,
     name: "mecanografa_a",
     display_name: "MECANOGRAFA A",
-    active: true
+    active: true,
   },
   {
     id: 164,
     name: "mecanografa_b",
     display_name: "MECANOGRAFA B",
-    active: true
+    active: true,
   },
   {
     id: 165,
     name: "mecanografa_c",
     display_name: "MECANOGRAFA C",
-    active: true
+    active: true,
   },
   {
     id: 166,
     name: "mecanografa_d",
     display_name: "MECANOGRAFA D",
-    active: true
+    active: true,
   },
   {
     id: 167,
     name: "medico",
     display_name: "MEDICO",
-    active: true
+    active: true,
   },
   {
     id: 168,
     name: "medico_a",
     display_name: "MEDICO A",
-    active: true
+    active: true,
   },
   {
     id: 169,
     name: "medico_b",
     display_name: "MEDICO B",
-    active: true
+    active: true,
   },
   {
     id: 170,
     name: "medico_c",
     display_name: "MEDICO C",
-    active: true
+    active: true,
   },
   {
     id: 171,
     name: "medico_d",
     display_name: "MEDICO D",
-    active: true
+    active: true,
   },
   {
     id: 172,
     name: "medico_e",
     display_name: "MEDICO E",
-    active: true
+    active: true,
   },
   {
     id: 173,
     name: "oficial",
     display_name: "OFICIAL",
-    active: true
+    active: true,
   },
   {
     id: 174,
     name: "oficial_administrativo",
     display_name: "OFICIAL ADMINISTRATIVO",
-    active: true
+    active: true,
   },
   {
     id: 175,
     name: "oficial_administrativo_a",
     display_name: "OFICIAL ADMINISTRATIVO A",
-    active: true
+    active: true,
   },
   {
     id: 176,
     name: "oficial_administrativo_b",
     display_name: "OFICIAL ADMINISTRATIVO B",
-    active: true
+    active: true,
   },
   {
     id: 177,
     name: "oficial_administrativo_c",
     display_name: "OFICIAL ADMINISTRATIVO C",
-    active: true
+    active: true,
   },
   {
     id: 178,
     name: "oficial_administrativo_d",
     display_name: "OFICIAL ADMINISTRATIVO D",
-    active: true
+    active: true,
   },
   {
     id: 179,
     name: "oficial_especializado_a",
     display_name: "OFICIAL ESPECIALIZADO A",
-    active: true
+    active: true,
   },
   {
     id: 180,
     name: "oficial_especializado_b",
     display_name: "OFICIAL ESPECIALIZADO B",
-    active: true
+    active: true,
   },
   {
     id: 181,
     name: "oficial_especializado_c",
     display_name: "OFICIAL ESPECIALIZADO C",
-    active: true
+    active: true,
   },
   {
     id: 182,
     name: "oficial_especializado_d",
     display_name: "OFICIAL ESPECIALIZADO D",
-    active: true
+    active: true,
   },
   {
     id: 183,
     name: "oficial_especializado_e",
     display_name: "OFICIAL ESPECIALIZADO E",
-    active: true
+    active: true,
   },
   {
     id: 184,
     name: "oficial_especializado_f",
     display_name: "OFICIAL ESPECIALIZADO F",
-    active: true
+    active: true,
   },
   {
     id: 185,
     name: "oficial_especializado_g",
     display_name: "OFICIAL ESPECIALIZADO G",
-    active: true
+    active: true,
   },
   {
     id: 186,
     name: "oficial_especializado_g-1",
     display_name: "OFICIAL ESPECIALIZADO G-1",
-    active: true
+    active: true,
   },
   {
     id: 187,
     name: "oficial_especializado_g-2",
     display_name: "OFICIAL ESPECIALIZADO G-2",
-    active: true
+    active: true,
   },
   {
     id: 188,
     name: "oficial_especializado_g-3",
     display_name: "OFICIAL ESPECIALIZADO G-3",
-    active: true
+    active: true,
   },
   {
     id: 189,
     name: "oficial_especializado_g-4",
     display_name: "OFICIAL ESPECIALIZADO G-4",
-    active: true
+    active: true,
   },
   {
     id: 190,
     name: "oficial_especializado_g-5",
     display_name: "OFICIAL ESPECIALIZADO G-5",
-    active: true
+    active: true,
   },
   {
     id: 191,
     name: "oficial_especializado_g-6",
     display_name: "OFICIAL ESPECIALIZADO G-6",
-    active: true
+    active: true,
   },
   {
     id: 192,
     name: "oficial_especializado_h",
     display_name: "OFICIAL ESPECIALIZADO H",
-    active: true
+    active: true,
   },
   {
     id: 193,
     name: "oficial_especializado_h-4",
     display_name: "OFICIAL ESPECIALIZADO H-4",
-    active: true
+    active: true,
   },
   {
     id: 194,
     name: "oficial_especializado_i",
     display_name: "OFICIAL ESPECIALIZADO I",
-    active: true
+    active: true,
   },
   {
     id: 195,
     name: "oficial_especializado_i-3",
     display_name: "OFICIAL ESPECIALIZADO I-3",
-    active: true
+    active: true,
   },
   {
     id: 196,
     name: "oficial_especializado_i-6",
     display_name: "OFICIAL ESPECIALIZADO I-6",
-    active: true
+    active: true,
   },
   {
     id: 197,
     name: "oficial_mayor",
     display_name: "OFICIAL MAYOR",
-    active: true
+    active: true,
   },
   {
     id: 198,
     name: "oficinista",
     display_name: "OFICINISTA",
-    active: true
+    active: true,
   },
   {
     id: 199,
     name: "operador",
     display_name: "OPERADOR",
-    active: true
+    active: true,
   },
   {
     id: 200,
     name: "operador_a",
     display_name: "OPERADOR A",
-    active: true
+    active: true,
   },
   {
     id: 201,
     name: "operador_b",
     display_name: "OPERADOR B",
-    active: true
+    active: true,
   },
   {
     id: 202,
     name: "operador_c",
     display_name: "OPERADOR C",
-    active: true
+    active: true,
   },
   {
     id: 203,
     name: "operador_d",
     display_name: "OPERADOR D",
-    active: true
+    active: true,
   },
   {
     id: 204,
     name: "operador_de_maquinaria",
     display_name: "OPERADOR DE MAQUINARIA",
-    active: true
+    active: true,
   },
   {
     id: 205,
     name: "operador_de_maquinaria_pesada",
     display_name: "OPERADOR DE MAQUINARIA PESADA",
-    active: true
+    active: true,
   },
   {
     id: 206,
     name: "operador_de_sonido_c",
     display_name: "OPERADOR DE SONIDO C",
-    active: true
+    active: true,
   },
   {
     id: 207,
     name: "operador_e",
     display_name: "OPERADOR E",
-    active: true
+    active: true,
   },
   {
     id: 208,
     name: "operador_f",
     display_name: "OPERADOR F",
-    active: true
+    active: true,
   },
   {
     id: 209,
     name: "paramedico",
     display_name: "PARAMEDICO",
-    active: true
+    active: true,
   },
   {
     id: 210,
     name: "peon",
     display_name: "PEON",
-    active: true
+    active: true,
   },
   {
     id: 211,
     name: "peon_a",
     display_name: "PEON A",
-    active: true
+    active: true,
   },
   {
     id: 212,
     name: "peon_b",
     display_name: "PEON B",
-    active: true
+    active: true,
   },
   {
     id: 213,
     name: "pintor",
     display_name: "PINTOR",
-    active: true
+    active: true,
   },
   {
     id: 214,
     name: "plomero",
     display_name: "PLOMERO",
-    active: true
+    active: true,
   },
   {
     id: 215,
     name: "podador",
     display_name: "PODADOR",
-    active: true
+    active: true,
   },
   {
     id: 216,
     name: "podador_a",
     display_name: "PODADOR A",
-    active: true
+    active: true,
   },
   {
     id: 217,
     name: "podador_b",
     display_name: "PODADOR B",
-    active: true
+    active: true,
   },
   {
     id: 218,
     name: "policia",
     display_name: "POLICIA",
-    active: true
+    active: true,
   },
   {
     id: 219,
     name: "policia_i",
     display_name: "POLICIA I",
-    active: true
+    active: true,
   },
   {
     id: 220,
     name: "policia_primero",
     display_name: "POLICIA PRIMERO",
-    active: true
+    active: true,
   },
   {
     id: 221,
     name: "policia_segundo",
     display_name: "POLICIA SEGUNDO",
-    active: true
+    active: true,
   },
   {
     id: 222,
     name: "policia_segundo_i",
     display_name: "POLICIA SEGUNDO I",
-    active: true
+    active: true,
   },
   {
     id: 223,
     name: "policia_tercero",
     display_name: "POLICIA TERCERO",
-    active: true
+    active: true,
   },
   {
     id: 224,
     name: "policia_tercero_56",
     display_name: "POLICIA TERCERO (56)",
-    active: true
+    active: true,
   },
   {
     id: 225,
     name: "policia_tercero_90",
     display_name: "POLICIA TERCERO (90)",
-    active: true
+    active: true,
   },
   {
     id: 226,
     name: "presidente_municipal",
     display_name: "PRESIDENTE MUNICIPAL",
-    active: true
+    active: true,
   },
   {
     id: 227,
     name: "promotor_de_salud",
     display_name: "PROMOTOR DE SALUD",
-    active: true
+    active: true,
   },
   {
     id: 228,
     name: "proyectista",
     display_name: "PROYECTISTA",
-    active: true
+    active: true,
   },
   {
     id: 229,
     name: "radio_operador_tel",
     display_name: "RADIO OPERADOR TEL.",
-    active: true
+    active: true,
   },
   {
     id: 230,
     name: "recolector",
     display_name: "RECOLECTOR",
-    active: true
+    active: true,
   },
   {
     id: 231,
     name: "recolector_a",
     display_name: "RECOLECTOR A",
-    active: true
+    active: true,
   },
   {
     id: 232,
     name: "recolector_b",
     display_name: "RECOLECTOR B",
-    active: true
+    active: true,
   },
   {
     id: 233,
     name: "recolector_c",
     display_name: "RECOLECTOR C",
-    active: true
+    active: true,
   },
   {
     id: 234,
     name: "recolector_d",
     display_name: "RECOLECTOR D",
-    active: true
+    active: true,
   },
   {
     id: 235,
     name: "recolector_e",
     display_name: "RECOLECTOR E",
-    active: true
+    active: true,
   },
   {
     id: 236,
     name: "recolector_f",
     display_name: "RECOLECTOR F",
-    active: true
+    active: true,
   },
   {
     id: 237,
     name: "regidor",
     display_name: "REGIDOR",
-    active: true
+    active: true,
   },
   {
     id: 238,
     name: "rescatista_a",
     display_name: "RESCATISTA A",
-    active: true
+    active: true,
   },
   {
     id: 239,
     name: "rescatista_b",
     display_name: "RESCATISTA B",
-    active: true
+    active: true,
   },
   {
     id: 240,
     name: "secretaria_ejecutiva",
     display_name: "SECRETARIA EJECUTIVA",
-    active: true
+    active: true,
   },
   {
     id: 241,
     name: "secretaria_ejecutiva_a",
     display_name: "SECRETARIA EJECUTIVA A",
-    active: true
+    active: true,
   },
   {
     id: 242,
     name: "secretaria_ejecutiva_b",
     display_name: "SECRETARIA EJECUTIVA B",
-    active: true
+    active: true,
   },
   {
     id: 243,
     name: "secretaria_ejecutiva_c",
     display_name: "SECRETARIA EJECUTIVA C",
-    active: true
+    active: true,
   },
   {
     id: 244,
     name: "secretaria_ejecutiva_d",
     display_name: "SECRETARIA EJECUTIVA D",
-    active: true
+    active: true,
   },
   {
     id: 245,
     name: "secretaria_ejecutiva_e",
     display_name: "SECRETARIA EJECUTIVA E",
-    active: true
+    active: true,
   },
   {
     id: 246,
     name: "secretaria_ejecutiva_f",
     display_name: "SECRETARIA EJECUTIVA F",
-    active: true
+    active: true,
   },
   {
     id: 247,
     name: "secretaria_privada_b",
     display_name: "SECRETARIA PRIVADA B",
-    active: true
+    active: true,
   },
   {
     id: 248,
     name: "secretario",
     display_name: "SECRETARIO",
-    active: true
+    active: true,
   },
   {
     id: 249,
     name: "secretario_municipal",
     display_name: "SECRETARIO MUNICIPAL",
-    active: true
+    active: true,
   },
   {
     id: 250,
     name: "secretario_particular",
     display_name: "SECRETARIO PARTICULAR",
-    active: true
+    active: true,
   },
   {
     id: 251,
     name: "sindico_del_h_ayuntamiento",
     display_name: "SINDICO DEL H. AYUNTAMIENTO",
-    active: true
+    active: true,
   },
   {
     id: 252,
     name: "sobrestante",
     display_name: "SOBRESTANTE",
-    active: true
+    active: true,
   },
   {
     id: 253,
     name: "subinspector",
     display_name: "SUBINSPECTOR",
-    active: true
+    active: true,
   },
   {
     id: 254,
     name: "suboficial",
     display_name: "SUBOFICIAL",
-    active: true
+    active: true,
   },
   {
     id: 255,
     name: "supervisor_a",
     display_name: "SUPERVISOR A",
-    active: true
+    active: true,
   },
   {
     id: 256,
     name: "supervisor_b",
     display_name: "SUPERVISOR B",
-    active: true
+    active: true,
   },
   {
     id: 257,
     name: "supervisor_c",
     display_name: "SUPERVISOR C",
-    active: true
+    active: true,
   },
   {
     id: 258,
     name: "supervisor_d",
     display_name: "SUPERVISOR D",
-    active: true
+    active: true,
   },
   {
     id: 259,
     name: "supervisor_de_brigada",
     display_name: "SUPERVISOR DE BRIGADA",
-    active: true
+    active: true,
   },
   {
     id: 260,
     name: "supervisor_de_obra_a",
     display_name: "SUPERVISOR DE OBRA A",
-    active: true
+    active: true,
   },
   {
     id: 261,
     name: "supervisor_e",
     display_name: "SUPERVISOR E",
-    active: true
+    active: true,
   },
   {
     id: 262,
     name: "supervisor_f",
     display_name: "SUPERVISOR F",
-    active: true
+    active: true,
   },
   {
     id: 263,
     name: "supervisor_f_80",
     display_name: "SUPERVISOR F (80)",
-    active: true
+    active: true,
   },
   {
     id: 264,
     name: "supervisor_g",
     display_name: "SUPERVISOR G",
-    active: true
+    active: true,
   },
   {
     id: 265,
     name: "tec_especializado_d",
     display_name: "TEC. ESPECIALIZADO D",
-    active: true
+    active: true,
   },
   {
     id: 266,
     name: "tecnico_administrativo",
     display_name: "TECNICO ADMINISTRATIVO",
-    active: true
+    active: true,
   },
   {
     id: 267,
     name: "tecnico_administrativo_a",
     display_name: "TECNICO ADMINISTRATIVO A",
-    active: true
+    active: true,
   },
   {
     id: 268,
     name: "tecnico_administrativo_b",
     display_name: "TECNICO ADMINISTRATIVO B",
-    active: true
+    active: true,
   },
   {
     id: 269,
     name: "tecnico_administrativo_c",
     display_name: "TECNICO ADMINISTRATIVO C",
-    active: true
+    active: true,
   },
   {
     id: 270,
     name: "tecnico_administrativo_d",
     display_name: "TECNICO ADMINISTRATIVO D",
-    active: true
+    active: true,
   },
   {
     id: 271,
     name: "tecnico_administrativo_e",
     display_name: "TECNICO ADMINISTRATIVO E",
-    active: true
+    active: true,
   },
   {
     id: 272,
     name: "tecnico_de_mantto_c",
     display_name: "TECNICO DE MANTTO. C",
-    active: true
+    active: true,
   },
   {
     id: 273,
     name: "tecnico_electricista",
     display_name: "TECNICO ELECTRICISTA",
-    active: true
+    active: true,
   },
   {
     id: 274,
     name: "tecnico_electromecanico",
     display_name: "TECNICO ELECTROMECANICO",
-    active: true
+    active: true,
   },
   {
     id: 275,
     name: "tecnico_especializado",
     display_name: "TECNICO ESPECIALIZADO",
-    active: true
+    active: true,
   },
   {
     id: 276,
     name: "tecnico_especializado_a",
     display_name: "TECNICO ESPECIALIZADO A",
-    active: true
+    active: true,
   },
   {
     id: 277,
     name: "tecnico_especializado_b",
     display_name: "TECNICO ESPECIALIZADO B",
-    active: true
+    active: true,
   },
   {
     id: 278,
     name: "tecnico_especializado_c",
     display_name: "TECNICO ESPECIALIZADO C",
-    active: true
+    active: true,
   },
   {
     id: 279,
     name: "tecnico_especializado_d",
     display_name: "TECNICO ESPECIALIZADO D",
-    active: true
+    active: true,
   },
   {
     id: 280,
     name: "tesorero",
     display_name: "TESORERO",
-    active: true
+    active: true,
   },
   {
     id: 281,
     name: "tomador_de_tiempo_a",
     display_name: "TOMADOR DE TIEMPO A",
-    active: true
+    active: true,
   },
   {
     id: 282,
     name: "topografo",
     display_name: "TOPOGRAFO",
-    active: true
+    active: true,
   },
   {
     id: 283,
     name: "velador",
     display_name: "VELADOR",
-    active: true
+    active: true,
   },
   {
     id: 284,
     name: "velador_a",
     display_name: "VELADOR A",
-    active: true
+    active: true,
   },
   {
     id: 285,
     name: "velador_b",
     display_name: "VELADOR B",
-    active: true
+    active: true,
   },
   {
     id: 286,
     name: "vigilante",
     display_name: "VIGILANTE",
-    active: true
+    active: true,
   },
   {
     id: 287,
     name: "vigilante_a",
     display_name: "VIGILANTE A",
-    active: true
+    active: true,
   },
   {
     id: 288,
     name: "vigilante_b",
     display_name: "VIGILANTE B",
-    active: true
+    active: true,
   },
   {
     id: 289,
     name: "vocal_operativo",
     display_name: "VOCAL OPERATIVO",
-    active: true
+    active: true,
   },
   {
     id: 290,
     name: "vulcanizador",
     display_name: "VULCANIZADOR",
-    active: true
-  }
+    active: true,
+  },
 ];
 
 module.exports = category;
