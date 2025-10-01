@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import Divider from '@mui/material/Divider';
-import {Grid2 as Grid, Box, Typography, Button, ButtonGroup, Card, CardContent} from "@mui/material";
+import {Grid2 as Grid, Box, Typography, Button, ButtonGroup} from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
 import {toUpper} from "lodash";
-import {IconClockUp, IconClockDown, IconClockCheck, IconX} from "@tabler/icons-react";
+import {IconClockUp, IconClockDown, IconClockCheck} from "@tabler/icons-react";
 import {getEmployeesAttendances} from "@/services/employees-attendances";
 import {StatusCodes} from "http-status-codes";
 import {logger} from "@/lib/logger";
