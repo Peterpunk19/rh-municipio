@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { validationMessages } from "@/common/validation/messages";
 import { validateDate } from "@/schemas/utils";
-
-const MAX_NUM_VACATION_DAYS = process.env.MAX_NUM_VACATION_DAYS;
+import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 
 export const EmployeeIncidentsPostSchema = z
   .object({
@@ -40,20 +39,24 @@ export const EmployeeIncidentsPostSchema = z
       .number({ message: validationMessages.required("Asistencia") })
       .optional()
       .nullable(),
-    incidentDates: z
-      .array(z.string(), {
-        required_error: validationMessages.required("Fechas de incidencia"),
-        invalid_type_error: validationMessages.required("Fechas de incidencia"),
-      })
-      .min(1, { message: validationMessages.required("Fechas de incidencia") })
-      .max(Number(MAX_NUM_VACATION_DAYS), {
-        message: `Fechas de incidencia no puede exceder de ${MAX_NUM_VACATION_DAYS} días`,
-      }),
+    incidentDates: z.array(z.string()).optional(),
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: validationMessages.invalidDateRange("Fecha de Terminación", "Fecha de Inicio"),
     path: ["endDate"],
-  });
+  })
+  .refine(
+    (data) => {
+      if (data.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+        return true;
+      }
+      return data.incidentDates && data.incidentDates.length > 0;
+    },
+    {
+      message: validationMessages.required("Fechas de incidencia"),
+      path: ["incidentDates"],
+    },
+  );
 
 export const EmployeeIncidentsGetFilterSchema = z.object({
   page: z

@@ -175,7 +175,30 @@ export const IncidentRulesService = {
       } else if (rule.start_date && rule.end_date) {
         setPeriodFromRuleWindow(rule.start_date, rule.end_date);
       }
-    } else {
+    }
+    else if (incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+      const lastIncidentDay = await prisma.employeeIncidentDays.findFirst({
+        where: {
+          employee_incident: {
+            employee_id: employeeId,
+            incident_id: INCIDENT_TYPES_ID.LACTANCIA,
+            active: true,
+            incident_status_id: { lte: INCIDENT_STATUS_ID.APROBADA },
+            end_date: { lt: startDate },
+          },
+        },
+        orderBy: {
+          date: 'desc',
+        },
+        select: {
+          date: true,
+        },
+      });
+      if (lastIncidentDay) {
+        periodStart = startDate;
+      }
+    }
+    else {
       if (rule.start_date && rule.end_date) {
         setPeriodFromRuleWindow(rule.start_date, rule.end_date);
       }
@@ -192,6 +215,17 @@ export const IncidentRulesService = {
           hasRules: true,
         });
       }
+    }
+
+    if (incidentId === INCIDENT_TYPES_ID.LACTANCIA && employee?.gender?.name !== "female") {
+      return HttpResponse.success(HttpMessages.incidentRules.getSuccess, {
+        incident_id: incidentId,
+        employee_id: employeeId,
+        allowed_days: 0,
+        used_days: 0,
+        remaining_days: 0,
+        hasRules: true,
+      });
     }
 
     const used_days = await this.getUsedIncidentDays(employeeId, incidentId, periodStart, periodEnd);
@@ -364,6 +398,12 @@ export const IncidentRulesService = {
       if (body.incidentId === INCIDENT_TYPES_ID.PATERNIDAD) {
         if (employee?.gender?.name !== "male") {
           return HttpResponse.failure(HttpMessages.incidentRules.notMaleEmployee, {});
+        }
+      }
+
+      if (body.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+        if (employee?.gender?.name !== "female") {
+          return HttpResponse.failure(HttpMessages.incidentRules.notFemaleEmployee, {});
         }
       }
 

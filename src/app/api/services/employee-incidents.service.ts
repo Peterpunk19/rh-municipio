@@ -113,6 +113,7 @@ export const EmployeeIncidentsService = {
               const found = employeeIncident.incidentDatesWithPercentage.find((d) => d.date === dateStr);
               percentage_salary = found?.percentage || 100;
             }
+
             return {
               date,
               value,
@@ -122,10 +123,15 @@ export const EmployeeIncidentsService = {
             };
           }),
         );
+
         if (vacationDayRecords.length > 0) {
-          await tx.employeeIncidentDays.createMany({
-            data: vacationDayRecords as any[],
-          });
+          const BATCH_SIZE = 50;
+          for (let i = 0; i < vacationDayRecords.length; i += BATCH_SIZE) {
+            const batch = vacationDayRecords.slice(i, i + BATCH_SIZE);
+            await tx.employeeIncidentDays.createMany({
+              data: batch as any[],
+            });
+          }
         }
       }
 
@@ -564,18 +570,28 @@ export const EmployeeIncidentsService = {
       return { start, next };
     });
 
-    const conflicts = await prisma.employeeIncidentDays.findMany({
-      where: {
-        OR: dayWindows.map(({ start, next }) => ({
-          date: { gte: start, lt: next },
-          employee_incident: {
-            employee_id: Number(employeeId),
-            incident_status_id: { in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA] },
-          },
-        })),
-      },
-      select: { date: true },
-    });
-    return conflicts.map((c) => c.date);
+    const BATCH_SIZE = 50;
+    let allConflicts: { date: Date }[] = [];
+
+    for (let i = 0; i < dayWindows.length; i += BATCH_SIZE) {
+      const batchWindows = dayWindows.slice(i, i + BATCH_SIZE);
+
+      const batchConflicts = await prisma.employeeIncidentDays.findMany({
+        where: {
+          OR: batchWindows.map(({ start, next }) => ({
+            date: { gte: start, lt: next },
+            employee_incident: {
+              employee_id: Number(employeeId),
+              incident_status_id: { in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA] },
+            },
+          })),
+        },
+        select: { date: true },
+      });
+
+      allConflicts = [...allConflicts, ...batchConflicts];
+    }
+
+    return allConflicts.map((c) => c.date);
   },
 };

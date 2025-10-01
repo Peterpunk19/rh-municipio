@@ -45,7 +45,7 @@ const incident = [
     display_name: "LACTANCIA",
     type: 1,
     active: true,
-    display_calendar_dates: true,
+    display_calendar_dates: false,
     display_time_on_calendar: false,
     bgColorOnCalendar: "warning.main",
   },
