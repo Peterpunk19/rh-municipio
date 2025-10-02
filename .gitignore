@@ -12,7 +12,6 @@ node_modules/
 
 .idea/
 .next/
-yarn.lock
 .env
 .vscode/
 docker-compose.override.yml

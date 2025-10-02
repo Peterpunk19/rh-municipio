@@ -1,0 +1,24 @@
+steps:
+  # 1. Construir la imagen Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'gcr.io/metal-force-473618-p6/rhadmin', '.' ]
+
+  # 2. Subir la imagen al Container Registry / Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/metal-force-473618-p6/rhadmin' ]
+
+  # 3. Desplegar en Cloud Run con el nombre de servicio rhadmin
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run', 'deploy', 'rhadmin',
+        '--image', 'gcr.io/metal-force-473618-p6/rhadmin',
+        '--platform', 'managed',
+        '--region', 'us-central1',
+        '--allow-unauthenticated',
+        '--port', '3000'
+      ]
+
+images:
+  - gcr.io/metal-force-473618-p6/rhadmin

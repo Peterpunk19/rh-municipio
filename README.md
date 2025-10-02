@@ -8,6 +8,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 cp .env.dist .env
 cp docker-compose.override.yml.dist docker-compose.override.yml
 docker-compose build
+dcu -d mysql
+dcli yarn prisma generate
+dcli yarn ts-node prisma/seed.ts --employees=20
 docker-compose up
 dcli yarn install
 ```

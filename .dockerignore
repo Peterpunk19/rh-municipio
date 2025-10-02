@@ -6,3 +6,6 @@ Dockerfile
 .dockerignore
 .git
 .gitignore
+.next
+dist
+docker-compose*.yml

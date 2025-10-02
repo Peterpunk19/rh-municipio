@@ -1,7 +1,7 @@
 import { Grid2 as Grid, Box, Typography } from "@mui/material";
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import PageContainer from "@/app/components/container/PageContainer";
-import AuthForgotPassword from "../../authForms/AuthForgotPassword";
+import AuthForgotPassword from "@/app/auth/authForms/AuthForgotPassword";
 import Image from "next/image";
 
 export default function ForgotPassword() {
