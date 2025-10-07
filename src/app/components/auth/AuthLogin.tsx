@@ -1,7 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { Box, Typography, FormGroup, FormControlLabel, Button, Stack, Divider } from "@mui/material";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import type { loginType } from "@/app/(DashboardLayout)/types/auth/auth";
 import CustomCheckbox from "@/app/components/forms/theme-elements/CustomCheckbox";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/ui/form-error";
 import { FormSuccess } from "@/components/ui/form-success";
 import { login } from "@/actions/login";
+import {DEFAULT_LOGIN_REDIRECT} from "@/routes";
 
 const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
   const [isPending, startTransition] = useTransition();
@@ -43,8 +44,8 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
         return;
       }
 
-      if (result?.success && result.redirectTo) {
-        window.location.href = result.redirectTo;
+      if (result?.success) {
+        window.location.href = DEFAULT_LOGIN_REDIRECT;
         return;
       }
 

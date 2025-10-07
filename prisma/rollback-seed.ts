@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,6 @@ async function rollback() {
   await prisma.incident.deleteMany();
   await prisma.incidentStatus.deleteMany();
   await prisma.location.deleteMany();
-  await prisma.payroll.deleteMany();
   await prisma.request.deleteMany();
   await prisma.requestStatus.deleteMany();
   await prisma.employeeHiring.deleteMany();

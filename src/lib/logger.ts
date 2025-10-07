@@ -1,13 +1,21 @@
 import { pino, type Logger } from "pino";
 
-export const logger: Logger = pino({
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-    },
-  },
-  level: process.env.PINO_LOG_LEVEL || "info",
+const isDev = process.env.NODE_ENV !== "production";
 
-  redact: [], // prevent logging of sensitive data
-});
+export const logger: Logger = pino(
+  isDev
+    ? {
+        transport: {
+          target: "pino-pretty",
+          options: {
+            colorize: true,
+            translateTime: "SYS:standard",
+            ignore: "pid,hostname",
+          },
+        },
+        level: process.env.PINO_LOG_LEVEL || "debug",
+      }
+    : {
+        level: process.env.PINO_LOG_LEVEL || "info",
+      },
+);

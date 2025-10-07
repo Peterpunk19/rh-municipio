@@ -4,6 +4,17 @@ import { LoginSchema } from "@/schemas/authentication";
 import { login } from "@/services/authentication";
 
 export default {
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === "production" ? "__Secure-next-auth.session-token" : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_URL?.includes("localhost"),
+      },
+    },
+  },
   providers: [
     Credentials({
       // @ts-ignore
@@ -31,5 +42,19 @@ export default {
         }
       },
     }),
+  ],
+
+  // 🔑 Necesario para NextAuth v5
+  secret: process.env.NEXTAUTH_SECRET,
+
+  // ✅ confía en el host automáticamente (útil en Docker/local)
+  trustHost: true,
+
+  // o si prefieres lista explícita de hosts válidos
+  trustedHosts: [
+    "localhost:3000",
+    "127.0.0.1:3000",
+    "host.docker.internal:3000",
+    "https://rhadmin-1005155783559.us-central1.run.app",
   ],
 } satisfies NextAuthConfig;

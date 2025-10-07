@@ -1,98 +1,80 @@
-import NextAuth from "next-auth";
-import authConfig from "@/auth.config";
-import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { HttpMessages } from "@/common/response/messages";
-
+import { HttpResponse } from "@/common/response/model";
 import {
   publicRoutes,
   authRoutes,
   apiAuthPrefix,
   apiPrefix,
-  DEFAULT_LOGIN_REDIRECT,
   DEFAULT_ADMIN_REDIRECT,
   DEFAULT_EMPLOYEE_REDIRECT,
 } from "@/routes";
-import { NextResponse } from "next/server";
-import { HttpResponse } from "./common/response/model";
+import { auth } from "@/auth"; // 👈 Este wrapper hace la magia
 
-const { auth } = NextAuth(authConfig);
-// @ts-ignore
-
-const excludedApiRoutes = ["/api/employee-attendance/bulk-import", "api/employees/import"];
+const excludedApiRoutes = ["/api/employee-attendance/bulk-import", "/api/employees/import"];
 
 export default auth(async (req) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-  const isRoot = nextUrl.pathname === "/";
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  const isApiRoute = nextUrl.pathname.startsWith(apiPrefix);
-  const isAdminRoute = nextUrl.pathname.startsWith("/admin");
-  const isEmployeeRoute = nextUrl.pathname.startsWith("/employee");
+  const { pathname } = nextUrl;
+  const session = req.auth; // ✅ ESTA ES TU SESIÓN
+  const isLoggedIn = !!session;
+  const roleName = session?.user?.role_name;
 
-  if (isPublicRoute) {
-    return null;
+  // --- PUBLIC ROUTES ---
+  if (publicRoutes.includes(pathname)) return NextResponse.next();
+
+  // --- ROOT ---
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  if (isRoot) {
-    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-  }
+  // --- AUTH API ROUTES ---
+  if (pathname.startsWith(apiAuthPrefix)) return NextResponse.next();
 
-  if (isApiAuthRoute) {
-    return null;
-  }
-
-  if (isApiRoute) {
-    const isExcludedApiRoute = excludedApiRoutes.includes(nextUrl.pathname);
-    if (isExcludedApiRoute) {
-      return null;
+  // --- API PROTEGIDAS ---
+  if (pathname.startsWith(apiPrefix)) {
+    if (excludedApiRoutes.includes(pathname)) {
+      return NextResponse.next();
     }
-
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-    if (!token) {
+    if (!isLoggedIn) {
       const response = HttpResponse.unauthorized(HttpMessages.error.notAuthorized, HttpStatusCode.Unauthorized);
-      return NextResponse.json(response, { status: HttpStatusCode.Unauthorized });
-    }
-    return null;
-  }
-
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      const token = await getToken({
-        req,
-        secret: process.env.NEXTAUTH_SECRET,
+      return NextResponse.json(response, {
+        status: HttpStatusCode.Unauthorized,
       });
-
-      if (token.role_name === "empleado") {
-        return Response.redirect(new URL(DEFAULT_EMPLOYEE_REDIRECT, nextUrl));
-      }
-      return Response.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl));
     }
-    return null;
+    return NextResponse.next();
   }
 
-  if (!isLoggedIn) {
-    return Response.redirect(new URL("/login", nextUrl));
+  // --- LOGIN ---
+  if (authRoutes.includes(pathname)) {
+    if (isLoggedIn) {
+      const redirectTo = roleName === "empleado" ? DEFAULT_EMPLOYEE_REDIRECT : DEFAULT_ADMIN_REDIRECT;
+      return NextResponse.redirect(new URL(redirectTo, req.url));
+    }
+    return NextResponse.next();
   }
 
+  // --- RUTAS PRIVADAS ---
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isEmployeeRoute = pathname.startsWith("/employee");
+
+  if (!isLoggedIn && (isAdminRoute || isEmployeeRoute)) {
+    // 🔒 Si no tiene sesión y entra a /admin o /employee → login
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  // --- RESTRICCIONES POR ROL ---
   if (isLoggedIn) {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-    if (isAdminRoute && token?.role_name === "empleado") {
-      return NextResponse.redirect(new URL(DEFAULT_EMPLOYEE_REDIRECT, nextUrl));
+    if (isAdminRoute && roleName === "empleado") {
+      return NextResponse.redirect(new URL(DEFAULT_EMPLOYEE_REDIRECT, req.url));
     }
-
-    if (isEmployeeRoute && token?.role_name !== "empleado") {
-      return NextResponse.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl));
+    if (isEmployeeRoute && roleName !== "empleado") {
+      return NextResponse.redirect(new URL(DEFAULT_ADMIN_REDIRECT, req.url));
     }
   }
 
-  return null;
+  return NextResponse.next();
 });
 
 export const config = {

@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   nextjs:
     build:
       context: .
       target: development
-    command: sh -c "yarn prisma generate && yarn dev"
     image: nextjs:latest
+    command: sh -c "yarn prisma generate && yarn dev"
     ports:
       - "3001:3000"   # App visible en http://localhost:3001
     environment:

@@ -17,7 +17,7 @@ import { setSelectedEmployee, setJobSchedule } from "@/store/slices/employeeRequ
 import type { AppDispatch } from "@/store/store";
 import { RequestCreateModalProps } from "@/app/api/employee-requests/types";
 import { getEmployeeById } from "@/services/employees";
-import CreateRequestForm from "./create/form-requests/page";
+import CreateRequestForm from "./create/form-requests/CreateRequestForm";
 
 export const RequestCreateModal = ({ open, onClose, employeeId, onSuccess }: RequestCreateModalProps) => {
   const dispatch = useDispatch<AppDispatch>();

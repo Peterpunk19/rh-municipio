@@ -5,7 +5,6 @@ import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 import { IconChevronDown } from '@tabler/icons-react';
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo"
-import DemosDD from './DemosDD';
 import AppLinks from '@/app/(DashboardLayout)/layout/vertical/header/AppLinks';
 import QuickLinks from '@/app/(DashboardLayout)/layout/vertical/header/QuickLinks';
 
@@ -30,15 +29,6 @@ const MobileSidebar = () => {
 
                         Demos
                     </Button>
-                    {toggle && (
-                        <Collapse in={toggle}>
-                            <Box m="-21px">
-                                <Box ml={1}>
-                                    <DemosDD />
-                                </Box>
-                            </Box>
-                        </Collapse>
-                    )}
 
                     <Button color="inherit"
                         onClick={() => setToggle2(!toggle2)}

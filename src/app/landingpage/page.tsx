@@ -7,7 +7,6 @@ import PageContainer from '@/app/components/container/PageContainer';
 import Banner from '@/app/components/landingpage/banner/Banner';
 import C2a from '@/app/components/landingpage/c2a/C2a';
 import C2a2 from '@/app/components/landingpage/c2a/C2a2';
-import DemoSlider from '@/app/components/landingpage/demo-slider/DemoSlider';
 import Features from '@/app/components/landingpage/features/Features';
 import Footer from '@/app/components/landingpage/footer/Footer';
 import Frameworks from '@/app/components/landingpage/frameworks/Frameworks';
@@ -19,7 +18,6 @@ export default function Landingpage () {
     <PageContainer title="Landingpage" description="this is Landingpage">
       <LpHeader />
       <Banner />
-      <DemoSlider />
       <Frameworks />
       <Testimonial />
       <Features />

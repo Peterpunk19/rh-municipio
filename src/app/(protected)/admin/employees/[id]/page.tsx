@@ -30,7 +30,7 @@ import { useDispatch } from "@/store/hooks";
 import EmployeeRequests from "@/app/(protected)/admin/employees-requests/page";
 import { a11yPropsProfile } from "@/common/utils";
 import CustomCalendarAttendance from "@/components/customComponents/CustomCalendarAttendance";
-import EmployeesAttendances from "@/app/(protected)/admin/employees-attendances/page";
+import EmployeesAttendances from "@/app/(protected)/admin/employees-attendances/EmployeeAttendance";
 
 interface TabPanelProps {
   children?: React.ReactNode;

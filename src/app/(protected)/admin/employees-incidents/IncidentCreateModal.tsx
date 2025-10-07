@@ -9,7 +9,7 @@ import { setSelectedEmployee } from "@/store/slices/employeeIncidentSlice";
 import type { AppDispatch } from "@/store/store";
 import { IncidentCreateModalProps } from "@/app/api/employee-incidents/types";
 import { getEmployeeById } from "@/services/employees";
-import IncidentCreateForm from "./create/form/page";
+import IncidentCreateForm from "./create/form/IncidentCreateForm";
 
 export const IncidentCreateModal = ({ open, onClose, employeeId, onSuccess }: IncidentCreateModalProps) => {
   const dispatch = useDispatch<AppDispatch>();

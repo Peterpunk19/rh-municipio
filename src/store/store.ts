@@ -5,16 +5,8 @@ import storage from "redux-persist/lib/storage";
 
 import counterReducer from "./counter/counterSlice";
 import CustomizerReducer from "./customizer/CustomizerSlice";
-import EcommerceReducer from "./apps/eCommerce/ECommerceSlice";
-import ChatsReducer from "./apps/chat/ChatSlice";
-import NotesReducer from "./apps/notes/NotesSlice";
-import EmailReducer from "./apps/email/EmailSlice";
-import TicketReducer from "./apps/tickets/TicketSlice";
-import ContactsReducer from "./apps/contacts/ContactSlice";
 import EmployeesReducer from "@/store/employees/EmployeeSlice";
 import UsersReducer from "@/store/users/UserSlice";
-import UserProfileReducer from "./apps/userProfile/UserProfileSlice";
-import BlogReducer from "./apps/blog/BlogSlice";
 import EmployeesFiltersReducer from "./employees/EmployeesFiltersSlice";
 import UsersFiltersReducer from "./users/UsersFiltersSlice";
 import FiltersReducer from "./tables/FiltersSlice";
@@ -40,14 +32,6 @@ export const store = configureStore({
   reducer: {
     counter: counterReducer,
     customizer: persistReducer<any>(persistConfig, CustomizerReducer),
-    ecommerceReducer: EcommerceReducer,
-    chatReducer: ChatsReducer,
-    emailReducer: EmailReducer,
-    notesReducer: NotesReducer,
-    contactsReducer: ContactsReducer,
-    ticketReducer: TicketReducer,
-    userpostsReducer: UserProfileReducer,
-    blogReducer: BlogReducer,
     employeesReducer: EmployeesReducer,
     employeeIncident: employeeIncidentReducer,
     filterEmployeesSlice: EmployeesFiltersReducer,
@@ -74,15 +58,7 @@ export const store = configureStore({
 const rootReducer = combineReducers({
   counter: counterReducer,
   customizer: CustomizerReducer,
-  ecommerceReducer: EcommerceReducer,
-  chatReducer: ChatsReducer,
-  emailReducer: EmailReducer,
-  notesReducer: NotesReducer,
-  contactsReducer: ContactsReducer,
   employeesReducer: EmployeesReducer,
-  ticketReducer: TicketReducer,
-  userpostsReducer: UserProfileReducer,
-  blogReducer: BlogReducer,
 });
 
 export const persistor = persistStore(store);

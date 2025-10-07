@@ -3,7 +3,6 @@
 import React from "react";
 import { Box, Typography, Chip, List, ListItem, ListItemText, Paper } from "@mui/material";
 
-import loginImage from "../../../../../../../public/images/help-center/login.png";
 import { generateUniqueKey } from "@/utils";
 import Image from "next/image";
 
@@ -33,6 +32,8 @@ interface ArticleRendererProps {
   introduction: string;
   sections: Section[];
 }
+
+const loginImage = "/images/help-center/login.png";
 
 const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps) => {
   const imageMap: Record<string, any> = {

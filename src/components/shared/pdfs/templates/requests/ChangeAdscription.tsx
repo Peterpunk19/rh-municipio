@@ -19,7 +19,7 @@ const ChangeAdscription: React.FC<RequestTemplateProps> = ({ data, styles, type 
     <>
       {type === "director" && (
         <>
-          <Text style={styles?.yearText}>"2025, AÑO DE ROSARIO CASTELLANOS FIGUEROA"</Text>
+          <Text style={styles?.yearText}>&quot;2025, AÑO DE ROSARIO CASTELLANOS FIGUEROA&quot;</Text>
           <View style={styles?.bodyContainer}>
             <View style={styles?.dateSection}>
               <Text style={styles?.date}>Tuxtla Gutiérrez, Chiapas a {currentDate}</Text>
@@ -69,7 +69,7 @@ const ChangeAdscription: React.FC<RequestTemplateProps> = ({ data, styles, type 
 
       {type === "employee" && (
         <>
-          <Text style={styles?.yearText}>"2025, AÑO DE ROSARIO CASTELLANOS FIGUEROA"</Text>
+          <Text style={styles?.yearText}> &quot;2025, AÑO DE ROSARIO CASTELLANOS FIGUEROA &quot;</Text>
 
           <View style={styles?.dateSection}>
             <Text style={styles?.date}>Tuxtla Gutiérrez, Chiapas a {currentDate}</Text>

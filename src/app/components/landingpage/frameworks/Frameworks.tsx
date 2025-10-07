@@ -6,8 +6,9 @@ import { styled } from '@mui/material/styles';
 import FrameworksTitle from "./FrameworksTitle";
 
 // images
-import sliderImg from "/public/images/landingpage/background/slider-group.png";
 import Image from "next/image";
+
+const sliderImg = "/images/landingpage/background/slider-group.png";
 
 const SliderBox = styled(Box)(() => ({
   "@keyframes slide": {
