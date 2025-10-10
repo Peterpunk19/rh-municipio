@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
@@ -64,7 +64,9 @@ const CreateRequestForm = ({
   isSubmitting: externalSubmitting,
 }: CreateRequestFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { formData, currentJobSchedule, errors } = useSelector((state: RootState) => state.createEmployeeRequest);
+  const { formData, currentJobSchedule, errors, employeeData } = useSelector(
+    (state: RootState) => state.createEmployeeRequest,
+  );
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -89,7 +91,7 @@ const CreateRequestForm = ({
       dispatch(
         updateFormData({
           field: "locationForm",
-          value: { currentLocationId: 0, newLocationId: 0, startDate: "", endDate: "" },
+          value: { currentLocationId: 0, newLocationId: 0, startDate: "", endDate: "", unionName: "" },
         }),
       );
       dispatch(updateFormData({ field: "attendanceTypeForm", value: { attendanceType: "", applicationDate: "" } }));
@@ -128,6 +130,16 @@ const CreateRequestForm = ({
   const fetchData = useCallback(() => fetchCatalogData(catalogName), []);
   const { options: requestsTypes, isLoading, error } = useFetchOptions(fetchData);
 
+  const filteredRequestTypes = useMemo(() => {
+    if (!requestsTypes) return [];
+
+    if (employeeData && !employeeData.trade_union_display_name) {
+      return requestsTypes.filter((rt) => Number(rt.id) !== REQUEST_TYPES.UNION_LEAVE);
+    }
+
+    return requestsTypes;
+  }, [requestsTypes, employeeData]);
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setOpenDialog(true);
@@ -137,7 +149,15 @@ const CreateRequestForm = ({
     if (!selectedEmployee) setIsSubmitting(true);
     dispatch(clearErrors());
     try {
-      const response = await createEmployeeRequest(formData);
+      const requestData = { ...formData };
+      if (Number(formData.typeRequestId) === REQUEST_TYPES.UNION_LEAVE && employeeData?.trade_union_display_name) {
+        requestData.locationForm = {
+          ...formData.locationForm,
+          unionName: employeeData.trade_union_display_name,
+        };
+      }
+
+      const response = await createEmployeeRequest(requestData);
 
       if (!response.success) {
         if (response.responseObject) {
@@ -232,7 +252,7 @@ const CreateRequestForm = ({
                     ) : error ? (
                       <MenuItem disabled>Error al cargar</MenuItem>
                     ) : (
-                      requestsTypes?.map((requestType) => (
+                      filteredRequestTypes?.map((requestType) => (
                         <MenuItem key={requestType.id} value={requestType.id}>
                           {requestType.display_name}
                         </MenuItem>
@@ -246,7 +266,8 @@ const CreateRequestForm = ({
                       fontSize: 16,
                     }}
                     label={
-                      requestsTypes.find((rt) => rt.id === formData.typeRequestId)?.display_name ?? "Tipo desconocido"
+                      filteredRequestTypes.find((rt) => rt.id === formData.typeRequestId)?.display_name ??
+                      "Tipo desconocido"
                     }
                     color="primary"
                     onDelete={() => dispatch(updateFormData({ field: "typeRequestId", value: "0" }))}
@@ -261,7 +282,8 @@ const CreateRequestForm = ({
                 {Number(formData.typeRequestId) === REQUEST_TYPES.SCHEDULE && (
                   <ScheduleForm currentJobSchedule={currentJobSchedule} />
                 )}
-                {Number(formData.typeRequestId) === REQUEST_TYPES.LOCATION && <LocationForm />}
+                {(Number(formData.typeRequestId) === REQUEST_TYPES.LOCATION ||
+                  Number(formData.typeRequestId) === REQUEST_TYPES.UNION_LEAVE) && <LocationForm />}
                 {Number(formData.typeRequestId) === REQUEST_TYPES.ATTENDANCE && <AttendanceTypeForm />}
                 {Number(formData.typeRequestId) === REQUEST_TYPES.FINGERPRINT && <FingerprintForm />}
                 {Number(formData.typeRequestId) === REQUEST_TYPES.ADSCRIPTION && <AdscriptionForm />}

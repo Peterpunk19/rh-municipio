@@ -24,6 +24,7 @@ interface FormData {
     newLocationId: number;
     startDate: string;
     endDate: string;
+    unionName: string;
   };
   attendanceTypeForm: {
     attendanceType: string;
@@ -65,6 +66,15 @@ export const formatRequestData = (formData: FormData) => {
         locationId: formData.locationForm.newLocationId,
         startDate: formData.locationForm.startDate,
         endDate: formData.locationForm.endDate,
+      };
+
+    case REQUEST_TYPES.UNION_LEAVE:
+      return {
+        ...baseData,
+        locationId: formData.locationForm.newLocationId,
+        startDate: formData.locationForm.startDate,
+        endDate: formData.locationForm.endDate,
+        unionName: formData.locationForm.unionName,
       };
 
     case REQUEST_TYPES.ATTENDANCE:

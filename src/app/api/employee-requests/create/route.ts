@@ -48,6 +48,9 @@ const requestValidations: IRequestValidations = {
     { id: "direccionId", service: DireccionService.getDireccionById, message: HttpMessages.location.notFoundById },
     { id: "attendanceId", service: AttendanceService.getAttendanceById, message: HttpMessages.attendance.notFoundById },
   ],
+  union_leave_request: [
+    { id: "locationId", service: LocationService.getLocationById, message: HttpMessages.location.notFoundById },
+  ],
 };
 
 export async function POST(request: NextRequest) {

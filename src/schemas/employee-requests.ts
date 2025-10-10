@@ -184,9 +184,18 @@ const ReleaseRequestSchema = z.object({
 
 const UnionLeaveSchema = z.object({
   requestId: z.literal(7),
-  startDate: z.string(),
-  endDate: z.string(),
-  unionName: z.string(),
+  startDate: z.preprocess(
+    (val) => validateDate(val),
+    z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }),
+  ),
+  endDate: z.preprocess(
+    (val) => validateDate(val),
+    z.date({ message: validationMessages.invalidaFormat("Fecha de fin") }),
+  ),
+  locationId: z
+    .number({ message: validationMessages.required("Ubicación") })
+    .positive({ message: validationMessages.required("Ubicación") }),
+  unionName: z.string({ message: validationMessages.required("Nombre de la sindicatura") }),
   ...EmployeeRequestPostBaseSchema,
 });
 

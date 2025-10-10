@@ -63,6 +63,7 @@ describe("API: GET /employee-requests/:id/pdf", () => {
           maternal_last_name: "MARTINEZ",
         },
         changeDate: "2025-07-15T00:00:00.000Z",
+        leaveDate: null,
         requestDetail: {
           id: 1,
           start_date: "2025-07-15T00:00:00.000Z",
