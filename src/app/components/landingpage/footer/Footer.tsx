@@ -3,8 +3,9 @@ import Container from '@mui/material/Container';
 import { Grid2 as Grid } from '@mui/material';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import logoIcon from '/public/images/logos/logoIcon.svg';
 import Image from 'next/image';
+
+const logoIcon = '/images/logos/logoIcon.svg';
 
 const Footer = () => {
   return (

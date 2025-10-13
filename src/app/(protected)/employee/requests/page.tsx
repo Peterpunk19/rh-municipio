@@ -1,6 +1,6 @@
 "use client";
 
-import EmployeeRequests from "@/app/(protected)/admin/employees-requests/page";
+import EmployeeRequests from "@/app/(protected)/admin/employees-requests/EmployeeRequests";
 import { withEmployeeLayout } from "@/app/(protected)/employee/(home)/components/EmployeeLayoutWrapper";
 import { ContentCard } from "@/app/(protected)/employee/(home)/components/ContentCard";
 import { useCurrentUser } from "@/hooks/use-current-user";

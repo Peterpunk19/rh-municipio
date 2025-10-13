@@ -50,11 +50,13 @@ const AttendanceReportTemplate: React.FC<{ data: AttendanceReportData }> = ({ da
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }} fixed>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image src={urlBackground} style={styles.backgroundImage} />
         </View>
 
         <View style={styles.header} fixed>
           <View style={styles.logo}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <Image src={urlLogo} />
           </View>
           <View style={styles.headerTextContainer}>

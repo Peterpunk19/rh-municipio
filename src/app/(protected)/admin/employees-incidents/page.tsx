@@ -1,27 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import TableWithPagination from "@/components/tables/TableWithPagination";
-import type { EmployeeType } from "@/types/EmployeeType";
-import { useSelector } from "@/store/hooks";
-import { tableFiltersConfig } from "./(list)/FiltersConfig";
-import { columnTypeConfig } from "./(list)/ColumnsConfig";
-import { useDispatch } from "react-redux";
-import { fetchEmployees } from "@/store/employees-incidents/EmployeesIncidentsSlice";
-import type { AppDispatch } from "@/store/store";
-import { header as adminHeader } from "./(list)/Header";
-import type { RootState } from "@/store/store";
-import PageContainer from "@/app/components/container/PageContainer";
-import CustomIncidentStatusComponent from "@/components/customComponents/CustomIncidentStatusComponent";
-import { Button } from "@mui/material";
-import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
-import { IncidentCreateModal } from "./IncidentCreateModal";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { ROLES } from "@/common/constants/Roles";
-import { HeadCell } from "@/interfaces/HeadCell";
-import IncidentDetailModal from "@/app/(protected)/employee/incidents/IncidentDetailModal";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import Dialog from "@mui/material/Dialog";
+import React from "react";
+import EmployeesIncidents from "@/app/(protected)/admin/employees-incidents/EmployeesIncidents";
 
 const BCrumb = [
   {
@@ -30,100 +9,6 @@ const BCrumb = [
   },
 ];
 
-export default function EmployeesIncidents({
-  role = ROLES.ADMIN,
-  header = adminHeader,
-}: {
-  role?: string;
-  header?: readonly HeadCell[];
-}) {
-  const ENTITY = "employeesIncidents";
-  const dispatch = useDispatch<AppDispatch>();
-  const { page, limit } = useSelector((state: RootState) => state.pagination);
-  const { searchTerm, values, title, showSearchBar } = useSelector(
-    (state: RootState) => state.filters.employeesIncidents || { searchTerm: "", values: {} },
-  );
-  const { user } = useCurrentUser();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const [selectedIncident, setSelectedIncident] = useState<any>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
-  const handleSuccess = () => {
-    setRefreshKey((prev) => prev + 1);
-  };
-
-  useEffect(() => {
-    const queryParams = [];
-    if (page) queryParams.push(`page=${page}`);
-    if (limit) queryParams.push(`limit=${limit}`);
-    if (searchTerm) queryParams.push(`search=${searchTerm}`);
-
-    Object.keys(values).forEach((key) => {
-      if (values[key]) queryParams.push(`${key}=${values[key]}`);
-    });
-
-    dispatch(fetchEmployees(queryParams.join("&")));
-  }, [dispatch, page, limit, searchTerm, values, refreshKey]);
-
-  const items: EmployeeType[] = useSelector((state) => state.employeesIncidentsSlice.employeesIncidents);
-
-  const emptyMessage = useSelector((state) => state.employeesIncidentsSlice.emptyMessage);
-
-  const createLink = (
-    <Button
-      {...(role === ROLES.ADMIN ? { href: "/admin/employees-incidents/create" } : { onClick: handleOpenModal })}
-      fullWidth
-      variant="contained"
-      color="primary"
-    >
-      Crear Incidencia
-    </Button>
-  );
-
-  const handleOpenDetailModal = (incidentId: string) => {
-    setSelectedIncident(incidentId);
-    setIsDetailModalOpen(true);
-  };
-
-  const handleCloseDetailModal = () => {
-    setIsDetailModalOpen(false);
-    setSelectedIncident(null);
-  };
-
-  return (
-    <PageContainer title={title} description={title}>
-      {showSearchBar && <Breadcrumb title={title} items={BCrumb} />}
-      <TableWithPagination
-        title=""
-        headCells={header}
-        items={items}
-        columnTypeConfig={columnTypeConfig}
-        filtersConfig={tableFiltersConfig}
-        entity={ENTITY}
-        emptyMessage={emptyMessage}
-        createLink={createLink}
-        onRowDetailClick={handleOpenDetailModal}
-      >
-        <CustomIncidentStatusComponent />
-      </TableWithPagination>
-      <IncidentCreateModal
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        employeeId={user?.employee_id}
-        onSuccess={handleSuccess}
-      />
-      {selectedIncident && (
-        <Dialog open={isDetailModalOpen} onClose={handleCloseDetailModal} fullWidth maxWidth="md">
-          <DialogTitle id="alert-dialog-title">Detalle de incidencia</DialogTitle>
-          <DialogContent>
-            <IncidentDetailModal id={selectedIncident} />
-          </DialogContent>
-        </Dialog>
-      )}
-    </PageContainer>
-  );
+export default function Page({}) {
+  return <EmployeesIncidents />;
 }

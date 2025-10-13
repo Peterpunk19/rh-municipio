@@ -1,11 +1,13 @@
+# Mantén node_modules fuera del contexto para reducir peso
 node_modules
+
+# Ignora logs locales
 npm-debug.log
 yarn-debug.log
 yarn-error.log
-Dockerfile
-.dockerignore
+
+# Ignora git y Docker internos
 .git
 .gitignore
-.next
-dist
+Dockerfile
 docker-compose*.yml

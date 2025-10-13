@@ -20,7 +20,6 @@ import DownloadCard from "@/app/components/shared/DownloadCard";
 import {
   basicsTableData,
   EnTableType,
-  TableType,
 } from "@/app/components/tables/tableData";
 
 import {

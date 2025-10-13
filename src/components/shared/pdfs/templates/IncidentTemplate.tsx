@@ -24,10 +24,12 @@ const IncidentTemplate: React.FC<IncidentTemplateProps> = ({ data, directorName 
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={{ position: "absolute", top: 0, left: 0, right: -30, bottom: 0 }}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image src="/images/backgrounds/bg_rh.png" style={styles.backgroundImage} />
         </View>
         <View style={styles.header}>
           <View style={styles.logo}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <Image src="/images/logos/municipio.png" />
           </View>
           <View style={styles.headerTextContainer}>
@@ -177,6 +179,7 @@ const IncidentTemplate: React.FC<IncidentTemplateProps> = ({ data, directorName 
 
         <View style={styles.qrSection}>
           <View style={styles.qrBox}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <Image src={qrBase64} style={{ width: 80, height: 80 }} />
           </View>
 
@@ -189,6 +192,7 @@ const IncidentTemplate: React.FC<IncidentTemplateProps> = ({ data, directorName 
           </View>
 
           <View style={styles.selloBox}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <Image src="/images/sello.jpg" style={styles.selloImage} />
             <Text style={{ fontSize: 10, position: "absolute", bottom: 36, left: -10 }}>
               {formatDate(data.created_at, "dd/MM/yyyy")}

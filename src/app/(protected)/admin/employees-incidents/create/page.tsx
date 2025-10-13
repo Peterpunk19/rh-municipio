@@ -1,7 +1,7 @@
 import React from "react";
 import PageContainer from "@/app/components/container/PageContainer";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
-import IncidentCreateForm from "./form/page";
+import IncidentCreateForm from "./form/IncidentCreateForm";
 
 const BCrumb = [
   {

@@ -29,10 +29,12 @@ const RequestTemplate: React.FC<RequestTemplateProps> = ({ data, type }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={{ position: "absolute", top: 0, left: 0, right: -30, bottom: 0 }}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image src={urlBackground} style={styles.backgroundImage} />
         </View>
         <View style={styles.header}>
           <View style={styles.logoSection}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <Image src={urlLogo} style={styles.logoImage} />
           </View>
           <View style={styles.centerSection}>

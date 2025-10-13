@@ -1,7 +1,5 @@
-import Link from "next/link";
-import { Grid2 as Grid, Box, Card, Stack, Typography } from "@mui/material";
+import { Grid2 as Grid, Box, Card, Stack } from "@mui/material";
 
-// components
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import PageContainer from "@/app/components/container/PageContainer";
 import AuthLogin from "../../components/auth/AuthLogin";

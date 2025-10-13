@@ -8,7 +8,6 @@ import { styled } from '@mui/material/styles';
 import { IconChevronDown } from '@tabler/icons-react';
 import AppLinks from '@/app/(DashboardLayout)/layout/vertical/header/AppLinks';
 import QuickLinks from '@/app/(DashboardLayout)/layout/vertical/header/QuickLinks';
-import DemosDD from './DemosDD';
 
 const Navigations = () => {
 
@@ -55,22 +54,6 @@ const Navigations = () => {
         >
             Demos
         </StyledButton>
-        {open && (
-            <Paper
-                onMouseEnter={handleOpen}
-                onMouseLeave={handleClose}
-                sx={{
-                    position: 'absolute',
-                    left: '0',
-                    right: '0',
-                    top: '55px',
-                    maxWidth: '1200px',
-                    width: '100%'
-                }}
-            >
-                <DemosDD />
-            </Paper>
-        )}
         <Box>
             <StyledButton
                 color="inherit"

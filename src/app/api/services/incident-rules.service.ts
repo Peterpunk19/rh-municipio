@@ -175,8 +175,7 @@ export const IncidentRulesService = {
       } else if (rule.start_date && rule.end_date) {
         setPeriodFromRuleWindow(rule.start_date, rule.end_date);
       }
-    }
-    else if (incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+    } else if (incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
       const lastIncidentDay = await prisma.employeeIncidentDays.findFirst({
         where: {
           employee_incident: {
@@ -188,7 +187,7 @@ export const IncidentRulesService = {
           },
         },
         orderBy: {
-          date: 'desc',
+          date: "desc",
         },
         select: {
           date: true,
@@ -197,8 +196,7 @@ export const IncidentRulesService = {
       if (lastIncidentDay) {
         periodStart = startDate;
       }
-    }
-    else {
+    } else {
       if (rule.start_date && rule.end_date) {
         setPeriodFromRuleWindow(rule.start_date, rule.end_date);
       }

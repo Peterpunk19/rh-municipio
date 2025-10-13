@@ -7,9 +7,10 @@ import { Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import BannerContent from "./BannerContent";
-import bannerbgImg1 from "/public/images/landingpage/bannerimg1.svg";
-import bannerbgImg2 from "/public/images/landingpage/bannerimg2.svg";
 import Image from "next/image";
+
+const bannerbgImg1 = "/images/landingpage/bannerimg1.svg";
+const bannerbgImg2 = "/images/landingpage/bannerimg2.svg";
 
 const Banner = () => {
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));

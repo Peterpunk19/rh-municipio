@@ -72,7 +72,7 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
       }
       return null;
     } catch (error) {
-      logger.error("Error fetching employee data:", error);
+      console.log(error);
       return null;
     }
   };
@@ -126,7 +126,7 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
 
             await Promise.all(promises);
           } catch (error) {
-            logger.error("Error loading employee data:", error);
+            console.log(error);
           } finally {
             setInitialLoading(false);
           }
