@@ -11,6 +11,3 @@ yarn-error.log
 .gitignore
 Dockerfile
 docker-compose*.yml
-
-# ❌ PERO NO ignores .next ni prisma ni public
-# (esas se copian dentro del contenedor)
