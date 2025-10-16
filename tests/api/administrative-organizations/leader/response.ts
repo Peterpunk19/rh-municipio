@@ -3,15 +3,15 @@ import { validationMessages } from "@/common/validation/messages";
 import { HttpMessages } from "@/common/response/messages";
 
 export const response = {
-  validData: generator.response({
+  validData: {
     success: true,
     message: HttpMessages.administrativeOrganizations.leadersCreatedSuccess,
     responseObject: {
-      director: [],
-      deputyDirector: [],
+      success: true,
+      responseObject: [],
     },
     statusCode: 200,
-  }),
+  },
   direccionIdNotNumber: {
     success: false,
     message: HttpMessages.error.validationFields,
@@ -92,42 +92,122 @@ export const response = {
     },
     statusCode: 400,
   },
-  deputyDirectorNotNumber: {
+  secretaryNotNumber: {
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      deputyDirector: {
-        messages: [validationMessages.number("El ID del subdirector")],
+      secretary: {
+        messages: [validationMessages.number("El ID del secretario")],
       },
     },
     statusCode: 400,
   },
-  deputyDirectorZero: {
+  secretaryZero: {
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      deputyDirector: {
-        messages: [validationMessages.minNumber("El ID del subdirector", 1)],
+      secretary: {
+        messages: [validationMessages.minNumber("El ID del secretario", 1)],
       },
     },
     statusCode: 400,
   },
-  deputyDirectorNegative: {
+  secretaryNegative: {
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      deputyDirector: {
-        messages: [validationMessages.minNumber("El ID del subdirector", 1)],
+      secretary: {
+        messages: [validationMessages.minNumber("El ID del secretario", 1)],
       },
     },
     statusCode: 400,
   },
-  deputyDirectorLong: {
+  secretaryLong: {
     success: false,
     message: HttpMessages.error.validationFields,
     responseObject: {
-      deputyDirector: {
-        messages: [validationMessages.maxNumber("El ID del subdirector", 999999999999999)],
+      secretary: {
+        messages: [validationMessages.maxNumber("El ID del secretario", 999999999999999)],
+      },
+    },
+    statusCode: 400,
+  },
+  coordinatorNotNumber: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      coordinator: {
+        messages: [validationMessages.number("El ID del coordinador")],
+      },
+    },
+    statusCode: 400,
+  },
+  coordinatorZero: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      coordinator: {
+        messages: [validationMessages.minNumber("El ID del coordinador", 1)],
+      },
+    },
+    statusCode: 400,
+  },
+  coordinatorNegative: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      coordinator: {
+        messages: [validationMessages.minNumber("El ID del coordinador", 1)],
+      },
+    },
+    statusCode: 400,
+  },
+  coordinatorLong: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      coordinator: {
+        messages: [validationMessages.maxNumber("El ID del coordinador", 999999999999999)],
+      },
+    },
+    statusCode: 400,
+  },
+  immediateResponsibleNotNumber: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      immediateResponsible: {
+        messages: [validationMessages.number("El ID del responsable inmediato")],
+      },
+    },
+    statusCode: 400,
+  },
+  immediateResponsibleZero: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      immediateResponsible: {
+        messages: [validationMessages.minNumber("El ID del responsable inmediato", 1)],
+      },
+    },
+    statusCode: 400,
+  },
+  immediateResponsibleNegative: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      immediateResponsible: {
+        messages: [validationMessages.minNumber("El ID del responsable inmediato", 1)],
+      },
+    },
+    statusCode: 400,
+  },
+  immediateResponsibleLong: {
+    success: false,
+    message: HttpMessages.error.validationFields,
+    responseObject: {
+      immediateResponsible: {
+        messages: [validationMessages.maxNumber("El ID del responsable inmediato", 999999999999999)],
       },
     },
     statusCode: 400,

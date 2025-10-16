@@ -35,6 +35,7 @@ import IncidentTemplate from "@/components/shared/pdfs/templates/IncidentTemplat
 import IncidentDays from "@/components/customComponents/IncidentDays";
 import Link from "next/link";
 import { IconArrowBack } from "@tabler/icons-react";
+import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 const BCrumb = [
   {
@@ -49,7 +50,8 @@ const BCrumb = [
 const EmployeeIncident = () => {
   const [loading, setLoading] = useState(false);
   const [employeeIncidentData, setEmployeeIncidentData] = useState<any>(null);
-  const [directorName, setDirectorName] = useState<string>("");
+  const [signatoryData, setSignatoryData] = useState<any>(null);
+  const [immediateResponsibleData, setImmediateResponsibleData] = useState<any>(null);
   const { id } = useParams();
   const [openDialog, setOpenDialog] = React.useState(false);
   const [idStatus, setIdStatus] = React.useState(0);
@@ -76,11 +78,25 @@ const EmployeeIncident = () => {
               .then((pdfData) => {
                 if (pdfData.success && pdfData.responseObject) {
                   const dataWithDirector = pdfData.responseObject;
-                  const director = dataWithDirector?.direccion?.leaders?.[0];
-                  const directorFullName = director?.employee
-                    ? `${director.employee.name} ${director.employee.paternal_last_name} ${director.employee.maternal_last_name}`.toUpperCase()
+                  const leaders = dataWithDirector?.direccion?.leaders;
+                  const signatory = leaders.find((l: any) => l.sign_incidents);
+                  const immediateResponsible = leaders.find(
+                    (l: any) => l.role_id === ROLES_ID_VALUES[ROLES.RESPONSABLE_INMEDIATO],
+                  );
+                  const signatoryFullName = signatory?.employee
+                    ? `${signatory.employee.name} ${signatory.employee.paternal_last_name} ${signatory.employee.maternal_last_name}`.toUpperCase()
                     : "";
-                  setDirectorName(directorFullName);
+                  const immediateResponsibleFullName = immediateResponsible?.employee
+                    ? `${immediateResponsible.employee.name} ${immediateResponsible.employee.paternal_last_name} ${immediateResponsible.employee.maternal_last_name}`.toUpperCase()
+                    : "";
+                  setSignatoryData({
+                    name: signatoryFullName,
+                    role: signatory?.role?.display_name,
+                  });
+                  setImmediateResponsibleData({
+                    name: immediateResponsibleFullName,
+                    role: immediateResponsible?.role?.display_name,
+                  });
                 }
               })
               .catch((error) => {
@@ -215,7 +231,11 @@ const EmployeeIncident = () => {
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
                 <Box display="flex" gap={1}>
                   <PDFGenerator
-                    data={{ ...employeeIncidentData, directorName }}
+                    data={{
+                      ...employeeIncidentData,
+                      signatory: signatoryData,
+                      immediateResponsible: immediateResponsibleData,
+                    }}
                     title="Formato de incidencia"
                     fileName={`incidencia-${employeeIncidentData.folio}`}
                     template={IncidentTemplate as any}

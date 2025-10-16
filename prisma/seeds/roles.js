@@ -75,5 +75,23 @@ const roles = [
     display_name: "Servicios Médicos",
     description: "Personal correspondiente a la Dirección de Servicios Médicos",
   },
+  {
+    id: 15,
+    name: "secretario",
+    display_name: "Secretario",
+    description: "Secretario de organismo administrativo",
+  },
+  {
+    id: 16,
+    name: "coordinador",
+    display_name: "Coordinador",
+    description: "Coordinador de organismo administrativo",
+  },
+  {
+    id: 17,
+    name: "responsable_inmediato",
+    display_name: "Responsable Inmediato",
+    description: "Responsable Inmediato de organismo administrativo",
+  },
 ];
 module.exports = roles;

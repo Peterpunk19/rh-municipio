@@ -6,7 +6,16 @@ import { IncidentTypes } from "@/common/constants/IncidentTypes";
 import styles from "@/components/shared/pdfs/styles/IncidentStyle";
 
 interface IncidentTemplateProps {
-  data: IncidentData & { directorName?: string };
+  data: IncidentData & {
+    signatory?: {
+      name: string;
+      role: string;
+    };
+    immediateResponsible?: {
+      name: string;
+      role: string;
+    };
+  };
   directorName?: string;
 }
 
@@ -18,7 +27,10 @@ const IncidentTemplate: React.FC<IncidentTemplateProps> = ({ data, directorName 
     tipo: data.incident?.display_name,
   });
   const qrBase64 = generateQRBase64(qrData);
-  const finalDirectorName = data.directorName || directorName || '';
+  const finalSignatoryName = data.signatory?.name || directorName || "";
+  const finalSignatoryRole = data.signatory?.role || "Secretario y/o Director";
+  const finalImmediateResponsibleName = data.immediateResponsible?.name || "";
+  const finalImmediateResponsibleRole = data.immediateResponsible?.role || "Responsable Inmediato";
 
   return (
     <Document>
@@ -143,7 +155,6 @@ const IncidentTemplate: React.FC<IncidentTemplateProps> = ({ data, directorName 
               </Text>
             </View>
           ))}
-
         </View>
 
         <Text style={styles.tableTitle}>DATOS DE LA INCIDENCIA</Text>
@@ -206,15 +217,14 @@ const IncidentTemplate: React.FC<IncidentTemplateProps> = ({ data, directorName 
 
         <View style={styles.signatureSection}>
           <View style={[styles.signatureBox, { width: "30%" }]}>
+            <Text style={{ fontSize: 8, fontWeight: "bold", marginBottom: 5 }}>{finalImmediateResponsibleName}</Text>
             <Text>_____________________________</Text>
-            <Text style={{ fontSize: 8, fontWeight: "bold" }}>Responsable Inmediato</Text>
+            <Text style={{ fontSize: 8, fontWeight: "bold" }}>{finalImmediateResponsibleRole}</Text>
           </View>
           <View style={[styles.signatureBox, { width: "40%" }]}>
-            <Text style={{ fontSize: 8, fontWeight: "bold", marginBottom: 5 }}>
-              {finalDirectorName}
-            </Text>
+            <Text style={{ fontSize: 8, fontWeight: "bold", marginBottom: 5 }}>{finalSignatoryName}</Text>
             <Text>_____________________________</Text>
-            <Text style={{ fontSize: 8, fontWeight: "bold" }}>Secretario y/o Director</Text>
+            <Text style={{ fontSize: 8, fontWeight: "bold" }}>{finalSignatoryRole}</Text>
           </View>
           <View style={[styles.signatureBox, { width: "30%" }]}>
             <Text style={{ fontSize: 8, fontWeight: "bold", marginBottom: 5 }}>ANA LILIA GUTIERREZ HERNANDEZ</Text>

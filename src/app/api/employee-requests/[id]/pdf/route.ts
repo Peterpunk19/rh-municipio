@@ -88,11 +88,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
       description: employeeRequest.description,
       rhDirector: employeeRequest.rhDirector,
+      signatory: employeeRequest.signatory,
       destinationDirector: employeeRequest.destinationDirector,
       changeDate: formatDate(employeeRequest.changeDate, "dd/MM/yyyy"),
       requestDetail: employeeRequest.requestDetail,
     };
-
     const response = HttpResponse.success(HttpMessages.employeeRequests.pdfDataObtainedSuccess, pdfData);
     return handleHttpResponse(response);
   } catch (error: any) {

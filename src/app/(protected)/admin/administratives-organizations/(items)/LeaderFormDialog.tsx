@@ -10,8 +10,11 @@ import {
   CircularProgress,
   Alert,
   Stack,
-  Box,
+  FormControl,
+  RadioGroup,
   FormControlLabel,
+  Radio,
+  Box,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useEffect } from "react";
@@ -26,25 +29,43 @@ import { logger } from "@/lib/logger";
 import { DirectorFormProps, FormErrors } from "@/interfaces/AdministrativeOrganization";
 import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import { getEmployeeById } from "@/services/employees";
+import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
 import CustomRadio from "@/app/components/forms/theme-elements/CustomRadio";
+
+const SIGNER_ROLES = [
+  { id: ROLES_ID_VALUES[ROLES.SECRETARIO], value: ROLES.SECRETARIO, label: "Secretario" },
+  { id: ROLES_ID_VALUES[ROLES.DIRECTOR], value: ROLES.DIRECTOR, label: "Director" },
+  { id: ROLES_ID_VALUES[ROLES.COORDINADOR], value: ROLES.COORDINADOR, label: "Coordinador" },
+  {
+    id: ROLES_ID_VALUES[ROLES.RESPONSABLE_INMEDIATO],
+    value: ROLES.RESPONSABLE_INMEDIATO,
+    label: "Responsable Inmediato",
+  },
+];
 dayjs.extend(utc);
 dayjs.locale("es");
 
-export default function DirectorFormDialog({ open, onClose, onSave, secretaria, direccion }: DirectorFormProps) {
+export default function LeaderFormDialog({ open, onClose, onSave, secretaria, direccion }: DirectorFormProps) {
   const [form, setForm] = useState({
+    secretary_id: "",
     director_id: "",
-    deputy_director_id: "",
+    coordinator_id: "",
+    immediate_responsible_id: "",
     startDate: "",
     endDate: "",
     direccion_id: "",
+    sign_incidents_role: "",
+    sign_requests_role: "",
   });
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [secretaryEmployee, setSecretaryEmployee] = useState<any>(null);
   const [directorEmployee, setDirectorEmployee] = useState<any>(null);
-  const [deputyDirectorEmployee, setDeputyDirectorEmployee] = useState<any>(null);
+  const [coordinatorEmployee, setCoordinatorEmployee] = useState<any>(null);
+  const [immediateResponsibleEmployee, setImmediateResponsibleEmployee] = useState<any>(null);
 
   const fetchEmployeeData = async (employeeId: string) => {
     if (!employeeId) return null;
@@ -80,16 +101,27 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
   useEffect(() => {
     if (open) {
       setInitialLoading(true);
+      let secretary = direccion?.secretary;
       let director = direccion?.director;
-      let deputyDirector = direccion?.deputy_director;
+      let coordinator = direccion?.coordinator;
+      let immediateResponsible = direccion?.immediateResponsible;
       let organizationId = direccion?.id;
+
       if (director) {
         const formData = {
+          secretary_id: secretary?.id ? String(secretary.id) : "",
           director_id: director?.id ? String(director.id) : "",
-          deputy_director_id: deputyDirector?.id ? String(deputyDirector.id) : "",
+          coordinator_id: coordinator?.id ? String(coordinator.id) : "",
+          immediate_responsible_id: immediateResponsible?.id ? String(immediateResponsible.id) : "",
           startDate: director?.startDate || "",
           endDate: director?.endDate || "",
           direccion_id: organizationId ? String(organizationId) : "",
+          sign_incidents_role: direccion?.signatories?.incidentSigner
+            ? String(direccion?.signatories?.incidentSigner)
+            : "",
+          sign_requests_role: direccion?.signatories?.requestSigner
+            ? String(direccion?.signatories?.requestSigner)
+            : "",
         };
 
         if (formData.startDate) {
@@ -99,11 +131,21 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
         if (formData.endDate) {
           formData.endDate = dayjs(formData.endDate).utc().format("YYYY-MM-DD");
         }
+
         setForm(formData);
 
         const loadEmployeeData = async () => {
           try {
             const promises = [];
+
+            if (secretary?.id) {
+              promises.push(
+                fetchEmployeeData(String(secretary.id)).then((employeeData) => {
+                  if (employeeData) setSecretaryEmployee(employeeData);
+                }),
+              );
+            }
+
             if (director?.id) {
               promises.push(
                 fetchEmployeeData(String(director.id)).then((employeeData) => {
@@ -114,12 +156,18 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
               );
             }
 
-            if (deputyDirector?.id) {
+            if (coordinator?.id) {
               promises.push(
-                fetchEmployeeData(String(deputyDirector.id)).then((employeeData) => {
-                  if (employeeData) {
-                    setDeputyDirectorEmployee(employeeData);
-                  }
+                fetchEmployeeData(String(coordinator.id)).then((employeeData) => {
+                  if (employeeData) setCoordinatorEmployee(employeeData);
+                }),
+              );
+            }
+
+            if (immediateResponsible?.id) {
+              promises.push(
+                fetchEmployeeData(String(immediateResponsible.id)).then((employeeData) => {
+                  if (employeeData) setImmediateResponsibleEmployee(employeeData);
                 }),
               );
             }
@@ -139,6 +187,16 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
     }
   }, [open, direccion]);
 
+  const handleSecretarySelect = (employee: any) => {
+    if (employee) {
+      setSecretaryEmployee(employee);
+      setForm((prev) => ({ ...prev, secretary_id: employee.id }));
+    } else {
+      setSecretaryEmployee(null);
+      setForm((prev) => ({ ...prev, secretary_id: "" }));
+    }
+  };
+
   const handleDirectorSelect = (employee: any) => {
     if (employee) {
       setDirectorEmployee(employee);
@@ -149,13 +207,23 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
     }
   };
 
-  const handleDeputyDirectorSelect = (employee: any) => {
+  const handleCoordinatorSelect = (employee: any) => {
     if (employee) {
-      setDeputyDirectorEmployee(employee);
-      setForm((prev) => ({ ...prev, deputy_director_id: employee.id }));
+      setCoordinatorEmployee(employee);
+      setForm((prev) => ({ ...prev, coordinator_id: employee.id }));
     } else {
-      setDeputyDirectorEmployee(null);
-      setForm((prev) => ({ ...prev, deputy_director_id: "" }));
+      setCoordinatorEmployee(null);
+      setForm((prev) => ({ ...prev, coordinator_id: "" }));
+    }
+  };
+
+  const handleImmediateResponsibleSelect = (employee: any) => {
+    if (employee) {
+      setImmediateResponsibleEmployee(employee);
+      setForm((prev) => ({ ...prev, immediate_responsible_id: employee.id }));
+    } else {
+      setImmediateResponsibleEmployee(null);
+      setForm((prev) => ({ ...prev, immediate_responsible_id: "" }));
     }
   };
 
@@ -170,13 +238,16 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
     setLoading(true);
     try {
       const newErrors: FormErrors = {};
+      const requiresDates = Boolean(form.director_id || form.secretary_id || form.coordinator_id);
 
-      if (!form.startDate) {
-        newErrors.startDate = "La fecha de inicio es requerida";
-      }
+      if (requiresDates) {
+        if (!form.startDate) {
+          newErrors.startDate = "La fecha de inicio es requerida";
+        }
 
-      if (!form.endDate) {
-        newErrors.endDate = "La fecha de fin es requerida";
+        if (!form.endDate) {
+          newErrors.endDate = "La fecha de fin es requerida";
+        }
       }
 
       if (Object.keys(newErrors).length > 0) {
@@ -185,37 +256,44 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
         return;
       }
 
-      const startDate = dayjs(form.startDate);
-      const endDate = dayjs(form.endDate);
+      // Date validations
+      if (requiresDates || (form.startDate && form.endDate)) {
+        const startDate = dayjs(form.startDate);
+        const endDate = dayjs(form.endDate);
 
-      if (!startDate.isValid() || !endDate.isValid()) {
-        if (!startDate.isValid()) newErrors.startDate = "La fecha de inicio no es válida";
-        if (!endDate.isValid()) newErrors.endDate = "La fecha de fin no es válida";
-        setErrors(newErrors);
-        setLoading(false);
-        return;
-      }
+        if (!startDate.isValid() || !endDate.isValid()) {
+          if (!startDate.isValid()) newErrors.startDate = "La fecha de inicio no es válida";
+          if (!endDate.isValid()) newErrors.endDate = "La fecha de fin no es válida";
+          setErrors(newErrors);
+          setLoading(false);
+          return;
+        }
 
-      if (startDate.isSame(endDate, "day")) {
-        newErrors.endDate = "La fecha de fin no puede ser igual a la fecha de inicio";
-        setErrors(newErrors);
-        setLoading(false);
-        return;
-      }
+        if (startDate.isSame(endDate, "day")) {
+          newErrors.endDate = "La fecha de fin no puede ser igual a la fecha de inicio";
+          setErrors(newErrors);
+          setLoading(false);
+          return;
+        }
 
-      if (endDate.isBefore(startDate)) {
-        newErrors.endDate = "La fecha de fin no puede ser anterior a la fecha de inicio";
-        setErrors(newErrors);
-        setLoading(false);
-        return;
+        if (endDate.isBefore(startDate)) {
+          newErrors.endDate = "La fecha de fin no puede ser anterior a la fecha de inicio";
+          setErrors(newErrors);
+          setLoading(false);
+          return;
+        }
       }
 
       const payload = {
         direccionId: Number(form.direccion_id),
         director: Number(form.director_id),
-        deputyDirector: Number(form.deputy_director_id) || null,
-        startDate: startDate.format("YYYY-MM-DD"),
-        endDate: endDate.format("YYYY-MM-DD"),
+        secretary: Number(form.secretary_id) || null,
+        coordinator: Number(form.coordinator_id) || null,
+        immediateResponsible: Number(form.immediate_responsible_id) || null,
+        signIncidentsRole: Number(form.sign_incidents_role) || null,
+        signRequestsRole: Number(form.sign_requests_role) || null,
+        startDate: form.startDate ? dayjs(form.startDate).format("YYYY-MM-DD") : null,
+        endDate: form.endDate ? dayjs(form.endDate).format("YYYY-MM-DD") : null,
       };
 
       const response = await updateLeader(payload);
@@ -253,14 +331,20 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
 
   const resetForm = () => {
     setForm({
+      secretary_id: "",
       director_id: "",
-      deputy_director_id: "",
+      coordinator_id: "",
+      immediate_responsible_id: "",
       startDate: "",
       endDate: "",
       direccion_id: "",
+      sign_incidents_role: "",
+      sign_requests_role: "",
     });
+    setSecretaryEmployee(null);
     setDirectorEmployee(null);
-    setDeputyDirectorEmployee(null);
+    setCoordinatorEmployee(null);
+    setImmediateResponsibleEmployee(null);
     setErrors({});
     setMessage(null);
     setSuccess(false);
@@ -281,7 +365,7 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth disableEscapeKeyDown>
+    <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth disableEscapeKeyDown>
       <DialogTitle>
         {secretaria} - {direccion?.name}
       </DialogTitle>
@@ -298,12 +382,12 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
             <Grid container spacing={2}>
               <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
                 <EmployeeFinder
-                  onEmployeeSelect={handleDirectorSelect}
-                  error={""}
+                  onEmployeeSelect={handleSecretarySelect}
+                  error=""
                   label="Secretario"
-                  initialEmployee={directorEmployee}
+                  initialEmployee={secretaryEmployee}
                 />
-                <CustomLabelError field={errors.director && errors.director} />
+                <CustomLabelError field={errors.secretary && errors.secretary} />
               </Grid>
               <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
                 <EmployeeFinder
@@ -316,68 +400,80 @@ export default function DirectorFormDialog({ open, onClose, onSave, secretaria, 
               </Grid>
               <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
                 <EmployeeFinder
-                  onEmployeeSelect={handleDeputyDirectorSelect}
+                  onEmployeeSelect={handleCoordinatorSelect}
                   error=""
                   label="Coordinador"
-                  initialEmployee={deputyDirectorEmployee}
+                  initialEmployee={coordinatorEmployee}
                 />
-                <CustomLabelError field={errors.deputyDirector && errors.deputyDirector} />
+                <CustomLabelError field={errors.coordinator && errors.coordinator} />
               </Grid>
               <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
                 <EmployeeFinder
-                  onEmployeeSelect={handleDirectorSelect}
-                  error={""}
-                  label="Responsable inmediato"
-                  initialEmployee={directorEmployee}
+                  onEmployeeSelect={handleImmediateResponsibleSelect}
+                  error=""
+                  label="Responsable Inmediato"
+                  initialEmployee={immediateResponsibleEmployee}
                 />
-                <CustomLabelError field={errors.director && errors.director} />
+                <CustomLabelError field={errors.immediateResponsible && errors.immediateResponsible} />
               </Grid>
-              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
-                <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
-                  ¿Quien firma las incidencias?
-                </Typography>
-                <Box
-                  sx={{
-                    textAlign: "left",
-                  }}
-                >
-                  <FormControlLabel control={<CustomRadio color="primary" />} label="Secretario" labelPlacement="end" />
-                  <FormControlLabel control={<CustomRadio color="primary" />} label="Director" labelPlacement="end" />
+            </Grid>
+            <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
+              <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
+                ¿Quién firma las incidencias?
+              </Typography>
+              <Box
+                sx={{
+                  textAlign: "left",
+                }}
+              >
+                {SIGNER_ROLES.map((role) => (
                   <FormControlLabel
-                    control={<CustomRadio color="primary" />}
-                    label="Coordinador"
+                    key={`incidents-${role.id}`}
+                    control={
+                      <CustomRadio
+                        color="primary"
+                        checked={form.sign_incidents_role === String(role.id)}
+                        onChange={(e) => setForm((prev) => ({ ...prev, sign_incidents_role: String(role.id) }))}
+                        value={String(role.id)}
+                        name="sign_incidents_role"
+                      />
+                    }
+                    label={role.label}
                     labelPlacement="end"
+                    sx={{ mr: 4, display: "inline-flex" }}
                   />
+                ))}
+                <CustomLabelError field={errors.sign_incidents_role} />
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
+              <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
+                ¿Quién firma las solicitudes?
+              </Typography>
+              <Box
+                sx={{
+                  textAlign: "left",
+                }}
+              >
+                {SIGNER_ROLES.map((role) => (
                   <FormControlLabel
-                    control={<CustomRadio color="primary" />}
-                    label="Responsable inmediato"
+                    key={`requests-${role.id}`}
+                    control={
+                      <CustomRadio
+                        color="primary"
+                        checked={form.sign_requests_role === String(role.id)}
+                        onChange={(e) => setForm((prev) => ({ ...prev, sign_requests_role: String(role.id) }))}
+                        value={String(role.id)}
+                        name="sign_requests_role"
+                      />
+                    }
+                    label={role.label}
                     labelPlacement="end"
+                    sx={{ mr: 4, display: "inline-flex" }}
                   />
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 6 }} sx={{ mt: 2 }}>
-                <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>
-                  ¿Quien firma las solicitudes?
-                </Typography>
-                <Box
-                  sx={{
-                    textAlign: "left",
-                  }}
-                >
-                  <FormControlLabel control={<CustomRadio color="primary" />} label="Secretario" labelPlacement="end" />
-                  <FormControlLabel control={<CustomRadio color="primary" />} label="Director" labelPlacement="end" />
-                  <FormControlLabel
-                    control={<CustomRadio color="primary" />}
-                    label="Coordinador"
-                    labelPlacement="end"
-                  />
-                  <FormControlLabel
-                    control={<CustomRadio color="primary" />}
-                    label="Responsable inmediato"
-                    labelPlacement="end"
-                  />
-                </Box>
-              </Grid>
+                ))}
+                <CustomLabelError field={errors.sign_requests_role} />
+              </Box>
             </Grid>
             <Divider sx={{ my: 2 }} />
             <Typography variant="body1" fontWeight="bold" sx={{ mb: 2 }}>

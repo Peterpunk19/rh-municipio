@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type {
   ICreateLeader,
+  ICreateLeadersParams,
   IAdministrativeOrganizationsFilters,
   ILeadersFilters,
 } from "@/app/api/administrative-organizations/types";
@@ -122,6 +123,100 @@ export const AdministrativeOrganizationLeadersService = {
     });
   },
 
+  async deactivateOtherLeaders(direccionId: number, activeRoleIds: number[], createdById: number) {
+    return await prisma.administrativeOrganizationLeaders.updateMany({
+      where: {
+        direccion_id: direccionId,
+        role_id: {
+          notIn: activeRoleIds,
+        },
+        active: true,
+      },
+      data: {
+        active: false,
+        updated_at: new Date(),
+        created_by_id: createdById,
+      },
+    });
+  },
+
+  async createLeaders(params: ICreateLeadersParams) {
+    return await prisma.$transaction(async (tx) => {
+      await tx.administrativeOrganizationLeaders.updateMany({
+        where: {
+          direccion_id: params.direccionId,
+          role_id: {
+            in: params.roles.map((role) => role.roleId),
+          },
+          active: true,
+        },
+        data: {
+          active: false,
+          updated_at: new Date(),
+          created_by_id: params.createdById,
+        },
+      });
+
+      const createdLeaders = [];
+      for (const role of params.roles) {
+        const isImmediateResponsible =
+          role.roleId === ROLES_ID_VALUES[ROLES.RESPONSABLE_INMEDIATO as keyof typeof ROLES_ID_VALUES];
+        const baseData: any = {
+          direccion: {
+            connect: { id: params.direccionId },
+          },
+          employee: {
+            connect: { id: role.employeeId },
+          },
+          role: {
+            connect: { id: role.roleId },
+          },
+          created_by: {
+            connect: { id: params.createdById },
+          },
+          active: true,
+          sign_incidents: role.signIncidents,
+          sign_requests: role.signRequests,
+        };
+
+        if (!isImmediateResponsible) {
+          baseData.start_date = params.startDate;
+          baseData.end_date = params.endDate;
+        }
+
+        const createdLeader = await tx.administrativeOrganizationLeaders.create({
+          data: baseData,
+          select: {
+            id: true,
+            direccion_id: true,
+            employee_id: true,
+            role_id: true,
+            active: true,
+            start_date: true,
+            end_date: true,
+            sign_incidents: true,
+            sign_requests: true,
+            employee: {
+              select: {
+                name: true,
+                paternal_last_name: true,
+                maternal_last_name: true,
+              },
+            },
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        });
+        createdLeaders.push(createdLeader);
+      }
+
+      return createdLeaders;
+    });
+  },
+
   async getAdministrativeOrganizationsByParams(
     administrativeOrganizationsFilters: IAdministrativeOrganizationsFilters,
   ) {
@@ -223,37 +318,52 @@ export const AdministrativeOrganizationLeadersService = {
       },
     });
 
-    const administrativeOrganizations = data.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      display_name: item.display_name,
-      direcciones: item.direcciones.map((direccion: any) => {
-        const director = direccion.leaders.find((leader: any) => leader.role.name === ROLES.DIRECTOR);
-        const deputyDirector = direccion.leaders.find((leader: any) => leader.role.name === ROLES.SUPLENTE);
+    const administrativeOrganizations = await Promise.all(
+      data.map(async (item: any) => ({
+        id: item.id,
+        name: item.name,
+        display_name: item.display_name,
+        direcciones: await Promise.all(
+          item.direcciones.map(async (direccion: any) => {
+            const director = direccion.leaders.find((leader: any) => leader.role.name === ROLES.DIRECTOR);
+            const secretary = direccion.leaders.find((leader: any) => leader.role.name === ROLES.SECRETARIO);
+            const coordinator = direccion.leaders.find((leader: any) => leader.role.name === ROLES.COORDINADOR);
+            const immediateResponsible = direccion.leaders.find(
+              (leader: any) => leader.role.name === ROLES.RESPONSABLE_INMEDIATO,
+            );
+            const signatories = await this.getLeadersSigner(direccion.id);
 
-        const getFullName = (employee: any) =>
-          employee ? `${employee.paternal_last_name} ${employee.maternal_last_name} ${employee.name}` : null;
+            const getFullName = (employee: any) =>
+              employee ? `${employee.paternal_last_name} ${employee.maternal_last_name} ${employee.name}` : null;
 
-        const ENLACE_ID = ROLES_ID_VALUES[ROLES.ENLACE as keyof typeof ROLES_ID_VALUES];
-        const SUBENLACE_ID = ROLES_ID_VALUES[ROLES.SUBENLACE as keyof typeof ROLES_ID_VALUES];
-        const enlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === ENLACE_ID);
-        const subenlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === SUBENLACE_ID);
+            const ENLACE_ID = ROLES_ID_VALUES[ROLES.ENLACE as keyof typeof ROLES_ID_VALUES];
+            const SUBENLACE_ID = ROLES_ID_VALUES[ROLES.SUBENLACE as keyof typeof ROLES_ID_VALUES];
+            const enlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === ENLACE_ID);
+            const subenlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === SUBENLACE_ID);
 
-        return {
-          id: direccion.id,
-          name: direccion.display_name,
-          director: {
-            id: director?.employee.id ?? "",
-            name: getFullName(director?.employee),
-            startDate: director?.start_date ?? null,
-            endDate: director?.end_date ?? null,
-          },
-          deputy_director: { id: deputyDirector?.employee.id ?? "", name: getFullName(deputyDirector?.employee) },
-          enlace: { id: enlace?.user.id, username: enlace?.user.username },
-          subenlace: { id: subenlace?.user.id, username: subenlace?.user.username },
-        };
-      }),
-    }));
+            return {
+              id: direccion.id,
+              name: direccion.display_name,
+              director: {
+                id: director?.employee.id ?? "",
+                name: getFullName(director?.employee),
+                startDate: director?.start_date ?? null,
+                endDate: director?.end_date ?? null,
+              },
+              secretary: { id: secretary?.employee.id ?? "", name: getFullName(secretary?.employee) },
+              coordinator: { id: coordinator?.employee.id ?? "", name: getFullName(coordinator?.employee) },
+              immediateResponsible: {
+                id: immediateResponsible?.employee.id ?? "",
+                name: getFullName(immediateResponsible?.employee),
+              },
+              enlace: { id: enlace?.user.id, username: enlace?.user.username },
+              subenlace: { id: subenlace?.user.id, username: subenlace?.user.username },
+              signatories: signatories,
+            };
+          }),
+        ),
+      })),
+    );
 
     const total = await prisma.secretaria.count({ where: whereClause });
     const pagination = await getPaginationData(total, Number(limit), Number(page));
@@ -367,5 +477,28 @@ export const AdministrativeOrganizationLeadersService = {
     }));
 
     return { ...pagination, leaders };
+  },
+
+  async getLeadersSigner(direccionId: number) {
+    const leaders = await prisma.administrativeOrganizationLeaders.findMany({
+      where: {
+        direccion_id: direccionId,
+        active: true,
+        OR: [{ sign_incidents: true }, { sign_requests: true }],
+      },
+      select: {
+        role_id: true,
+        sign_incidents: true,
+        sign_requests: true,
+      },
+    });
+
+    const incidentSigner = leaders.find((l) => l.sign_incidents);
+    const requestSigner = leaders.find((l) => l.sign_requests);
+
+    return {
+      incidentSigner: incidentSigner?.role_id || null,
+      requestSigner: requestSigner?.role_id || null,
+    };
   },
 };

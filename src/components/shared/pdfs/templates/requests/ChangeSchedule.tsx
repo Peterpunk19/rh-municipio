@@ -221,7 +221,11 @@ const ChangeSchedule: React.FC<RequestTemplateProps> = ({ data, type, styles }) 
         </View>
         <View style={{ width: "33.33%", alignItems: "center" }}>
           <Text style={{ fontWeight: "bold", fontSize: 10, marginBottom: 50 }}>Vo. Bo.</Text>
-          <Text style={{ borderTop: "1px solid black", width: "80%", textAlign: "center", paddingTop: 5 }}>&nbsp;</Text>
+          <Text style={{ borderTop: "1px solid black", width: "80%", textAlign: "center", paddingTop: 5 }}>
+            {data.vobo
+              ? `${data.vobo.employee.name} ${data.vobo.employee.paternal_last_name} ${data.vobo.employee.maternal_last_name}`.toUpperCase()
+              : `${data.rhDirector?.name || ""} ${data.rhDirector?.paternal_last_name || ""} ${data.rhDirector?.maternal_last_name || ""}`}
+          </Text>
           <Text style={{ fontSize: 8, textAlign: "center", marginTop: 2 }}>
             Jefe(a) de Departamento y/o Jefe(a) Inmediato
           </Text>
@@ -229,9 +233,13 @@ const ChangeSchedule: React.FC<RequestTemplateProps> = ({ data, type, styles }) 
         <View style={{ width: "33.33%", alignItems: "center" }}>
           <Text style={{ fontWeight: "bold", fontSize: 10, marginBottom: 50 }}>Autoriza</Text>
           <Text style={{ borderTop: "1px solid black", width: "80%", textAlign: "center", paddingTop: 5 }}>
-            {data.rhDirector?.name} {data.rhDirector?.paternal_last_name} {data.rhDirector?.maternal_last_name}
+            {data.signatory
+              ? `${data.signatory.employee.name} ${data.signatory.employee.paternal_last_name} ${data.signatory.employee.maternal_last_name}`.toUpperCase()
+              : `${data.rhDirector?.name || ""} ${data.rhDirector?.paternal_last_name || ""} ${data.rhDirector?.maternal_last_name || ""}`}
           </Text>
-          <Text style={{ fontSize: 8, textAlign: "center", marginTop: 2 }}>Director(a)</Text>
+          <Text style={{ fontSize: 8, textAlign: "center", marginTop: 2 }}>
+            {data.signatory ? data.signatory.role.display_name : "Director(a)"}
+          </Text>
         </View>
       </View>
     </>

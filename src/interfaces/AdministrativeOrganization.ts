@@ -9,9 +9,15 @@ export interface IDireccion {
   id: number;
   name: string;
   director: IDirector;
-  deputy_director: IDirector;
+  secretary: IDirector;
+  coordinator: IDirector;
+  immediateResponsible: IDirector;
   enlace?: IEnlace;
   subenlace?: IEnlace;
+  signatories: {
+    incidentSigner: number | null;
+    requestSigner: number | null;
+  };
 }
 
 export interface IAdministrativeOrganization {

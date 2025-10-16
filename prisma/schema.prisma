@@ -690,20 +690,22 @@ model Country {
 }
 
 model AdministrativeOrganizationLeaders {
-  id            Int       @id @default(autoincrement())
-  direccion_id  Int
-  employee_id   Int
-  role_id       Int
-  created_by_id Int
-  active        Boolean   @default(true)
-  start_date    DateTime
-  end_date      DateTime
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  direccion     Direccion @relation(fields: [direccion_id], references: [id])
-  employee      Employee  @relation(fields: [employee_id], references: [id])
-  role          Role      @relation(fields: [role_id], references: [id])
-  created_by    User      @relation("createdBy", fields: [created_by_id], references: [id])
+  id             Int       @id @default(autoincrement())
+  direccion_id   Int
+  employee_id    Int
+  role_id        Int
+  created_by_id  Int
+  active         Boolean   @default(true)
+  start_date     DateTime?
+  end_date       DateTime?
+  sign_incidents Boolean   @default(false)
+  sign_requests  Boolean   @default(false)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  direccion      Direccion @relation(fields: [direccion_id], references: [id])
+  employee       Employee  @relation(fields: [employee_id], references: [id])
+  role           Role      @relation(fields: [role_id], references: [id])
+  created_by     User      @relation("createdBy", fields: [created_by_id], references: [id])
 }
 
 model EmployeeAscriptions {
