@@ -20,6 +20,7 @@ export const UserSchema = z.object({
     .regex(/[0-9]/, { message: validationMessages.oneNumber("Contraseña") })
     .regex(/[^A-Za-z0-9]/, { message: validationMessages.oneSymbol("Contraseña") }),
   set_password_key: z.string().min(1).optional().nullable(),
+  must_change_password: z.boolean().default(false).optional(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
   employee_id: z
@@ -50,6 +51,7 @@ export const UserPostSchema = z
       .regex(/[0-9]/, { message: validationMessages.oneNumber("Contraseña") })
       .regex(/[^A-Za-z0-9]/, { message: validationMessages.oneSymbol("Contraseña") }),
     set_password_key: z.string().min(1).optional().nullable(),
+    must_change_password: z.boolean().default(false).optional(),
     created_at: z.date().optional(),
     updated_at: z.date().optional(),
     employee_id: z
@@ -137,6 +139,7 @@ export const UserGetSchema = z.object({
     .string({ message: validationMessages.required("Usuario") })
     .min(1, { message: validationMessages.required("Usuario") })
     .max(30, { message: validationMessages.maxLength("Usuario", 30) }),
+  must_change_password: z.boolean().default(false).optional(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
   employee_id: z
@@ -145,4 +148,16 @@ export const UserGetSchema = z.object({
     .nullable(),
   role_id: z.number({ message: validationMessages.required("Rol") }).nullable(),
   created_by_id: z.number().int().positive().optional().nullable(),
+});
+
+export const UserResetPasswordSchema = z.object({
+  userId: z
+    .number({ message: validationMessages.number("ID de usuario") })
+    .min(1, { message: validationMessages.minNumber("ID de usuario", 1) }),
+  password: z
+    .string({ message: validationMessages.required("Contraseña") })
+    .min(8, { message: validationMessages.minLength("Contraseña", 8) })
+    .regex(/[A-Z]/, { message: validationMessages.oneUppercaseLetter("Contraseña") })
+    .regex(/[a-z]/, { message: validationMessages.oneLowercaseLetter("Contraseña") })
+    .regex(/[0-9]/, { message: validationMessages.oneNumber("Contraseña") }),
 });

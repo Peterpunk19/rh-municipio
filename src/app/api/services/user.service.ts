@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { buildWhereClause, encryptPassword, getPaginationData } from "@/common/utils";
 import type { IUser, IUserFilters } from "@/app/api/users/interface";
+import { logger } from "@/lib/logger";
+import { SYSTEM_LOG_ACTIONS } from "@/common/constants/SystemLogActions";
 
 export const UserService = {
   async getUserByUsername(username: string) {
@@ -148,6 +150,7 @@ export const UserService = {
         uuid: user.uuid ?? uuidv4(),
         username: user.username,
         password: await encryptPassword(user.password),
+        must_change_password: user.must_change_password ?? false,
         active: true,
         employee_id: user.employee_id ?? null,
         role: {
@@ -310,5 +313,60 @@ export const UserService = {
         updated_at: true,
       },
     });
+  },
+
+  async resetUserPassword(
+    userId: number,
+    adminUserId: number,
+    temporaryPassword: string,
+  ): Promise<{
+    success: boolean;
+    message?: string;
+    temporaryPassword?: string;
+  }> {
+    try {
+      const hashedPassword = await encryptPassword(temporaryPassword);
+
+      await prisma.$transaction(async (tx) => {
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            password: hashedPassword,
+            must_change_password: true,
+            updated_at: new Date(),
+          },
+        });
+
+        await tx.systemLogs.create({
+          data: {
+            type: "change-password",
+            performed_by_id: adminUserId,
+            affected_user_id: userId,
+            description: `Administrador reseteó la contraseña del usuario ID ${userId}`,
+            metadata: {
+              action: SYSTEM_LOG_ACTIONS.PASSWORD_RESET,
+              timestamp: new Date().toISOString(),
+            },
+          },
+        });
+      });
+
+      return {
+        success: true,
+        temporaryPassword,
+      };
+    } catch (error: any) {
+      logger.error("Error resetting user password", {
+        userId,
+        adminUserId,
+        error: error.message,
+        stack: error.stack,
+      });
+
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
   },
 };
