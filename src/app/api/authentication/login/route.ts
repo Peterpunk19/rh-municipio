@@ -12,7 +12,6 @@ import jwt from "jsonwebtoken";
 import type { NextRequest } from "next/server";
 import { RoleModuleService } from "@/app/api/services/role-module.service";
 import { generateMenuItems } from "@/utils/menu-generator";
-import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,15 +51,6 @@ export async function POST(request: NextRequest) {
       process.env.NEXTAUTH_SECRET!,
       { expiresIn: Number.parseInt(process.env.JWT_ACCESS_EXPIRES_IN!, 10) },
     );
-
-    cookies().set({
-      name: "__Secure-authjs.session-token",
-      value: token,
-      httpOnly: true,
-      path: "/",
-      sameSite: "none",
-      secure: true,
-    });
 
     const response = HttpResponse.success(HttpMessages.user.loginSuccess, {
       payload: {

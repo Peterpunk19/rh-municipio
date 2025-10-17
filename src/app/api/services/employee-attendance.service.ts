@@ -390,11 +390,11 @@ export const EmployeeAttendanceService = {
         rfc: item.employee_ascriptions.employee.rfc,
         curp: item.employee_ascriptions.employee.curp,
       },
-      organism_public: item.employee_ascriptions.direccion.secretaria,
+      organism_public: item.employee_ascriptions.direccion?.secretaria,
       organism_administrative: {
-        id: item.employee_ascriptions.direccion.id,
-        name: item.employee_ascriptions.direccion.name,
-        display_name: item.employee_ascriptions.direccion.display_name,
+        id: item.employee_ascriptions.direccion?.id,
+        name: item.employee_ascriptions.direccion?.name,
+        display_name: item.employee_ascriptions.direccion?.display_name,
       },
       created_by: {
         id: item.created_by.id,

@@ -50,11 +50,15 @@ export const HttpMessages = {
   employeeHiring: {
     notFound: "No se encontraron datos de contratacion para el empleado",
   },
+  employeeAscription: {
+    notFound: "No se encontraron datos de ascripción para el empleado",
+  },
   employeeLocation: {
     notFound: "No se encontraron datos de ubicación para el empleado",
   },
   employeeAttendanceType: {
     notFound: "No se encontraron datos de tipo de asistencia para el empleado",
+    notValid: "El empleado no se encuentra en RELOJ DIGITAL",
   },
   incidentStatus: {
     idNotFound: "El ID de estatus de incidencia no fue encontrado",
