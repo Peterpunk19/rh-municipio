@@ -96,6 +96,13 @@ export const HttpMessages = {
     wrongUsername: "Usuario incorrecto",
     wrongPassword: "Contraseña incorrecta",
     notFoundCreator: "No se encontró por lo menos un usuario creador",
+    resetPasswordUnauthorized:
+      "No tienes permisos para realizar esta acción. Solo los administradores pueden resetear contraseñas.",
+    resetPasswordSuccess:
+      "Contraseña reseteada exitosamente. El usuario deberá cambiar su contraseña en el próximo inicio de sesión.",
+    resetPasswordCannotAdmin: "No se puede resetear la contraseña de otro administrador",
+    resetPasswordUserNotFound: "Usuario no encontrado",
+    resetPasswordServiceError: "Error al resetear la contraseña",
   },
   role: {
     notFound: "El rol no existe",

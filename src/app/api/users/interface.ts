@@ -7,6 +7,7 @@ export interface IUser {
   secretaria_id?: number | null;
   direcciones_ids?: number[] | null;
   created_by_id?: number;
+  must_change_password?: boolean;
 }
 
 export interface IUserFilters {

@@ -21,6 +21,7 @@ model User {
   username                            String                              @unique
   password                            String
   set_password_key                    String?
+  must_change_password                Boolean                             @default(false)
   active                              Boolean                             @default(true)
   created_at                          DateTime?                           @default(now())
   updated_at                          DateTime?                           @updatedAt
@@ -37,6 +38,8 @@ model User {
   employee_attendance_type_created_by EmployeeAttendanceType[]            @relation("createdByEmployeeAttendanceType")
   employee_ascriptions                EmployeeAscriptions[]               @relation("createdBy")
   user_direcciones                    UserDireccion[]
+  system_logs_performed               SystemLogs[]                        @relation("SystemLogsPerformedBy")
+  system_logs_affected                SystemLogs[]                        @relation("SystemLogsAffectedUser")
 }
 
 model Employee {
@@ -786,4 +789,22 @@ model Holiday {
   holiday_date    DateTime @unique
   validation_date DateTime @unique
   active          Boolean  @default(true)
+}
+
+model SystemLogs {
+  id              Int      @id @default(autoincrement())
+  type            String
+  performed_by_id Int
+  affected_user_id Int?    
+  description     String?  
+  metadata        Json?    
+  created_at      DateTime @default(now())
+  
+  performed_by    User     @relation("SystemLogsPerformedBy", fields: [performed_by_id], references: [id])
+  affected_user   User?    @relation("SystemLogsAffectedUser", fields: [affected_user_id], references: [id])
+
+  @@index([performed_by_id], map: "SystemLogs_performed_by_id_fkey")
+  @@index([affected_user_id], map: "SystemLogs_affected_user_id_fkey")
+  @@index([type], map: "SystemLogs_type_idx")
+  @@index([created_at], map: "SystemLogs_created_at_idx")
 }
