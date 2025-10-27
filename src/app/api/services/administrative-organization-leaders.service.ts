@@ -309,6 +309,7 @@ export const AdministrativeOrganizationLeadersService = {
                     id: true,
                     username: true,
                     role_id: true,
+                    employee_id: true,
                   },
                 },
               },
@@ -341,6 +342,30 @@ export const AdministrativeOrganizationLeadersService = {
             const enlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === ENLACE_ID);
             const subenlace = direccion.user_direcciones.find((userDir: any) => userDir.user.role_id === SUBENLACE_ID);
 
+            const enlaceEmployee = enlace?.user.employee_id
+              ? await prisma.employee.findUnique({
+                  where: { id: enlace.user.employee_id },
+                  select: {
+                    id: true,
+                    name: true,
+                    paternal_last_name: true,
+                    maternal_last_name: true,
+                  },
+                })
+              : null;
+
+            const subenlaceEmployee = subenlace?.user.employee_id
+              ? await prisma.employee.findUnique({
+                  where: { id: subenlace.user.employee_id },
+                  select: {
+                    id: true,
+                    name: true,
+                    paternal_last_name: true,
+                    maternal_last_name: true,
+                  },
+                })
+              : null;
+
             return {
               id: direccion.id,
               name: direccion.display_name,
@@ -356,8 +381,8 @@ export const AdministrativeOrganizationLeadersService = {
                 id: immediateResponsible?.employee.id ?? "",
                 name: getFullName(immediateResponsible?.employee),
               },
-              enlace: { id: enlace?.user.id, username: enlace?.user.username },
-              subenlace: { id: subenlace?.user.id, username: subenlace?.user.username },
+              enlace: { id: enlace?.user.id, username: getFullName(enlaceEmployee || null) },
+              subenlace: { id: subenlace?.user.id, username: getFullName(subenlaceEmployee || null) },
               signatories: signatories,
             };
           }),

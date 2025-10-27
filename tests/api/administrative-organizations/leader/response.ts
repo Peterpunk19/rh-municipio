@@ -215,14 +215,14 @@ export const response = {
   emptyStartDate: generator.response({
     responseObject: {
       startDate: {
-        messages: [validationMessages.invalidaFormat("Fecha de inicio")],
+        messages: [validationMessages.required("Fecha de inicio y fin")],
       },
     },
   }),
   emptyEndDate: generator.response({
     responseObject: {
-      endDate: {
-        messages: [validationMessages.invalidaFormat("Fecha de fin")],
+      startDate: {
+        messages: [validationMessages.required("Fecha de inicio y fin")],
       },
     },
   }),

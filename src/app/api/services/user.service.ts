@@ -39,15 +39,6 @@ export const UserService = {
         id: true,
         username: true,
         employee_id: true,
-        employee: {
-          select: {
-            name: true,
-            paternal_last_name: true,
-            maternal_last_name: true,
-            gender_id: true,
-            number_employee: true,
-          },
-        },
         role_id: true,
         role: {
           select: {
@@ -60,25 +51,39 @@ export const UserService = {
       },
     });
 
-    if (data) {
-      return {
-        id: data.id,
-        username: data.username,
-        employee_id: data.employee_id,
-        name: data.employee?.name,
-        paternal_last_name: data.employee?.paternal_last_name,
-        maternal_last_name: data.employee?.maternal_last_name,
-        gender_id: data.employee?.gender_id,
-        role_id: data.role_id,
-        role_display_name: data.role.display_name,
-        number_employee: data.employee?.number_employee,
-        active: data.active,
-        created_at: data.created_at,
-        updated_at: data.updated_at,
-      };
+    if (!data) {
+      return null;
     }
 
-    return null;
+    let employee = null;
+    if (data.employee_id) {
+      employee = await prisma.employee.findUnique({
+        where: { id: data.employee_id },
+        select: {
+          name: true,
+          paternal_last_name: true,
+          maternal_last_name: true,
+          gender_id: true,
+          number_employee: true,
+        },
+      });
+    }
+
+    return {
+      id: data.id,
+      username: data.username,
+      employee_id: data.employee_id,
+      name: employee?.name,
+      paternal_last_name: employee?.paternal_last_name,
+      maternal_last_name: employee?.maternal_last_name,
+      gender_id: employee?.gender_id,
+      role_id: data.role_id,
+      role_display_name: data.role.display_name,
+      number_employee: employee?.number_employee,
+      active: data.active,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    };
   },
 
   async getUserInfoAuthById(id: number) {
@@ -89,16 +94,7 @@ export const UserService = {
       select: {
         id: true,
         username: true,
-        employee: {
-          select: {
-            id: true,
-            name: true,
-            paternal_last_name: true,
-            maternal_last_name: true,
-            gender_id: true,
-            number_employee: true,
-          },
-        },
+        employee_id: true,
         role_id: true,
         role: {
           select: {
@@ -109,22 +105,37 @@ export const UserService = {
       },
     });
 
-    if (data) {
-      return {
-        id: data.id,
-        username: data.username,
-        employee_id: data.employee?.id,
-        name: data.employee?.name,
-        paternal_last_name: data.employee?.paternal_last_name,
-        maternal_last_name: data.employee?.maternal_last_name,
-        role_id: data.role_id,
-        role_name: data.role.name,
-        role_display_name: data.role.display_name,
-        number_employee: data.employee?.number_employee,
-      };
+    if (!data) {
+      return null;
     }
 
-    return null;
+    let employee = null;
+    if (data.employee_id) {
+      employee = await prisma.employee.findUnique({
+        where: { id: data.employee_id },
+        select: {
+          id: true,
+          name: true,
+          paternal_last_name: true,
+          maternal_last_name: true,
+          gender_id: true,
+          number_employee: true,
+        },
+      });
+    }
+
+    return {
+      id: data.id,
+      username: data.username,
+      employee_id: employee?.id,
+      name: employee?.name,
+      paternal_last_name: employee?.paternal_last_name,
+      maternal_last_name: employee?.maternal_last_name,
+      role_id: data.role_id,
+      role_name: data.role.name,
+      role_display_name: data.role.display_name,
+      number_employee: employee?.number_employee,
+    };
   },
 
   async createUser(user: IUser) {
@@ -215,13 +226,6 @@ export const UserService = {
         id: true,
         username: true,
         employee_id: true,
-        employee: {
-          select: {
-            name: true,
-            paternal_last_name: true,
-            maternal_last_name: true,
-          },
-        },
         role_id: true,
         role: {
           select: {
@@ -234,22 +238,41 @@ export const UserService = {
       },
     });
 
+    const employeeIds = data.map((user) => user.employee_id).filter((id): id is number => id !== null);
+
+    const employees = await prisma.employee.findMany({
+      where: {
+        id: { in: employeeIds },
+      },
+      select: {
+        id: true,
+        name: true,
+        paternal_last_name: true,
+        maternal_last_name: true,
+      },
+    });
+
+    const employeeMap = new Map(employees.map((emp) => [emp.id, emp]));
+
     const total = await prisma.user.count({ where: whereClause });
     const pagination = await getPaginationData(total, limit, page);
 
-    const users = data.map((user) => ({
-      id: user.id,
-      username: user.username,
-      name: user.employee?.name,
-      paternal_last_name: user.employee?.paternal_last_name,
-      maternal_last_name: user.employee?.maternal_last_name,
-      role_id: user.role_id,
-      role_display_name: user.role.display_name,
-      active: user.active,
-      active_display_name: user.active ? "Activo" : "Inactivo",
-      created_at: user.created_at,
-      updated_at: user.updated_at,
-    }));
+    const users = data.map((user) => {
+      const employee = user.employee_id ? employeeMap.get(user.employee_id) : null;
+      return {
+        id: user.id,
+        username: user.username,
+        name: employee?.name,
+        paternal_last_name: employee?.paternal_last_name,
+        maternal_last_name: employee?.maternal_last_name,
+        role_id: user.role_id,
+        role_display_name: user.role.display_name,
+        active: user.active,
+        active_display_name: user.active ? "Activo" : "Inactivo",
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+      };
+    });
 
     return {
       ...pagination,
