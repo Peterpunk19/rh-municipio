@@ -68,11 +68,11 @@ export const MigrationService = {
     try {
       const legacyUsers = await prismaLegacy.$queryRaw<LegacyEnlaceUser[]>`
                 SELECT enlace.Username, enlace.idSecretaria, empleado.NumeroEmpleado, 
-                       cat_secretarias.Secretaria, enlace.Activo, empleado.StatusEmpl 
+                       cat_secretarias.Secretaria, enlace.Activo, CASE WHEN empleado.StatusEmpl = 'A' THEN 'Activo' WHEN empleado.StatusEmpl = 'D' THEN 'Baja' ELSE 'Fallecimiento' END AS StatusEmployee 
                 FROM enlace 
                 INNER JOIN empleado ON empleado.IdEmpleado = enlace.idEmpleado 
                 INNER JOIN cat_secretarias ON cat_secretarias.idSecretaria = enlace.idSecretaria
-                WHERE enlace.Activo = 1 AND empleado.StatusEmpl = 'A'
+                WHERE enlace.Activo = 1
             `;
 
       logger.info(`Found ${legacyUsers.length} enlace users in legacy database`);
