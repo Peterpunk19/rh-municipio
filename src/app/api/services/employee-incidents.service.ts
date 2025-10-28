@@ -510,30 +510,92 @@ export const EmployeeIncidentsService = {
     return prisma.$transaction(async (tx) => {
       if (employeeIncident.incidentStatusId === INCIDENT_STATUS_ID.APROBADA) {
         await Promise.all(
-          employeeIncident.employeeIncidentDays.map((item: any) =>
-            tx.employeeAttendance.create({
-              data: {
-                check_in: item.date,
-                check_out: item.date,
-                description: "Asistencia creada por incidencia",
+          employeeIncident.employeeIncidentDays.map(async (item: any) => {
+            const startOfDay = new Date(item.date);
+            const endOfDay = new Date(startOfDay);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            const existingAttendance = await tx.employeeAttendance.findFirst({
+              where: {
                 employee_ascriptions: {
-                  connect: { id: employeeIncident.employeeAscriptionId },
+                  employee: { number_employee: employeeIncident.numberEmployee },
                 },
-                employee_location: {
-                  connect: { id: employeeIncident.employeeLocationId },
-                },
-                employee_attendance_type: {
-                  connect: { id: 1 },
-                },
-                created_by: {
-                  connect: { id: employeeIncident.createdById },
-                },
-                employee_incident: {
-                  connect: { id: Number(employeeIncident.id) },
-                },
+                active: true,
+                OR: [
+                  {
+                    check_in: {
+                      gte: startOfDay,
+                      lte: endOfDay,
+                    },
+                  },
+                  {
+                    check_out: {
+                      gte: startOfDay,
+                      lte: endOfDay,
+                    },
+                  },
+                ],
               },
-            }),
-          ),
+            });
+
+            if (existingAttendance) {
+              const existingRelation = await tx.employeeAttendanceIncident.findFirst({
+                where: {
+                  employee_attendance_id: existingAttendance.id,
+                  employee_incident_id: employeeIncident.id,
+                },
+              });
+
+              if (!existingRelation) {
+                await tx.employeeAttendanceIncident.create({
+                  data: {
+                    employee_attendance: {
+                      connect: { id: Number(existingAttendance.id) },
+                    },
+                    employee_incident: {
+                      connect: { id: Number(employeeIncident.id) },
+                    },
+                    created_at: new Date(),
+                  },
+                });
+              }
+            } else {
+              const employeeAttendance = await tx.employeeAttendance.create({
+                data: {
+                  check_in: startOfDay,
+                  check_out: endOfDay,
+                  description: "Asistencia creada por incidencia",
+                  employee: {
+                    connect: { id: employeeIncident.employeeId },
+                  },
+                  employee_ascriptions: {
+                    connect: { id: employeeIncident.employeeAscriptionId },
+                  },
+                  employee_location: {
+                    connect: { id: employeeIncident.employeeLocationId },
+                  },
+                  employee_attendance_type: {
+                    connect: { id: employeeIncident.employeeAttendanceTypeId },
+                  },
+                  created_by: {
+                    connect: { id: employeeIncident.createdById },
+                  },
+                },
+              });
+
+              await tx.employeeAttendanceIncident.create({
+                data: {
+                  employee_attendance: {
+                    connect: { id: Number(employeeAttendance.id) },
+                  },
+                  employee_incident: {
+                    connect: { id: Number(employeeIncident.id) },
+                  },
+                  created_at: new Date(),
+                },
+              });
+            }
+          }),
         );
       }
 
@@ -567,7 +629,7 @@ export const EmployeeIncidentsService = {
     });
   },
 
-  async findDateConflicts(employeeId: number, incidentDates: (string | Date)[]) {
+  async findDateConflicts(employeeId: number, incidentDates: (string | Date)[], incidentId: number) {
     if (!incidentDates || incidentDates.length === 0) return [] as Date[];
     const dayWindows = incidentDates.map((d) => {
       const date = d instanceof Date ? d : new Date(String(d).trim());
@@ -588,6 +650,7 @@ export const EmployeeIncidentsService = {
             date: { gte: start, lt: next },
             employee_incident: {
               employee_id: Number(employeeId),
+              incident_id: incidentId,
               incident_status_id: { in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA] },
             },
           })),

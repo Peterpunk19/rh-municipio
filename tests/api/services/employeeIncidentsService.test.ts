@@ -116,6 +116,7 @@ describe("EmployeeIncidentsService", () => {
     const mockEmployeeIncident = {
       id: 1,
       incidentStatusId: INCIDENT_STATUS_ID.APROBADA,
+      numberEmployee: "107991",
       checkIn: new Date(),
       checkOut: new Date(),
       employeeAscriptionId: 10,
@@ -137,7 +138,12 @@ describe("EmployeeIncidentsService", () => {
     it("should create attendance, update incident, and create incident status when status is APROBADA", async () => {
       const mockTx = {
         employeeAttendance: {
+          findFirst: jest.fn().mockResolvedValue(null),
           create: jest.fn().mockResolvedValue({ id: 99 }),
+        },
+        employeeAttendanceIncident: {
+          findFirst: jest.fn().mockResolvedValue(null),
+          create: jest.fn().mockResolvedValue({ id: 123 }),
         },
         employeeIncidents: {
           update: jest.fn(),
@@ -159,11 +165,11 @@ describe("EmployeeIncidentsService", () => {
             check_in: expect.any(Date),
             check_out: expect.any(Date),
             description: "Asistencia creada por incidencia",
+            employee: { connect: { id: mockEmployeeIncident.employeeId } },
+            employee_ascriptions: { connect: { id: mockEmployeeIncident.employeeAscriptionId } },
             employee_location: { connect: { id: mockEmployeeIncident.employeeLocationId } },
             employee_attendance_type: { connect: { id: 1 } },
             created_by: { connect: { id: mockEmployeeIncident.createdById } },
-            employee_incident: { connect: { id: mockEmployeeIncident.id } },
-            employee_ascriptions: { connect: { id: mockEmployeeIncident.employeeAscriptionId } },
           }),
         }),
       );

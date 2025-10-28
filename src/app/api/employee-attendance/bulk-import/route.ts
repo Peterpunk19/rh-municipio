@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
           }
         } else {
           const attendanceData = {
+            employee_id: employee.id,
             check_in: isEntry === 1 ? timestamp : null,
             check_out: isEntry === 0 ? timestamp : null,
             active: true,
@@ -130,6 +131,7 @@ export async function POST(request: NextRequest) {
           await EmployeeAttendanceService.createSingleAttendance(attendanceData);
         }
       } catch (error) {
+        logger.error(error instanceof Error ? error : { error });
         responseRecord.status = "error";
         responseRecord.errorMessage = error instanceof Error ? error.message : "Error desconocido";
       }

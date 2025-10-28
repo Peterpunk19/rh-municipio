@@ -17,7 +17,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IncidentDetailModal from "@/app/(protected)/employee/incidents/IncidentDetailModal";
-import {IAttendance, ICalendarDay} from "@/components/types";
+import {IAttendance, IAttendanceCalendar, ICalendarDay} from "@/components/types";
+import {generateUniqueKey} from "@/utils";
 
 const CustomCalendarAttendance = ()=> {
   const { values } = useSelector(
@@ -52,7 +53,7 @@ const CustomCalendarAttendance = ()=> {
   }
 
   const attendanceMap = useMemo(() => {
-    const map = new Map<string, IAttendance>();
+    const map = new Map<string, IAttendanceCalendar>();
     if (!attendanceData || attendanceData.length === 0) return map;
 
     for (const record of attendanceData) {
@@ -63,16 +64,22 @@ const CustomCalendarAttendance = ()=> {
         continue;
       }
 
-      const attendance: IAttendance = {
+      const incidents = record.employee_attendance_incident?.map((ai: any) => ({
+        id: ai.employee_incident.id,
+        type: ai.employee_incident.incident.display_name,
+        name: ai.employee_incident.incident.name,
+        displayTimeOnCalendar: ai.employee_incident.incident.display_time_on_calendar,
+        bgColorOnCalendar: ai.employee_incident.incident.bgColorOnCalendar,
+        colorOnCalendar: ai.employee_incident.incident.colorOnCalendar,
+        status: ai.employee_incident.incident_status.display_name,
+      })) || [];
+
+      const attendance: IAttendanceCalendar = {
         id: record.id,
         checkIn: record.check_in || null,
         checkOut: record.check_out || null,
-        isIncident: !!record.employee_incident,
-        incidentId: record.employee_incident?.id || null,
-        incidentType: record.employee_incident?.incident?.display_name || undefined,
-        displayTimeOnCalendar: record.employee_incident?.incident?.display_time_on_calendar || undefined,
-        bgColorOnCalendar: record.employee_incident?.incident?.bgColorOnCalendar || undefined,
-        colorOnCalendar: record.employee_incident?.incident?.colorOnCalendar || "#FFF",
+        incidents,
+        hasIncidents: incidents.length > 0,
       };
 
       map.set(dateString, attendance);
@@ -105,14 +112,6 @@ const CustomCalendarAttendance = ()=> {
     }).subtract({ months: 1 });
     setMonth(prevMonth);
     setYear(prevYear);
-  };
-
-  const handleDayClick = (attendance: IAttendance | undefined) => {
-    if (attendance?.isIncident) {
-      console.log("attendance", attendance.incidentId);
-      setSelectedIncident(attendance.incidentId);
-      setModalOpen(true);
-    }
   };
 
   const handleCloseModal = () => {
@@ -179,68 +178,22 @@ const CustomCalendarAttendance = ()=> {
       </Box>
 
       <Grid container columns={7}>
-        {days.map((name, index) => (
-          <Grid size={{xs: 1}} key={index} border={1} borderColor="#f6f6f6" borderLeft={1} borderRight={1} sx={{ borderLeftColor: "#ddd", borderRightColor: "#ddd" }} >
+        {days.map((name) => (
+          <Grid size={{xs: 1}} key={generateUniqueKey()} border={1} borderColor="#f6f6f6" borderLeft={1} borderRight={1} sx={{ borderLeftColor: "#ddd", borderRightColor: "#ddd" }} >
             <Typography align="center" fontWeight="bold">{name}</Typography>
           </Grid>
         ))}
       </Grid>
       <Grid container columns={7} flexGrow={1}>
         {monthCalendar.map((day, index) => {
-          const attendance = attendanceMap.get(day.date.toString());
-          const isIncident = attendance?.isIncident;
+          const dateStr = day.date.toString();
+          const attendance = attendanceMap.get(dateStr);
+          const hasIncidents = attendance?.hasIncidents;
+          const incidents = attendance?.incidents || [];
           const checkIn = attendance?.checkIn;
           const checkOut = attendance?.checkOut;
-          const incidentType = attendance?.incidentType;
-          const bgColorOnCalendar = attendance?.bgColorOnCalendar;
-          const colorOnCalendar = attendance?.colorOnCalendar;
-          const displayTimeOnCalendar = attendance?.displayTimeOnCalendar;
-
-          let attendanceType = "";
-          let isCompleteAttendance = false;
-          let bgColor = "#fff";
-          let textColor = "#fff";
-
-          if (attendance) {
-            if (isIncident) {
-              attendanceType = incidentType || "";
-              bgColor = attendance.bgColorOnCalendar || "#f0f0f0";
-              textColor = attendance.colorOnCalendar || "#000";
-            } else if (checkIn && checkOut) {
-              attendanceType = "ASISTENCIA";
-              bgColor = attendance.bgColorOnCalendar || "success.attendance";
-              textColor = attendance.colorOnCalendar || "#000";
-              isCompleteAttendance = true;
-            } else if (checkIn && !checkOut) {
-              attendanceType = "OMISIÓN DE SALIDA";
-              bgColor = attendance.bgColorOnCalendar || "warning.main";
-              textColor = attendance.colorOnCalendar || "#fff";
-            } else if (!checkIn && checkOut) {
-              attendanceType = "OMISIÓN DE ENTRADA";
-              bgColor = attendance.bgColorOnCalendar || "warning.main";
-              textColor = attendance.colorOnCalendar || "#fff";
-            }
-          }
 
           const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
-          const hasAttendance = !!attendance;
-
-          const backgroundColor =
-            hasAttendance
-              ? isIncident
-                ? bgColorOnCalendar
-                : isCompleteAttendance
-                  ? 'success.attendance'
-                  : '#FFAE1F'
-              : isPast
-                ? '#fff'
-                : '#fff';
-
-          const color = hasAttendance
-            ? colorOnCalendar
-            : isPast
-              ? '#000'
-              : '#000';
 
           return (
             <Grid
@@ -249,17 +202,14 @@ const CustomCalendarAttendance = ()=> {
               textAlign="right"
               border={0.5}
               borderColor="#eee"
-              onClick={() => handleDayClick(attendance)}
               sx={{
                 backgroundColor: day.isInMonth ? "#fff" : "#f6f6f6",
                 color: day.isInMonth ? "#000" : "#999999",
-                // backgroundColor: day.isInMonth ? bgColor : "#f6f6f6",
-                // color: day.isInMonth ? attendance ? textColor : "#000" : "#999999",
                 pt: 2.4,
                 pl: 1,
+                pr  : 1,
                 position: 'relative',
-                minHeight: 140, // Aumenté la altura mínima
-                cursor: isIncident ? 'pointer' : 'auto'
+                minHeight: 140,
               }}
             >
               <Box
@@ -267,60 +217,170 @@ const CustomCalendarAttendance = ()=> {
                 sx={{
                   width: 32,
                   height: 32,
-                  lineHeight: '30px',
+                  lineHeight: '32px',
                   borderRadius: '50%',
                   textAlign: 'center',
                   position: 'absolute',
                   top: 5,
                   right: 5,
                   border: day.isInMonth ? Temporal.PlainDate.compare(day.date, today) === 0 ? '1px solid #000' : "1px solid #fff" : "1px solid #f6f6f6",
-                  borderColor: attendance ? 'danger.attendance' : '"1px solid #fff"',
                   color: "#000"
                 }}
               >
                 {day.date.day}
-                <Divider sx={{marginTop: 0.2, border: 1.5, borderColor: day.isInMonth ? bgColor : "#f6f6f6"}} />
               </Box>
               <>
-              <Box sx={{mt: 3}}>
-                {attendance ?
-                  <Box sx={{textAlign: 'left', mb: 2}}>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <IconClockCheck size={15}/>
-                      <Typography fontWeight={600} variant="body2" sx={{ fontSize: '0.8rem' }}>
-                        {attendanceType}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  : isPast && (
-                  <Box sx={{textAlign: 'left'}}>
-                    <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
-                      <Typography fontWeight={600} variant="body2" sx={{wordBreak: 'break-word'}}>
-                        SIN REGISTROS
-                      </Typography>
-                    </Box>
-                  </Box>
-                )}
-              </Box>
+                <Box sx={{mt: 3}}>
+                  {attendance ? (
+                    <Box sx={{ textAlign: 'left', mb: 2 }}>
+                      {hasIncidents ? (
+                        incidents.map((inc: any) => (
+                          <Box
+                            key={generateUniqueKey()}
+                            onClick={() => {
+                              setSelectedIncident(inc.id);
+                              setModalOpen(true);
+                            }}
+                            display="flex"
+                            alignItems="center"
+                            title={`Haz clic para ver detalle de ${inc.type}`}
+                            gap={1}
+                            sx={{
+                              mb: 0.3,
+                              backgroundColor: inc.bgColorOnCalendar || '#eee',
+                              borderRadius: '6px',
+                              px: 1,
+                              py: 0.3,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <IconClockCheck size={14} color={inc.colorOnCalendar || '#000'}/>
+                            <Typography
+                              fontWeight={600}
+                              variant="body2"
+                              sx={{ fontSize: '0.75rem', color: inc.colorOnCalendar || '#000' }}
+                            >
+                              {inc.type}
+                            </Typography>
+                          </Box>
+                        ))
+                      ) : (
+                        (() => {
+                          let label = "";
+                          let bg = "";
+                          let color = "#fff";
 
-              {attendance && (displayTimeOnCalendar || !isIncident) && (
-                <Box >
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <IconClockUp size={15} />
-                    <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
-                      Entrada: {checkIn ? formatDate(new Date(checkIn), "HH:mm") : ''}
-                    </Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <IconClockDown size={15} />
-                    <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
-                      Salida: {checkOut ? formatDate(new Date(checkOut), "HH:mm") : ''}
-                    </Typography>
-                  </Box>
+                          if (checkIn && checkOut) {
+                            label = "ASISTENCIA";
+                            bg = "success.attendance";
+                          } else if (checkIn && !checkOut) {
+                            label = "OMISIÓN DE SALIDA";
+                            bg = "warning.main";
+                          } else if (!checkIn && checkOut) {
+                            label = "OMISIÓN DE ENTRADA";
+                            bg = "warning.main";
+                          }
+
+                          if (!label) return null;
+
+                          return (
+                            <Box
+                              key={generateUniqueKey()}
+                              display="flex"
+                              alignItems="center"
+                              gap={1}
+                              sx={{
+                                mb: 0.3,
+                                backgroundColor: bg,
+                                borderRadius: "6px",
+                                px: 1,
+                                py: 0.3,
+                              }}
+                            >
+                              <IconClockCheck size={14} color={color} />
+                              <Typography
+                                fontWeight={600}
+                                variant="body2"
+                                sx={{ fontSize: "0.75rem", color }}
+                              >
+                                {label}
+                              </Typography>
+                            </Box>
+                          );
+                        })()
+                      )}
+                    </Box>
+                  ) : (
+                    isPast && (
+                      <Box sx={{ textAlign: 'left' }}>
+                        <Typography fontWeight={600} variant="body2">
+                          SIN REGISTROS
+                        </Typography>
+                      </Box>
+                    )
+                  )}
                 </Box>
-              )}
 
-                </>
+                {attendance && (
+                  <>
+                    {(
+                      (!attendance.hasIncidents && (checkIn || checkOut)) ||
+                      (attendance.hasIncidents &&
+                        attendance.incidents.some(
+                          (inc: any) => inc.displayTimeOnCalendar === true
+                        ))
+                    ) && (
+                      <>
+                        <Box
+                          key={generateUniqueKey()}
+                          display="flex"
+                          alignItems="center"
+                          gap={1}
+                          sx={{
+                            mb: 0.3,
+                            backgroundColor: "#eee",
+                            borderRadius: "6px",
+                            px: 1,
+                            py: 0.3,
+                          }}
+                        >
+                          <IconClockUp size={14} color="#000" />
+                          <Typography
+                            fontWeight={600}
+                            variant="body2"
+                            sx={{ fontSize: "0.75rem", color: "#000" }}
+                          >
+                            Entrada: {checkIn ? formatDate(new Date(checkIn), "HH:mm") : ""}
+                          </Typography>
+                        </Box>
+
+                        <Box
+                          key={generateUniqueKey()}
+                          display="flex"
+                          alignItems="center"
+                          gap={1}
+                          sx={{
+                            mb: 0.3,
+                            backgroundColor: "#eee",
+                            borderRadius: "6px",
+                            px: 1,
+                            py: 0.3,
+                          }}
+                        >
+                          <IconClockDown size={14} color="#000" />
+                          <Typography
+                            fontWeight={600}
+                            variant="body2"
+                            sx={{ fontSize: "0.75rem", color: "#000" }}
+                          >
+                            Salida: {checkOut ? formatDate(new Date(checkOut), "HH:mm") : ""}
+                          </Typography>
+                        </Box>
+                      </>
+                    )}
+                  </>
+                )}
+              </>
             </Grid>
           )
         })}

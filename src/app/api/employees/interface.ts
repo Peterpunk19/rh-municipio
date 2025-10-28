@@ -58,7 +58,7 @@ export interface IEmployeeFilters {
   active: string | boolean | null | undefined;
   employee_status: number | null | undefined;
   location: number | null | undefined;
-  employeeAttendanceType: number | null | undefined;
+  attendance: number | null | undefined;
   category: number | null | undefined;
   direccion: number | null | undefined;
   secretaria: number | null | undefined;

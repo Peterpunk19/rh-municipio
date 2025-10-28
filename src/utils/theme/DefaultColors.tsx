@@ -31,6 +31,10 @@ const baselightTheme = {
       contrastText: '#ffffff',
       attendance: '#F44336',
     },
+    incident: {
+      retardo: '#FFCC01',
+      permiso_sin_goce: '#FF8A04',
+    },
     warning: {
       main: '#FFAE1F',
       light: '#FEF5E5',

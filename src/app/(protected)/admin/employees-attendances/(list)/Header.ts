@@ -29,10 +29,36 @@ export const header: readonly HeadCell[] = [
     label: "Fecha de salida",
   },
   {
-    id: "employee_incident.incident.display_name",
+    id: "employee_attendace_incident",
     numeric: false,
     disablePadding: false,
-    label: "Incidencia",
+    label: "Incidencias",
+    children: [
+      {
+        id: "employee_attendance_incident[0].employee_incident.incident.display_name",
+        numeric: false,
+        disablePadding: false,
+        label: "Incidencias",
+      },
+      {
+        id: "employee_attendance_incident[1].employee_incident.incident.display_name",
+        numeric: false,
+        disablePadding: false,
+        label: "Incidencias",
+      },
+      {
+        id: "employee_attendance_incident[2].employee_incident.incident.display_name",
+        numeric: false,
+        disablePadding: false,
+        label: "Incidencias",
+      },
+      {
+        id: "employee_attendance_incident[3].employee_incident.incident.display_name",
+        numeric: false,
+        disablePadding: false,
+        label: "Incidencias",
+      },
+    ],
   },
   {
     id: "type_attendance.display_name",

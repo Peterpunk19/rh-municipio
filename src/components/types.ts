@@ -2,14 +2,25 @@ import { Temporal } from "@js-temporal/polyfill";
 
 export type IAttendance = {
   id: number;
-  incidentId: number;
-  checkIn: string;
-  checkOut: string;
-  isIncident?: boolean;
-  displayTimeOnCalendar?: boolean;
-  incidentType?: string;
-  bgColorOnCalendar?: string;
-  colorOnCalendar?: string;
+  check_in: string;
+  check_out: string;
+  employee_attendance_incident: any;
+};
+
+export type IAttendanceCalendar = {
+  id: number;
+  checkIn: string | null;
+  checkOut: string | null;
+  incidents: {
+    id: number;
+    type: string;
+    name: string;
+    displayTimeOnCalendar?: boolean;
+    bgColorOnCalendar?: string;
+    colorOnCalendar?: string;
+    status: string;
+  };
+  hasIncidents?: boolean;
 };
 
 export type ICalendarDay = {

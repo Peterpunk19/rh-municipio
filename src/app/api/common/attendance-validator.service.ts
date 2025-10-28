@@ -4,6 +4,7 @@ import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
 import { EmployeeAttendanceService } from "@/app/api/services/employee-attendance.service";
+import { getEmployeeDireccion } from "@/app/api/common/utils.service";
 
 dayjs.extend(isoWeek);
 
@@ -63,6 +64,7 @@ export class AttendanceValidator {
     if (attendanceDate.isAfter(toleranceLimit)) {
       const folio = await EmployeeIncidentsService.getFolio();
 
+      const direccionId = await getEmployeeDireccion(Number(employeeData.id));
       const [incident] = await EmployeeIncidentsService.createEmployeeIncidents({
         folio,
         incidentId: INCIDENT_TYPES_ID.RETARDO,
@@ -73,6 +75,7 @@ export class AttendanceValidator {
         employeeId: employeeData.id,
         incidentStatusId: INCIDENT_STATUS_ID.CREADA,
         createdBy: employeeData.id,
+        direccionId: direccionId ? Number(direccionId) : null,
       });
 
       return incident.id;

@@ -423,48 +423,28 @@ export const EmployeeService = {
       };
     }
 
-    if (employeeFilters.employeeAttendanceType) {
+    if (employeeFilters.attendance) {
       whereClause.employee_attendance_type = {
         some: {
-          attendance_id: employeeFilters.employeeAttendanceType,
+          attendance_id: employeeFilters.attendance,
           active: true,
         },
       };
     }
 
     if (employeeFilters.search) {
-      whereClause.OR = [
-        {
-          name: {
-            contains: employeeFilters.search,
-          },
-        },
-        {
-          paternal_last_name: {
-            contains: employeeFilters.search,
-          },
-        },
-        {
-          maternal_last_name: {
-            contains: employeeFilters.search,
-          },
-        },
-        {
-          rfc: {
-            contains: employeeFilters.search,
-          },
-        },
-        {
-          curp: {
-            contains: employeeFilters.search,
-          },
-        },
-        {
-          number_employee: {
-            contains: employeeFilters.search,
-          },
-        },
-      ];
+      const terms = employeeFilters.search.split(" ").filter(Boolean);
+
+      whereClause.AND = terms.map((term) => ({
+        OR: [
+          { name: { contains: term } },
+          { paternal_last_name: { contains: term } },
+          { maternal_last_name: { contains: term } },
+          { rfc: { contains: term } },
+          { curp: { contains: term } },
+          { number_employee: { contains: term } },
+        ],
+      }));
     }
 
     const data = await prisma.employee.findMany({

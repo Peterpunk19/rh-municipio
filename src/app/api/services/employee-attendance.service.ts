@@ -57,26 +57,35 @@ export const EmployeeAttendanceService = {
     });
   },
 
-  async findByEmployeeAndDateRange(numberEmployee: string, start: Date, end: Date) {
-    return prisma.employeeAttendance.findMany({
-      where: {
-        employee_ascriptions: {
-          employee: {
-            number_employee: numberEmployee,
-          },
-        },
-        check_in: {
-          gte: start,
-          lte: end,
-        },
-      },
-    });
-  },
-
   async updateAttendanceCheckIn(attendanceId: number, date: Date, incidentId: number | null) {
-    return prisma.employeeAttendance.update({
-      where: { id: attendanceId },
-      data: { check_in: date, employee_incident_id: incidentId },
+    return prisma.$transaction(async (tx) => {
+      await tx.employeeAttendance.update({
+        where: { id: attendanceId },
+        data: { check_in: date },
+      });
+
+      if (incidentId) {
+        const existingRelation = await tx.employeeAttendanceIncident.findFirst({
+          where: {
+            employee_attendance_id: attendanceId,
+            employee_incident_id: incidentId,
+          },
+        });
+
+        if (!existingRelation) {
+          await tx.employeeAttendanceIncident.create({
+            data: {
+              employee_attendance: {
+                connect: { id: attendanceId },
+              },
+              employee_incident: {
+                connect: { id: incidentId },
+              },
+              created_at: new Date(),
+            },
+          });
+        }
+      }
     });
   },
 
@@ -140,6 +149,8 @@ export const EmployeeAttendanceService = {
   },
 
   async createEmployeeAttendance(employeeAttendance: IEmployeeAttendance) {
+    console.log("employeeAttendance");
+    console.log(employeeAttendance);
     return prisma.$transaction(async (tx) => {
       const createEmployeeAttendance = await tx.employeeAttendance.create({
         data: {
@@ -147,6 +158,9 @@ export const EmployeeAttendanceService = {
           check_out: employeeAttendance.checkOut,
           active: employeeAttendance.active,
           description: employeeAttendance.description,
+          employee: {
+            connect: { id: employeeAttendance.employeeId },
+          },
           employee_ascriptions: {
             connect: { id: employeeAttendance.employeeAscriptionId },
           },
@@ -168,32 +182,46 @@ export const EmployeeAttendanceService = {
   },
 
   async createSingleAttendance(data: any) {
-    return await prisma.employeeAttendance.create({
-      data: {
-        check_in: data.check_in,
-        check_out: data.check_out,
-        active: true,
-        description: data.description,
-        created_at: new Date(),
-        udpated_at: new Date(),
-        created_by: {
-          connect: { id: data.created_by_id },
-        },
-        employee_ascriptions: {
-          connect: { id: data.employee_ascription_id },
-        },
-        employee_location: {
-          connect: { id: data.employee_location_id },
-        },
-        employee_attendance_type: {
-          connect: { id: data.employee_attendance_type_id },
-        },
-        ...(data.employee_incident_id && {
-          employee_incident: {
-            connect: { id: data.employee_incident_id },
+    return prisma.$transaction(async (tx) => {
+      const employeeAttendance = await tx.employeeAttendance.create({
+        data: {
+          check_in: data.check_in,
+          check_out: data.check_out,
+          employee: {
+            connect: { id: data.employee_id },
           },
-        }),
-      },
+          active: true,
+          description: data.description,
+          created_at: new Date(),
+          udpated_at: new Date(),
+          created_by: {
+            connect: { id: data.created_by_id },
+          },
+          employee_ascriptions: {
+            connect: { id: data.employee_ascription_id },
+          },
+          employee_location: {
+            connect: { id: data.employee_location_id },
+          },
+          employee_attendance_type: {
+            connect: { id: data.employee_attendance_type_id },
+          },
+        },
+      });
+
+      if (data.employee_incident_id) {
+        await tx.employeeAttendanceIncident.create({
+          data: {
+            employee_attendance: {
+              connect: { id: Number(employeeAttendance.id) },
+            },
+            employee_incident: {
+              connect: { id: Number(data.employee_incident_id) },
+            },
+            created_at: new Date(),
+          },
+        });
+      }
     });
   },
 
@@ -295,19 +323,29 @@ export const EmployeeAttendanceService = {
             },
           },
         },
-        employee_incident_id: true,
-        employee_incident: {
+        employee_attendance_incident: {
           select: {
-            id: true,
-            active: true,
-            incident: {
+            employee_incident: {
               select: {
                 id: true,
-                name: true,
-                display_name: true,
-                display_time_on_calendar: true,
-                bgColorOnCalendar: true,
-                colorOnCalendar: true,
+                active: true,
+                incident: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                    display_time_on_calendar: true,
+                    bgColorOnCalendar: true,
+                    colorOnCalendar: true,
+                  },
+                },
+                incident_status: {
+                  select: {
+                    id: true,
+                    name: true,
+                    display_name: true,
+                  },
+                },
               },
             },
           },
@@ -367,7 +405,7 @@ export const EmployeeAttendanceService = {
 
     const data = attendances.map((item: any) => ({
       id: item.id,
-      employee_incident: item.employee_incident,
+      employee_attendance_incident: item.employee_attendance_incident,
       check_in: item.check_in,
       check_out: item.check_out,
       created_at: item.created_at,
