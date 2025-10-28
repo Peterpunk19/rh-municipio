@@ -182,16 +182,16 @@ export const validateExistence = async (id: number, key: string, service: Functi
 export const getEmployeeDireccion = async (employeeId: number) => {
   const employee = await EmployeeService.getEmployeeById(employeeId);
 
-  if (!employee || !employee.employee_hiring || employee.employee_hiring.length === 0) {
+  if (!employee || !employee.employee_ascriptions || employee.employee_ascriptions.length === 0) {
     return null;
   }
 
-  const activeHiring = employee.employee_hiring.find((hiring) => hiring.active === true);
-  if (!activeHiring || !activeHiring.direccion_id) {
+  const activeAscription = employee.employee_ascriptions.find((ascription) => ascription.active === true);
+  if (!activeAscription || !activeAscription.direccion_id) {
     return null;
   }
 
-  return activeHiring.direccion_id;
+  return activeAscription.direccion_id;
 };
 
 export const getVacationDayValue = (date: Date, isHoliday: boolean): number => {

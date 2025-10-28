@@ -94,7 +94,11 @@ export async function POST(request: NextRequest) {
     const datesToCheck = body.incidentDates || [];
 
     if (datesToCheck.length > 0) {
-      const conflicts = await EmployeeIncidentsService.findDateConflicts(Number(body.employeeId), datesToCheck);
+      const conflicts = await EmployeeIncidentsService.findDateConflicts(
+        Number(body.employeeId),
+        datesToCheck,
+        Number(body.incidentId),
+      );
       if (conflicts.length > 0) {
         const response = HttpResponse.failure(HttpMessages.incidentRules.notSameDay, {
           dates: conflicts.map((d) => d.toISOString().slice(0, 10)),

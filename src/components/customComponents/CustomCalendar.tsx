@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
-import Divider from "@mui/material/Divider";
 import { Grid2 as Grid, Box, Typography, Button, ButtonGroup, DialogActions, IconButton, Tooltip } from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
 import { toUpper } from "lodash";
 import { IconClockUp, IconClockDown, IconClockCheck, IconEye, IconEyeOff } from "@tabler/icons-react";
 import {getEmployeesAttendances} from "@/services/employees-attendances";
 import {calculateDaysBetweenDates} from "@/common/utils";
-import {IAttendance, ICalendarDay, ICustomCalendarProps} from "@/components/types";
+import {IAttendance, IAttendanceCalendar, ICalendarDay, ICustomCalendarProps} from "@/components/types";
 import {formatDate} from "@/utils/formatter";
+import {generateUniqueKey} from "@/utils";
 
 const CustomCalendar = ({
   onSave,
@@ -34,7 +34,7 @@ const CustomCalendar = ({
   const monthKey = useCallback((y: number, m: number) => `${y}-${String(m).padStart(2, "0")}`, []);
 
   const attendanceMap = useMemo(() => {
-    const map = new Map<string, IAttendance>();
+    const map = new Map<string, IAttendanceCalendar>();
     if (!attendanceData || attendanceData.length === 0) return map;
 
     for (const record of attendanceData) {
@@ -45,16 +45,22 @@ const CustomCalendar = ({
         continue;
       }
 
-      const attendance: IAttendance = {
+      const incidents = record.employee_attendance_incident?.map((ai: any) => ({
+        id: ai.employee_incident.id,
+        type: ai.employee_incident.incident.display_name,
+        name: ai.employee_incident.incident.name,
+        displayTimeOnCalendar: ai.employee_incident.incident.display_time_on_calendar,
+        bgColorOnCalendar: ai.employee_incident.incident.bgColorOnCalendar,
+        colorOnCalendar: ai.employee_incident.incident.colorOnCalendar,
+        status: ai.employee_incident.incident_status.display_name,
+      })) || [];
+
+      const attendance: IAttendanceCalendar = {
         id: record.id,
         checkIn: record.check_in || null,
         checkOut: record.check_out || null,
-        isIncident: !!record.employee_incident,
-        incidentId: record.employee_incident?.id || null,
-        incidentType: record.employee_incident?.incident?.display_name || undefined,
-        displayTimeOnCalendar: record.employee_incident?.incident?.display_time_on_calendar || undefined,
-        bgColorOnCalendar: record.employee_incident?.incident?.bgColorOnCalendar || undefined,
-        colorOnCalendar: record.employee_incident?.incident?.colorOnCalendar || "#FFF",
+        incidents,
+        hasIncidents: incidents.length > 0,
       };
 
       map.set(dateString, attendance);
@@ -277,49 +283,29 @@ const CustomCalendar = ({
         {monthCalendar.map((day, index) => {
           const dateStr = day.date.toString();
           const isSelected = selectedDates.has(dateStr);
-          const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
           const attendance = attendanceMap.get(dateStr);
+          const hasIncidents = attendance?.hasIncidents;
+          const incidents = attendance?.incidents || [];
+          const checkIn = attendance?.checkIn;
+          const checkOut = attendance?.checkOut;
 
-          // Determine attendance type and styling
-          let attendanceType = "";
-          let isCompleteAttendance = false;
-          let textColor = "#000";
+          const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
+
           let backgroundColor = "#fff";
           let color = "#000";
-          let bgColor = "#fff";
 
           if (attendance) {
             if (isSelected) {
-              backgroundColor = "#1976d2";
+              backgroundColor = "#1565c0";
               color = "#fff";
-            }
-            if (attendance.isIncident) {
-              attendanceType = attendance.incidentType || "";
-              bgColor = attendance.bgColorOnCalendar || "#f0f0f0";
-              textColor = attendance.colorOnCalendar || "#000";
-            } else if (attendance.checkIn && attendance.checkOut) {
-              attendanceType = "ASISTENCIA";
-              bgColor = attendance.bgColorOnCalendar || "success.attendance";
-              isCompleteAttendance = true;
-              textColor = isSelected ? "#fff" : "#000";
-            } else if (attendance.checkIn && !attendance.checkOut) {
-              attendanceType = "OMISIÓN DE SALIDA";
-              bgColor = attendance.bgColorOnCalendar || "warning.main";
-              textColor = isSelected ? "#fff" : "#000";
-            } else if (!attendance.checkIn && attendance.checkOut) {
-              attendanceType = "OMISIÓN DE ENTRADA";
-              bgColor = attendance.bgColorOnCalendar || "warning.main";
-              textColor = isSelected ? "#fff" : "#000";
             }
           } else if (!day.isInMonth) {
             backgroundColor = "#f6f6f6";
             color = "#999999";
           } else if (isSelected) {
-            backgroundColor = "#1976d2";
+            backgroundColor = "#1565c0";
             color = "#fff";
           }
-
-          const displayTime = attendance && (attendance.displayTimeOnCalendar || !attendance.isIncident);
 
           return (
             <Grid
@@ -333,6 +319,7 @@ const CustomCalendar = ({
                 color: color,
                 pt: 2.4,
                 pl: 1,
+                pr: 1,
                 position: "relative",
                 minHeight: showAttendanceDetails ? 140 : 112,
                 cursor: day.isInMonth ? "pointer" : "default",
@@ -356,13 +343,11 @@ const CustomCalendar = ({
                   top: 5,
                   right: 5,
                   backgroundColor: isSelected ? "#fff" : backgroundColor,
-                  border: "1px solid #eee",
-                  borderColor: isSelected ? "#1976d2" : "#f6f6f6",
+                  border: day.isInMonth ? Temporal.PlainDate.compare(day.date, today) === 0 ? '1px solid #000' : "1px solid #fff" : "1px solid #f6f6f6",
                   color: "#000",
                 }}
               >
                 {day.date.day}
-                {showAttendanceDetails && (<Divider sx={{marginTop: 0.2, border: 1.5, borderColor: isSelected ? "#1976d2" : bgColor}} />) }
               </Box>
 
               {showAttendanceDetails && (
@@ -370,40 +355,148 @@ const CustomCalendar = ({
                   <Box sx={{ mt: 3 }}>
                     {attendance ? (
                       <Box sx={{ textAlign: 'left', mb: 2 }}>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <IconClockCheck size={15}/>
-                          <Typography fontWeight={600} variant="body2" sx={{ fontSize: '0.7rem' }}>
-                            {attendanceType}
+                        {hasIncidents ? (
+                          incidents.map((inc: any) => (
+                            <Box
+                              key={inc.id}
+                              display="flex"
+                              alignItems="center"
+                              title={`Haz clic para ver detalle de ${inc.type}`}
+                              gap={1}
+                              sx={{
+                                mb: 0.3,
+                                backgroundColor: inc.bgColorOnCalendar || '#eee',
+                                borderRadius: '6px',
+                                px: 1,
+                                py: 0.3,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <IconClockCheck size={14} color={inc.colorOnCalendar || '#000'}/>
+                              <Typography
+                                fontWeight={600}
+                                variant="body2"
+                                sx={{ fontSize: '0.75rem', color: inc.colorOnCalendar || '#000' }}
+                              >
+                                {inc.type}
+                              </Typography>
+                            </Box>
+                          ))
+                        ) : (
+                          (() => {
+                            let label = "";
+                            let bg = "";
+                            let color = "#fff";
+
+                            if (checkIn && checkOut) {
+                              label = "ASISTENCIA";
+                              bg = "success.attendance";
+                            } else if (checkIn && !checkOut) {
+                              label = "OMISIÓN DE SALIDA";
+                              bg = "warning.main";
+                            } else if (!checkIn && checkOut) {
+                              label = "OMISIÓN DE ENTRADA";
+                              bg = "warning.main";
+                            }
+
+                            if (!label) return null;
+
+                            return (
+                              <Box
+                                key={generateUniqueKey()}
+                                display="flex"
+                                alignItems="center"
+                                gap={1}
+                                sx={{
+                                  mb: 0.3,
+                                  backgroundColor: bg,
+                                  borderRadius: "6px",
+                                  px: 1,
+                                  py: 0.3,
+                                }}
+                              >
+                                <IconClockCheck size={14} color={color} />
+                                <Typography
+                                  fontWeight={600}
+                                  variant="body2"
+                                  sx={{ fontSize: "0.75rem", color }}
+                                >
+                                  {label}
+                                </Typography>
+                              </Box>
+                            );
+                          })()
+                        )}
+                      </Box>
+                    ) : (
+                      isPast && (
+                        <Box sx={{ textAlign: 'left' }}>
+                          <Typography fontWeight={600} variant="body2">
+                            SIN REGISTROS
                           </Typography>
                         </Box>
-                      </Box>
-                      ) : Temporal.PlainDate.compare(day.date, today) < 0 && day.isInMonth ? (
-                        <Box sx={{ textAlign: 'left' }}>
-                          <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
-                            <Typography fontWeight={600} variant="body2" sx={{ wordBreak: 'break-word', fontSize: '0.7rem' }}>
-                              SIN REGISTROS
-                            </Typography>
-                          </Box>
-                        </Box>
-                      ) : null
-                    }
+                      )
+                    )}
                   </Box>
 
-                  {displayTime && (
-                    <Box sx={{ mt: 1 }}>
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <IconClockUp size={15} />
-                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
-                          Entrada: {attendance.checkIn ? formatDate(new Date(attendance.checkIn), "HH:mm") : ''}
-                        </Typography>
-                      </Box>
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <IconClockDown size={15} />
-                        <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.8rem' }}>
-                          Salida: {attendance.checkOut ? formatDate(new Date(attendance.checkOut), "HH:mm") : ''}
-                        </Typography>
-                      </Box>
-                    </Box>
+                  {attendance && (
+                    <>
+                      {(
+                        (!attendance.hasIncidents && (checkIn || checkOut)) ||
+                        (attendance.hasIncidents &&
+                          attendance.incidents.some(
+                            (inc: any) => inc.displayTimeOnCalendar === true
+                          ))
+                      ) && (
+                        <>
+                          <Box
+                            key={generateUniqueKey()}
+                            display="flex"
+                            alignItems="center"
+                            gap={1}
+                            sx={{
+                              mb: 0.3,
+                              backgroundColor: "#eee",
+                              borderRadius: "6px",
+                              px: 1,
+                              py: 0.3,
+                            }}
+                          >
+                            <IconClockUp size={14} color="#000" />
+                            <Typography
+                              fontWeight={600}
+                              variant="body2"
+                              sx={{ fontSize: "0.75rem", color: "#000" }}
+                            >
+                              Entrada: {checkIn ? formatDate(new Date(checkIn), "HH:mm") : ""}
+                            </Typography>
+                          </Box>
+
+                          <Box
+                            key={generateUniqueKey()}
+                            display="flex"
+                            alignItems="center"
+                            gap={1}
+                            sx={{
+                              mb: 0.3,
+                              backgroundColor: "#eee",
+                              borderRadius: "6px",
+                              px: 1,
+                              py: 0.3,
+                            }}
+                          >
+                            <IconClockDown size={14} color="#000" />
+                            <Typography
+                              fontWeight={600}
+                              variant="body2"
+                              sx={{ fontSize: "0.75rem", color: "#000" }}
+                            >
+                              Salida: {checkOut ? formatDate(new Date(checkOut), "HH:mm") : ""}
+                            </Typography>
+                          </Box>
+                        </>
+                      )}
+                    </>
                   )}
                 </>
               )}

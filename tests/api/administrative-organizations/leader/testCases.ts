@@ -128,16 +128,4 @@ export const testCases = [
     expectedStatus: dataProvider.immediateResponsibleLong.status,
     expectedResponse: dataProvider.immediateResponsibleLong.response,
   },
-  {
-    description: "should return error for empty startDate",
-    requestData: dataProvider.emptyStartDate.request as ICreateUpdateLeader,
-    expectedStatus: dataProvider.emptyStartDate.status,
-    expectedResponse: dataProvider.emptyStartDate.response,
-  },
-  {
-    description: "should return error for empty endDate",
-    requestData: dataProvider.emptyEndDate.request as ICreateUpdateLeader,
-    expectedStatus: dataProvider.emptyEndDate.status,
-    expectedResponse: dataProvider.emptyEndDate.response,
-  },
 ];

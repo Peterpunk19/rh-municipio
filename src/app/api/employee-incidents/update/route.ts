@@ -72,6 +72,7 @@ export async function PUT(request: NextRequest) {
 
     const employeeData = employeeIncident.employee as unknown as {
       id: number;
+      number_employee: string;
       employee_ascriptions: { id: number }[];
       employee_hiring: { id: number }[];
       employee_location: { id: number }[];
@@ -94,6 +95,7 @@ export async function PUT(request: NextRequest) {
     const updateData = {
       id: employeeIncidentId,
       incidentStatusId: incidentStatusId,
+      numberEmployee: employeeData.number_employee,
       employeeId: employeeData.id,
       employeeAscriptionId: employeeData.employee_ascriptions?.[0]?.id,
       employeeHiringId: employeeData.employee_hiring?.[0]?.id,

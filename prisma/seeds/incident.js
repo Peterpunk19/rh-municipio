@@ -87,7 +87,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
-    bgColorOnCalendar: "warning.main",
+    bgColorOnCalendar: "incident.permiso_sin_goce",
   },
   {
     id: 10,
@@ -117,7 +117,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
-    bgColorOnCalendar: "warning.main",
+    bgColorOnCalendar: "incident.retardo",
   },
   {
     id: 13,

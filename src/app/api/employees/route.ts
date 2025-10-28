@@ -42,9 +42,7 @@ export async function GET(request: Request) {
     const end_job_date_end = searchParams.has("end_job_date_end") ? searchParams.get("end_job_date_end") : null;
     const trade_union = searchParams.has("trade_union") ? Number.parseInt(searchParams.get("trade_union")!, 10) : null;
     const search = searchParams.has("search") ? searchParams.get("search") : null;
-    const employeeAttendanceType = searchParams.has("employeeAttendanceType")
-      ? Number(searchParams.get("employeeAttendanceType"))
-      : null;
+    const attendance = searchParams.has("attendance") ? Number(searchParams.get("attendance")) : null;
     const requestParams: any = {
       page,
       limit,
@@ -62,7 +60,7 @@ export async function GET(request: Request) {
       end_job_date_start,
       end_job_date_end,
       search,
-      employeeAttendanceType,
+      attendance,
       trade_union,
     };
 

@@ -52,6 +52,7 @@ export interface IEmployeeIncidentUpdate {
   id: number | string;
   incidentStatusId: number;
   employeeId: number;
+  numberEmployee: string;
   employeeAscriptionId: number;
   employeeHiringId: number;
   employeeLocationId: number;
