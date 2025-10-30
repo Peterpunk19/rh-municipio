@@ -344,26 +344,26 @@ export const AdministrativeOrganizationLeadersService = {
 
             const enlaceEmployee = enlace?.user.employee_id
               ? await prisma.employee.findUnique({
-                where: { id: enlace.user.employee_id },
-                select: {
-                  id: true,
-                  name: true,
-                  paternal_last_name: true,
-                  maternal_last_name: true,
-                },
-              })
+                  where: { id: enlace.user.employee_id },
+                  select: {
+                    id: true,
+                    name: true,
+                    paternal_last_name: true,
+                    maternal_last_name: true,
+                  },
+                })
               : null;
 
             const subenlaceEmployee = subenlace?.user.employee_id
               ? await prisma.employee.findUnique({
-                where: { id: subenlace.user.employee_id },
-                select: {
-                  id: true,
-                  name: true,
-                  paternal_last_name: true,
-                  maternal_last_name: true,
-                },
-              })
+                  where: { id: subenlace.user.employee_id },
+                  select: {
+                    id: true,
+                    name: true,
+                    paternal_last_name: true,
+                    maternal_last_name: true,
+                  },
+                })
               : null;
 
             return {

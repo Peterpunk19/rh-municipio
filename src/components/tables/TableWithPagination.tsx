@@ -30,6 +30,7 @@ import { formatDate, getMonthName } from "@/utils/formatter";
 import { RowDetail } from "@/components/tables/RowDetail";
 import { RowSwitch } from "@/components/tables/RowSwitch";
 import { Chip } from "@mui/material";
+import {generateUniqueKey} from "@/utils";
 
 interface TableItemBase {
   id: number;
@@ -313,7 +314,7 @@ const TableWithPagination = <T extends TableItemBase>({
                 {items &&
                   items.map((row: any) => {
                     return (
-                      <TableRow hover tabIndex={-1} key={row.id}>
+                      <TableRow hover tabIndex={-1} key={generateUniqueKey()}>
                         {headCells.map((headCell) => (
                           <TableCell
                             key={headCell.id}

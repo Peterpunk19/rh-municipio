@@ -17,6 +17,7 @@ import EmployeesRequestsFiltersSlice from "@/store/employees-requests/EmployeesR
 import CreateEmployeeRequestReducer from "@/store/employees-requests/CreateEmployeeRequest";
 import CreateEmployeeAttendanceReducer from "@/store/employees-attendances/CreateEmployeeAttendance";
 import EmployeesAttendancesSlice from "@/store/employees-attendances/EmployeesAttendancesSlice";
+import EmployeesPayrollSlice from "@/store/employees-payroll/EmployeesPayrollSlice";
 import IncidentsRolesPermissionsListSlice from "@/store/reference/incidents-roles-permissions/ListSlice";
 import RequestsRolesPermissionsListSlice from "@/store/reference/requests-roles-permissions/ListSlice";
 import IncidentsRulesListSlice from "@/store/reference/incidents-rules/ListSlice";
@@ -46,6 +47,7 @@ export const store = configureStore({
     createEmployeeIncident: EmployeesIncidentsSlice,
     createEmployeeAttendance: CreateEmployeeAttendanceReducer,
     employeesAttendancesSlice: EmployeesAttendancesSlice,
+    employeesPayrollSlice: EmployeesPayrollSlice,
     incidentsRolesPermissions: IncidentsRolesPermissionsListSlice,
     requestsRolesPermissions: RequestsRolesPermissionsListSlice,
     incidentsRules: IncidentsRulesListSlice,
