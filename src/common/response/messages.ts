@@ -79,6 +79,7 @@ export const HttpMessages = {
     notFound: "Datos no encontrados",
     validationFields: "Datos incorrectos, por favor revise de nuevo el formulario.",
     notAuthorized: "No autorizado: JWT inválido o ausente",
+    notAuthenticated: "No autenticado",
     invalidJSONFormat: "Invalid JSON format",
     notAllowedToCreateForDifferentDireccion: "No tienes permiso para crear registros para empleados de otra dirección",
   },
@@ -195,5 +196,8 @@ export const HttpMessages = {
   salaries: {
     notFound: "No se encontraron salarios con los filtros proporcionados",
     getSuccess: "Salarios encontrados correctamente",
+  },
+  migration: {
+    enlaceUsersImportSuccess: "Usuarios importados correctamente",
   },
 };
