@@ -71,6 +71,7 @@ export const response = {
         maternal_last_name: "MARTINEZ",
       },
       changeDate: "15/07/2025",
+      leaveDate: "",
       requestDetail: {
         id: 1,
         start_date: "2025-07-15T00:00:00.000Z",
@@ -137,6 +138,7 @@ export const response = {
         maternal_last_name: "MARTINEZ",
       },
       changeDate: "15/07/2025",
+      leaveDate: "",
       requestDetail: {
         id: 1,
         start_date: "2025-07-15T00:00:00.000Z",
@@ -203,6 +205,7 @@ export const response = {
         maternal_last_name: "MARTINEZ",
       },
       changeDate: "15/07/2025",
+      leaveDate: "",
       requestDetail: {
         id: 1,
         start_date: "2025-07-15T00:00:00.000Z",

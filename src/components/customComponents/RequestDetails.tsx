@@ -32,11 +32,11 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
   const isLocationRequest = request.name === "location_change_request";
   const isCheckerRequest = request.name === "checker_change_request";
   const adscriptionChangeRequest = request.name === "adscription_change_request";
-  const isFingerprintRequest =
-    request.name === "fingerprint_registration_request";
+  const isFingerprintRequest = request.name === "fingerprint_registration_request";
+  const isLeaveRequest = request.name === "union_leave_request";
 
   return (
-    <Paper variant="outlined" sx={{ height: "100%"}}>
+    <Paper variant="outlined" sx={{ height: "100%" }}>
       <Box p={3} display="flex" flexDirection="column" gap="4px" height="100%">
         <Grid container>
           <Grid size={{ lg: 12, xs: 12 }} mb={2}>
@@ -71,7 +71,7 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
                 endAt={request_details.end_at}
               />
             )}
-            {isLocationRequest && (
+            {(isLocationRequest || isLeaveRequest) && (
               <RequestLocationDetails
                 currentLocation={request_details.current_location}
                 newLocation={request_details.new_location}
@@ -106,7 +106,7 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
                 {data.requestedBy?.username || "-"}
               </Typography>
             </Grid>
-            
+
             <Grid size={5}>
               <Typography variant="subtitle1" color="text.secondary">
                 Aprobado por
@@ -114,8 +114,12 @@ const RequestDetails: React.FC<Props> = ({ data }) => {
             </Grid>
             <Grid size={7}>
               <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-                {data.approvedBy && Object.keys(data.approvedBy).length > 0 ? 
-                  data.approvedBy.name + " " + data.approvedBy.paternal_last_name + " " + data.approvedBy.maternal_last_name 
+                {data.approvedBy && Object.keys(data.approvedBy).length > 0
+                  ? data.approvedBy.name +
+                    " " +
+                    data.approvedBy.paternal_last_name +
+                    " " +
+                    data.approvedBy.maternal_last_name
                   : "-"}
               </Typography>
             </Grid>

@@ -91,6 +91,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       signatory: employeeRequest.signatory,
       destinationDirector: employeeRequest.destinationDirector,
       changeDate: formatDate(employeeRequest.changeDate, "dd/MM/yyyy"),
+      leaveDate: formatDate(employeeRequest.leaveDate, "dd/MM/yyyy"),
       requestDetail: employeeRequest.requestDetail,
     };
     const response = HttpResponse.success(HttpMessages.employeeRequests.pdfDataObtainedSuccess, pdfData);

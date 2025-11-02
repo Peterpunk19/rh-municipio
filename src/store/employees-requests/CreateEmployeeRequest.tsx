@@ -26,6 +26,7 @@ interface StateType {
       newLocationId: number;
       startDate: string;
       endDate: string;
+      unionName?: string;
     };
     attendanceTypeForm: {
       attendanceType: string;
@@ -67,6 +68,7 @@ const initialState: StateType = {
       newLocationId: 0,
       startDate: "",
       endDate: "",
+      unionName: "",
     },
     attendanceTypeForm: {
       attendanceType: "",

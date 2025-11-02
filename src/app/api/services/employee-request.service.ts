@@ -142,7 +142,7 @@ export const EmployeeRequestService = {
               connect: { id: currentEmployeeAttendanceType.attendance.id },
             },
           }),
-          ...(currentEmployeeAscriptions?.id && {
+          ...(currentEmployeeAscriptions?.direccion_id && {
             direccion: {
               connect: { id: currentEmployeeAscriptions.direccion_id },
             },
@@ -673,9 +673,12 @@ export const EmployeeRequestService = {
         ...employeeRequest.request,
       },
       request_details: {
-        ...(["schedule_change_request", "location_change_request", "schedule_attendance_change_request"].includes(
-          employeeRequest.request.name,
-        ) && {
+        ...([
+          "schedule_change_request",
+          "location_change_request",
+          "schedule_attendance_change_request",
+          "union_leave_request",
+        ].includes(employeeRequest.request.name) && {
           start_at: employeeRequest.employee_request_detail[0].start_date,
           end_at: employeeRequest.employee_request_detail[0].end_date,
         }),
@@ -695,7 +698,7 @@ export const EmployeeRequestService = {
             : null,
           schedule: Object.values(employeeRequest.employee.job_schedule_employee),
         }),
-        ...(employeeRequest.request.name === "location_change_request" && {
+        ...(["location_change_request", "union_leave_request"].includes(employeeRequest.request.name) && {
           current_location: employeeRequest.employee_request_detail[0].location
             ? { ...employeeRequest.employee_request_detail[0].location }
             : null,
@@ -1323,6 +1326,7 @@ export const EmployeeRequestService = {
         ) || null,
       destinationDirector: destinationDirector?.employee || null,
       changeDate: requestDetail?.start_date || null,
+      leaveDate: requestDetail?.end_date || null,
       requestDetail,
     };
   },

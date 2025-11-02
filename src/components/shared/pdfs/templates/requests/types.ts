@@ -1,5 +1,5 @@
 import { Style } from "@react-pdf/types";
-import { ChangeSchedule, ChangeAttendance, ChangeScheduleAttendance, ChangeAdscription } from ".";
+import { ChangeSchedule, ChangeAttendance, ChangeScheduleAttendance, ChangeAdscription, UnionLeave } from ".";
 import { REQUEST_TYPES_NAME } from "@/common/constants/RequestTypes";
 
 export const REQUEST_COMPONENTS = {
@@ -10,7 +10,7 @@ export const REQUEST_COMPONENTS = {
   [REQUEST_TYPES_NAME.LOCATION]: ChangeSchedule,
   [REQUEST_TYPES_NAME.FINGERPRINT]: ChangeSchedule,
   [REQUEST_TYPES_NAME.RELEASE]: ChangeSchedule,
-  [REQUEST_TYPES_NAME.UNION_LEAVE]: ChangeSchedule,
+  [REQUEST_TYPES_NAME.UNION_LEAVE]: UnionLeave,
 };
 
 export interface RequestTemplateData {
@@ -108,6 +108,7 @@ export interface RequestTemplateData {
     maternal_last_name: string;
   } | null;
   changeDate?: string | null;
+  leaveDate?: string | null;
   requestDetail?: {
     id: number;
     start_date: Date | null;

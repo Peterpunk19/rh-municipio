@@ -70,6 +70,18 @@ const basePermissions = [
     can_edit: true,
     active: true,
   },
+  {
+    request_id: 7,
+    // name: "union_leave_request",
+    can_view: true,
+    can_create: true,
+    can_approve: false,
+    can_cancel: true,
+    can_delete: true,
+    can_reject: false,
+    can_edit: true,
+    active: true,
+  },
 ];
 
 const adminPermissions = basePermissions.map((permission) => ({
