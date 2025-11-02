@@ -159,6 +159,14 @@ const modules = [
     icon: "IconPoint",
     parent_id: 16,
   },
+  {
+    id: 21,
+    name: "employee_payroll",
+    display_name: "Nómina",
+    route: "/admin/employees-payroll",
+    icon: "IconPoint",
+    parent_id: null,
+  },
 ];
 
 module.exports = modules;

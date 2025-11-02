@@ -140,6 +140,13 @@ const employeesAttendancesConfig: EntityConfig = {
   showSearchBar: true,
 };
 
+const employeesPayrollConfig: EntityConfig = {
+  name: "employeesPayroll",
+  initialSortBy: "name",
+  title: "Nóminas de empleados",
+  showSearchBar: true,
+};
+
 const salariesConfig: EntityConfig = {
   name: "salaries",
   initialSortBy: "id",
@@ -157,6 +164,7 @@ export const filtersSlice = createFiltersSlice([
   incidentsRulesConfig,
   salariesConfig,
   requestsRolesPermissionsConfig,
+  employeesPayrollConfig,
 ]);
 
 export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen, updateConfigFilters } =

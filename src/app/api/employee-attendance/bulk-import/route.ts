@@ -56,13 +56,6 @@ export async function POST(request: NextRequest) {
           throw new Error("Empleado no encontrado");
         }
 
-        if (employee.employee_attendance_type[0]?.attendance?.name !== "digital_clock") {
-          responseRecord.status = "error";
-          responseRecord.errorMessage = HttpMessages.employeeAttendanceType.notValid;
-          processedRecords.push(responseRecord);
-          continue;
-        }
-
         if (!employee.employee_ascriptions.length) {
           responseRecord.status = "error";
           responseRecord.errorMessage = HttpMessages.employeeAscription.notFound;
