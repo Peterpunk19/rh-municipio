@@ -5,6 +5,8 @@ import { ROLES_ID_VALUES } from "@/common/constants/Roles";
 import { logger } from "@/lib/logger";
 import { ImportResult, LegacyEnlaceUser } from "@/app/api/migration/enlace-users/interface";
 import { encryptPassword } from "@/common/utils";
+import { ImportResultLeaders, LegacyLeaders } from "@/app/api/migration/types";
+import { HttpMessages } from "@/common/response/messages";
 
 const DIRECCION_EXCEPTIONS: Record<string, string> = {
   "DIRECCION DE AUDITORIAS A FONDOS DE APORTACIONES FEDERALES ESTATALES Y MUNICIPALES":
@@ -42,7 +44,7 @@ export const MigrationService = {
     const legacyDatabaseUrl = process.env.DATABASE_LEGACY_URL;
 
     if (!legacyDatabaseUrl) {
-      throw new Error("DATABASE_LEGACY_URL no está configurada en las variables de entorno");
+      throw new Error(HttpMessages.migration.databaseLegacyUrlNotConfigured);
     }
 
     return new PrismaClient({
@@ -208,6 +210,147 @@ export const MigrationService = {
       return result;
     } catch (error: any) {
       logger.error("Error in importEnlaceUsers:", error);
+      throw new Error(`Migration failed: ${error.message}`);
+    } finally {
+      await prismaLegacy.$disconnect();
+    }
+  },
+
+  async importAdministrativeOrganizationsLeaders(authResponse: any): Promise<ImportResultLeaders> {
+    const prismaLegacy = this.createLegacyPrismaClient();
+    const result: ImportResultLeaders = {
+      success: true,
+      total: 0,
+      imported: 0,
+      skipped: 0,
+      errors: [],
+    };
+
+    try {
+      const legacyLeaders = await prismaLegacy.$queryRaw<LegacyLeaders[]>`
+        SELECT
+          cs.Secretaria AS direccion_display_name,
+          dir.NumeroEmpleado AS director_number_employee,
+          res.NumeroEmpleado AS responsible_number_employee,
+          cd.FechaInicia AS start_date,
+          cd.FechaFinal AS end_date
+        FROM
+          cat_directores cd
+        INNER JOIN empleado dir
+          ON cd.NombreD = dir.Nombre
+          AND cd.ApaternoD = dir.Apaterno
+          AND cd.AmaternoD = dir.Amaterno
+          AND dir.NumeroEmpleado IS NOT NULL
+        LEFT JOIN empleado res 
+          ON cd.NombreSuplente = CONCAT_WS(' ', res.Nombre, res.Apaterno, res.Amaterno)
+          AND res.NumeroEmpleado IS NOT NULL
+          AND res.NumeroEmpleado != dir.NumeroEmpleado
+        INNER JOIN cat_secretarias cs 
+          ON cd.IdSecretaria = cs.IdSecretaria
+        WHERE
+          cd.FechaFinal > '2025-01-01'
+          AND cd.Estatus = 1
+      `;
+
+      logger.info(`Found ${legacyLeaders.length} leaders in legacy database`);
+      result.total = legacyLeaders.length;
+
+      if (legacyLeaders.length === 0) {
+        return result;
+      }
+
+      const allEmployeeNumbers = new Set<string>();
+      legacyLeaders.forEach((leader) => {
+        allEmployeeNumbers.add(String(leader.director_number_employee));
+        if (leader.responsible_number_employee) {
+          allEmployeeNumbers.add(String(leader.responsible_number_employee));
+        }
+      });
+
+      const employees = await prisma.employee.findMany({
+        where: {
+          number_employee: { in: Array.from(allEmployeeNumbers) },
+        },
+        select: {
+          id: true,
+          number_employee: true,
+        },
+      });
+      const employeeMap = new Map(employees.map((e) => [e.number_employee, e.id]));
+
+      const direcciones = await prisma.direccion.findMany({
+        where: { active: true },
+        select: { id: true, display_name: true },
+      });
+
+      const direccionMap = new Map();
+      direcciones.forEach((dir) => {
+        const normalized = normalizeName(dir.display_name);
+        if (normalized) {
+          direccionMap.set(normalized, dir.id);
+        }
+      });
+
+      for (const leader of legacyLeaders) {
+        const directorNumberEmployee = String(leader.director_number_employee);
+        const directorId = employeeMap.get(directorNumberEmployee);
+        const responsableId = leader.responsible_number_employee
+          ? employeeMap.get(String(leader.responsible_number_employee))
+          : null;
+
+        const normalizedDireccionName = normalizeName(leader.direccion_display_name);
+        const direccionId = direccionMap.get(normalizedDireccionName);
+
+        if (!direccionId) {
+          result.errors.push({
+            numero_empleado: directorNumberEmployee,
+            reason: `No se encontró la dirección: ${leader.direccion_display_name} (normalizado como: ${normalizedDireccionName})`,
+          });
+          result.skipped++;
+          continue;
+        }
+
+        if (directorId) {
+          const director = await prisma.administrativeOrganizationLeaders.create({
+            data: {
+              direccion_id: direccionId,
+              employee_id: directorId,
+              role_id: ROLES_ID_VALUES.director,
+              created_by_id: authResponse.userId,
+              active: true,
+              start_date: leader.start_date,
+              end_date: leader.end_date,
+              sign_incidents: true,
+              sign_requests: true,
+            },
+          });
+          if (director) result.imported++;
+        }
+
+        if (responsableId && directorId !== responsableId) {
+          const responsable = await prisma.administrativeOrganizationLeaders.create({
+            data: {
+              direccion_id: direccionId,
+              employee_id: responsableId,
+              role_id: ROLES_ID_VALUES.responsable_inmediato,
+              created_by_id: authResponse.userId,
+              active: true,
+              start_date: leader.start_date,
+              end_date: leader.end_date,
+              sign_incidents: false,
+              sign_requests: false,
+            },
+          });
+          if (responsable) result.imported++;
+        }
+      }
+
+      logger.info(
+        `Migration completed: ${result.imported} imported, ${result.skipped} skipped, ${result.errors.length} errors`,
+      );
+      return result;
+    } catch (error: any) {
+      logger.error("Error in importAdministrativeOrganizationLeaders:", error);
       throw new Error(`Migration failed: ${error.message}`);
     } finally {
       await prismaLegacy.$disconnect();

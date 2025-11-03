@@ -199,5 +199,9 @@ export const HttpMessages = {
   },
   migration: {
     enlaceUsersImportSuccess: "Usuarios importados correctamente",
+    administrativeOrganizationLeadersImportSuccess: "Directivos importados correctamente",
+    databaseLegacyUrlNotConfigured:
+      "Error de migración: DATABASE_LEGACY_URL no está configurada en las variables de entorno",
+    databaseConnectionFailed: "Error de migración: No se pudo conectar a la base de datos",
   },
 };
