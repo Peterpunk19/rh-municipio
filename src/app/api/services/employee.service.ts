@@ -719,7 +719,7 @@ export const EmployeeService = {
                  JOIN Direccion AS d ON ea.direccion_id = d.id
                  JOIN Secretaria AS s ON d.secretaria_id = s.id
                  JOIN Category AS c ON eh.category_id = c.id
-                 JOIN EmployeeType AS et ON eh.employee_type_id = et.id
+                 JOIN EmployeeType AS et ON eh.employee_type_id = et.id AND et.name != 'pensionado'
                  LEFT JOIN EmployeeTradeUnion AS etu ON e.id = etu.employee_id
                  LEFT JOIN TradeUnion AS tu ON etu.trade_union_id = tu.id
                  LEFT JOIN EmployeeLocation AS el ON e.id = el.employee_id AND el.active = 1

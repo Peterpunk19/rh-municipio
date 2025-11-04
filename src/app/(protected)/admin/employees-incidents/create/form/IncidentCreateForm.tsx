@@ -239,17 +239,21 @@ const IncidentCreateForm = ({
       return incidentTypes;
     }
 
-    if (currentEmployee.gender_name === GENDER.MALE) {
-      return incidentTypes.filter((type) => {
-        const shouldExclude = Number(type.id) === INCIDENT_TYPES_ID.LACTANCIA;
-        return !shouldExclude;
-      });
-    } else {
-      return incidentTypes.filter((type) => {
-        const shouldExclude = Number(type.id) === INCIDENT_TYPES_ID.PATERNIDAD;
-        return !shouldExclude;
-      });
-    }
+    return incidentTypes.filter((type) => {
+      const id = Number(type.id);
+
+      if (currentEmployee.gender_name === GENDER.MALE && id === INCIDENT_TYPES_ID.LACTANCIA) {
+        return false;
+      }
+
+      if (currentEmployee.gender_name !== GENDER.MALE && id === INCIDENT_TYPES_ID.PATERNIDAD) {
+        return false;
+      }
+
+      return !(
+        id === INCIDENT_TYPES_ID.FALTA && currentEmployee.attendance_type_display_name !== "LISTA DE ASISTENCIA"
+      );
+    });
   }, [incidentTypes, currentEmployee]);
 
   const calendarIncidentIds = useMemo(() => {
