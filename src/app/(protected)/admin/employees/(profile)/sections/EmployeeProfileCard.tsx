@@ -10,14 +10,20 @@ import { IconAmbulance, IconEdit, IconUserScan } from "@tabler/icons-react";
 import Stack from "@mui/material/Stack";
 import { Chip, Dialog, DialogTitle, DialogContent, DialogActions, Button, Divider } from "@mui/material";
 import { formatDate } from "@/utils/formatter";
+import PDFGenerator from "@/components/shared/pdfs/PDFGenerator";
+import MedicalValidity from "@/components/shared/pdfs/templates/employees/MedicalValidity";
+import { normalizeText } from "@/common/utils";
 
 const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
-  const DEFAULT_IMAGE_MALE: string = "/images/profile/user-1.jpg";
-  const DEFAULT_IMAGE_FEMALE: string = "/images/profile/user-10.jpg";
-  const REDIRECT_TO_EDIT = "/admin/employees/edit/";
-  const FULL_NAME = `${employeeData.name} ${employeeData.paternal_last_name} ${employeeData.maternal_last_name}`;
-
+  const defaultImageMale: string = "/images/profile/user-1.jpg";
+  const defaultImageFemale: string = "/images/profile/user-10.jpg";
+  const redirectToEdit = "/admin/employees/edit/";
+  const fullName = `${employeeData.name} ${employeeData.paternal_last_name} ${employeeData.maternal_last_name}` || "";
+  const category = employeeData?.employee_hiring[0]?.category?.display_name || "";
+  const secretary = employeeData?.employee_ascriptions[0].direccion?.secretaria?.display_name || "";
+  const direction = employeeData?.employee_ascriptions[0].direccion?.display_name || "";
   const [openVigencia, setOpenVigencia] = React.useState(false);
+  const fileName = `${normalizeText(fullName)}_${formatDate(new Date(), "dd_MM_yyyy")}`;
 
   return (
     <>
@@ -25,19 +31,17 @@ const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
         {/* Avatar + Info (lado izquierdo) */}
         <Box display="flex" alignItems="center">
           <Avatar
-            alt={FULL_NAME}
-            src={employeeData.gender_id === 1 ? DEFAULT_IMAGE_FEMALE : DEFAULT_IMAGE_MALE}
+            alt={fullName}
+            src={employeeData.gender_id === 1 ? defaultImageFemale : defaultImageMale}
             sx={{ width: 84, height: 84 }}
           />
           <Box sx={{ display: "flex", marginLeft: "15px", flexDirection: "column" }}>
             <Typography variant="body1" fontWeight={600}>
-              {FULL_NAME}
+              {fullName}
             </Typography>
-            <Typography variant="body2">{employeeData?.employee_ascriptions[0]?.category?.display_name}</Typography>
-            <Typography variant="body2">{employeeData?.employee_ascriptions[0]?.direccion?.display_name}</Typography>
-            <Typography variant="body2">
-              {employeeData?.employee_ascriptions[0]?.direccion?.secretaria?.display_name}
-            </Typography>
+            <Typography variant="body2">{category}</Typography>
+            <Typography variant="body2">{direction}</Typography>
+            <Typography variant="body2">{secretary}</Typography>
           </Box>
         </Box>
 
@@ -50,7 +54,7 @@ const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
             </IconButton>
             <IconButton
               aria-label="edit"
-              onClick={() => redirect(`${REDIRECT_TO_EDIT}${employeeData.id}?name=${FULL_NAME}`)}
+              onClick={() => redirect(`${redirectToEdit}${employeeData.id}?name=${fullName}`)}
             >
               <IconEdit stroke={1.5} />
             </IconButton>
@@ -66,28 +70,52 @@ const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
         <DialogTitle>Vigencia Médica</DialogTitle>
         <DialogContent dividers>
           <Typography variant="h6">Datos del Asegurado</Typography>
-          <Typography>Nombre: {FULL_NAME}</Typography>
-          <Typography>CURP: {employeeData.curp}</Typography>
-          <Typography>Fecha de nacimiento: {formatDate(employeeData.birthday)}</Typography>
+          <Typography>
+            <strong>Nombre:</strong> {fullName}
+          </Typography>
+          <Typography>
+            <strong>CURP:</strong> {employeeData.curp || ""}
+          </Typography>
+          <Typography>
+            <strong>Fecha de nacimiento:</strong> {formatDate(employeeData.birthday) || ""}
+          </Typography>
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6">Datos del trabajo</Typography>
-          <Typography>Ascripcion: OFICIALIA/DIRECCION DE RECURSOS HUMANOS</Typography>
-          <Typography>Categoria: TECNICO ESPECIALIZADO E</Typography>
-          <Typography>Tipo de contrato: CONFIANZA</Typography>
+          <Typography>
+            <strong>Ascripción:</strong> {secretary} / {direction}
+          </Typography>
+          <Typography>
+            <strong>Categoría:</strong> {category}
+          </Typography>
+          <Typography>
+            <strong>Tipo de contrato:</strong> {employeeData?.employee_hiring[0]?.employee_type?.display_name || ""}
+          </Typography>
           <Divider sx={{ my: 2 }} />
 
           <Typography variant="h6">Vigencia de Derechos</Typography>
           <Typography>
-            Estado: <b style={{ color: "green" }}>{employeeData?.vigencia?.estado ?? "No disponible"}</b>
+            <strong>Estado:</strong> <b style={{ color: "green" }}>{employeeData?.vigencia?.estado ?? "No disponible"}</b>
           </Typography>
-          <Typography>Inicio: Si es de contrato poner fecha de alta</Typography>
-          <Typography>Fin: Si es de contrato poner fecha de baja</Typography>
+          <Typography>
+            <strong>Inicio:</strong> {formatDate(employeeData?.employee_hiring[0]?.start_job_date) || ""}
+          </Typography>
+          <Typography>
+            <strong>Fin:</strong> {formatDate(employeeData?.employee_hiring[0]?.end_job_date) || ""}
+          </Typography>
           <Divider sx={{ my: 2 }} />
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="primary">
-            Imprimir
-          </Button>
+          <PDFGenerator
+            data={employeeData}
+            fileName={fileName}
+            title="Vigencia Médica"
+            template={MedicalValidity}
+            optionsConfig={{
+              displayMode: "button",
+            }}
+            buttonLabel="Imprimir"
+            buttonProps={{ color: "primary" }}
+          />
           <Button color="error" onClick={() => setOpenVigencia(false)}>
             Cerrar
           </Button>

@@ -7,7 +7,7 @@ import { Font } from "@react-pdf/renderer";
 
 Font.registerHyphenationCallback((word: string) => [word]);
 
-const urlLogo = `${process.env.NEXT_PUBLIC_BASE_URL}/images/logos/logo_municipio_2024.jpg`;
+const urlLogo = `${process.env.NEXT_PUBLIC_BASE_URL}/images/logos/logo.png`;
 const urlBackground = `${process.env.NEXT_PUBLIC_BASE_URL}/images/backgrounds/bg_rh.png`;
 const needDestinationDirector: string[] = [REQUEST_TYPES_NAME.ADSCRIPTION];
 const needNewDirection: string[] = [REQUEST_TYPES_NAME.ADSCRIPTION];
