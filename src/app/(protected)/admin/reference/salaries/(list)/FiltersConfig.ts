@@ -1,19 +1,38 @@
-import type { FiltersConfig } from "@/interfaces/FiltersConfig";
-import { fetchCatalogData } from "@/services/catalogs";
+import { setSelectedYear, fetchSalariesByYear } from "@/store/reference/salaries/SalaryConfigSlice";
+import { AppDispatch } from "@/store/store";
 
-export const tableFiltersConfig = (): FiltersConfig[] => [
-  {
-    key: "categoryId",
-    label: "Categoría",
-    type: "select",
-    fetchOptions: () => fetchCatalogData("category"),
-    gridSize: { xs: 12, sm: 4, lg: 3 },
-  },
-  {
-    key: "employeeTypeId",
-    label: "Tipo de Empleado",
-    type: "select",
-    fetchOptions: () => fetchCatalogData("employee-type"),
-    gridSize: { xs: 12, sm: 4, lg: 3 },
-  },
-];
+interface ConfigYear {
+  year: number;
+}
+
+export const getSalariesFiltersConfig = (
+  configYears: { responseObject: ConfigYear[] } | undefined,
+  dispatch: AppDispatch,
+  selectedYear: number,
+  currentYear: number,
+) => {
+  return [
+    {
+      id: "year",
+      key: "year",
+      label: "Año",
+      placeholder: "Año",
+      type: "select",
+      options: (configYears?.responseObject || []).map((year: any) => ({
+        value: year.year,
+        label: year.year.toString(),
+      })),
+      onChange: (value: string | number) => {
+        const year = value ? Number(value) : currentYear;
+        dispatch(setSelectedYear(year));
+        dispatch(fetchSalariesByYear({ year }));
+      },
+      redux: {
+        entity: "salaries",
+        action: "updateFilter",
+        key: "year",
+      },
+      defaultValue: selectedYear ? String(selectedYear) : currentYear.toString(),
+    },
+  ];
+};

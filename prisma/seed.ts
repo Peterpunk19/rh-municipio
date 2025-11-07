@@ -35,6 +35,7 @@ const incidentRules = require("./seeds/incident-rules");
 const holidays = require("./seeds/holiday");
 const jobSchedulesEmployees = require("./seeds/job-schedules-employees");
 const { scheduleMappings } = require("./seeds/schedule-mappings");
+const configYear = require("./seeds/config-year");
 
 const prisma = new PrismaClient();
 
@@ -104,6 +105,7 @@ async function main() {
   await prisma.attendance.createMany({ data: attendance });
   await prisma.category.createMany({ data: category });
   await prisma.day.createMany({ data: day });
+  await prisma.configYear.createMany({ data: configYear });
   await prisma.employeeType.createMany({ data: employeeType });
   await prisma.gender.createMany({ data: gender });
   await prisma.hour.createMany({ data: hours });

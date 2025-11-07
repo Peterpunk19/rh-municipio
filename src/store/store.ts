@@ -22,6 +22,7 @@ import IncidentsRolesPermissionsListSlice from "@/store/reference/incidents-role
 import RequestsRolesPermissionsListSlice from "@/store/reference/requests-roles-permissions/ListSlice";
 import IncidentsRulesListSlice from "@/store/reference/incidents-rules/ListSlice";
 import SalariesListSlice from "@/store/reference/salaries/ListSlice";
+import SalaryConfigSlice from "@/store/reference/salaries/SalaryConfigSlice";
 import employeeIncidentReducer from "@/store/slices/employeeIncidentSlice";
 import CatalogsListSlice from "@/store/reference/catalogs/CatalogsSlice";
 
@@ -54,6 +55,7 @@ export const store = configureStore({
     incidentsRules: IncidentsRulesListSlice,
     salaries: SalariesListSlice,
     catalogsList: CatalogsListSlice,
+    salaryConfig: SalaryConfigSlice,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),

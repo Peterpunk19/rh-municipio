@@ -29,10 +29,29 @@ const TableFilters = (props: EnhancedTableToolbarProps) => {
   const { filterOpen } = useSelector((state: RootState) => state.filters[entity] || { filterOpen: false });
 
   useEffect(() => {
-    if (values) {
+    if (Object.keys(values).length === 0 && filters.length > 0) {
+      const initialLocalState: Record<string, any> = {};
+      filters.forEach((filter) => {
+        if (filter.defaultValue) {
+          initialLocalState[filter.key] = filter.defaultValue;
+        }
+      });
+      setLocalState(initialLocalState);
+      filters.forEach((filter) => {
+        if (filter.defaultValue) {
+          dispatch(
+            updateFilter({
+              entity,
+              key: filter.key,
+              value: filter.defaultValue,
+            }),
+          );
+        }
+      });
+    } else if (values) {
       setLocalState(values);
     }
-  }, []);
+  }, [values, filters]);
 
   const handleFilterChange = (filterKey: string, value: any) => {
     const isDateFilter = filters.some(
