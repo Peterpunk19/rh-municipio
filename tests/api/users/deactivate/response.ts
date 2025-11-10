@@ -52,7 +52,13 @@ export const response = {
     success: true,
     message: HttpMessages.user.activatedSuccess,
     responseObject: {
-      user: {},
+      user: {
+        id: 3,
+        uuid: "test-uuid-2",
+        username: "williammrr",
+        active: true,
+        updated_at: "2025-02-22T22:47:36.946Z",
+      },
     },
     statusCode: 200,
   },
@@ -68,7 +74,13 @@ export const response = {
     success: true,
     message: HttpMessages.user.deactivatedSuccess,
     responseObject: {
-      user: {},
+      user: {
+        id: 2,
+        uuid: "test-uuid",
+        username: "carloszh",
+        active: false,
+        updated_at: "2025-02-22T22:47:36.946Z",
+      },
     },
     statusCode: 200,
   },

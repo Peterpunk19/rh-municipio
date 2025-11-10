@@ -1,6 +1,7 @@
 import { POST } from "@/app/api/users/deactivate/route";
 import { UserService } from "@/app/api/services/user.service";
 import { testCases } from "./testCases";
+import { authMiddleware } from "@/middleware/authMiddleware";
 
 jest.mock("@/app/api/services/user.service", () => ({
   UserService: {
@@ -9,7 +10,26 @@ jest.mock("@/app/api/services/user.service", () => ({
   },
 }));
 
+jest.mock("@/middleware/authMiddleware", () => ({
+  authMiddleware: jest.fn().mockResolvedValue({
+    userId: 1,
+    employeeId: 1,
+    roleId: 1,
+    roleName: "admin",
+  }),
+}));
+
 describe("API: POST /users/deactivate", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    (authMiddleware as jest.Mock).mockResolvedValue({
+      userId: 1,
+      employeeId: 1,
+      roleId: 1,
+      roleName: "admin",
+    });
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -33,7 +53,13 @@ describe("API: POST /users/deactivate", () => {
           created_at: "2025-02-17T00:02:09.415Z",
           updated_at: "2025-02-22T22:47:36.946Z",
         });
-        (UserService.changeStatusUser as jest.Mock).mockResolvedValueOnce({ user: {} });
+        (UserService.changeStatusUser as jest.Mock).mockResolvedValueOnce({
+          id: 2,
+          uuid: "test-uuid",
+          username: "carloszh",
+          active: false,
+          updated_at: "2025-02-22T22:47:36.946Z",
+        });
       }
 
       if (description === "should successfully activate a user") {
@@ -47,7 +73,13 @@ describe("API: POST /users/deactivate", () => {
           updated_at: "2025-02-22T22:47:36.946Z",
         });
 
-        (UserService.changeStatusUser as jest.Mock).mockResolvedValueOnce({ user_id: 3, active: true });
+        (UserService.changeStatusUser as jest.Mock).mockResolvedValueOnce({
+          id: 3,
+          uuid: "test-uuid-2",
+          username: "williammrr",
+          active: true,
+          updated_at: "2025-02-22T22:47:36.946Z",
+        });
       }
 
       const requestObj = {

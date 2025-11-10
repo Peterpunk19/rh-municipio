@@ -280,20 +280,42 @@ export const UserService = {
     };
   },
 
-  async changeStatusUser(id: number, active?: boolean) {
-    return await prisma.user.update({
-      where: { id: id },
-      data: {
-        active: active,
-        updated_at: new Date(),
-      },
-      select: {
-        id: true,
-        uuid: true,
-        username: true,
-        active: true,
-        updated_at: true,
-      },
+  async changeStatusUser(id: number, active: boolean, performedById: number, username: string) {
+    const actionType = active ? SYSTEM_LOG_ACTIONS.ACTIVATE_USER : SYSTEM_LOG_ACTIONS.DEACTIVATE_USER;
+    const actionDescription = active ? "activó" : "desactivó";
+
+    return await prisma.$transaction(async (tx) => {
+      const updatedUser = await tx.user.update({
+        where: { id: id },
+        data: {
+          active: active,
+          updated_at: new Date(),
+        },
+        select: {
+          id: true,
+          uuid: true,
+          username: true,
+          active: true,
+          updated_at: true,
+        },
+      });
+
+      await tx.systemLogs.create({
+        data: {
+          type: active ? "activate-user" : "deactivate-user",
+          performed_by_id: performedById,
+          affected_user_id: id,
+          description: `Administrador ${actionDescription} al usuario ID ${id} (${username})`,
+          metadata: {
+            action: actionType,
+            timestamp: new Date().toISOString(),
+            previousStatus: !active,
+            newStatus: active,
+          },
+        },
+      });
+
+      return updatedUser;
     });
   },
 

@@ -31,6 +31,12 @@ export async function POST(request: NextRequest) {
       const response = HttpResponse.failure(HttpMessages.user.wrongUsername, {}, StatusCodes.NOT_FOUND);
       return handleHttpResponse(response);
     }
+
+    if (!user.active) {
+      const response = HttpResponse.failure(HttpMessages.user.userInactive, {}, StatusCodes.FORBIDDEN);
+      return handleHttpResponse(response);
+    }
+
     const isPasswordValid = await bcryptjs.compare(password, user.password);
     if (!isPasswordValid) {
       const response = HttpResponse.failure(HttpMessages.user.wrongPassword, {}, StatusCodes.UNAUTHORIZED);

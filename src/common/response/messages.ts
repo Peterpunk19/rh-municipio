@@ -100,6 +100,7 @@ export const HttpMessages = {
     loginSuccess: "Inicio de sesión exitoso",
     wrongUsername: "Usuario incorrecto",
     wrongPassword: "Contraseña incorrecta",
+    userInactive: "El usuario no esta activo o no fue encontrado.",
     notFoundCreator: "No se encontró por lo menos un usuario creador",
     resetPasswordUnauthorized:
       "No tienes permisos para realizar esta acción. Solo los administradores pueden resetear contraseñas.",

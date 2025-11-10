@@ -13,14 +13,24 @@ export const login = async (authCredentials: z.infer<typeof LoginSchema>) => {
         "Content-Type": "application/json",
       },
     });
+
+    const data = await response.json();
+
     if (!response.ok) {
-      console.log(response);
-      throw new Error("Failed to login");
+      return {
+        success: false,
+        message: data.message || "Failed to login",
+        responseObject: null,
+      };
     }
-    if (response.ok) {
-      return response.json();
-    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching user login data", error);
+    return {
+      success: false,
+      message: "Error de conexión al servidor",
+      responseObject: null,
+    };
   }
 };
