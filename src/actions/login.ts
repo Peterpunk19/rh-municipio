@@ -2,32 +2,32 @@
 
 import type * as z from "zod";
 import { LoginSchema } from "@/schemas/authentication";
-import { signIn, auth } from "@/auth";
-import { DEFAULT_LOGIN_REDIRECT, DEFAULT_ADMIN_REDIRECT, DEFAULT_EMPLOYEE_REDIRECT } from "@/routes";
-import { ROLES_ID_VALUES } from "@/common/constants/Roles";
+import { signIn } from "@/auth";
+import { login as loginService } from "@/services/authentication";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validateFields = LoginSchema.safeParse(values);
   if (!validateFields.success) {
     return { error: "Campos invalidos!" };
   }
+
   const { username, password } = validateFields.data;
+
+  const authResponse = await loginService(validateFields.data);
+
+  if (!authResponse?.success) {
+    return { error: authResponse?.message || "Credenciales incorrectas!" };
+  }
+
   try {
-    const result = await signIn("credentials", {
+    await signIn("credentials", {
       username,
       password,
       redirect: false,
     });
 
-    if (result?.error) {
-      return { error: "Credenciales incorrectas!" };
-    }
-
     return { success: "Login exitoso!" };
-  } catch (error) {
-    console.log(error);
-    throw error;
+  } catch (error: any) {
+    return { error: "Error al iniciar sesión" };
   }
-
-  return { success: "Login exitoso!" };
 };

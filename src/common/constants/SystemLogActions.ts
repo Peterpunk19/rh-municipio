@@ -1,5 +1,7 @@
 export const SYSTEM_LOG_ACTIONS = {
   PASSWORD_RESET: "PASSWORD_RESET",
+  ACTIVATE_USER: "ACTIVATE_USER",
+  DEACTIVATE_USER: "DEACTIVATE_USER",
 } as const;
 
 export type SystemLogAction = (typeof SYSTEM_LOG_ACTIONS)[keyof typeof SYSTEM_LOG_ACTIONS];
