@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         CatalogsService.getAttendance(),
         CatalogsService.getCategory(),
         CatalogsService.getEmployeeTypes(),
-        CatalogsService.getDirecciones(1),
+        CatalogsService.getDirecciones(),
       ]);
 
     const randomLocation = getRandomElement(catalogLocation);

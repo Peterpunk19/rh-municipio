@@ -63,9 +63,11 @@ export const buildWhereClause = async (
         const pathParts = whereKey.path.split(".");
         let current = whereClause;
 
+        const value = whereKey.transform ? whereKey.transform(filters[filterKey]) : filters[filterKey];
+
         pathParts.forEach((part: string, index: number) => {
           if (index === pathParts.length - 1) {
-            current[whereKey.field || part] = filters[filterKey];
+            current[whereKey.field || part] = value;
           } else {
             current[part] = current[part] || {};
             current = current[part];

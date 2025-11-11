@@ -154,6 +154,97 @@ const salariesConfig: EntityConfig = {
   showSearchBar: true,
 };
 
+const employeeTypeConfig: EntityConfig = {
+  name: "employee-type",
+  initialSortBy: "id",
+  title: "Tipos de Empleado",
+  showSearchBar: false,
+};
+
+const categoryConfig: EntityConfig = {
+  name: "category",
+  initialSortBy: "id",
+  title: "Categorías",
+  showSearchBar: false,
+};
+
+const holidayConfig: EntityConfig = {
+  name: "holiday",
+  initialSortBy: "date",
+  title: "Días Festivos",
+  showSearchBar: false,
+};
+
+const incidentConfig: EntityConfig = {
+  name: "incident",
+  initialSortBy: "id",
+  title: "Tipos de Incidencias",
+  showSearchBar: false,
+};
+
+const locationConfig: EntityConfig = {
+  name: "location",
+  initialSortBy: "id",
+  title: "Ubicaciones",
+  showSearchBar: false,
+};
+
+const maritalStatusConfig: EntityConfig = {
+  name: "marital-status",
+  initialSortBy: "id",
+  title: "Estado Civil",
+  showSearchBar: false,
+};
+
+const schoolingConfig: EntityConfig = {
+  name: "schooling",
+  initialSortBy: "id",
+  title: "Escolaridad",
+  showSearchBar: false,
+};
+
+const occupationConfig: EntityConfig = {
+  name: "occupation",
+  initialSortBy: "id",
+  title: "Ocupaciones",
+  showSearchBar: false,
+};
+
+const professionConfig: EntityConfig = {
+  name: "profession",
+  initialSortBy: "id",
+  title: "Profesiones",
+  showSearchBar: false,
+};
+
+const requestConfig: EntityConfig = {
+  name: "request",
+  initialSortBy: "id",
+  title: "Tipos de Solicitud",
+  showSearchBar: false,
+};
+
+const secretariaConfig: EntityConfig = {
+  name: "secretaria",
+  initialSortBy: "id",
+  title: "Secretarías",
+  showSearchBar: false,
+};
+
+const direccionConfig: EntityConfig = {
+  name: "direccion",
+  initialSortBy: "id",
+  title: "Direcciones",
+  showSearchBar: false,
+};
+
+const tradeUnionConfig: EntityConfig = {
+  name: "trade-union",
+  initialSortBy: "id",
+  title: "Sindicatos",
+  showSearchBar: false,
+};
+
 export const filtersSlice = createFiltersSlice([
   employeeConfig,
   userConfig,
@@ -165,6 +256,19 @@ export const filtersSlice = createFiltersSlice([
   salariesConfig,
   requestsRolesPermissionsConfig,
   employeesPayrollConfig,
+  employeeTypeConfig,
+  categoryConfig,
+  holidayConfig,
+  incidentConfig,
+  locationConfig,
+  maritalStatusConfig,
+  schoolingConfig,
+  occupationConfig,
+  professionConfig,
+  requestConfig,
+  secretariaConfig,
+  direccionConfig,
+  tradeUnionConfig,
 ]);
 
 export const { updateFilter, updateSearch, sortBy, resetFilters, updateFilterOpen, updateConfigFilters } =

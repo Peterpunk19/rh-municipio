@@ -167,6 +167,14 @@ const modules = [
     icon: "IconPoint",
     parent_id: null,
   },
+  {
+    id: 22,
+    name: "reference_catalogs",
+    display_name: "Cátalogos del sistema",
+    route: "/admin/reference/catalogs",
+    icon: "IconPoint",
+    parent_id: 16,
+  },
 ];
 
 module.exports = modules;

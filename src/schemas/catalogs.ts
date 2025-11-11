@@ -1,5 +1,37 @@
 import { z } from "zod";
-import { DirectorSchema } from "./director";
+
+const BaseCatalogFilterSchema = z.object({
+  page: z.number().nullable(),
+  limit: z.number().nullable(),
+  search: z.string().nullable(),
+  active: z.preprocess((val) => {
+    if (typeof val === "string" || val instanceof String) {
+      const stringValue = val.toString().toLowerCase();
+      if (stringValue === "true") return true;
+      if (stringValue === "false") return false;
+      return undefined;
+    }
+    return val;
+  }, z.boolean().optional().nullable()),
+});
+const EmployeeTypeFilterSchema = BaseCatalogFilterSchema;
+const GenderFilterSchema = BaseCatalogFilterSchema;
+const DireccionFilterSchema = BaseCatalogFilterSchema.extend({
+  secretaria_id: z.number().nullable().optional(),
+});
+const SecretariaFilterSchema = BaseCatalogFilterSchema;
+const CategoryFilterSchema = BaseCatalogFilterSchema;
+const HolidayFilterSchema = BaseCatalogFilterSchema.extend({
+  year: z.number().nullable(),
+});
+const IncidentFilterSchema = BaseCatalogFilterSchema;
+const LocationFilterSchema = BaseCatalogFilterSchema;
+const OccupationFilterSchema = BaseCatalogFilterSchema;
+const ProfessionFilterSchema = BaseCatalogFilterSchema;
+const RequestsTypeFilterSchema = BaseCatalogFilterSchema;
+const TradeUnionFilterSchema = BaseCatalogFilterSchema;
+const MaritalStatusFilterSchema = BaseCatalogFilterSchema;
+const SchoolingFilterSchema = BaseCatalogFilterSchema;
 
 const EmployeeTypeSchema = z.object({
   id: z.number().int().positive(),
@@ -118,15 +150,29 @@ const AttendanceSchema = z.object({
 export {
   EmployeeTypeSchema,
   GenderSchema,
+  GenderFilterSchema,
   StatusEmployeeSchema,
   DepartamentoSchema,
   PayrollSchema,
   DireccionSchema,
+  DireccionFilterSchema,
   SecretariaSchema,
   CategorySchema,
   IncidentStatusSchema,
   IncidentsSchema,
+  IncidentFilterSchema,
   LocationSchema,
+  LocationFilterSchema,
   RequestStatusSchema,
   AttendanceSchema,
+  EmployeeTypeFilterSchema,
+  CategoryFilterSchema,
+  HolidayFilterSchema,
+  OccupationFilterSchema,
+  ProfessionFilterSchema,
+  RequestsTypeFilterSchema,
+  SecretariaFilterSchema,
+  TradeUnionFilterSchema,
+  MaritalStatusFilterSchema,
+  SchoolingFilterSchema,
 };

@@ -23,6 +23,7 @@ import RequestsRolesPermissionsListSlice from "@/store/reference/requests-roles-
 import IncidentsRulesListSlice from "@/store/reference/incidents-rules/ListSlice";
 import SalariesListSlice from "@/store/reference/salaries/ListSlice";
 import employeeIncidentReducer from "@/store/slices/employeeIncidentSlice";
+import CatalogsListSlice from "@/store/reference/catalogs/CatalogsSlice";
 
 const persistConfig = {
   key: "root",
@@ -52,6 +53,7 @@ export const store = configureStore({
     requestsRolesPermissions: RequestsRolesPermissionsListSlice,
     incidentsRules: IncidentsRulesListSlice,
     salaries: SalariesListSlice,
+    catalogsList: CatalogsListSlice,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),

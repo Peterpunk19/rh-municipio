@@ -15,9 +15,17 @@ type Props = {
   codeModel?: JSX.Element | JSX.Element[];
   children: JSX.Element;
   showSearchBar?: boolean;
+  hasFilters?: boolean;
 };
 
-const ParentCard = ({ children, footer, codeModel, entity, showSearchBar: showSearchBarProp }: Props) => {
+const ParentCard = ({
+  children,
+  footer,
+  codeModel,
+  entity,
+  showSearchBar: showSearchBarProp,
+  hasFilters = true,
+}: Props) => {
   const dispatch = useDispatch();
   const { filterOpen, showSearchBar } = useSelector(
     (state: RootState) => state.filters[entity] || { filterOpen: false, showSearchBar: true },
@@ -64,32 +72,36 @@ const ParentCard = ({ children, footer, codeModel, entity, showSearchBar: showSe
         elevation={customizer.isCardShadow ? 9 : 0}
         variant={!customizer.isCardShadow ? "outlined" : undefined}
       >
-        <CardHeader
-          sx={{
-            pl: 3,
-            pt: 1.5,
-            pb: 1.5,
-          }}
-          title="Filtros"
-          slotProps={{
-            title: {
-              sx: { fontSize: "1.5rem", fontWeight: "bold" },
-            },
-          }}
-          action={
-            <Tooltip title="Lista de filtros">
-              <IconButton
-                onClick={handleFilterClick}
-                sx={{
-                  color: filterOpen ? "primary.main" : "text.secondary",
-                }}
-              >
-                <IconFilter size="1.2rem" />
-              </IconButton>
-            </Tooltip>
-          }
-        />
-        <Divider />
+        {hasFilters && (
+          <>
+            <CardHeader
+              sx={{
+                pl: 3,
+                pt: 1.5,
+                pb: 1.5,
+              }}
+              title="Filtros"
+              slotProps={{
+                title: {
+                  sx: { fontSize: "1.5rem", fontWeight: "bold" },
+                },
+              }}
+              action={
+                <Tooltip title="Lista de filtros">
+                  <IconButton
+                    onClick={handleFilterClick}
+                    sx={{
+                      color: filterOpen ? "primary.main" : "text.secondary",
+                    }}
+                  >
+                    <IconFilter size="1.2rem" />
+                  </IconButton>
+                </Tooltip>
+              }
+            />
+            <Divider />
+          </>
+        )}
 
         <CardContent>{children}</CardContent>
         {footer ? (
