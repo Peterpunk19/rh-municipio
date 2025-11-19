@@ -94,7 +94,8 @@ const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
 
           <Typography variant="h6">Vigencia de Derechos</Typography>
           <Typography>
-            <strong>Estado:</strong> <b style={{ color: "green" }}>{employeeData?.vigencia?.estado ?? "No disponible"}</b>
+            <strong>Estado:</strong>{" "}
+            <b style={{ color: "green" }}>{employeeData?.vigencia?.estado ?? "No disponible"}</b>
           </Typography>
           <Typography>
             <strong>Inicio:</strong> {formatDate(employeeData?.employee_hiring[0]?.start_job_date) || ""}

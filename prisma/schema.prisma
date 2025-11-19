@@ -93,6 +93,10 @@ model Employee {
   leaders                              AdministrativeOrganizationLeaders[]
   employee_ascriptions                 EmployeeAscriptions[]
   employee_attendance                  EmployeeAttendance[]
+
+  job_schedule_calendar JobScheduleCalendar[]
+
+  JobScheduleCalendar JobScheduleCalendar[] @relation("createdByEmployee")
 }
 
 model EmployeeAddress {
@@ -487,6 +491,25 @@ model JobScheduleEmployee {
   end_hour      Hour      @relation("EndHour", fields: [end_hour_id], references: [id])
 }
 
+model JobScheduleCalendar {
+  id                 Int                 @id @default(autoincrement())
+  employee_id        Int
+  date               DateTime
+  check_in        DateTime
+  check_out       DateTime
+  start_hour_id Int
+  end_hour_id   Int
+  start_hour    Hour      @relation("StartHour", fields: [start_hour_id], references: [id])
+  end_hour      Hour      @relation("EndHour", fields: [end_hour_id], references: [id])
+  employee           Employee            @relation(fields: [employee_id], references: [id])
+  created_by_id       Int
+  created_by          Employee        @relation("createdByEmployee", fields: [created_by_id], references: [id])
+  active        Boolean   @default(true)
+  created_at    DateTime? @default(now())
+
+  @@index([employee_id, date, active])
+}
+
 model Day {
   id                              Int                       @id @default(autoincrement())
   name                            String                    @unique
@@ -507,6 +530,8 @@ model Hour {
   job_schedule_employees_end      JobScheduleEmployee[]     @relation("EndHour")
   employee_request_start_schedule EmployeeRequestSchedule[] @relation("StartHour")
   employee_request_end_schedule   EmployeeRequestSchedule[] @relation("EndHour")
+  job_schedule_calendar_start JobScheduleCalendar[] @relation("StartHour")
+  job_schedule_calendar_end JobScheduleCalendar[] @relation("EndHour")
 }
 
 model Role {

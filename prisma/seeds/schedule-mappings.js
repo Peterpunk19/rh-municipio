@@ -69,18 +69,6 @@ const scheduleMappings = {
       end_day: "holidays",
     },
   ],
-  Intercalados: [
-    {
-      start_day: "intercalated",
-      end_day: "intercalated",
-    },
-  ],
-  "Intercalado Nocturno": [
-    {
-      start_day: "intercalated",
-      end_day: "intercalated",
-    },
-  ],
 };
 
 module.exports = { scheduleMappings };

@@ -22,4 +22,5 @@ export const validationMessages = {
   invalidDateRangeGreaterThan: (to: string, from: string) => `${to} debe ser mayor a ${from} `,
   duplicated: (field: string) => `${field} ya existe.`,
   invalid: (field: string) => `${field} es inválido`,
+  returnMessage: (field: string) => `${field}`,
 };

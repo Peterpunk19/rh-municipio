@@ -7,6 +7,7 @@ export const HttpMessages = {
     createdSuccess: "Empleado creado correctamente",
     notFound: "No se encontraron empleados con los filtros proporcionados",
     idNotFound: "Empleado no encontrado",
+    idsNotFound: "Empleados no encontrados",
     getSuccess: "Empleados encontrados correctamente",
     invalidEmployeeType: "No fue encontrado el tipo de empleado.",
     notFoundById: "No se encontró empleado con el ID proporcionado",
@@ -204,5 +205,8 @@ export const HttpMessages = {
     databaseLegacyUrlNotConfigured:
       "Error de migración: DATABASE_LEGACY_URL no está configurada en las variables de entorno",
     databaseConnectionFailed: "Error de migración: No se pudo conectar a la base de datos",
+  },
+  jobScheduleCalendar: {
+    notFound: "No se encontraron empleados con los filtros proporcionados",
   },
 };
