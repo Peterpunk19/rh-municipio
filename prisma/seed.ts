@@ -378,12 +378,17 @@ async function main() {
           }
         }
 
+        const attendanceType =
+          schedule.jornada === "Intercalados" || schedule.jornada === "Intercalado Nocturno"
+            ? 6
+            : Number(schedule.attendanceId);
+
         if (schedule.attendanceId && schedule.attendanceId !== "" && schedule.attendanceId !== "0") {
           try {
             await prisma.employeeAttendanceType.create({
               data: {
                 employee: { connect: { id: createEmployee.id } },
-                attendance: { connect: { id: Number(schedule.attendanceId) } },
+                attendance: { connect: { id: attendanceType } },
                 active: true,
                 created_by: { connect: { id: 1 } },
                 created_at: new Date(),
@@ -395,6 +400,7 @@ async function main() {
           }
 
           if (
+            attendanceType !== 6 &&
             schedule.jornada &&
             schedule.jornada.trim() !== "" &&
             schedule.checkin &&

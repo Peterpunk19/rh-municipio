@@ -6,7 +6,6 @@ const day = [
   { id: 5, name: "friday", display_name: "Viernes" },
   { id: 6, name: "saturday", display_name: "Sábado" },
   { id: 7, name: "sunday", display_name: "Domingo" },
-  { id: 8, name: "intercalated", display_name: "Intercalados" },
   { id: 9, name: "holidays", display_name: "Dias festivos" },
 ];
 module.exports = day;

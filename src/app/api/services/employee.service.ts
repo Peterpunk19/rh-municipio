@@ -960,4 +960,37 @@ export const EmployeeService = {
 
     return { allowed: true, direccionId: match.direccion_id };
   },
+
+  async getEmployeesWithAttendanceType(employeesId: number[]): Promise<
+    {
+      id: number | string;
+      employee_attendance_type: any;
+    }[]
+  > {
+    if (!Array.isArray(employeesId) || employeesId.length === 0) {
+      return [];
+    }
+
+    return await prisma.employee.findMany({
+      where: {
+        id: { in: employeesId },
+      },
+      select: {
+        id: true,
+        employee_attendance_type: {
+          select: {
+            attendance_id: true,
+            active: true,
+            attendance: {
+              select: {
+                id: true,
+                name: true,
+                display_name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  },
 };
