@@ -1,18 +1,11 @@
-import { handleHttpResponse } from "@/common/response/handler";
-import { HttpResponse } from "@/common/response/model";
-import { HttpMessages } from "@/common/response/messages";
 import { CatalogsService } from "@/app/api/services/catalogs.service";
+import { TradeUnionFilterSchema } from "@/schemas/catalogs";
+import { handleCatalogRequest } from "@/app/api/catalogs/helpers/handleCatalogRequest";
 
-export async function GET() {
-  try {
-    const data = await CatalogsService.getTradeUnion();
-
-    const response = HttpResponse.success(HttpMessages.catalog.success, data);
-
-    return handleHttpResponse(response);
-  } catch (error: any) {
-    const response = HttpResponse.internalServerError(HttpMessages.error.internalServerError, { error: error.message });
-
-    return handleHttpResponse(response);
-  }
+export async function GET(request: Request) {
+  return handleCatalogRequest({
+    request,
+    filterSchema: TradeUnionFilterSchema,
+    serviceMethod: CatalogsService.getTradeUnion,
+  });
 }

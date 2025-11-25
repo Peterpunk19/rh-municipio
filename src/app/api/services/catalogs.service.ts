@@ -1,48 +1,62 @@
 import { prisma } from "@/lib/prisma";
+import { ICatalogFilters } from "@/interfaces/Catalogs";
+import { executeCatalog } from "./helpers/catalogServicesHelper";
 
 export const CatalogsService = {
-  async getGender() {
-    return prisma.gender.findMany();
+  async getGender(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.gender,
+      filters,
+    });
   },
 
-  async getCategory() {
-    return prisma.category.findMany({
-      orderBy: {
-        display_name: "asc",
+  async getCategory(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.category,
+      filters,
+    });
+  },
+
+  async getSecretarias(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.secretaria,
+      filters,
+    });
+  },
+
+  async getDirecciones(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.direccion,
+      filters,
+      filterMappings: {
+        secretaria_id: "secretaria_id",
+        active: "active",
+      },
+      select: {
+        id: true,
+        display_name: true,
+        active: true,
+        secretaria: {
+          select: {
+            id: true,
+            display_name: true,
+          },
+        },
       },
     });
   },
 
-  async getSecretarias() {
-    return prisma.secretaria.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
+  async getEmployeeTypes(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.employeeType,
+      filters,
     });
   },
 
-  async getDirecciones(secretariaId: number) {
-    return prisma.direccion.findMany({
-      where: { secretaria_id: secretariaId },
-      orderBy: {
-        display_name: "asc",
-      },
-    });
-  },
-
-  async getEmployeeTypes() {
-    return prisma.employeeType.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
-    });
-  },
-
-  async getLocations() {
-    return prisma.location.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
+  async getLocations(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.location,
+      filters,
     });
   },
 
@@ -71,35 +85,31 @@ export const CatalogsService = {
     });
   },
 
-  async getMaritalStatus() {
-    return prisma.maritalStatus.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
+  async getMaritalStatus(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.maritalStatus,
+      filters,
     });
   },
 
-  async getProfession() {
-    return prisma.profession.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
+  async getProfession(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.profession,
+      filters,
     });
   },
 
-  async getSchooling() {
-    return prisma.schooling.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
+  async getSchooling(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.schooling,
+      filters,
     });
   },
 
-  async getOccupation() {
-    return prisma.occupation.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
+  async getOccupation(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.occupation,
+      filters,
     });
   },
 
@@ -111,11 +121,10 @@ export const CatalogsService = {
     });
   },
 
-  async getTradeUnion() {
-    return prisma.tradeUnion.findMany({
-      orderBy: {
-        display_name: "asc",
-      },
+  async getTradeUnion(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.tradeUnion,
+      filters,
     });
   },
 
@@ -137,9 +146,10 @@ export const CatalogsService = {
     });
   },
 
-  async getIncidents() {
-    return prisma.incident.findMany({
-      orderBy: { display_name: "asc" },
+  async getIncidents(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.incident,
+      filters,
     });
   },
 
@@ -309,11 +319,31 @@ WHERE parent.active = 1 ORDER BY parent.id`;
     });
   },
 
-  async getRequestsTypes() {
-    return prisma.request.findMany({
-      orderBy: {
-        display_name: "asc",
+  async getRequestsTypes(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.request,
+      filters,
+    });
+  },
+
+  async getHolydays(filters?: ICatalogFilters) {
+    return executeCatalog({
+      model: prisma.holiday,
+      filters,
+      filterMappings: {
+        year: {
+          path: "holiday_date",
+          transform: (year: number | string) => {
+            const yearNumber = Number(year);
+            return {
+              gte: new Date(`${yearNumber}-01-01T00:00:00.000Z`),
+              lte: new Date(`${yearNumber}-12-31T23:59:59.999Z`),
+            };
+          },
+        },
+        active: "active",
       },
+      orderBy: { holiday_date: "asc" },
     });
   },
 

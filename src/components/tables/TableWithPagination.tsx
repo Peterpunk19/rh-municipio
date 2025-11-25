@@ -30,7 +30,7 @@ import { formatDate, getMonthName } from "@/utils/formatter";
 import { RowDetail } from "@/components/tables/RowDetail";
 import { RowSwitch } from "@/components/tables/RowSwitch";
 import { Chip } from "@mui/material";
-import {generateUniqueKey} from "@/utils";
+import { generateUniqueKey } from "@/utils";
 
 interface TableItemBase {
   id: number;
@@ -209,12 +209,7 @@ const TableWithPagination = <T extends TableItemBase>({
 
       case "statusEmployee":
         return (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            sx={{ width: "100%" }}
-          >
+          <Box display="flex" justifyContent="center" alignItems="center" sx={{ width: "100%" }}>
             <Box
               sx={{
                 backgroundColor:
@@ -281,9 +276,11 @@ const TableWithPagination = <T extends TableItemBase>({
     }
   };
 
+  const hasFilters = filters.length > 0;
+
   return (
     <Box>
-      <ParentCard codeModel={createLink} entity={entity} showSearchBar={showSearchBar}>
+      <ParentCard codeModel={createLink} entity={entity} showSearchBar={showSearchBar} hasFilters={hasFilters}>
         <EnhancedTableToolbar
           filters={filters.map((filter) => ({
             key: filter.key,

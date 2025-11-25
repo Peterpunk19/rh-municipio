@@ -1,11 +1,12 @@
 import { CatalogsService } from "@/app/api/services/catalogs.service";
-import { OccupationFilterSchema } from "@/schemas/catalogs";
+import { HolidayFilterSchema } from "@/schemas/catalogs";
 import { handleCatalogRequest } from "@/app/api/catalogs/helpers/handleCatalogRequest";
 
 export async function GET(request: Request) {
   return handleCatalogRequest({
     request,
-    filterSchema: OccupationFilterSchema,
-    serviceMethod: CatalogsService.getOccupation,
+    filterSchema: HolidayFilterSchema,
+    serviceMethod: CatalogsService.getHolydays,
+    additionalParams: { year: null },
   });
 }

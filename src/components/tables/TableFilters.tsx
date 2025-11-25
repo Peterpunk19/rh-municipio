@@ -209,7 +209,7 @@ const TableFilters = (props: EnhancedTableToolbarProps) => {
     }
   };
 
-  return filterOpen ? (
+  return filterOpen && filters.length > 0 ? (
     <Box
       sx={{
         pb: 2,
