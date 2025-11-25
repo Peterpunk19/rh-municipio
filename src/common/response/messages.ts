@@ -198,6 +198,10 @@ export const HttpMessages = {
   salaries: {
     notFound: "No se encontraron salarios con los filtros proporcionados",
     getSuccess: "Salarios encontrados correctamente",
+    updateSuccess: "Salarios actualizados correctamente",
+  },
+  configYears: {
+    notFound: "No se encontraron años de configuración con los filtros proporcionados",
   },
   migration: {
     enlaceUsersImportSuccess: "Usuarios importados correctamente",

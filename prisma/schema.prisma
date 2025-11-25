@@ -809,13 +809,25 @@ model RequestsRolesPermissions {
   active      Boolean @default(true)
 }
 
+model ConfigYear {
+  id                    Int                    @id @default(autoincrement())
+  year                  Int                    @unique
+  display_name          String?
+  active                Boolean                @default(false)
+  created_at            DateTime               @default(now())
+  updated_at            DateTime               @updatedAt
+  categoryEmployeeTypes CategoryEmployeeType[]
+}
+
 model CategoryEmployeeType {
   id               Int          @id @default(autoincrement())
   category_id      Int
   employee_type_id Int
   category         Category     @relation(fields: [category_id], references: [id])
   employee_type    EmployeeType @relation(fields: [employee_type_id], references: [id])
-  salary           Decimal      @default(0)
+  salary           Decimal?     @default(0)
+  config_year_id   Int?
+  config_year      ConfigYear?  @relation(fields: [config_year_id], references: [id])
   active           Boolean      @default(true)
   created_at       DateTime     @default(now())
   updated_at       DateTime     @updatedAt
