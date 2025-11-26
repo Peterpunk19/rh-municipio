@@ -1,0 +1,104 @@
+{
+  "title": "Ver incidencia y cambiar estatus",
+  "introduction": "Guía para visualizar los detalles completos de una incidencia, revisar su historial y actualizar el estatus desde la interfaz del sistema.",
+  "sections": [
+    {
+      "type": "step-group",
+      "content": {
+        "title": "Acceder al módulo de incidencias",
+        "steps": [
+          {
+            "text": "Desde el menú desplegable, haz clic en la sección 'Incidencias'.",
+            "image": {
+              "src": "028-incident-menu.png",
+              "alt": "Menú desplegable con la opción Incidencias",
+              "caption": "Menú desplegable con la opción Incidencias"
+            }
+          },
+          {
+            "text": "Selecciona la opción 'Ver incidencias'.",
+            "image": {
+              "src": "028-incident-list.png",
+              "alt": "Ver incidencias",
+              "caption": "Vista general del listado de incidencias"
+            }
+          },
+          {
+            "text": "Busca la incidencia que deseas consultar utilizando los filtros o el buscador superior.",
+            "image": {
+              "src": "028-incident-filters.png",
+              "alt": "Filtros de búsqueda de incidencias",
+              "caption": "Filtros de búsqueda de incidencias"
+            }
+          },
+          {
+            "text": "Haz clic sobre los 3 puntos y después sobre el botón 'Ver' para abrir los detalles de la incidencia.",
+            "image": {
+              "src": "028-incident-actions.png",
+              "alt": "Acciones de la incidencia",
+              "caption": "Acciones de la incidencia, botón 'Ver'"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "step-group",
+      "content": {
+        "title": "Visualizar detalles de la incidencia",
+        "steps": [
+          {
+            "text": "En la pantalla de detalle podrás ver información general de la incidencia, como el tipo, descripción, fechas y datos del solicitante.",
+            "image": {
+              "src": "028-incident-details.png",
+              "alt": "Vista detallada de la incidencia",
+              "caption": "Detalles principales de la incidencia"
+            }
+          },
+          {
+            "text": "Desplázate hacia abajo para consultar el historial de estatus."
+          },
+          {
+            "text": "Revisa los días a justificar y cualquier actualización previa registrada por los responsables."
+          }
+        ]
+      }
+    },
+    {
+      "type": "step-group",
+      "content": {
+        "title": "Cambiar el estatus de la incidencia",
+        "steps": [
+          {
+            "text": "Dentro de la vista de detalle, ubica en la parte superior el selector de estatus.",
+            "image": {
+              "src": "028-incident-status.png",
+              "alt": "Selector de cambio de estatus",
+              "caption": "Opciones para cambiar estatus"
+            }
+          },
+          {
+            "text": "Selecciona el nuevo estatus según corresponda."
+          },
+          {
+            "text": "En el cuadro de diálogo confirma el cambio de estatus."
+          },
+          {
+            "text": "El sistema confirmará la actualización y reflejará la información en el historial.",
+            "image": {
+              "src": "028-incident-status-updated.png",
+              "alt": "Estatus actualizado",
+              "caption": "Alerta de cambio de estatus"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "video",
+      "content": {
+        "src": "028.mp4"
+      }
+    }
+  ]
+}

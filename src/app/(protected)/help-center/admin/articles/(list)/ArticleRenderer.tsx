@@ -34,14 +34,29 @@ interface ArticleRendererProps {
 }
 
 const loginImage = "/images/help-center/login.png";
+const incidentMenu = "/images/help-center/028-incident-menu.png";
+const incidentList = "/images/help-center/028-incident-list.png";
+const incidentFilters = "/images/help-center/028-incident-filters.png";
+const incidentActions = "/images/help-center/028-incident-actions.png";
+const incidentDetails = "/images/help-center/028-incident-details.png";
+const incidentStatus = "/images/help-center/028-incident-status.png";
+const incidentStatusUpdated = "/images/help-center/028-incident-status-updated.png";
 
 const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps) => {
   const imageMap: Record<string, any> = {
     "login.png": loginImage,
+    "028-incident-menu.png": incidentMenu,
+    "028-incident-list.png": incidentList,
+    "028-incident-filters.png": incidentFilters,
+    "028-incident-actions.png": incidentActions,
+    "028-incident-details.png": incidentDetails,
+    "028-incident-status.png": incidentStatus,
+    "028-incident-status-updated.png": incidentStatusUpdated,
   };
 
   const videoMap: Record<string, any> = {
     "login.mp4": "/videos/login.mp4",
+    "028.mp4": "/videos/028.mp4",
   };
 
   const getVideoPath = (videoSrc: string): string => {
@@ -130,13 +145,16 @@ const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps
                           <Image
                             src={imageMap[step.image.src]}
                             alt={step.image.alt}
+                            width={800}
+                            height={450}
                             style={{
-                              maxWidth: "100%",
+                              width: "100%",
                               height: "auto",
                               border: "1px solid #ddd",
                               borderRadius: "4px",
                             }}
                           />
+
                           {step.image.caption && (
                             <Typography variant="caption" display="block" sx={{ mt: 1 }}>
                               {step.image.caption}
