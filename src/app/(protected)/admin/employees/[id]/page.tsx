@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Grid2 as Grid, Tabs, Tab, Box, CardContent, Divider } from "@mui/material";
+import { Grid2 as Grid, Tabs, Tab, Box, CardContent, Divider, Typography } from "@mui/material";
 import BlankCard from "@/components/shared/BlankCard";
 import {
   IconAlertCircle,
@@ -31,6 +31,7 @@ import EmployeeRequests from "@/app/(protected)/admin/employees-requests/page";
 import { a11yPropsProfile } from "@/common/utils";
 import CustomCalendarAttendance from "@/components/customComponents/CustomCalendarAttendance";
 import EmployeesAttendances from "@/app/(protected)/admin/employees-attendances/EmployeeAttendance";
+import { formatScheduleText } from "@/utils/formatter";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -189,6 +190,23 @@ const Profile = () => {
                 />
               </TabPanel>
               <TabPanel value={value} index={5}>
+                <Grid size={12}>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Horario:
+                  </Typography>
+                </Grid>
+                <Grid size={12} mb={5}>
+                  {employeeData.job_schedule_employee.length ? (
+                    <Typography variant="subtitle1" fontWeight={600} mb={0.5} sx={{ whiteSpace: "pre-line" }}>
+                      {formatScheduleText(employeeData.job_schedule_employee)}
+                    </Typography>
+                  ) : (
+                    <Typography variant="subtitle1" fontWeight={600} color="text.secondary">
+                      No tiene asignado
+                    </Typography>
+                  )}
+                </Grid>
+
                 <CustomCalendarAttendance />
               </TabPanel>
               <TabPanel value={value} index={6}>

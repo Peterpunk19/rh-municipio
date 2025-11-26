@@ -122,6 +122,7 @@ export const EmployeePayrollService = {
             IFNULL(registro_incidencias.vacaciones, 0) AS vacaciones,
             IFNULL(registro_incidencias.comision, 0) AS comision,
             IFNULL(registro_incidencias.retardo, 0) AS retardo,
+            IFNULL(registro_incidencias.retardo_mayor, 0) AS retardo_mayor,
             IFNULL(registro_incidencias.total_retardos, 0) AS total_retardos,
             IFNULL(registro_incidencias.falta, 0) AS falta,
             IFNULL(registro_incidencias.licencia_medica, 0) AS licencia_medica
@@ -152,6 +153,7 @@ export const EmployeePayrollService = {
                 CAST(COUNT(DISTINCT CASE WHEN i.name = 'vacaciones' THEN eid.id END) AS SIGNED) AS vacaciones,
                 CAST(COUNT(DISTINCT CASE WHEN i.name = 'comision' THEN eid.id END) AS SIGNED) AS comision,
                 CAST(COUNT(DISTINCT CASE WHEN i.name = 'retardo' THEN eid.id END) AS SIGNED) AS retardo,
+                CAST(COUNT(DISTINCT CASE WHEN i.name = 'retardo_mayor' THEN eid.id END) AS SIGNED) AS retardo_mayor,
                 CAST(FLOOR(SUM(IF(i.name = 'retardo', 1, 0)) / 3) AS SIGNED) AS total_retardos,
                 CAST(COUNT(DISTINCT CASE WHEN i.name = 'falta' THEN eid.id END) * 2 AS SIGNED) AS falta,
                 CAST(COUNT(DISTINCT CASE WHEN i.name = 'licencia_medica' THEN eid.id END) AS SIGNED) AS licencia_medica

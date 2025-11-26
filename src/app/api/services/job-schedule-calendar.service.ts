@@ -96,7 +96,7 @@ export const JobScheduleCalendarService = {
               start_hour: {
                 select: {
                   id: true,
-                  display_name: true, // "HH:mm"
+                  display_name: true,
                 },
               },
               end_hour: {
@@ -136,7 +136,7 @@ export const JobScheduleCalendarService = {
 
       const getHourFromId = (id: string) => {
         const h = hoursCatalog.find((x) => x.id === Number(id));
-        return h?.display_name; // "HH:mm"
+        return h?.display_name;
       };
 
       const scheduleDates = schedules.map((s) => s.date);
