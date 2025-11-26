@@ -23,4 +23,5 @@ export const validationMessages = {
   duplicated: (field: string) => `${field} ya existe.`,
   invalid: (field: string) => `${field} es inválido`,
   returnMessage: (field: string) => `${field}`,
+  array: `Debe enviar al menos un elemento`,
 };

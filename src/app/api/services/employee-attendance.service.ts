@@ -42,7 +42,8 @@ export const EmployeeAttendanceService = {
     const endOfDay = new Date(dateTime);
     endOfDay.setHours(23, 59, 59, 999);
 
-    return prisma.employeeAttendance.findFirst({
+    // 1️⃣ Buscar entrada del MISMO día
+    const sameDayRecord = await prisma.employeeAttendance.findFirst({
       where: {
         employee_ascriptions: {
           employee: { number_employee: numberEmployee },
@@ -55,6 +56,47 @@ export const EmployeeAttendanceService = {
       },
       orderBy: { check_in: "desc" },
     });
+
+    if (sameDayRecord) {
+      return sameDayRecord;
+    }
+
+    // 2️⃣ Buscar entrada del DÍA ANTERIOR
+    const prevDayStart = new Date(startOfDay);
+    prevDayStart.setDate(prevDayStart.getDate() - 1);
+    prevDayStart.setHours(0, 0, 0, 0);
+
+    const prevDayEnd = new Date(startOfDay);
+    prevDayEnd.setHours(23, 59, 59, 999);
+
+    const previousDayRecord = await prisma.employeeAttendance.findFirst({
+      where: {
+        employee_ascriptions: {
+          employee: { number_employee: numberEmployee },
+        },
+        check_out: null,
+        check_in: {
+          gte: prevDayStart,
+          lte: prevDayEnd,
+        },
+      },
+      orderBy: { check_in: "desc" },
+    });
+
+    if (!previousDayRecord) {
+      return null;
+    }
+
+    // 3️⃣ Validar que la diferencia entre entrada y salida no supere 12 horas
+    const checkInDate = new Date(previousDayRecord.check_in);
+    const diffHours = (dateTime.getTime() - checkInDate.getTime()) / (1000 * 60 * 60);
+
+    if (diffHours <= 12) {
+      return previousDayRecord;
+    }
+
+    // ❌ Si supera 12 horas, NO emparejar
+    return null;
   },
 
   async updateAttendanceCheckIn(attendanceId: number, date: Date, incidentId: number | null) {

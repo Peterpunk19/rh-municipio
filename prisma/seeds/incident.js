@@ -139,5 +139,15 @@ const incident = [
     display_time_on_calendar: false,
     bgColorOnCalendar: "warning.main",
   },
+  {
+    id: 15,
+    name: "retardo_mayor",
+    display_name: "RETARDO MAYOR",
+    type: 1,
+    active: true,
+    display_calendar_dates: true,
+    display_time_on_calendar: true,
+    bgColorOnCalendar: "incident.retardo",
+  },
 ];
 module.exports = incident;

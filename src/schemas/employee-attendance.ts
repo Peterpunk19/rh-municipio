@@ -24,21 +24,25 @@ export const EmployeeAttendancePostSchema = z
   });
 
 export const EmployeeAttendanceItemSchema = z.object({
-  id: z.number({ message: "El campo ID es requerido" }),
+  id: z.number({ message: validationMessages.required("ID") }),
   numberEmployee: z
-    .string({ message: "Número de empleado requerido" })
-    .min(1, { message: "Número de empleado requerido" }),
+    .string({ message: validationMessages.required("Número de empleado") })
+    .min(1, { message: validationMessages.required("Número de empleado") }),
 
-  isEntry: z.number({ message: "El campo isEntry es requerido" }).refine((val) => val === 0 || val === 1, {
+  isEntry: z.number({ message: validationMessages.required("isEntry") }).refine((val) => val === 0 || val === 1, {
     message: "El campo isEntry debe ser 0 (salida) o 1 (entrada)",
   }),
 
-  dateTime: z.string({ message: "Fecha requerida" }).refine((val) => !isNaN(Date.parse(val.replace(" ", "T"))), {
-    message: "Formato de fecha inválido",
-  }),
+  dateTime: z
+    .string({ message: validationMessages.required("Fecha") })
+    .refine((val) => !isNaN(Date.parse(val.replace(" ", "T"))), {
+      message: validationMessages.invalidFormat("fecha"),
+    }),
 });
 
-export const EmployeeAttendanceBulkInsertSchema = z.array(EmployeeAttendanceItemSchema);
+export const EmployeeAttendanceBulkInsertSchema = z.array(EmployeeAttendanceItemSchema, {
+  message: validationMessages.array,
+});
 
 export const EmployeeAttendanceGetFilterSchema = z.object({
   page: z

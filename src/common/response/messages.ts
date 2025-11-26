@@ -47,6 +47,8 @@ export const HttpMessages = {
     notFoundById: "Asistencia no encontrada",
     processed: "Asistencias procesadas",
     foundById: "Asistencia encontrada correctamente",
+    invalidDates: "No hay fechas válidas en el payload",
+    invalidFormatDate: "Formato de fecha inválido",
   },
   employeeHiring: {
     notFound: "No se encontraron datos de contratacion para el empleado",
@@ -59,7 +61,7 @@ export const HttpMessages = {
   },
   employeeAttendanceType: {
     notFound: "No se encontraron datos de tipo de asistencia para el empleado",
-    notValid: "El empleado no se encuentra en RELOJ DIGITAL",
+    notValid: "El empleado no se encuentra en RELOJ DIGITAL o INTERCALADO",
   },
   incidentStatus: {
     idNotFound: "El ID de estatus de incidencia no fue encontrado",

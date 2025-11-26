@@ -32,7 +32,31 @@ export async function POST(request: NextRequest) {
     }
 
     const employeeNumbers = body.map((emp) => String(emp.numberEmployee));
-    const employees = await EmployeeService.getEmployeesForBulkAttendance(employeeNumbers);
+
+    const timestamps = body.map((r) => new Date(r.dateTime)).filter((d) => !isNaN(d.getTime()));
+
+    if (!timestamps.length) {
+      return handleHttpResponse(HttpResponse.failure(HttpMessages.employeeAttendance.invalidDates, {}));
+    }
+
+    const minTime = Math.min(...timestamps.map((d) => d.getTime()));
+    const maxTime = Math.max(...timestamps.map((d) => d.getTime()));
+
+    const minDate = new Date(minTime);
+    const maxDate = new Date(maxTime);
+
+    const from = new Date(minDate);
+    from.setHours(0, 0, 0, 0);
+    from.setDate(from.getDate() - 1);
+
+    const to = new Date(maxDate);
+    to.setHours(23, 59, 59, 999);
+    to.setDate(to.getDate() + 1);
+
+    const employees = await EmployeeService.getEmployeesForBulkAttendance(employeeNumbers, {
+      from,
+      to,
+    });
 
     const createdById = 1;
     const processedRecords: AttendanceResponse[] = [];
@@ -48,14 +72,23 @@ export async function POST(request: NextRequest) {
         const timestamp = new Date(dateTime);
 
         if (isNaN(timestamp.getTime())) {
-          throw new Error("Formato de fecha inválido");
+          throw new Error(HttpMessages.employeeAttendance.invalidFormatDate);
         }
 
         const employee = employees.find((e) => e.number_employee === numberEmployee);
         if (!employee) {
-          throw new Error("Empleado no encontrado");
+          throw new Error(HttpMessages.employee.idNotFound);
         }
 
+        const allowedTypes = ["digital_clock", "intercalated"];
+        const type = employee.employee_attendance_type[0]?.attendance?.name;
+
+        if (!allowedTypes.includes(type)) {
+          responseRecord.status = "error";
+          responseRecord.errorMessage = HttpMessages.employeeAttendanceType.notValid;
+          processedRecords.push(responseRecord);
+          continue;
+        }
         if (!employee.employee_ascriptions.length) {
           responseRecord.status = "error";
           responseRecord.errorMessage = HttpMessages.employeeAscription.notFound;

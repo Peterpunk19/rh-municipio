@@ -590,7 +590,18 @@ export const EmployeeService = {
     };
   },
 
-  async getEmployeesForBulkAttendance(employeeNumbers: any) {
+  async getEmployeesForBulkAttendance(employeeNumbers: string[], dateRange?: { from: Date; to: Date }) {
+    const calendarWhere: any = {
+      active: true,
+    };
+
+    if (dateRange) {
+      calendarWhere.date = {
+        gte: dateRange.from,
+        lte: dateRange.to,
+      };
+    }
+
     return await prisma.employee.findMany({
       where: {
         number_employee: { in: employeeNumbers },
@@ -688,6 +699,23 @@ export const EmployeeService = {
                 name: true,
                 display_name: true,
               },
+            },
+          },
+        },
+        job_schedule_calendar: {
+          where: calendarWhere,
+          select: {
+            id: true,
+            date: true,
+            check_in: true,
+            check_out: true,
+            start_hour_id: true,
+            end_hour_id: true,
+            start_hour: {
+              select: { id: true, name: true, display_name: true },
+            },
+            end_hour: {
+              select: { id: true, name: true, display_name: true },
             },
           },
         },

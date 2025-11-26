@@ -10,6 +10,13 @@ export interface IEmployeeAttendance {
   active: boolean;
 }
 
+export type IEmployeeAttendanceBulkImport = {
+  id: number;
+  numberEmployee: string;
+  isEntry: number;
+  dateTime: string;
+}[];
+
 export interface IEmployeeAttendanceFilters {
   page: number | string;
   limit: number | string;
