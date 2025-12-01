@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
         role_name: user.role.name,
         role_display_name: user.role.display_name,
         menuItems,
+        must_change_password: user.must_change_password ?? false,
       },
       token,
     });

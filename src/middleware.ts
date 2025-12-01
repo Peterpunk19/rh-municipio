@@ -7,6 +7,7 @@ import {
   apiPrefix,
   DEFAULT_ADMIN_REDIRECT,
   DEFAULT_EMPLOYEE_REDIRECT,
+  CHANGE_PASSWORD_ROUTE,
 } from "@/routes";
 
 const ROLE_EMPLOYEE = "empleado";
@@ -57,8 +58,34 @@ export default auth(async (req) => {
 
   if (authRoutes.includes(pathname)) {
     if (isLoggedIn) {
-      const redirectTo = roleId === ROLE_EMPLOYEE ? DEFAULT_EMPLOYEE_REDIRECT : DEFAULT_ADMIN_REDIRECT;
+      if (
+        pathname === "/login" &&
+        req.nextUrl.searchParams.get("message") === "password_changed" &&
+        !req.nextUrl.searchParams.get("session_invalidated")
+      ) {
+        const response = NextResponse.redirect(
+          new URL("/login?message=password_changed&session_invalidated=true", req.url),
+        );
+        response.cookies.delete("next-auth.session-token");
+        response.cookies.delete("__Secure-next-auth.session-token");
+        return response;
+      }
 
+      if (pathname === "/login" && req.nextUrl.searchParams.get("session_invalidated") === "true") {
+        return NextResponse.next();
+      }
+
+      // Si debe cambiar contraseña, permitir acceso a la página de cambio
+      if (pathname === CHANGE_PASSWORD_ROUTE && session?.user?.must_change_password) {
+        return NextResponse.next();
+      }
+      // Si ya está logueado y no debe cambiar contraseña, redirigir al dashboard
+      if (pathname === CHANGE_PASSWORD_ROUTE && !session?.user?.must_change_password) {
+        const redirectTo = role === ROLE_EMPLOYEE ? DEFAULT_EMPLOYEE_REDIRECT : DEFAULT_ADMIN_REDIRECT;
+        return NextResponse.redirect(new URL(redirectTo, req.url));
+      }
+
+      const redirectTo = role === ROLE_EMPLOYEE ? DEFAULT_EMPLOYEE_REDIRECT : DEFAULT_ADMIN_REDIRECT;
       return NextResponse.redirect(new URL(redirectTo, req.url));
     }
 
@@ -69,6 +96,15 @@ export default auth(async (req) => {
      RUTAS PRIVADAS
   ========================= */
 
+  // --- FORZAR CAMBIO DE CONTRASEÑA ---
+  if (isLoggedIn && session?.user?.must_change_password) {
+    // Si debe cambiar contraseña y no está en la página de cambio, redirigir
+    if (pathname !== CHANGE_PASSWORD_ROUTE && !pathname.startsWith(apiPrefix)) {
+      return NextResponse.redirect(new URL(CHANGE_PASSWORD_ROUTE, req.url));
+    }
+  }
+
+  // --- RUTAS PRIVADAS ---
   const isAdminRoute = pathname.startsWith("/admin");
   const isEmployeeRoute = pathname.startsWith("/employee");
 

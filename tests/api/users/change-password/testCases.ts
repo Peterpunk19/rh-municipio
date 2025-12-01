@@ -1,0 +1,105 @@
+import { request } from "./request";
+import { response } from "./response";
+
+export const testCases = [
+  {
+    description: "should successfully change password with valid data",
+    requestData: request.validData,
+    expectedStatus: response.validData.statusCode,
+    expectedResponse: response.validData,
+    isAuthenticated: true,
+    mockChangePasswordResult: { success: true },
+  },
+  {
+    description: "should return error when current password is incorrect",
+    requestData: request.wrongCurrentPassword,
+    expectedStatus: response.wrongCurrentPassword.statusCode,
+    expectedResponse: response.wrongCurrentPassword,
+    isAuthenticated: true,
+    mockChangePasswordResult: {
+      success: false,
+      message: "La contraseña actual es incorrecta",
+    },
+  },
+  {
+    description: "should return error when passwords do not match",
+    requestData: request.passwordsMismatch,
+    expectedStatus: response.passwordsMismatch.statusCode,
+    expectedResponse: response.passwordsMismatch,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when password is too weak",
+    requestData: request.weakPassword,
+    expectedStatus: response.weakPassword.statusCode,
+    expectedResponse: response.weakPassword,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when password has no uppercase letter",
+    requestData: request.noUppercase,
+    expectedStatus: response.noUppercase.statusCode,
+    expectedResponse: response.noUppercase,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when password has no lowercase letter",
+    requestData: request.noLowercase,
+    expectedStatus: response.noLowercase.statusCode,
+    expectedResponse: response.noLowercase,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when password has no number",
+    requestData: request.noNumber,
+    expectedStatus: response.noNumber.statusCode,
+    expectedResponse: response.noNumber,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when password has no symbol",
+    requestData: request.noSymbol,
+    expectedStatus: response.noSymbol.statusCode,
+    expectedResponse: response.noSymbol,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when new password is same as old",
+    requestData: request.sameAsOld,
+    expectedStatus: response.sameAsOld.statusCode,
+    expectedResponse: response.sameAsOld,
+    isAuthenticated: true,
+    mockChangePasswordResult: {
+      success: false,
+      message: "La nueva contraseña debe ser diferente a la contraseña actual",
+    },
+  },
+  {
+    description: "should return error when current password is missing",
+    requestData: request.missingCurrentPassword,
+    expectedStatus: response.missingCurrentPassword.statusCode,
+    expectedResponse: response.missingCurrentPassword,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when new password is missing",
+    requestData: request.missingNewPassword,
+    expectedStatus: response.missingNewPassword.statusCode,
+    expectedResponse: response.missingNewPassword,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when confirm password is missing",
+    requestData: request.missingConfirmPassword,
+    expectedStatus: response.missingConfirmPassword.statusCode,
+    expectedResponse: response.missingConfirmPassword,
+    isAuthenticated: true,
+  },
+  {
+    description: "should return error when user is not authenticated",
+    requestData: request.validData,
+    expectedStatus: response.unauthorized.statusCode,
+    expectedResponse: response.unauthorized,
+    isAuthenticated: false,
+  },
+];

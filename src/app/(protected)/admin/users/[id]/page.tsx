@@ -17,10 +17,11 @@ import BlankCard from "@/components/shared/BlankCard";
 import { StatusCodes } from "http-status-codes";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import PersonalTab from "../(profile)/sections/PersonalTab";
+import SecurityTab from "../(profile)/sections/SecurityTab";
 import UserProfileCard from "../(profile)/sections/UserProfileCard";
 import { redirect, useParams } from "next/navigation";
 import { changeStatusUser, getUserById } from "@/services/user";
-import { IconUserCircle } from "@tabler/icons-react";
+import { IconUserCircle, IconLock } from "@tabler/icons-react";
 import TabPanel from "@/components/shared/tabs/TabPanel";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { logger } from "@/lib/logger";
@@ -151,8 +152,14 @@ const Profile = () => {
                 <Tab
                   iconPosition="start"
                   icon={<IconUserCircle size="22" />}
-                  label="Datos personales"
+                  label="Datos Personales"
                   {...a11yProps(0)}
+                />
+                <Tab
+                  iconPosition="start"
+                  icon={<IconLock size="22" />}
+                  label="Seguridad"
+                  {...a11yProps(1)}
                 />
               </Tabs>
             </Box>
@@ -160,6 +167,9 @@ const Profile = () => {
             <CardContent>
               <TabPanel value={value} index={0}>
                 <PersonalTab userData={userData} />
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                <SecurityTab userData={userData} />
               </TabPanel>
             </CardContent>
           </BlankCard>

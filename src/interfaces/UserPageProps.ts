@@ -1,7 +1,8 @@
 interface User {
   id: number;
   active: boolean;
-  username: boolean;
+  username: string;
+  role_id: number;
   role_display_name: string;
   employee_id: number;
   name: string;

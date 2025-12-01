@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { validateRequest } from "@/common/request/validateRequest";
@@ -6,9 +6,7 @@ import { UserService } from "@/app/api/services/user.service";
 import { HttpMessages } from "@/common/response/messages";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
-import { logger } from "@/lib/logger";
 import { UserResetPasswordSchema } from "@/schemas/user";
-import { SYSTEM_LOG_ACTIONS } from "@/common/constants/SystemLogActions";
 
 interface IResetPasswordRequest {
   userId: number;
@@ -58,13 +56,6 @@ export async function POST(request: NextRequest) {
       return handleHttpResponse(response);
     }
 
-    logger.info("Password reset by administrator", {
-      adminUserId: authResponse.userId,
-      targetUserId: body.userId,
-      timestamp: new Date().toISOString(),
-      action: SYSTEM_LOG_ACTIONS.PASSWORD_RESET,
-    });
-
     const response = HttpResponse.success(HttpMessages.user.resetPasswordSuccess, {
       userId: body.userId,
       username: targetUser.username,
@@ -72,10 +63,6 @@ export async function POST(request: NextRequest) {
     });
     return handleHttpResponse(response);
   } catch (error: any) {
-    logger.error("Error resetting user password", {
-      error: error.message,
-      stack: error.stack,
-    });
 
     const response = HttpResponse.internalServerError("Error interno del servidor al resetear la contraseña", {
       error: error.message,

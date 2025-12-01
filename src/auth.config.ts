@@ -41,6 +41,7 @@ export default {
           role_display_name: response.responseObject.payload.role_display_name.toString(),
           accessToken: response.responseObject.token,
           menuItems: response.responseObject.payload.menuItems,
+          must_change_password: response.responseObject.payload.must_change_password ?? false,
           errorMessage: response?.message,
         };
       },
