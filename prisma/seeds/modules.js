@@ -175,6 +175,14 @@ const modules = [
     icon: "IconPoint",
     parent_id: 16,
   },
+  {
+    id: 23,
+    name: "job_schedule_calendar",
+    display_name: "Horarios intercalados",
+    route: "/admin/job-schedule-calendar",
+    icon: "IconPoint",
+    parent_id: null,
+  },
 ];
 
 module.exports = modules;

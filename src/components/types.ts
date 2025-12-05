@@ -37,4 +37,7 @@ export interface ICustomCalendarProps {
   clearOnMonthChange?: boolean;
   showAttendanceDetails?: boolean;
   employeeId?: string;
+  onDateClick?: (date: string) => void;
+  initialMonth?: number;
+  initialYear?: number;
 }

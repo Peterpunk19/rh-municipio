@@ -5,11 +5,11 @@ import { Grid2 as Grid, Box, Typography, Button, ButtonGroup, DialogActions, Ico
 import { Temporal } from "@js-temporal/polyfill";
 import { toUpper } from "lodash";
 import { IconClockUp, IconClockDown, IconClockCheck, IconEye, IconEyeOff } from "@tabler/icons-react";
-import {getEmployeesAttendances} from "@/services/employees-attendances";
-import {calculateDaysBetweenDates} from "@/common/utils";
-import {IAttendance, IAttendanceCalendar, ICalendarDay, ICustomCalendarProps} from "@/components/types";
-import {formatDate} from "@/utils/formatter";
-import {generateUniqueKey} from "@/utils";
+import { getEmployeesAttendances } from "@/services/employees-attendances";
+import { calculateDaysBetweenDates } from "@/common/utils";
+import { IAttendance, IAttendanceCalendar, ICalendarDay, ICustomCalendarProps } from "@/components/types";
+import { formatDate } from "@/utils/formatter";
+import { generateUniqueKey } from "@/utils";
 
 const CustomCalendar = ({
   onSave,
@@ -19,12 +19,27 @@ const CustomCalendar = ({
   onMonthVisibleChange,
   clearOnMonthChange = false,
   employeeId,
+  onDateClick,
+  initialMonth,
+  initialYear,
 }: ICustomCalendarProps) => {
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const today = Temporal.Now.plainDateISO();
 
-  const [month, setMonth] = useState(Temporal.Now.plainDateISO().month);
-  const [year, setYear] = useState(Temporal.Now.plainDateISO().year);
+  const [month, setMonth] = useState(initialMonth ?? today.month);
+  const [year, setYear] = useState(initialYear ?? today.year);
+
+  useEffect(() => {
+    if (initialMonth !== undefined && initialMonth !== month) {
+      setMonth(initialMonth);
+    }
+  }, [initialMonth]);
+
+  useEffect(() => {
+    if (initialYear !== undefined && initialYear !== year) {
+      setYear(initialYear);
+    }
+  }, [initialYear]);
   const [monthCalendar, setMonthCalendar] = useState<ICalendarDay[]>([]);
   const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
   const [showAttendanceDetails, setShowAttendanceDetails] = useState(false);
@@ -38,22 +53,22 @@ const CustomCalendar = ({
     if (!attendanceData || attendanceData.length === 0) return map;
 
     for (const record of attendanceData) {
-      const dateString = record.check_in?.substring(0, 10) ||
-        record.check_out?.substring(0, 10);
+      const dateString = record.check_in?.substring(0, 10) || record.check_out?.substring(0, 10);
 
       if (!dateString) {
         continue;
       }
 
-      const incidents = record.employee_attendance_incident?.map((ai: any) => ({
-        id: ai.employee_incident.id,
-        type: ai.employee_incident.incident.display_name,
-        name: ai.employee_incident.incident.name,
-        displayTimeOnCalendar: ai.employee_incident.incident.display_time_on_calendar,
-        bgColorOnCalendar: ai.employee_incident.incident.bgColorOnCalendar,
-        colorOnCalendar: ai.employee_incident.incident.colorOnCalendar,
-        status: ai.employee_incident.incident_status.display_name,
-      })) || [];
+      const incidents =
+        record.employee_attendance_incident?.map((ai: any) => ({
+          id: ai.employee_incident.id,
+          type: ai.employee_incident.incident.display_name,
+          name: ai.employee_incident.incident.name,
+          displayTimeOnCalendar: ai.employee_incident.incident.display_time_on_calendar,
+          bgColorOnCalendar: ai.employee_incident.incident.bgColorOnCalendar,
+          colorOnCalendar: ai.employee_incident.incident.colorOnCalendar,
+          status: ai.employee_incident.incident_status.display_name,
+        })) || [];
 
       const attendance: IAttendanceCalendar = {
         id: record.id,
@@ -106,6 +121,7 @@ const CustomCalendar = ({
 
   const handleDateClick = useCallback(
     (dateStr: string) => {
+      onDateClick?.(dateStr);
       if (selectedDates.has(dateStr)) {
         setSelectedDates((prev) => {
           const next = new Set(prev);
@@ -158,7 +174,7 @@ const CustomCalendar = ({
           employeeId: employeeId,
           checkIn: firstDay.toString(),
           checkOut: lastDay.toString(),
-          limit: calculateDaysBetweenDates(firstDay.toString(), lastDay.toString())
+          limit: calculateDaysBetweenDates(firstDay.toString(), lastDay.toString()),
         });
         setAttendanceData(data.responseObject.data);
       } catch (error) {
@@ -168,24 +184,23 @@ const CustomCalendar = ({
   }, [showAttendanceDetails, year, month]);
 
   useEffect(() => {
-    let targetYear = year;
-    let targetMonth = month;
-    if (daysSelected && daysSelected.length > 0) {
-      const first = Temporal.PlainDate.from(daysSelected[0]);
-      targetYear = first.year;
-      targetMonth = first.month;
-    } else {
-      const today = Temporal.Now.plainDateISO();
-      targetYear = today.year;
-      targetMonth = today.month;
-    }
-    setYear(targetYear);
-    setMonth(targetMonth);
-    onMonthVisibleChange?.(targetYear, targetMonth);
-    if (clearOnMonthChange) {
-      selectionsByMonthRef.current.set(monthKey(targetYear, targetMonth), new Set(daysSelected));
-    }
+    setSelectedDates(new Set(daysSelected));
   }, [daysSelected]);
+
+  useEffect(() => {
+    if (initialYear !== undefined && initialYear !== year) {
+      setYear(initialYear);
+    }
+    if (initialMonth !== undefined && initialMonth !== month) {
+      setMonth(initialMonth);
+    }
+  }, [initialYear, initialMonth]);
+
+  useEffect(() => {
+    if ((initialYear !== year || initialMonth !== month) && initialYear !== undefined && initialMonth !== undefined) {
+      onMonthVisibleChange?.(year, month);
+    }
+  }, [year, month]);
 
   useEffect(() => {
     const fiveWeeks = 5 * 7;
@@ -208,21 +223,31 @@ const CustomCalendar = ({
     setMonthCalendar(calendar);
   }, [year, month]);
 
+  const prevDaysSelectedRef = useRef(daysSelected);
+
   useEffect(() => {
-    setSelectedDates(new Set(daysSelected));
-    if (!clearOnMonthChange) return;
-    const grouped = new Map<string, Set<string>>();
-    for (const ds of daysSelected) {
-      const d = Temporal.PlainDate.from(ds);
-      const key = monthKey(d.year, d.month);
-      const set = grouped.get(key) || new Set<string>();
-      set.add(ds);
-      grouped.set(key, set);
+    const hasChanged =
+      JSON.stringify(Array.from(prevDaysSelectedRef.current || [])) !== JSON.stringify(Array.from(daysSelected || []));
+
+    if (hasChanged) {
+      setSelectedDates(new Set(daysSelected));
+      prevDaysSelectedRef.current = daysSelected;
+
+      if (clearOnMonthChange) {
+        const grouped = new Map<string, Set<string>>();
+        for (const ds of daysSelected) {
+          const d = Temporal.PlainDate.from(ds);
+          const key = monthKey(d.year, d.month);
+          const set = grouped.get(key) || new Set<string>();
+          set.add(ds);
+          grouped.set(key, set);
+        }
+        const current = selectionsByMonthRef.current;
+        grouped.forEach((v, k) => {
+          current.set(k, v);
+        });
+      }
     }
-    const current = selectionsByMonthRef.current;
-    grouped.forEach((v, k) => {
-      current.set(k, v);
-    });
   }, [daysSelected, monthKey, clearOnMonthChange]);
 
   const monthYearDisplay = useMemo(() => {
@@ -343,7 +368,11 @@ const CustomCalendar = ({
                   top: 5,
                   right: 5,
                   backgroundColor: isSelected ? "#fff" : backgroundColor,
-                  border: day.isInMonth ? Temporal.PlainDate.compare(day.date, today) === 0 ? '1px solid #000' : "1px solid #fff" : "1px solid #f6f6f6",
+                  border: day.isInMonth
+                    ? Temporal.PlainDate.compare(day.date, today) === 0
+                      ? "1px solid #000"
+                      : "1px solid #fff"
+                    : "1px solid #f6f6f6",
                   color: "#000",
                 }}
               >
@@ -354,83 +383,77 @@ const CustomCalendar = ({
                 <>
                   <Box sx={{ mt: 3 }}>
                     {attendance ? (
-                      <Box sx={{ textAlign: 'left', mb: 2 }}>
-                        {hasIncidents ? (
-                          incidents.map((inc: any) => (
-                            <Box
-                              key={inc.id}
-                              display="flex"
-                              alignItems="center"
-                              title={`Haz clic para ver detalle de ${inc.type}`}
-                              gap={1}
-                              sx={{
-                                mb: 0.3,
-                                backgroundColor: inc.bgColorOnCalendar || '#eee',
-                                borderRadius: '6px',
-                                px: 1,
-                                py: 0.3,
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <IconClockCheck size={14} color={inc.colorOnCalendar || '#000'}/>
-                              <Typography
-                                fontWeight={600}
-                                variant="body2"
-                                sx={{ fontSize: '0.75rem', color: inc.colorOnCalendar || '#000' }}
-                              >
-                                {inc.type}
-                              </Typography>
-                            </Box>
-                          ))
-                        ) : (
-                          (() => {
-                            let label = "";
-                            let bg = "";
-                            let color = "#fff";
-
-                            if (checkIn && checkOut) {
-                              label = "ASISTENCIA";
-                              bg = "success.attendance";
-                            } else if (checkIn && !checkOut) {
-                              label = "OMISIÓN DE SALIDA";
-                              bg = "warning.main";
-                            } else if (!checkIn && checkOut) {
-                              label = "OMISIÓN DE ENTRADA";
-                              bg = "warning.main";
-                            }
-
-                            if (!label) return null;
-
-                            return (
+                      <Box sx={{ textAlign: "left", mb: 2 }}>
+                        {hasIncidents
+                          ? incidents.map((inc: any) => (
                               <Box
-                                key={generateUniqueKey()}
+                                key={inc.id}
                                 display="flex"
                                 alignItems="center"
+                                title={`Haz clic para ver detalle de ${inc.type}`}
                                 gap={1}
                                 sx={{
                                   mb: 0.3,
-                                  backgroundColor: bg,
+                                  backgroundColor: inc.bgColorOnCalendar || "#eee",
                                   borderRadius: "6px",
                                   px: 1,
                                   py: 0.3,
+                                  cursor: "pointer",
                                 }}
                               >
-                                <IconClockCheck size={14} color={color} />
+                                <IconClockCheck size={14} color={inc.colorOnCalendar || "#000"} />
                                 <Typography
                                   fontWeight={600}
                                   variant="body2"
-                                  sx={{ fontSize: "0.75rem", color }}
+                                  sx={{ fontSize: "0.75rem", color: inc.colorOnCalendar || "#000" }}
                                 >
-                                  {label}
+                                  {inc.type}
                                 </Typography>
                               </Box>
-                            );
-                          })()
-                        )}
+                            ))
+                          : (() => {
+                              let label = "";
+                              let bg = "";
+                              let color = "#fff";
+
+                              if (checkIn && checkOut) {
+                                label = "ASISTENCIA";
+                                bg = "success.attendance";
+                              } else if (checkIn && !checkOut) {
+                                label = "OMISIÓN DE SALIDA";
+                                bg = "warning.main";
+                              } else if (!checkIn && checkOut) {
+                                label = "OMISIÓN DE ENTRADA";
+                                bg = "warning.main";
+                              }
+
+                              if (!label) return null;
+
+                              return (
+                                <Box
+                                  key={generateUniqueKey()}
+                                  display="flex"
+                                  alignItems="center"
+                                  gap={1}
+                                  sx={{
+                                    mb: 0.3,
+                                    backgroundColor: bg,
+                                    borderRadius: "6px",
+                                    px: 1,
+                                    py: 0.3,
+                                  }}
+                                >
+                                  <IconClockCheck size={14} color={color} />
+                                  <Typography fontWeight={600} variant="body2" sx={{ fontSize: "0.75rem", color }}>
+                                    {label}
+                                  </Typography>
+                                </Box>
+                              );
+                            })()}
                       </Box>
                     ) : (
                       isPast && (
-                        <Box sx={{ textAlign: 'left' }}>
+                        <Box sx={{ textAlign: "left" }}>
                           <Typography fontWeight={600} variant="body2">
                             SIN REGISTROS
                           </Typography>
@@ -441,13 +464,9 @@ const CustomCalendar = ({
 
                   {attendance && (
                     <>
-                      {(
-                        (!attendance.hasIncidents && (checkIn || checkOut)) ||
+                      {((!attendance.hasIncidents && (checkIn || checkOut)) ||
                         (attendance.hasIncidents &&
-                          attendance.incidents.some(
-                            (inc: any) => inc.displayTimeOnCalendar === true
-                          ))
-                      ) && (
+                          attendance.incidents.some((inc: any) => inc.displayTimeOnCalendar === true))) && (
                         <>
                           <Box
                             key={generateUniqueKey()}
@@ -463,11 +482,7 @@ const CustomCalendar = ({
                             }}
                           >
                             <IconClockUp size={14} color="#000" />
-                            <Typography
-                              fontWeight={600}
-                              variant="body2"
-                              sx={{ fontSize: "0.75rem", color: "#000" }}
-                            >
+                            <Typography fontWeight={600} variant="body2" sx={{ fontSize: "0.75rem", color: "#000" }}>
                               Entrada: {checkIn ? formatDate(new Date(checkIn), "HH:mm") : ""}
                             </Typography>
                           </Box>
@@ -486,11 +501,7 @@ const CustomCalendar = ({
                             }}
                           >
                             <IconClockDown size={14} color="#000" />
-                            <Typography
-                              fontWeight={600}
-                              variant="body2"
-                              sx={{ fontSize: "0.75rem", color: "#000" }}
-                            >
+                            <Typography fontWeight={600} variant="body2" sx={{ fontSize: "0.75rem", color: "#000" }}>
                               Salida: {checkOut ? formatDate(new Date(checkOut), "HH:mm") : ""}
                             </Typography>
                           </Box>
@@ -509,7 +520,7 @@ const CustomCalendar = ({
         <Typography variant="body2" color="textSecondary">
           {selectedDates.size > 0
             ? `${selectedDates.size} ${selectedDates.size === 1 ? "día seleccionado" : "días seleccionados"}`
-            : "Selecciona las fechas de vacaciones"}
+            : "Selecciona las fechas"}
         </Typography>
         <Box>
           <Button onClick={handleCancel} color="error" sx={{ mr: 1 }}>
