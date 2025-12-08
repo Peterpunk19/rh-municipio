@@ -117,6 +117,12 @@ const Menuitems: MenuitemsType[] = [
         icon: IconPoint,
         href: "/admin/employees-attendances/create",
       },
+      {
+        id: uniqueId(),
+        title: "Horarios intercalados",
+        icon: IconPoint,
+        href: "/admin/shift-schedule",
+      },
     ],
   },
   {
