@@ -33,30 +33,18 @@ interface ArticleRendererProps {
   sections: Section[];
 }
 
-const loginImage = "/images/help-center/login.png";
-const incidentMenu = "/images/help-center/028-incident-menu.png";
-const incidentList = "/images/help-center/028-incident-list.png";
-const incidentFilters = "/images/help-center/028-incident-filters.png";
-const incidentActions = "/images/help-center/028-incident-actions.png";
-const incidentDetails = "/images/help-center/028-incident-details.png";
-const incidentStatus = "/images/help-center/028-incident-status.png";
-const incidentStatusUpdated = "/images/help-center/028-incident-status-updated.png";
-
 const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps) => {
-  const imageMap: Record<string, any> = {
-    "login.png": loginImage,
-    "028-incident-menu.png": incidentMenu,
-    "028-incident-list.png": incidentList,
-    "028-incident-filters.png": incidentFilters,
-    "028-incident-actions.png": incidentActions,
-    "028-incident-details.png": incidentDetails,
-    "028-incident-status.png": incidentStatus,
-    "028-incident-status-updated.png": incidentStatusUpdated,
+  const getImagePath = (imageSrc: string): string => {
+    if (imageSrc.startsWith("http") || imageSrc.startsWith("/")) {
+      return imageSrc;
+    }
+    return `/images/help-center/${imageSrc}`;
   };
 
   const videoMap: Record<string, any> = {
     "login.mp4": "/videos/login.mp4",
     "028.mp4": "/videos/028.mp4",
+    "001.mp4": "/videos/001.mp4",
   };
 
   const getVideoPath = (videoSrc: string): string => {
@@ -140,10 +128,10 @@ const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps
                         </Box>
                       </Box>
 
-                      {step.image && imageMap[step.image.src] && (
+                      {step.image && step.image.src && (
                         <Box sx={{ my: 3, textAlign: "center" }}>
                           <Image
-                            src={imageMap[step.image.src]}
+                            src={getImagePath(step.image.src)}
                             alt={step.image.alt}
                             width={800}
                             height={450}
@@ -216,7 +204,7 @@ const ArticleRenderer = ({ title, introduction, sections }: ArticleRendererProps
                         height: "auto",
                         display: "block",
                       }}
-                      poster={imageMap[section.content.poster]}
+                      poster={section.content.poster ? getImagePath(section.content.poster) : undefined}
                       aria-label={section.content.caption || "Video tutorial"}
                     >
                       <source src={getVideoPath(section.content.src)} type="video/mp4" />

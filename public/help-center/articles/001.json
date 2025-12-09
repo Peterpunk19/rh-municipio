@@ -1,0 +1,84 @@
+{
+  "title": "Crear usuario",
+  "introduction": "Guía para la creación de usuarios en la plataforma.",
+  "sections": [
+    {
+      "type": "step-group",
+      "content": {
+        "title": "Acceder al módulo de usuarios",
+        "steps": [
+          {
+            "text": "Desde el menú desplegable, haz clic en la sección \"Usuarios\".",
+            "image": {
+              "src": "001-user-menu.jpg",
+              "alt": "Menú con la opción Usuarios",
+              "caption": "Menú con la opción Usuarios"
+            }
+          },
+          {
+            "text": "Da clic en el botón \"Crear Usuario\"",
+            "image": {
+              "src": "001-create-user-button.jpg",
+              "alt": "Botón para crear usuario",
+              "caption": "Botón para crear usuario"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "step-group",
+      "content": {
+        "title": "Completar el proceso",
+        "steps": [
+          {
+            "text": "Rellena los datos del formulario y da clic en el botón guardar",
+            "image": {
+              "src": "001-create-user-action.jpg",
+              "alt": "Formulario para la creación de usuario",
+              "caption": "Formulario para la creación de usuario"
+            }
+          },
+          {
+            "text": "Confirma la creación del usuario",
+            "image": {
+              "src": "001-confirmation-create-user.jpg",
+              "alt": "Modal de confirmación de acción",
+              "caption": "Modal de confimación de acción"
+            }
+          },
+          {
+            "text": "En caso de existir algún detalle con los campos, el sistema indicará el problema",
+            "image": {
+              "src": "001-validation-create-user.jpg",
+              "alt": "Validaciones del formulario",
+              "caption": "Validaciones del formulario"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "step-group",
+      "content": {
+        "title": "Casos excepcionales",
+        "steps": [
+          {
+            "text": "Para usuarios con rol enlace, deberá seleccionar la secretaría y las direcciones correspondientes",
+            "image": {
+              "src": "001-enlace-create-user.jpg",
+              "alt": "Usuario con rol enlace",
+              "caption": "Usuario con rol enlace"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "video",
+      "content": {
+        "src": "001.mp4"
+      }
+    }
+  ]
+}
