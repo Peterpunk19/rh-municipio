@@ -1,35 +1,53 @@
-const helpCategories = [{
+const helpCategories = [
+  {
     id: 1,
     displayName: "Inicio de Sesión",
-    articles: [{
-      displayName: "Acceder al sistema RH Municipio",
-      url: "01"
-    }, ]
+    articles: [
+      {
+        displayName: "Acceder al sistema RH Municipio",
+        url: "01",
+      },
+    ],
   },
   {
     id: 2,
     displayName: "Ejemplo",
-    articles: [{
+    articles: [
+      {
         displayName: "Articulo 02",
-        url: "02"
+        url: "02",
       },
       {
         displayName: "Articulo 03",
         url: "03",
-        children: [{
-          displayName: "Articulo 03.1",
-          url: "031",
-        }, ]
+        children: [
+          {
+            displayName: "Articulo 03.1",
+            url: "031",
+          },
+        ],
       },
-    ]
+    ],
   },
   {
     id: 3,
     displayName: "Incidencias",
-    articles: [{
-      displayName: "Ver incidencia y cambiar estatus",
-      url: "028"
-    }]
+    articles: [
+      {
+        displayName: "Ver incidencia y cambiar estatus",
+        url: "028",
+      },
+    ],
+  },
+  {
+    id: 4,
+    displayName: "Usuarios",
+    articles: [
+      {
+        displayName: "Crear usuarios",
+        url: "001",
+      },
+    ],
   },
 ];
 
