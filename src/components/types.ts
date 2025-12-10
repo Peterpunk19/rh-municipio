@@ -40,4 +40,5 @@ export interface ICustomCalendarProps {
   onDateClick?: (date: string) => void;
   initialMonth?: number;
   initialYear?: number;
+  hideActions?: boolean;
 }

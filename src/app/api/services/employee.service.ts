@@ -723,7 +723,7 @@ export const EmployeeService = {
     });
   },
 
-  async getEmployeesAutocomplete(search: string | null, direccionIds?: number[]) {
+  async getEmployeesAutocomplete(search: string | null, direccionIds?: number[], attendanceType?: string | null) {
     let baseQuery = `
         SELECT e.id,
                e.name,
@@ -757,8 +757,21 @@ export const EmployeeService = {
                  LEFT JOIN Gender AS g ON e.gender_id = g.id
     `;
 
+    const conditions: string[] = [];
+    const baseParams: (string | number)[] = [];
+
     if (direccionIds && direccionIds.length > 0) {
-      baseQuery += ` WHERE ea.direccion_id IN (${direccionIds.map(() => "?").join(",")})`;
+      conditions.push(`ea.direccion_id IN (${direccionIds.map(() => "?").join(",")})`);
+      baseParams.push(...direccionIds);
+    }
+
+    if (attendanceType) {
+      conditions.push(`at.name = ?`);
+      baseParams.push(attendanceType);
+    }
+
+    if (conditions.length > 0) {
+      baseQuery += ` WHERE ${conditions.join(" AND ")}`;
     }
 
     let employees: {
@@ -782,7 +795,7 @@ export const EmployeeService = {
 
     if (search) {
       const searchCondition = `
-            ${direccionIds && direccionIds.length > 0 ? "AND" : "WHERE"} (LOWER(e.name) LIKE LOWER(CONCAT('%', ?, '%'))
+            ${conditions.length > 0 ? "AND" : "WHERE"} (LOWER(e.name) LIKE LOWER(CONCAT('%', ?, '%'))
                OR LOWER(e.paternal_last_name) LIKE LOWER(CONCAT('%', ?, '%'))
                OR LOWER(e.maternal_last_name) LIKE LOWER(CONCAT('%', ?, '%'))
                OR LOWER(e.number_employee) LIKE LOWER(CONCAT('%', ?, '%'))
@@ -791,14 +804,10 @@ export const EmployeeService = {
         `;
       baseQuery += searchCondition;
 
-      const params =
-        direccionIds && direccionIds.length > 0
-          ? [...direccionIds, search, search, search, search, search, search]
-          : [search, search, search, search, search, search];
+      const params = [...baseParams, search, search, search, search, search, search];
       employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`, ...params);
     } else {
-      const params = direccionIds && direccionIds.length > 0 ? direccionIds : [];
-      employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`, ...params);
+      employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`, ...baseParams);
     }
 
     return employees.map((emp: any) => ({

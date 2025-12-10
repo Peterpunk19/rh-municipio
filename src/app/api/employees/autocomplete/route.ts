@@ -12,6 +12,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.has("search") ? searchParams.get("search") : null;
+    const attendanceType = searchParams.get("attendanceType");
 
     const authData = await authMiddleware();
     if (authData instanceof NextResponse) {
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
         const direcciones = await UserService.getActiveUserDirecciones(userId);
         direccionIds = direcciones.map((d: any) => d.direccion.id);
       }
-      existingEmployees = await EmployeeService.getEmployeesAutocomplete(search, direccionIds);
+      existingEmployees = await EmployeeService.getEmployeesAutocomplete(search, direccionIds, attendanceType);
 
       response = HttpResponse.success(HttpMessages.catalog.success, existingEmployees);
     }
