@@ -22,6 +22,7 @@ const CustomCalendar = ({
   onDateClick,
   initialMonth,
   initialYear,
+  hideActions = false,
 }: ICustomCalendarProps) => {
   const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const today = Temporal.Now.plainDateISO();
@@ -516,21 +517,23 @@ const CustomCalendar = ({
         })}
       </Grid>
 
-      <DialogActions sx={{ p: 2, justifyContent: "space-between" }}>
-        <Typography variant="body2" color="textSecondary">
-          {selectedDates.size > 0
-            ? `${selectedDates.size} ${selectedDates.size === 1 ? "día seleccionado" : "días seleccionados"}`
-            : "Selecciona las fechas"}
-        </Typography>
-        <Box>
-          <Button onClick={handleCancel} color="error" sx={{ mr: 1 }}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} variant="contained" color="primary" disabled={selectedDates.size === 0}>
-            Guardar Fechas
-          </Button>
-        </Box>
-      </DialogActions>
+      {!hideActions && (
+        <DialogActions sx={{ p: 2, justifyContent: "space-between" }}>
+          <Typography variant="body2" color="textSecondary">
+            {selectedDates.size > 0
+              ? `${selectedDates.size} ${selectedDates.size === 1 ? "día seleccionado" : "días seleccionados"}`
+              : "Selecciona las fechas"}
+          </Typography>
+          <Box>
+            <Button onClick={handleCancel} color="error" sx={{ mr: 1 }}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave} variant="contained" color="primary" disabled={selectedDates.size === 0}>
+              Guardar Fechas
+            </Button>
+          </Box>
+        </DialogActions>
+      )}
     </Box>
   );
 };

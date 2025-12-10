@@ -18,7 +18,8 @@ const CustomAutocompleteSearchField = ({ field, handleChange, initialOption }: C
 
     setLoading(true);
     try {
-      const response = await fetch(`${field.url}?search=${query}`);
+      const separator = field.url.includes("?") ? "&" : "?";
+      const response = await fetch(`${field.url}${separator}search=${query}`);
       const data = await response.json();
       setOptions(data.responseObject || []);
     } catch (error) {

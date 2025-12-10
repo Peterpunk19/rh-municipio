@@ -12,6 +12,8 @@ interface EmployeeFinderProps {
   error: string | null;
   label?: string;
   initialEmployee?: any;
+  showDetails?: boolean;
+  attendanceType?: string;
 }
 
 const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
@@ -19,6 +21,8 @@ const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
   error,
   label = "Empleado",
   initialEmployee = null,
+  showDetails = true,
+  attendanceType,
 }) => {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(initialEmployee);
 
@@ -39,7 +43,9 @@ const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
         <CustomFormLabel sx={{ mb: 2, mt: -2 }}>{label}</CustomFormLabel>
         <CustomAutocompleteSearchField
           field={{
-            url: "/api/employees/autocomplete",
+            url: attendanceType
+              ? `/api/employees/autocomplete?attendanceType=${attendanceType}`
+              : "/api/employees/autocomplete",
             label: "Ingresa RFC, CURP, Nombre o Número de empleados",
             value: initialEmployee ? initialEmployee.label : "",
           }}
@@ -54,7 +60,7 @@ const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
         />
         <CustomLabelError field={error || undefined} />
       </Grid2>
-      <EmployeeDetailCard employee={selectedEmployee} />
+      {showDetails && <EmployeeDetailCard employee={selectedEmployee} />}
     </Grid2>
   );
 };
