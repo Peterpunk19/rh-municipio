@@ -54,6 +54,10 @@ export const useCustomCalendar = ({
   }, [initialMonth, initialYear]);
 
   useEffect(() => {
+    setSelectedDates(new Set(daysSelected));
+  }, [daysSelected]);
+
+  useEffect(() => {
     onMonthVisibleChange?.(year, month);
   }, [year, month]);
 

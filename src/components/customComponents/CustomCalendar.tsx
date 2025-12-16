@@ -1,14 +1,7 @@
 "use client";
 
-import React, {useState} from "react";
-import {
-  Grid2 as Grid,
-  Box,
-  Typography,
-  Button,
-  DialogActions,
-  FormControlLabel,
-} from "@mui/material";
+import React, { useState } from "react";
+import { Grid2 as Grid, Box, Typography, Button, DialogActions, FormControlLabel } from "@mui/material";
 
 import { ICustomCalendarProps } from "@/components/types";
 import { useCustomCalendar } from "@/hooks/calendar/useCustomCalendar";
@@ -18,38 +11,32 @@ import CalendarDaysHeader from "@/components/customComponents/CalendarDaysHeader
 import CustomCheckbox from "@/app/components/forms/theme-elements/CustomCheckbox";
 
 const CustomCalendar = ({
-                          onSave,
-                          onCancel,
-                          maxSelections = 20,
-                          daysSelected = [],
-                          onMonthVisibleChange,
-                          clearOnMonthChange = false,
-                          employeeId,
-                          onDateClick,
-                          initialMonth,
-                          initialYear,
-                          hideActions = false,
-                          enableAttendanceToggle = true,
-                        }: ICustomCalendarProps) => {
-  const {
-    today,
-    days,
-    monthCalendar,
-    selectedDates,
-    attendanceMap,
-    monthYearDisplay,
-    scheduleMap,
-    actions,
-  } = useCustomCalendar({
-    employeeId,
-    maxSelections,
-    daysSelected,
-    initialMonth,
-    initialYear,
-    clearOnMonthChange,
-    onMonthVisibleChange,
-    onDateClick,
-  });
+  onSave,
+  onCancel,
+  maxSelections = 20,
+  daysSelected = [],
+  onMonthVisibleChange,
+  clearOnMonthChange = false,
+  employeeId,
+  onDateClick,
+  initialMonth,
+  initialYear,
+  hideActions = false,
+  enableAttendanceToggle = true,
+  scheduleData,
+  onScheduleClick,
+}: ICustomCalendarProps) => {
+  const { today, days, monthCalendar, selectedDates, attendanceMap, monthYearDisplay, scheduleMap, actions } =
+    useCustomCalendar({
+      employeeId,
+      maxSelections,
+      daysSelected,
+      initialMonth,
+      initialYear,
+      clearOnMonthChange,
+      onMonthVisibleChange,
+      onDateClick,
+    });
 
   const handleSave = () => {
     onSave?.(Array.from(selectedDates).sort());
@@ -78,10 +65,7 @@ const CustomCalendar = ({
               <>
                 <FormControlLabel
                   control={
-                    <CustomCheckbox
-                      checked={showSchedule}
-                      onChange={(e) => setShowSchedule(e.target.checked)}
-                    />
+                    <CustomCheckbox checked={showSchedule} onChange={(e) => setShowSchedule(e.target.checked)} />
                   }
                   label="Mostrar horario"
                 />
@@ -101,7 +85,7 @@ const CustomCalendar = ({
         {monthCalendar.map((day) => {
           const dateStr = day.date.toString();
           const isSelected = selectedDates.has(dateStr);
-
+          const schedule = scheduleData?.get(dateStr);
           return (
             <CalendarDay
               key={dateStr}
@@ -113,6 +97,8 @@ const CustomCalendar = ({
               schedule={scheduleMap?.get(dateStr)}
               showSchedule={showSchedule}
               onClick={actions.handleDateClick}
+              scheduleData={schedule}
+              onScheduleClick={onScheduleClick}
             />
           );
         })}
@@ -122,9 +108,7 @@ const CustomCalendar = ({
         <DialogActions sx={{ p: 2, justifyContent: "space-between" }}>
           <Typography variant="body2" color="textSecondary">
             {selectedDates.size > 0
-              ? `${selectedDates.size} ${
-                selectedDates.size === 1 ? "día seleccionado" : "días seleccionados"
-              }`
+              ? `${selectedDates.size} ${selectedDates.size === 1 ? "día seleccionado" : "días seleccionados"}`
               : "Selecciona las fechas"}
           </Typography>
 
@@ -132,11 +116,7 @@ const CustomCalendar = ({
             <Button onClick={onCancel} color="error" sx={{ mr: 1 }}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleSave}
-              variant="contained"
-              disabled={selectedDates.size === 0}
-            >
+            <Button onClick={handleSave} variant="contained" disabled={selectedDates.size === 0}>
               Guardar Fechas
             </Button>
           </Box>

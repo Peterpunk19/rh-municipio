@@ -28,6 +28,13 @@ export type ICalendarDay = {
   isInMonth: boolean;
 };
 
+export interface IScheduleData {
+  startHourId: number;
+  endHourId: number;
+  startDisplay: string;
+  endDisplay: string;
+}
+
 export interface ICustomCalendarProps {
   onSave?: (selectedDates: string[]) => void;
   onCancel?: () => void;
@@ -42,4 +49,6 @@ export interface ICustomCalendarProps {
   initialYear?: number;
   hideActions?: boolean;
   enableAttendanceToggle?: boolean;
+  scheduleData?: Map<string, IScheduleData>;
+  onScheduleClick?: (date: string, schedule: IScheduleData) => void;
 }
