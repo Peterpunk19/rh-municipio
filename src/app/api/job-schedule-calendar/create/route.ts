@@ -64,11 +64,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const employeeAttendance = await JobScheduleCalendarService.saveJobScheduleCalendar(body, authResponse.userId);
+    const { results, warnings } = await JobScheduleCalendarService.saveJobScheduleCalendar(body, authResponse.userId);
 
-    const response = HttpResponse.success(HttpMessages.employeeAttendance.createdSuccess, employeeAttendance);
+    if (results && results.length > 0) {
+      return handleHttpResponse(
+        HttpResponse.success(HttpMessages.jobScheduleCalendar.createdSuccess, {
+          created: results,
+          warnings: warnings.length > 0 ? warnings : null,
+        }),
+      );
+    }
 
-    return handleHttpResponse(response);
+    if (warnings.length > 0) {
+      return handleHttpResponse(
+        HttpResponse.failure(HttpMessages.jobScheduleCalendar.notCreated, {
+          created: [],
+          warnings,
+        }),
+      );
+    }
+
+    return handleHttpResponse(
+      HttpResponse.failure(HttpMessages.jobScheduleCalendar.notCreated, {
+        created: [],
+        warnings: null,
+      }),
+    );
   } catch (error: any) {
     logger.error({ error: error.message, stack: error.stack });
 

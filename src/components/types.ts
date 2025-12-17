@@ -41,4 +41,5 @@ export interface ICustomCalendarProps {
   initialMonth?: number;
   initialYear?: number;
   hideActions?: boolean;
+  enableAttendanceToggle?: boolean;
 }

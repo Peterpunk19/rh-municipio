@@ -7,9 +7,9 @@ import { logger } from "@/lib/logger";
 import { ROLES } from "@/common/constants/Roles";
 import { authMiddleware } from "@/middleware/authMiddleware";
 import { NextResponse } from "next/server";
-import { EmployeePayrollService } from "@/app/api/services/employee-payrolll.service";
 import { EmployeePayrollGetFilterSchema } from "@/schemas/employee-payroll";
 import { IEmployeePayrollFilters } from "@/app/api/employee-payroll/types";
+import { calculatePayroll } from "@/app/api/services/payroll/payroll.service";
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_PAGE = 1;
@@ -61,20 +61,12 @@ export async function GET(request: Request) {
       validRequestData.employeeId = Number(employeeId);
     }
 
-    const employeePayroll = await EmployeePayrollService.getEmployeesPayrollByParams(validRequestData);
+    const startDate = new Date(`${validRequestData.from}T00:00:00`);
+    const endDate = new Date(`${validRequestData.to}T23:59:59`);
 
-    if (employeePayroll && employeePayroll.total === 0) {
-      const response = HttpResponse.success(HttpMessages.employeeAttendance.notFound, {
-        data: [],
-        total: 0,
-        totalPages: 0,
-        currentPage: 1,
-      });
+    const data = await calculatePayroll({ startDate, endDate, search: validRequestData.search });
 
-      return handleHttpResponse(response);
-    }
-
-    const response = HttpResponse.success(HttpMessages.employeeAttendance.getSuccess, employeePayroll);
+    const response = HttpResponse.success(HttpMessages.employeeAttendance.getSuccess, data);
 
     return handleHttpResponse(response);
   } catch (error: any) {

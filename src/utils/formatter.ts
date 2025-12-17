@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import dayjs from "dayjs";
 
 export const formatDate = (date: string | Date | null | undefined, dateFormat = "dd/MM/yyyy") => {
   if (!date) return "";
@@ -43,30 +44,31 @@ type ScheduleItem = {
   end_hour: { display_name: string };
 };
 
-export const formatScheduleText = (schedule: string) => {
+export const formatScheduleText = (schedule: any) => {
   if (!schedule) return "";
   let formattedText = "";
+
+  const formatItem = (item: any) => {
+    const startDay = item.start_day?.display_name || item.startDay?.display_name || item.startDay?.name;
+    const endDay = item.end_day?.display_name || item.endDay?.display_name || item.endDay?.name;
+
+    const startHour = item.start_hour?.display_name || item.startHour?.display_name || item.startHour?.name;
+    const endHour = item.end_hour?.display_name || item.endHour?.display_name || item.endHour?.name;
+
+    if (startDay === endDay) {
+      return `${startDay} de ${startHour} a ${endHour}`;
+    }
+
+    return `${startDay} a ${endDay} de ${startHour} a ${endHour}`;
+  };
+
   if (Array.isArray(schedule)) {
-    formattedText = schedule
-      .map(
-        (item) =>
-          `${item.startDay?.name || item.start_day?.display_name} a ${item.endDay?.name || item.end_day?.display_name} de ${item.startHour?.name || item.start_hour?.display_name} a ${item.endHour?.name || item.end_hour?.display_name}`,
-      )
-      .join("\n");
+    formattedText = schedule.map((item) => formatItem(item)).join("\n");
   } else if (typeof schedule === "object") {
     const entries = Object.entries(schedule);
     entries.sort((a, b) => Number.parseInt(a[0]) - Number.parseInt(b[0]));
-    const parts = [];
-    for (const [_, value] of entries) {
-      const item = value as ScheduleItem;
 
-      if (item.start_day && item.start_hour && item.end_day && item.end_hour) {
-        parts.push(
-          `${item.start_day.display_name} a ${item.end_day.display_name} de ${item.start_hour.display_name} a ${item.end_hour.display_name}`,
-        );
-      }
-    }
-    formattedText = parts.join("\n");
+    formattedText = entries.map(([_, value]) => formatItem(value)).join("\n");
   } else if (typeof schedule === "string") {
     formattedText = schedule;
   }
@@ -128,4 +130,8 @@ export const formatDateToText = (date: string | Date | null | undefined, showYea
 export const getMonthName = (monthNumber: any) => {
   const mesIndex = parseInt(monthNumber) - 1;
   return MESES[mesIndex].toUpperCase();
+};
+
+export const nextDay = (d: string) => {
+  return dayjs(d).add(1, "day").format("YYYY-MM-DD");
 };

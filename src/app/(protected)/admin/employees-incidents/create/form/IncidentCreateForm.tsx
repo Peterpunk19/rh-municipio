@@ -490,7 +490,7 @@ const IncidentCreateForm = ({
               </FormControl>
             </Grid2>
 
-            <Dialog fullWidth maxWidth="lg" open={openCalendar} onClose={handleCalendarCancel} disableEscapeKeyDown>
+            <Dialog fullWidth maxWidth="xl" open={openCalendar} onClose={handleCalendarCancel} disableEscapeKeyDown>
               <DialogTitle>Seleccionar fechas de incidencia</DialogTitle>
               <DialogContent>
                 {formData && formData.employeeId && (

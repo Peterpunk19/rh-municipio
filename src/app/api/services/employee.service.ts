@@ -150,6 +150,11 @@ export const EmployeeService = {
             end_hour: true,
           },
         },
+        job_schedule_calendar: {
+          where: {
+            active: true,
+          },
+        },
       },
       where: {
         id,
@@ -955,6 +960,21 @@ export const EmployeeService = {
         orderBy: {
           id: "desc",
         },
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async getCurrentJobScheduleCalendar(employeeId: number, from: string, to: string) {
+    try {
+      return await prisma.jobScheduleCalendar.findMany({
+        where: {
+          employee_id: employeeId,
+          date: { gte: new Date(from), lte: new Date(to) },
+          active: true,
+        },
+        include: { start_hour: true, end_hour: true },
       });
     } catch (error) {
       throw error;

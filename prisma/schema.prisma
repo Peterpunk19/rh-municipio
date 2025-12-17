@@ -250,6 +250,12 @@ model EmployeeAttendance {
   udpated_at                  DateTime?              @updatedAt
 
   employee_attendance_incident EmployeeAttendanceIncident[]
+
+  job_schedule_employee_id Int?
+  job_schedule_employee JobScheduleEmployee? @relation(fields: [job_schedule_employee_id], references: [id])
+
+  job_schedule_calendar_id Int?
+  job_schedule_calendar JobScheduleCalendar? @relation(fields: [job_schedule_calendar_id], references: [id])
 }
 
 model EmployeeIncidents {
@@ -489,6 +495,8 @@ model JobScheduleEmployee {
   end_hour_id   Int
   start_hour    Hour      @relation("StartHour", fields: [start_hour_id], references: [id])
   end_hour      Hour      @relation("EndHour", fields: [end_hour_id], references: [id])
+
+  employee_attendance EmployeeAttendance[]
 }
 
 model JobScheduleCalendar {
@@ -506,6 +514,8 @@ model JobScheduleCalendar {
   created_by          Employee        @relation("createdByEmployee", fields: [created_by_id], references: [id])
   active        Boolean   @default(true)
   created_at    DateTime? @default(now())
+
+  employee_attendance EmployeeAttendance[]
 
   @@index([employee_id, date, active])
 }

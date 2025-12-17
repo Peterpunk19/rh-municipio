@@ -214,5 +214,7 @@ export const HttpMessages = {
   },
   jobScheduleCalendar: {
     notFound: "No se encontraron empleados con los filtros proporcionados",
+    createdSuccess: "Calendario de horarios creado correctamente",
+    notCreated: "Ocurrio un error al crear el calendario de horarios",
   },
 };

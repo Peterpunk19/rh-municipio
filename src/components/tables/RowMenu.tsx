@@ -33,7 +33,7 @@ const RowMenu = ({ row, redirectPath }: { row: any; redirectPath?: string }) => 
       </Tooltip>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         <MenuItem onClick={() => handleOpenInNewTab(`${redirectPath}${row.id}`)}>Ver</MenuItem>
-        <MenuItem onClick={() => handleOpenInNewTab(`${redirectPath}/edit/${row.id}`)}>Editar</MenuItem>
+        <MenuItem onClick={() => handleOpenInNewTab(`${redirectPath}edit/${row.id}`)}>Editar</MenuItem>
       </Menu>
     </Stack>
   );

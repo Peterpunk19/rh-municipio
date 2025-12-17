@@ -19,14 +19,8 @@ export const EmployeePayrollGetFilterSchema = z.object({
     .number({ message: validationMessages.number("Empleado") })
     .optional()
     .nullable(),
-  from: z
-    .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Campo De") }))
-    .optional()
-    .nullable(),
-  to: z
-    .preprocess((val) => validateDate(val), z.date({ message: validationMessages.invalidaFormat("Campo A") }))
-    .optional()
-    .nullable(),
+  from: z.string({ message: validationMessages.required("Inicio") }),
+  to: z.string({ message: validationMessages.required("Fin") }),
   organismPublic: z
     .number({ message: validationMessages.number("Organismo Público") })
     .min(1, { message: validationMessages.minNumber("Organismo Público", 1) })

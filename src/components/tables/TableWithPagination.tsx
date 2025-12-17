@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useTheme } from "@mui/material/styles";
+import {useTheme} from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -11,59 +11,61 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import { useSelector, useDispatch } from "@/store/hooks";
-import { HeadCell } from "@/interfaces/HeadCell";
+import {useSelector, useDispatch} from "@/store/hooks";
+import {HeadCell} from "@/interfaces/HeadCell";
 import EnhancedTableHead from "./TableHeaders";
 import EnhancedTableToolbar from "./TableFilters";
-import { ColumnTypeConfig } from "@/interfaces/ColumnTypeConfig";
-import { updatePage, updateLimit } from "@/store/tables/PaginationSlice";
-import { RootState } from "@/store/store";
-import { FiltersConfig } from "@/interfaces/FiltersConfig";
-import { updateFilter } from "@/store/tables/FiltersSlice";
-import { useDynamicFilters } from "../customHooks/useDinamycFilters";
+import {ColumnTypeConfig} from "@/interfaces/ColumnTypeConfig";
+import {updatePage, updateLimit} from "@/store/tables/PaginationSlice";
+import {RootState} from "@/store/store";
+import {FiltersConfig} from "@/interfaces/FiltersConfig";
+import {updateFilter} from "@/store/tables/FiltersSlice";
+import {useDynamicFilters} from "../customHooks/useDinamycFilters";
 import ParentCard from "@/components/shared/cards/ParentCard";
 import RowMenu from "./RowMenu";
 import TableRenderCell from "./TableRenderCell";
-import { currencyFormatter, getNestedValue } from "@/common/utils";
-import { IconCalendar, IconClock } from "@tabler/icons-react";
-import { formatDate, getMonthName } from "@/utils/formatter";
-import { RowDetail } from "@/components/tables/RowDetail";
-import { RowSwitch } from "@/components/tables/RowSwitch";
-import { Chip } from "@mui/material";
-import { generateUniqueKey } from "@/utils";
+import {currencyFormatter, getNestedValue} from "@/common/utils";
+import {IconCalendar, IconClock} from "@tabler/icons-react";
+import {formatDate, getMonthName} from "@/utils/formatter";
+import {RowDetail} from "@/components/tables/RowDetail";
+import {RowSwitch} from "@/components/tables/RowSwitch";
+import {Chip} from "@mui/material";
+import {generateUniqueKey} from "@/utils";
 
 interface TableItemBase {
   id: number;
 }
 
 interface TableProps<T extends TableItemBase> {
-  title: string;
-  headCells: readonly HeadCell[];
-  items: T[];
-  columnTypeConfig: Record<string, ColumnTypeConfig>;
-  filtersConfig: () => FiltersConfig[];
-  entity: string;
-  emptyMessage: string;
-  createLink?: React.ReactElement | React.ReactElement[];
-  onRowDetailClick?: (id: string) => void;
-  children?: React.ReactNode;
-  showSearchBar?: boolean;
+  title: string,
+  headCells: readonly HeadCell[],
+  items: T[],
+  columnTypeConfig: Record<string, ColumnTypeConfig>,
+  filtersConfig: () => FiltersConfig[],
+  entity: string,
+  emptyMessage: string,
+  createLink?: React.ReactElement | React.ReactElement[],
+  onRowDetailClick?: (id: string) => void,
+  children?: React.ReactNode,
+  showSearchBar?: boolean,
+  border?: boolean
 }
 
 const TableWithPagination = <T extends TableItemBase>({
-  headCells,
-  items,
-  columnTypeConfig,
-  filtersConfig,
-  entity,
-  emptyMessage,
-  createLink,
-  children,
-  onRowDetailClick,
-  showSearchBar,
-}: TableProps<T>) => {
+                                                        headCells,
+                                                        items,
+                                                        columnTypeConfig,
+                                                        filtersConfig,
+                                                        entity,
+                                                        emptyMessage,
+                                                        createLink,
+                                                        children,
+                                                        onRowDetailClick,
+                                                        showSearchBar,
+                                                        border = false
+                                                      }: TableProps<T>) => {
   const dispatch = useDispatch();
-  const { page, limit, total } = useSelector((state: RootState) => state.pagination);
+  const {page, limit, total} = useSelector((state: RootState) => state.pagination);
 
   React.useEffect(() => {
     const maxPage = Math.ceil(total / limit);
@@ -72,7 +74,7 @@ const TableWithPagination = <T extends TableItemBase>({
     }
   }, [total, limit, page, dispatch]);
 
-  const labelDisplayedRows = ({ count }: { count: number }) => {
+  const labelDisplayedRows = ({count}: { count: number }) => {
     if (count === 0) return "0-0 de 0";
 
     const adjustedFrom = (page - 1) * limit + 1;
@@ -80,9 +82,9 @@ const TableWithPagination = <T extends TableItemBase>({
 
     return `${adjustedFrom}–${adjustedTo} de ${count}`;
   };
-  const { values: initialValuesFromRedux } = useSelector((state: RootState) => state.filters[entity]);
+  const {values: initialValuesFromRedux} = useSelector((state: RootState) => state.filters[entity]);
 
-  const { filters, selectedValues, handleFilterChange } = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
+  const {filters, selectedValues, handleFilterChange} = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selected = parseInt(event.target.value, 10);
@@ -94,7 +96,7 @@ const TableWithPagination = <T extends TableItemBase>({
   const theme = useTheme();
   const borderColor = theme.palette.divider;
 
-  const DynamicCell = ({ row, headCell }: { row: T; headCell: HeadCell }) => {
+  const DynamicCell = ({row, headCell}: { row: T; headCell: HeadCell }) => {
     const value = getNestedValue(row, headCell.id);
     const config = columnTypeConfig[headCell.id] || {};
     const empty_text = headCell.empty_text;
@@ -129,13 +131,13 @@ const TableWithPagination = <T extends TableItemBase>({
         return (
           <Box display="flex" flexDirection="column" gap={0.5}>
             <Box display="flex" alignItems="center" gap={1}>
-              <IconCalendar size="14" />
+              <IconCalendar size="14"/>
               <Typography fontWeight={500} variant="body2">
                 {formatDate(new Date(value as string), "dd/MM/yyyy")}
               </Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={1}>
-              <IconClock size="14" />
+              <IconClock size="14"/>
               <Typography fontWeight={500} variant="body2">
                 {formatDate(new Date(value as string), "HH:mm")}
               </Typography>
@@ -147,14 +149,14 @@ const TableWithPagination = <T extends TableItemBase>({
         return (
           <Box display="flex" flexDirection="column" gap={0.5}>
             <Box display="flex" alignItems="center" gap={1}>
-              <IconCalendar size="14" />
+              <IconCalendar size="14"/>
               <Typography fontWeight={500} variant="body2">
                 {formatDate(new Date(value as string), "dd/MM/yyyy")}
               </Typography>
             </Box>
             {row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar ? (
               <Box display="flex" alignItems="center" gap={1}>
-                <IconClock size="14" />
+                <IconClock size="14"/>
                 <Typography fontWeight={500} variant="body2">
                   {formatDate(new Date(value as string), "HH:mm")}
                 </Typography>
@@ -167,14 +169,14 @@ const TableWithPagination = <T extends TableItemBase>({
         return (
           <Box display="flex" flexDirection="column" gap={0.5}>
             <Box display="flex" alignItems="center" gap={1}>
-              <IconCalendar size="14" />
+              <IconCalendar size="14"/>
               <Typography fontWeight={500} variant="body2">
                 {formatDate(new Date(value as string), "dd/MM/yyyy")}
               </Typography>
             </Box>
             {row?.employee_incident == null || row?.employee_incident?.incident?.display_time_on_calendar ? (
               <Box display="flex" alignItems="center" gap={1}>
-                <IconClock size="14" />
+                <IconClock size="14"/>
                 <Typography fontWeight={500} variant="body2">
                   {formatDate(new Date(value as string), "HH:mm")}
                 </Typography>
@@ -194,7 +196,7 @@ const TableWithPagination = <T extends TableItemBase>({
                 width: "10px",
               }}
             />
-            <Typography color="textSecondary" variant="subtitle2" sx={{ ml: 1 }}>
+            <Typography color="textSecondary" variant="subtitle2" sx={{ml: 1}}>
               {value ? "Activo" : "Inactivo"}
             </Typography>
           </Box>
@@ -209,7 +211,7 @@ const TableWithPagination = <T extends TableItemBase>({
 
       case "statusEmployee":
         return (
-          <Box display="flex" justifyContent="center" alignItems="center" sx={{ width: "100%" }}>
+          <Box display="flex" justifyContent="center" alignItems="center" sx={{width: "100%"}}>
             <Box
               sx={{
                 backgroundColor:
@@ -249,8 +251,8 @@ const TableWithPagination = <T extends TableItemBase>({
       case "avatar":
         return (
           <Box display="flex" alignItems="center">
-            <Avatar src={(row as any).photo} alt="avatar" sx={{ width: 56, height: 56 }} />
-            <Box sx={{ ml: 2 }}>
+            <Avatar src={(row as any).photo} alt="avatar" sx={{width: 56, height: 56}}/>
+            <Box sx={{ml: 2}}>
               <Typography variant="h6" fontWeight="600">
                 {(row as any).title}
               </Typography>
@@ -262,16 +264,16 @@ const TableWithPagination = <T extends TableItemBase>({
         );
 
       case "action":
-        return <RowMenu row={row} redirectPath={redirectPath} />;
+        return <RowMenu row={row} redirectPath={redirectPath}/>;
 
       case "detail":
-        return <RowDetail onClick={() => onRowDetailClick?.(row.id)} />;
+        return <RowDetail onClick={() => onRowDetailClick?.(row.id)}/>;
 
       default:
         return headCell.numeric ? (
           <Typography align="right">{value as number}</Typography>
         ) : (
-          <TableRenderCell row={row} headCell={headCell} emptyText={empty_text} />
+          <TableRenderCell row={row} headCell={headCell} emptyText={empty_text}/>
         );
     }
   };
@@ -303,10 +305,20 @@ const TableWithPagination = <T extends TableItemBase>({
           entity={entity}
         />
         {children}
-        <Paper variant="outlined" sx={{ mt: 1, border: `1px solid ${borderColor}` }}>
+        <Paper sx={{mt: 1}}>
           <TableContainer>
-            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
-              <EnhancedTableHead headCells={headCells} />
+            <Table
+              sx={{
+                minWidth: 750,
+                borderRadius: 4,
+                "& td, & th": {
+                  border: border ? "1px solid rgba(224, 224, 224, 1)" : "", // color del divider MUI
+                }
+              }}
+              aria-labelledby="tableTitle"
+              size={"medium"}
+            >
+              <EnhancedTableHead headCells={headCells}/>
               <TableBody>
                 {items &&
                   items.map((row: any) => {
@@ -318,7 +330,7 @@ const TableWithPagination = <T extends TableItemBase>({
                             align={headCell.numeric ? "right" : "left"}
                             padding={headCell.disablePadding ? "none" : "normal"}
                           >
-                            <DynamicCell row={row} headCell={headCell} />
+                            <DynamicCell row={row} headCell={headCell}/>
                           </TableCell>
                         ))}
                       </TableRow>
@@ -327,7 +339,7 @@ const TableWithPagination = <T extends TableItemBase>({
 
                 {emptyMessage && items && items.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={headCells.length} style={{ width: "100%" }}>
+                    <TableCell colSpan={headCells.length} style={{width: "100%"}}>
                       <div className="w-full min-h-[200px] flex justify-center items-center">
                         <h3>{emptyMessage}</h3>
                       </div>
@@ -338,12 +350,12 @@ const TableWithPagination = <T extends TableItemBase>({
             </Table>
           </TableContainer>
           <Box display="flex" alignItems="center" justifyContent="center">
-            <Box p={2} sx={{ width: "50%" }}>
+            <Box p={2} sx={{width: "50%"}}>
               Total: {total}
             </Box>
-            <Box p={2} sx={{ width: "50%" }}>
+            <Box p={2} sx={{width: "50%"}}>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: "Ver todo", value: -1 }]}
+                rowsPerPageOptions={[5, 10, 25, {label: "Ver todo", value: -1}]}
                 component="div"
                 count={total}
                 rowsPerPage={limit}

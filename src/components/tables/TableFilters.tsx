@@ -64,6 +64,10 @@ const TableFilters = (props: EnhancedTableToolbarProps) => {
       formattedValue = value ? dayjs(value).format("YYYY-MM-DD") : null;
     }
 
+    if(filterKey === "created_at" || filterKey === "from" || filterKey === "updated_at" || filterKey === "to"  || filterKey === "checkIn" ) {
+      formattedValue = value ? dayjs(value).format("YYYY-MM-DD") : null;
+    }
+
     setLocalState((prev) => ({ ...prev, [filterKey]: formattedValue }));
     dispatch(
       updateFilter({
@@ -138,7 +142,8 @@ const TableFilters = (props: EnhancedTableToolbarProps) => {
         return (
           <LocalizationProvider key={filter.key} dateAdapter={AdapterDayjs} adapterLocale="es">
             <DatePicker
-              value={localState[filter.key] || null}
+              value={localState[filter.key] ? dayjs(localState[filter.key], "YYYY-MM-DD") : null}
+              format="YYYY-MM-DD"
               onChange={(newValue) => handleFilterChange(filter.key, newValue)}
               slotProps={{
                 textField: {

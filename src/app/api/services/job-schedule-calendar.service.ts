@@ -2,22 +2,16 @@ import { prisma } from "@/lib/prisma";
 import type { IJobScheduleCalendar } from "@/app/api/job-schedule-calendar/create/types";
 import { IJobScheduleCalendarFilters } from "@/app/api/job-schedule-calendar/types";
 
+function normalizeDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()); // ← elimina zona horaria
+}
+
 export const JobScheduleCalendarService = {
   async getJobScheduleCalendar(filters: IJobScheduleCalendarFilters) {
     const { search = null, from = null, to = null, page = 1, limit = 10 } = filters;
 
     const skip = (page - 1) * limit;
-
-    const where: any = {
-      active: true,
-    };
-
-    if (from) where.date = { gte: new Date(from) };
-    if (to)
-      where.date = {
-        ...(where.date ?? {}),
-        lte: new Date(to),
-      };
 
     const employeeWhere: any = {};
 
@@ -40,7 +34,7 @@ export const JobScheduleCalendarService = {
       prisma.employee.findMany({
         where: employeeWhere,
         skip,
-        take: limit,
+        take: Number(limit),
         orderBy: { id: "desc" },
         select: {
           id: true,
@@ -57,8 +51,6 @@ export const JobScheduleCalendarService = {
           created_at: true,
           updated_at: true,
           status_employee: true,
-          user: false,
-          user_id: false,
           gender: true,
           employee_ascriptions: {
             select: {
@@ -82,10 +74,12 @@ export const JobScheduleCalendarService = {
           job_schedule_calendar: {
             where: {
               active: true,
-              ...(from && { date: { gte: new Date(from) } }),
-              ...(to && { date: { lte: new Date(to) } }),
+              date: {
+                ...(from && { gte: normalizeDate(from) }),
+                ...(to && { lte: normalizeDate(to) }),
+              },
             },
-            orderBy: { date: "asc" },
+            orderBy: [{ date: "asc" }],
             select: {
               id: true,
               date: true,
@@ -109,6 +103,7 @@ export const JobScheduleCalendarService = {
           },
         },
       }),
+
       prisma.employee.count({ where: employeeWhere }),
     ]);
 
@@ -127,6 +122,7 @@ export const JobScheduleCalendarService = {
 
     return prisma.$transaction(async (tx) => {
       const results = [];
+      const warnings: string[] = [];
 
       const hourIds = schedules.flatMap((s) => [Number(s.startHourId), Number(s.endHourId)]);
 
@@ -139,21 +135,44 @@ export const JobScheduleCalendarService = {
         return h?.display_name;
       };
 
+      const payloadDates = schedules.map((s) => new Date(s.date));
+      const minDate = new Date(Math.min(...payloadDates));
+      const maxDate = new Date(Math.max(...payloadDates));
+
       const scheduleDates = schedules.map((s) => s.date);
+      const datesToKeep = new Set(scheduleDates);
 
       for (const employeeId of employees) {
         const existing = await tx.jobScheduleCalendar.findMany({
           where: {
             employee_id: employeeId,
             active: true,
+            date: {
+              gte: minDate,
+              lte: maxDate,
+            },
           },
         });
 
-        const datesToKeep = new Set(scheduleDates);
-
-        const datesToDisable = existing.filter((e) => !datesToKeep.has(e.date.toISOString().split("T")[0]));
+        const datesToDisable = existing.filter((e) => {
+          const dateStr = e.date.toISOString().split("T")[0];
+          return !datesToKeep.has(dateStr);
+        });
 
         for (const old of datesToDisable) {
+          const usedInAttendance = await tx.employeeAttendance.findFirst({
+            where: {
+              job_schedule_calendar_id: old.id,
+              active: true,
+            },
+          });
+
+          if (usedInAttendance) {
+            const msg = `No se puede desactivar la fecha ${old.date.toISOString()} (ID ${old.id}) porque ya tiene asistencia registrada`;
+            warnings.push(msg);
+            continue;
+          }
+
           await tx.jobScheduleCalendar.update({
             where: { id: old.id },
             data: { active: false },
@@ -189,7 +208,20 @@ export const JobScheduleCalendarService = {
             continue;
           }
 
-          if (prev && !isSame) {
+          if (prev) {
+            const usedInAttendance = await tx.employeeAttendance.findFirst({
+              where: {
+                job_schedule_calendar_id: prev.id,
+                active: true,
+              },
+            });
+
+            if (usedInAttendance) {
+              const msg = `No se puede modificar la fecha ${date} porque ya tiene asistencias registradas. Se mantiene la configuración anterior.`;
+              warnings.push(msg);
+              continue;
+            }
+
             await tx.jobScheduleCalendar.update({
               where: { id: prev.id },
               data: { active: false },
@@ -213,7 +245,7 @@ export const JobScheduleCalendarService = {
         }
       }
 
-      return results;
+      return { results, warnings };
     });
   },
 };

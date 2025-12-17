@@ -59,8 +59,6 @@ export class AttendanceValidator {
 
     // 2. Si no hay calendario, usar horario fijo (JobScheduleEmployee)
     const fixedSchedule = this.getFixedSchedule(employeeData, attendanceDate);
-    console.log("fixedSchedule");
-    console.log(fixedSchedule);
     if (fixedSchedule) {
       return await this.validateWithFixedSchedule(record, employeeData, attendanceDate, fixedSchedule);
     }
@@ -204,5 +202,41 @@ export class AttendanceValidator {
     });
 
     return incident.id;
+  }
+
+  static getScheduleForPersistence(employeeData: any, isEntry: number, date: Date) {
+    const attendanceDate = dayjs(date);
+
+    const calendarSchedule = this.getIntercaladoScheduleForRecord(employeeData, attendanceDate);
+    if (calendarSchedule) {
+      return {
+        jobScheduleCalendarId: calendarSchedule.id,
+        jobScheduleEmployeeId: null,
+      };
+    }
+
+    let fixedSchedule = this.getFixedSchedule(employeeData, attendanceDate);
+    if (fixedSchedule) {
+      return {
+        jobScheduleEmployeeId: fixedSchedule.id,
+        jobScheduleCalendarId: null,
+      };
+    }
+
+    if (isEntry === 0) {
+      const previousDay = attendanceDate.subtract(1, "day");
+      fixedSchedule = this.getFixedSchedule(employeeData, previousDay);
+      if (fixedSchedule) {
+        return {
+          jobScheduleEmployeeId: fixedSchedule.id,
+          jobScheduleCalendarId: null,
+        };
+      }
+    }
+
+    return {
+      jobScheduleEmployeeId: null,
+      jobScheduleCalendarId: null,
+    };
   }
 }

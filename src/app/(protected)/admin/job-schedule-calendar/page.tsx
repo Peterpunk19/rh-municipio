@@ -16,18 +16,25 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Chip,
   Alert,
   CircularProgress,
-  Snackbar,
 } from "@mui/material";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import { Temporal } from "@js-temporal/polyfill";
-import { IconCopy, IconCalendar, IconUsers, IconX } from "@tabler/icons-react";
+import { IconCalendar, IconUsers } from "@tabler/icons-react";
 import CustomCalendar from "@/components/customComponents/CustomCalendar";
 import EmployeeFinder from "@/components/shared/EmployeeFinder";
 import { FormErrors, ShiftType, SelectedEmployee } from "./_config";
 import { saveJobScheduleCalendar, getJobScheduleCalendar } from "@/services/job-schedule-calendar";
+import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
+import PageContainer from "@/app/components/container/PageContainer";
+
+const BCrumb = [
+  {
+    to: "/admin/job-schedule-calendar",
+    title: "Horarios Intercalados",
+  },
+];
 
 const ShiftSchedulePage = () => {
   const today = Temporal.Now.plainDateISO();
@@ -41,11 +48,15 @@ const ShiftSchedulePage = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<SelectedEmployee[]>([]);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[] | null>(null);
+  const [warningSnackbar, setWarningSnackbar] = useState<string | null>(null);
+
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
     severity: "error" | "success" | "warning";
   }>({ open: false, message: "", severity: "warning" });
+
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const [isLoadingCalendar, setIsLoadingCalendar] = useState(false);
 
@@ -108,15 +119,11 @@ const ShiftSchedulePage = () => {
     try {
       const response = await fetch(`/api/catalogs/holiday?year=${currentYear}`);
 
-      if (!response.ok) {
-        throw new Error("Error al obtener los días festivos");
-      }
+      if (!response.ok) throw new Error("Error al obtener los días festivos");
 
       const data = await response.json();
 
-      if (!data.success || !data.responseObject) {
-        throw new Error("Formato de respuesta inválido");
-      }
+      if (!data.success || !data.responseObject) throw new Error("Formato de respuesta inválido");
 
       const holidayDates = new Set<string>();
       const currentMonthStr = String(currentMonth).padStart(2, "0");
@@ -142,19 +149,15 @@ const ShiftSchedulePage = () => {
 
   const handleDateClick = useCallback(
     (date: string) => {
-      setSelectedDates((prevSelectedDates) => {
-        const newSelectedDates = new Set(prevSelectedDates);
+      setSelectedDates((prev) => {
+        const newDates = new Set(prev);
 
-        if (newSelectedDates.has(date)) {
-          newSelectedDates.delete(date);
-        } else {
-          if (newSelectedDates.size >= MAX_SELECTIONS) {
-            return prevSelectedDates;
-          }
-          newSelectedDates.add(date);
+        if (newDates.has(date)) newDates.delete(date);
+        else {
+          if (newDates.size >= MAX_SELECTIONS) return prev;
+          newDates.add(date);
         }
-
-        return newSelectedDates;
+        return newDates;
       });
     },
     [MAX_SELECTIONS],
@@ -162,15 +165,16 @@ const ShiftSchedulePage = () => {
 
   const formatDate = (dateStr: string) => {
     const date = Temporal.PlainDate.from(dateStr);
-    return date.toLocaleString("es-MX", {
-      weekday: "short",
+
+    const formatted = date.toLocaleString("es-MX", {
+      weekday: "long",
       year: "numeric",
-      month: "short",
+      month: "long",
       day: "numeric",
     });
-  };
 
-  const handleCopyPreviousWeek = () => {};
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  };
 
   const handleDuplicatePattern = () => {
     setIsDuplicateMode(true);
@@ -189,14 +193,10 @@ const ShiftSchedulePage = () => {
     setOpenDialog(true);
   };
 
-  const handleClearCalendar = () => {
-    setSelectedDates(new Set());
-  };
+  const handleClearCalendar = () => setSelectedDates(new Set());
 
   const handlePreventClose = (reason: string) => {
-    if (reason === "backdropClick" || reason === "escapeKeyDown") {
-      return;
-    }
+    if (reason === "backdropClick" || reason === "escapeKeyDown") return;
   };
 
   const handleCancel = () => {
@@ -205,11 +205,13 @@ const ShiftSchedulePage = () => {
     setSelectedEmployees([]);
     setSubmitError(null);
     setSubmitSuccess(null);
+    setWarnings(null);
   };
 
   const handleConfirmApplyToEmployees = async () => {
     setSubmitError(null);
     setSubmitSuccess(null);
+    setWarnings(null);
 
     if (selectedEmployees.length === 0) {
       setErrors({ employeeId: "Debe seleccionar al menos un empleado" });
@@ -226,8 +228,8 @@ const ShiftSchedulePage = () => {
     try {
       const schedules = Array.from(selectedDates).map((date) => ({
         date,
-        startHourId: "09",
-        endHourId: "17",
+        startHourId: "17",
+        endHourId: "33",
       }));
 
       const payload = {
@@ -238,16 +240,24 @@ const ShiftSchedulePage = () => {
       const response = await saveJobScheduleCalendar(payload);
 
       if (!response.success) {
-        throw new Error(response.message || "Error al guardar los horarios");
+        setSubmitError(response.message);
+
+        if (response.responseObject?.warnings) {
+          setWarnings(response.responseObject.warnings);
+          setWarningSnackbar(response.responseObject.warnings[0]); // también en snackbar
+        }
+        return;
       }
 
       setSubmitSuccess("Horarios guardados correctamente");
+
+      if (response.responseObject?.warnings) {
+        setWarnings(response.responseObject.warnings);
+        setWarningSnackbar(response.responseObject.warnings[0]);
+      }
+
       setSelectedEmployees([]);
       setSelectedDates(new Set());
-      setTimeout(() => {
-        setOpenDialog(false);
-        setSubmitSuccess(null);
-      }, 1500);
     } catch (error: any) {
       setSubmitError(error.message || "Error al guardar los horarios");
     } finally {
@@ -267,7 +277,17 @@ const ShiftSchedulePage = () => {
     if (isDuplicateMode) {
       setIsLoadingCalendar(true);
       try {
-        const response = await getJobScheduleCalendar(`search=${employee.number_employee}`);
+        const year = currentYear;
+        const month = currentMonth;
+
+        const firstDay = Temporal.PlainDate.from({ year, month, day: 1 }).toString();
+        const lastDay = Temporal.PlainYearMonth.from({ year, month })
+          .toPlainDate({ day: Temporal.PlainYearMonth.from({ year, month }).daysInMonth })
+          .toString();
+
+        const response = await getJobScheduleCalendar(
+          `search=${employee.number_employee}&from=${firstDay}&to=${lastDay}`,
+        );
 
         if (response.success && response.responseObject?.data?.length > 0) {
           const employeeData = response.responseObject.data[0];
@@ -275,10 +295,7 @@ const ShiftSchedulePage = () => {
 
           if (calendarDates.length > 0) {
             const newDates = new Set<string>();
-            calendarDates.forEach((item: any) => {
-              const dateStr = new Date(item.date).toISOString().split("T")[0];
-              newDates.add(dateStr);
-            });
+            calendarDates.forEach((item: any) => newDates.add(new Date(item.date).toISOString().split("T")[0]));
             setSelectedDates(newDates);
             setSnackbar({
               open: true,
@@ -300,7 +317,7 @@ const ShiftSchedulePage = () => {
           });
         }
       } catch (error) {
-        console.error("Error al cargar calendario:", error);
+        console.error(error);
         setSnackbar({
           open: true,
           message: "Error al cargar el calendario del empleado",
@@ -322,34 +339,35 @@ const ShiftSchedulePage = () => {
     setSelectedEmployees((prev) => prev.filter((emp) => emp.id !== employeeId));
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbar((prev) => ({ ...prev, open: false }));
-  };
-
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Horarios Intercalados
-      </Typography>
+    <PageContainer title="Horarios Intercalados" description="Horarios Intercalados">
+      <Breadcrumb title="Horarios Intercalados" items={BCrumb} />
 
       <Grid2 container spacing={3}>
         <Grid2 size={{ xs: 12, md: 9 }}>
-          <Paper sx={{ p: 2, height: "100%" }}>
-            <CustomCalendar
-              key={`${currentYear}-${currentMonth}-${Array.from(selectedDates).sort().join(",")}`}
-              daysSelected={Array.from(selectedDates)}
-              onDateClick={handleDateClick}
-              maxSelections={MAX_SELECTIONS}
-              initialMonth={currentMonth}
-              initialYear={currentYear}
-              onMonthVisibleChange={handleMonthChange}
-              hideActions
-            />
-          </Paper>
+          <CustomCalendar
+            daysSelected={Array.from(selectedDates)}
+            onDateClick={handleDateClick}
+            maxSelections={MAX_SELECTIONS}
+            initialMonth={currentMonth}
+            initialYear={currentYear}
+            onMonthVisibleChange={handleMonthChange}
+            hideActions
+            enableAttendanceToggle={false}
+          />
         </Grid2>
 
         <Grid2 size={{ xs: 12, md: 3 }}>
-          <Paper sx={{ p: 2, mb: 2 }}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            height="100%"
+            sx={{
+              bgcolor: "#F5F7FB",
+              borderRadius: 3,
+              p: { xs: 1.5, md: 2 },
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               Configuración opcional
             </Typography>
@@ -414,19 +432,9 @@ const ShiftSchedulePage = () => {
               <Button
                 fullWidth
                 variant="outlined"
-                startIcon={<IconCopy size={18} />}
-                onClick={handleCopyPreviousWeek}
-                sx={{ mb: 1, justifyContent: "flex-start" }}
-              >
-                Copiar semana anterior
-              </Button>
-
-              <Button
-                fullWidth
-                variant="outlined"
                 startIcon={<IconCalendar size={18} />}
                 onClick={handleDuplicatePattern}
-                sx={{ mb: 1, justifyContent: "flex-start" }}
+                sx={{ mb: 1 }}
               >
                 Duplicar patrón
               </Button>
@@ -436,26 +444,22 @@ const ShiftSchedulePage = () => {
                 variant="outlined"
                 startIcon={<IconUsers size={18} />}
                 onClick={handleApplyToEmployees}
-                sx={{ mb: 1, justifyContent: "flex-start" }}
+                sx={{ mb: 1 }}
               >
                 Aplicar a empleados
               </Button>
 
-              <Button
-                fullWidth
-                variant="outlined"
-                color="error"
-                onClick={handleClearCalendar}
-                sx={{ justifyContent: "flex-start" }}
-              >
+              <Button fullWidth variant="outlined" color="error" onClick={handleClearCalendar}>
                 Limpiar calendario
               </Button>
             </Box>
-          </Paper>
+          </Box>
         </Grid2>
       </Grid2>
+
       <Dialog open={openDialog} onClose={handlePreventClose} maxWidth="md" fullWidth disableEscapeKeyDown>
         <DialogTitle variant="h5">{isDuplicateMode ? "Duplicar patrón de empleado" : "Aplicar fechas"}</DialogTitle>
+
         <DialogContent dividers>
           <Grid2 container spacing={2}>
             <Grid2 size={{ xs: 12 }}>
@@ -467,42 +471,28 @@ const ShiftSchedulePage = () => {
                   </Typography>
                 </Box>
               ) : (
-                <>
-                  <EmployeeFinder
-                    onEmployeeSelect={handleEmployeeSelected}
-                    error={errors.employeeId || ""}
-                    showDetails={false}
-                    attendanceType="intercalated"
-                  />
-                </>
+                <EmployeeFinder
+                  onEmployeeSelect={handleEmployeeSelected}
+                  error={errors.employeeId || ""}
+                  showDetails={false}
+                  attendanceType="intercalated"
+                />
               )}
             </Grid2>
 
-            {!isDuplicateMode && selectedEmployees.length > 0 && (
+            {warnings && (
               <Grid2 size={{ xs: 12 }}>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  Empleados seleccionados ({selectedEmployees.length})
-                </Typography>
-                <Paper variant="outlined" sx={{ p: 1, maxHeight: 200, overflow: "auto" }}>
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {selectedEmployees.map((emp) => (
-                      <Chip
-                        key={emp.id}
-                        label={emp.label}
-                        onDelete={() => handleRemoveEmployee(emp.id)}
-                        deleteIcon={<IconX size={16} />}
-                        color="primary"
-                        variant="outlined"
-                      />
-                    ))}
-                  </Box>
-                </Paper>
+                <Alert severity="warning" sx={{ whiteSpace: "pre-line" }} variant="filled">
+                  {warnings.join("\n")}
+                </Alert>
               </Grid2>
             )}
 
             {submitError && (
               <Grid2 size={{ xs: 12 }}>
-                <Alert severity="error">{submitError}</Alert>
+                <Alert severity="error" variant="filled">
+                  {submitError}
+                </Alert>
               </Grid2>
             )}
 
@@ -513,10 +503,12 @@ const ShiftSchedulePage = () => {
             )}
           </Grid2>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleCancel} color="error" variant="contained" disabled={isSubmitting}>
             Cancelar
           </Button>
+
           {!isDuplicateMode && (
             <Button
               onClick={handleConfirmApplyToEmployees}
@@ -530,17 +522,7 @@ const ShiftSchedulePage = () => {
           )}
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+    </PageContainer>
   );
 };
 
