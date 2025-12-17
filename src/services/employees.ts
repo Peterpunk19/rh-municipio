@@ -47,3 +47,12 @@ export const getEmployeeJobSchedule = async (employeeId: number) => {
     console.error("Error fetching employee job schedule:", error);
   }
 };
+
+export const getEmployeeJobScheduleCalendar = async (employeeId: number, from: string, to: string) => {
+  try {
+    const response = await fetch(`/api/employees/${employeeId}/job-schedule-calendar?from=${from}&to=${to}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching employee job schedule:", error);
+  }
+};

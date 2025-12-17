@@ -8,6 +8,8 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   "location.display_name": { renderType: "text" },
   check_in: { renderType: "checkIn" },
   check_out: { renderType: "checkOut" },
+  job_schedule_employee_id: { renderType: "text" },
+  job_schedule_calendar_id: { renderType: "text" },
   "incident.display_name": { renderType: "incidentType" },
   created_at: { renderType: "date", format: (value) => formatDate(value, "dd/MM/yyyy HH:mm") },
   actions: { renderType: "action", redirectPath: "/admin/employees-attendances/" },

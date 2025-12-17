@@ -191,8 +191,6 @@ export const EmployeeAttendanceService = {
   },
 
   async createEmployeeAttendance(employeeAttendance: IEmployeeAttendance) {
-    console.log("employeeAttendance");
-    console.log(employeeAttendance);
     return prisma.$transaction(async (tx) => {
       const createEmployeeAttendance = await tx.employeeAttendance.create({
         data: {
@@ -248,6 +246,12 @@ export const EmployeeAttendanceService = {
           employee_attendance_type: {
             connect: { id: data.employee_attendance_type_id },
           },
+          ...(data.job_schedule_employee_id
+            ? { job_schedule_employee: { connect: { id: Number(data.job_schedule_employee_id) } } }
+            : {}),
+          ...(data.job_schedule_calendar_id
+            ? { job_schedule_calendar: { connect: { id: Number(data.job_schedule_calendar_id) } } }
+            : {}),
         },
       });
 
@@ -301,13 +305,15 @@ export const EmployeeAttendanceService = {
 
     const whereClause: any = await buildWhereClause(filterMappings, employeeAttendanceFilters, searchMappings);
 
+    const checkInDate = new Date(employeeAttendanceFilters.checkIn);
+    checkInDate.setHours(0, 0, 0, 0);
+    const checkOutDate = new Date(employeeAttendanceFilters.checkOut);
+    checkOutDate.setHours(23, 59, 59, 999);
+
     if (employeeAttendanceFilters.checkIn || employeeAttendanceFilters.checkOut) {
       whereClause.AND = whereClause.AND || [];
 
       if (employeeAttendanceFilters.checkIn) {
-        const checkInDate = new Date(employeeAttendanceFilters.checkIn);
-        checkInDate.setHours(0, 0, 0, 0);
-
         whereClause.AND.push({
           OR: [
             { check_in: { gte: checkInDate } },
@@ -320,9 +326,6 @@ export const EmployeeAttendanceService = {
       }
 
       if (employeeAttendanceFilters.checkOut) {
-        const checkOutDate = new Date(employeeAttendanceFilters.checkOut);
-        checkOutDate.setHours(23, 59, 59, 999);
-
         whereClause.AND.push({
           OR: [
             { check_in: { lte: checkOutDate } },
@@ -436,6 +439,31 @@ export const EmployeeAttendanceService = {
             },
           },
         },
+        job_schedule_calendar: {
+          include: {
+            start_hour: true,
+            end_hour: true,
+          },
+        },
+        job_schedule_employee: {
+          select: {
+            id: true,
+            employee_id: true,
+            name: true,
+            description: true,
+            active: true,
+            created_at: true,
+            updated_at: true,
+            start_day_id: true,
+            end_day_id: true,
+            start_hour_id: true,
+            end_hour_id: true,
+            start_day: true,
+            end_day: true,
+            start_hour: true,
+            end_hour: true,
+          },
+        },
         created_by: {
           select: {
             id: true,
@@ -445,6 +473,7 @@ export const EmployeeAttendanceService = {
       },
     });
 
+    console.log(attendances);
     const data = attendances.map((item: any) => ({
       id: item.id,
       employee_attendance_incident: item.employee_attendance_incident,
@@ -480,6 +509,8 @@ export const EmployeeAttendanceService = {
         id: item.created_by.id,
         username: item.created_by.username,
       },
+      job_schedule_calendar: item.job_schedule_calendar,
+      job_schedule_employee: item.job_schedule_employee,
     }));
 
     const total = await prisma.employeeAttendance.count({ where: whereClause });

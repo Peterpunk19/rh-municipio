@@ -141,6 +141,8 @@ export async function POST(request: NextRequest) {
             await EmployeeAttendanceService.updateAttendanceCheckOut(existingRecord.id, timestamp);
           }
         } else {
+          const scheduleInfo = AttendanceValidator.getScheduleForPersistence(employee, isEntry, timestamp);
+
           const attendanceData = {
             employee_id: employee.id,
             check_in: isEntry === 1 ? timestamp : null,
@@ -152,6 +154,8 @@ export async function POST(request: NextRequest) {
             employee_attendance_type_id: attendanceType.id,
             employee_incident_id: incidentId,
             description: isEntry === 1 ? "Entrada registrada" : "Salida registrada",
+            job_schedule_employee_id: scheduleInfo.jobScheduleEmployeeId,
+            job_schedule_calendar_id: scheduleInfo.jobScheduleCalendarId,
           };
 
           await EmployeeAttendanceService.createSingleAttendance(attendanceData);

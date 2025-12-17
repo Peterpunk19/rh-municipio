@@ -21,8 +21,8 @@ export interface IEmployeeAttendanceFilters {
   page: number | string;
   limit: number | string;
   employeeId: number | string | undefined;
-  checkIn: string | null | undefined;
-  checkOut: string | null | undefined;
+  checkIn: string;
+  checkOut: string;
   typeAttendance: number | string | null | undefined;
   location: number | string | null | undefined;
   organismPublic: number | string | null | undefined;

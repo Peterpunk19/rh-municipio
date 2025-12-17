@@ -74,6 +74,7 @@ const EmployeesPayroll = ({
         entity={ENTITY}
         emptyMessage={emptyMessage}
         showSearchBar={showSearchBar}
+        border={true}
       />
     </PageContainer>
   );

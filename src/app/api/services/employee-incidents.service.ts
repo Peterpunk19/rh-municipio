@@ -13,6 +13,60 @@ import { HolidayService } from "@/app/api/services/holiday.service";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 
+async function resolveSchedule({ employeeId, date, attendanceTypeId, tx }) {
+  const attendanceType = await tx.employeeAttendanceType.findUnique({
+    where: { id: attendanceTypeId },
+  });
+
+  if (!attendanceType) return {};
+
+  const jsDay = date.getDay() === 0 ? 7 : date.getDay(); // 0=sunday → 7
+
+  if (attendanceType.name === "intercalated") {
+    const calendar = await tx.jobScheduleCalendar.findFirst({
+      where: {
+        employee_id: employeeId,
+        date: {
+          gte: new Date(date.setHours(0, 0, 0, 0)),
+          lte: new Date(date.setHours(23, 59, 59, 999)),
+        },
+        active: true,
+      },
+    });
+
+    console.log(calendar);
+
+    if (calendar) {
+      return {
+        job_schedule_calendar: {
+          connect: { id: calendar.id },
+        },
+      };
+    }
+
+    return {};
+  }
+
+  const weeklySchedule = await tx.jobScheduleEmployee.findFirst({
+    where: {
+      employee_id: employeeId,
+      active: true,
+      start_day_id: { lte: jsDay },
+      end_day_id: { gte: jsDay },
+    },
+  });
+
+  if (weeklySchedule) {
+    return {
+      job_schedule_employee: {
+        connect: { id: weeklySchedule.id },
+      },
+    };
+  }
+
+  return {};
+}
+
 export const EmployeeIncidentsService = {
   async getFolio() {
     const lastFolio = await prisma.employeeIncidents.findFirst({
@@ -560,6 +614,13 @@ export const EmployeeIncidentsService = {
                 });
               }
             } else {
+              const scheduleData = await resolveSchedule({
+                employeeId: employeeIncident.employeeId,
+                date: startOfDay,
+                attendanceTypeId: employeeIncident.employeeAttendanceTypeId,
+                tx,
+              });
+
               const employeeAttendance = await tx.employeeAttendance.create({
                 data: {
                   check_in: startOfDay,
@@ -580,6 +641,7 @@ export const EmployeeIncidentsService = {
                   created_by: {
                     connect: { id: employeeIncident.createdById },
                   },
+                  ...scheduleData,
                 },
               });
 
