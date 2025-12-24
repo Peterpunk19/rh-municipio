@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Grid2 as Grid, } from "@mui/material";
+import { Box, Typography, Grid2 as Grid } from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
-import {IconClockCheck, IconClockDown, IconClockUp} from "@tabler/icons-react";
-import { ICalendarDay, IAttendanceCalendar } from "@/components/types";
+import { IconClockCheck, IconClockDown, IconClockUp } from "@tabler/icons-react";
+import { ICalendarDay, IAttendanceCalendar, IScheduleData } from "@/components/types";
 import { formatDate } from "@/utils/formatter";
-import {generateUniqueKey} from "@/utils";
+import { generateUniqueKey } from "@/utils";
 
 interface Props {
   day: ICalendarDay;
@@ -17,30 +17,28 @@ interface Props {
   isWorkDay?: boolean;
   schedule?: { startHour: string; endHour: string };
   showSchedule?: boolean;
+  scheduleData?: IScheduleData;
+  onScheduleClick?: (date: string, schedule: IScheduleData) => void;
 }
 
 const CalendarDay = React.memo(
   ({
-     day,
-     today,
-     isSelected,
-     attendance,
-     onClick,
-     isWorkDay,
-     schedule,
-     showSchedule,
+    day,
+    today,
+    isSelected,
+    attendance,
+    onClick,
+    isWorkDay,
+    schedule,
+    showSchedule,
+    scheduleData,
+    onScheduleClick,
   }: Props) => {
     const dateStr = day.date.toString();
     const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
     const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
 
-    const bg = !day.isInMonth
-      ? isSelected
-        ? "#2F6FED"
-        : "#f6f6f6"
-      : isSelected
-        ? "#2F6FED"
-        : "#FFF";
+    const bg = !day.isInMonth ? (isSelected ? "#2F6FED" : "#f6f6f6") : isSelected ? "#2F6FED" : "#FFF";
     const color = isSelected ? "#FFF" : "#000";
 
     return (
@@ -87,73 +85,103 @@ const CalendarDay = React.memo(
           </Typography>
         )}
 
+        {scheduleData && (
+          <Box
+            onClick={(e) => {
+              e.stopPropagation();
+              onScheduleClick?.(dateStr, scheduleData);
+            }}
+            sx={{
+              position: "absolute",
+              bottom: 8,
+              left: 8,
+              right: 8,
+              backgroundColor: "#e07a5f",
+              borderRadius: "4px",
+              px: 1,
+              py: 0.5,
+              cursor: "pointer",
+              "&:hover": {
+                backgroundColor: "#c96a52",
+              },
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                color: "#fff",
+                fontSize: "0.7rem",
+                fontWeight: 500,
+                display: "block",
+                textAlign: "center",
+              }}
+            >
+              {scheduleData.startDisplay} - {scheduleData.endDisplay}
+            </Typography>
+          </Box>
+        )}
+
         {/* Contenido */}
         {showSchedule && (
           <Box sx={{ mt: 3.5 }}>
             {attendance ? (
               <>
-                {attendance.hasIncidents ?
-                  attendance.incidents.map((inc) => (
-                    <Box
-                      key={inc.id}
-                      sx={{
-                        mb: 0.5,
-                        px: 1,
-                        py: 0.3,
-                        borderRadius: 1,
-                        backgroundColor: inc.bgColorOnCalendar,
-                        color: inc.colorOnCalendar,
-                        fontSize: "0.75rem",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {inc.type}
-                    </Box>
-                  ))
-                : (
-                  (() => {
-                    let label = "";
-                    let bg = "";
-                    let color = "#fff";
-
-                    if (attendance.checkIn && attendance.checkOut) {
-                      label = "ASISTENCIA";
-                      bg = "success.attendance";
-                    } else if (attendance.checkIn && !attendance.checkOut) {
-                      label = "OMISIÓN DE SALIDA";
-                      bg = "warning.main";
-                    } else if (!attendance.checkIn && attendance.checkOut) {
-                      label = "OMISIÓN DE ENTRADA";
-                      bg = "warning.main";
-                    }
-
-                    if (!label) return null;
-
-                    return (
+                {attendance.hasIncidents
+                  ? attendance.incidents.map((inc) => (
                       <Box
-                        display="flex"
-                        alignItems="center"
-                        gap={1}
+                        key={inc.id}
                         sx={{
                           mb: 0.5,
                           px: 1,
                           py: 0.3,
                           borderRadius: 1,
-                          backgroundColor: bg,
+                          backgroundColor: inc.bgColorOnCalendar,
+                          color: inc.colorOnCalendar,
+                          fontSize: "0.75rem",
+                          fontWeight: 600,
                         }}
                       >
-                        <IconClockCheck size={14} color={color} />
-                        <Typography
-                          fontSize="0.75rem"
-                          fontWeight={600}
-                          sx={{ color }}
-                        >
-                          {label}
-                        </Typography>
+                        {inc.type}
                       </Box>
-                    );
-                  })()
-                )}
+                    ))
+                  : (() => {
+                      let label = "";
+                      let bg = "";
+                      let color = "#fff";
+
+                      if (attendance.checkIn && attendance.checkOut) {
+                        label = "ASISTENCIA";
+                        bg = "success.attendance";
+                      } else if (attendance.checkIn && !attendance.checkOut) {
+                        label = "OMISIÓN DE SALIDA";
+                        bg = "warning.main";
+                      } else if (!attendance.checkIn && attendance.checkOut) {
+                        label = "OMISIÓN DE ENTRADA";
+                        bg = "warning.main";
+                      }
+
+                      if (!label) return null;
+
+                      return (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          gap={1}
+                          sx={{
+                            mb: 0.5,
+                            px: 1,
+                            py: 0.3,
+                            borderRadius: 1,
+                            backgroundColor: bg,
+                          }}
+                        >
+                          <IconClockCheck size={14} color={color} />
+                          <Typography fontSize="0.75rem" fontWeight={600} sx={{ color }}>
+                            {label}
+                          </Typography>
+                        </Box>
+                      );
+                    })()}
 
                 {!attendance.hasIncidents && (
                   <>
@@ -212,7 +240,7 @@ const CalendarDay = React.memo(
         )}
       </Grid>
     );
-  }
+  },
 );
 
 export default CalendarDay;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -18,11 +18,13 @@ import {
   DialogActions,
   Alert,
   CircularProgress,
+  Snackbar,
 } from "@mui/material";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import { Temporal } from "@js-temporal/polyfill";
 import { IconCalendar, IconUsers } from "@tabler/icons-react";
 import CustomCalendar from "@/components/customComponents/CustomCalendar";
+import ApplyScheduleModal from "@/components/customComponents/ApplyScheduleModal";
 import EmployeeFinder from "@/components/shared/EmployeeFinder";
 import { FormErrors, ShiftType, SelectedEmployee } from "./_config";
 import { saveJobScheduleCalendar, getJobScheduleCalendar } from "@/services/job-schedule-calendar";
@@ -35,6 +37,7 @@ const BCrumb = [
     title: "Horarios Intercalados",
   },
 ];
+import { IScheduleData } from "@/components/types";
 
 const ShiftSchedulePage = () => {
   const today = Temporal.Now.plainDateISO();
@@ -59,6 +62,12 @@ const ShiftSchedulePage = () => {
 
   const [isDuplicateMode, setIsDuplicateMode] = useState(false);
   const [isLoadingCalendar, setIsLoadingCalendar] = useState(false);
+  const [openApplySchedule, setOpenApplySchedule] = useState(false);
+  const [appliedSchedules, setAppliedSchedules] = useState<Map<string, IScheduleData>>(new Map());
+  const [editingDate, setEditingDate] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentStartHourId, setCurrentStartHourId] = useState(0);
+  const [currentEndHourId, setCurrentEndHourId] = useState(0);
 
   const MAX_SELECTIONS = 365;
 
@@ -149,15 +158,23 @@ const ShiftSchedulePage = () => {
 
   const handleDateClick = useCallback(
     (date: string) => {
-      setSelectedDates((prev) => {
-        const newDates = new Set(prev);
+      setSelectedDates((prevSelectedDates) => {
+        const newSelectedDates = new Set(prevSelectedDates);
 
-        if (newDates.has(date)) newDates.delete(date);
-        else {
-          if (newDates.size >= MAX_SELECTIONS) return prev;
-          newDates.add(date);
+        if (newSelectedDates.has(date)) {
+          newSelectedDates.delete(date);
+          setAppliedSchedules((prev) => {
+            const newMap = new Map(prev);
+            newMap.delete(date);
+            return newMap;
+          });
+        } else {
+          if (newSelectedDates.size >= MAX_SELECTIONS) {
+            return prevSelectedDates;
+          }
+          newSelectedDates.add(date);
         }
-        return newDates;
+        return newSelectedDates;
       });
     },
     [MAX_SELECTIONS],
@@ -193,7 +210,75 @@ const ShiftSchedulePage = () => {
     setOpenDialog(true);
   };
 
-  const handleClearCalendar = () => setSelectedDates(new Set());
+  const handleClearCalendar = () => {
+    setSelectedDates(new Set());
+    setAppliedSchedules(new Map());
+  };
+
+  const handleOpenApplySchedule = () => {
+    if (selectedDates.size === 0) {
+      setSnackbar({
+        open: true,
+        message: "Debe seleccionar al menos una fecha antes de aplicar horarios",
+        severity: "warning",
+      });
+      return;
+    }
+    setIsEditMode(false);
+    setEditingDate(null);
+    setCurrentStartHourId(0);
+    setCurrentEndHourId(0);
+    setOpenApplySchedule(true);
+  };
+
+  const handleApplyScheduleConfirm = (
+    startHourId: number,
+    endHourId: number,
+    startDisplay: string,
+    endDisplay: string,
+  ) => {
+    if (isEditMode && editingDate) {
+      setAppliedSchedules((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(editingDate, { startHourId, endHourId, startDisplay, endDisplay });
+        return newMap;
+      });
+    } else {
+      const newMap = new Map(appliedSchedules);
+      selectedDates.forEach((date) => {
+        if (!appliedSchedules.has(date)) {
+          newMap.set(date, { startHourId, endHourId, startDisplay, endDisplay });
+        }
+      });
+      setAppliedSchedules(newMap);
+    }
+    setOpenApplySchedule(false);
+    setIsEditMode(false);
+    setEditingDate(null);
+  };
+
+  const handleScheduleClick = (date: string, schedule: IScheduleData) => {
+    setEditingDate(date);
+    setIsEditMode(true);
+    setCurrentStartHourId(schedule.startHourId);
+    setCurrentEndHourId(schedule.endHourId);
+    setOpenApplySchedule(true);
+  };
+
+  const handleDeleteSchedule = (date: string) => {
+    setSelectedDates((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(date);
+      return newSet;
+    });
+    setAppliedSchedules((prev) => {
+      const newMap = new Map(prev);
+      newMap.delete(date);
+      return newMap;
+    });
+  };
+
+  const scheduleDataMap = useMemo(() => appliedSchedules, [appliedSchedules]);
 
   const handlePreventClose = (reason: string) => {
     if (reason === "backdropClick" || reason === "escapeKeyDown") return;
@@ -223,14 +308,26 @@ const ShiftSchedulePage = () => {
       return;
     }
 
+    const datesWithoutSchedule = Array.from(selectedDates).filter((date) => !appliedSchedules.has(date));
+
+    if (datesWithoutSchedule.length > 0) {
+      setSubmitError(
+        `Hay ${datesWithoutSchedule.length} fecha(s) sin horario asignado. Por favor, aplique horarios a todas las fechas antes de continuar.`,
+      );
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const schedules = Array.from(selectedDates).map((date) => ({
-        date,
-        startHourId: "17",
-        endHourId: "33",
-      }));
+      const schedules = Array.from(selectedDates).map((date) => {
+        const schedule = appliedSchedules.get(date);
+        return {
+          date,
+          startHourId: schedule?.startHourId || 8,
+          endHourId: schedule?.endHourId || 17,
+        };
+      });
 
       const payload = {
         employees: selectedEmployees.map((emp) => emp.id),
@@ -258,6 +355,11 @@ const ShiftSchedulePage = () => {
 
       setSelectedEmployees([]);
       setSelectedDates(new Set());
+      setAppliedSchedules(new Map());
+      setTimeout(() => {
+        setOpenDialog(false);
+        setSubmitSuccess(null);
+      }, 1500);
     } catch (error: any) {
       setSubmitError(error.message || "Error al guardar los horarios");
     } finally {
@@ -295,8 +397,19 @@ const ShiftSchedulePage = () => {
 
           if (calendarDates.length > 0) {
             const newDates = new Set<string>();
-            calendarDates.forEach((item: any) => newDates.add(new Date(item.date).toISOString().split("T")[0]));
+            const newSchedules = new Map<string, IScheduleData>();
+            calendarDates.forEach((item: any) => {
+              const dateStr = new Date(item.date).toISOString().split("T")[0];
+              newDates.add(dateStr);
+              newSchedules.set(dateStr, {
+                startHourId: item.start_hour_id,
+                endHourId: item.end_hour_id,
+                startDisplay: item.start_hour?.display_name || "",
+                endDisplay: item.end_hour?.display_name || "",
+              });
+            });
             setSelectedDates(newDates);
+            setAppliedSchedules(newSchedules);
             setSnackbar({
               open: true,
               message: `Se cargaron ${calendarDates.length} fechas del calendario de ${employee.label}`,
@@ -345,16 +458,20 @@ const ShiftSchedulePage = () => {
 
       <Grid2 container spacing={3}>
         <Grid2 size={{ xs: 12, md: 9 }}>
-          <CustomCalendar
-            daysSelected={Array.from(selectedDates)}
-            onDateClick={handleDateClick}
-            maxSelections={MAX_SELECTIONS}
-            initialMonth={currentMonth}
-            initialYear={currentYear}
-            onMonthVisibleChange={handleMonthChange}
-            hideActions
-            enableAttendanceToggle={false}
-          />
+          <Paper sx={{ p: 2, height: "100%" }}>
+            <CustomCalendar
+              key={`${currentYear}-${currentMonth}`}
+              daysSelected={Array.from(selectedDates)}
+              onDateClick={handleDateClick}
+              maxSelections={MAX_SELECTIONS}
+              initialMonth={currentMonth}
+              initialYear={currentYear}
+              onMonthVisibleChange={handleMonthChange}
+              hideActions
+              scheduleData={scheduleDataMap}
+              onScheduleClick={handleScheduleClick}
+            />
+          </Paper>
         </Grid2>
 
         <Grid2 size={{ xs: 12, md: 3 }}>
@@ -422,6 +539,23 @@ const ShiftSchedulePage = () => {
               </Paper>
             </Box>
 
+            <Button color="error" variant="contained" fullWidth onClick={handleOpenApplySchedule}>
+              Aplicar horarios
+            </Button>
+            <ApplyScheduleModal
+              open={openApplySchedule}
+              onClose={() => {
+                setOpenApplySchedule(false);
+                setIsEditMode(false);
+                setEditingDate(null);
+              }}
+              onConfirm={handleApplyScheduleConfirm}
+              onDelete={handleDeleteSchedule}
+              defaultStartHourId={currentStartHourId}
+              defaultEndHourId={currentEndHourId}
+              editingDate={editingDate}
+              isEditMode={isEditMode}
+            />
             <Divider sx={{ my: 2 }} />
 
             <Box>
@@ -522,6 +656,17 @@ const ShiftSchedulePage = () => {
           )}
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </PageContainer>
   );
 };
