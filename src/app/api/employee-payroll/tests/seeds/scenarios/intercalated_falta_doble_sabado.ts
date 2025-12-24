@@ -37,6 +37,4 @@ export default async function seedIntercalated_FaltaDobleSabado(numberEmployee: 
   // - Falta
   // - Como es sábado → Falta Doble = 2 días descontados
   //
-
-  console.log(`🚫 Intercalated_FaltaDobleSabado creado para ${numberEmployee}`);
 }

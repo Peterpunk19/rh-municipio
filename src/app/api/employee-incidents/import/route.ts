@@ -45,8 +45,6 @@ export async function POST() {
       const employeeMapped = mapToIEmployeeIncident(employeeData, formattedFolio);
       Number(folio++);
 
-      console.log(employeeMapped);
-
       const [employee] = await EmployeeIncidentsService.createEmployeeIncidents(employeeMapped);
       createdEmployeesIncidents.push(employee);
     }

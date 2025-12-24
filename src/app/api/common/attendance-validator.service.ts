@@ -141,8 +141,6 @@ export class AttendanceValidator {
 
       const diffMinutes = attendanceDate.diff(scheduledStart, "minute");
 
-      console.log("diffMinutes");
-      console.log(diffMinutes);
       if (diffMinutes >= 16 && diffMinutes <= 30) {
         return await this.createRetardoIncident(record, employeeData, attendanceDate);
       }

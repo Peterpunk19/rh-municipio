@@ -91,8 +91,6 @@ export async function POST(request: NextRequest) {
       const employeeMapped = mapToIEmployeeRequest(employeeData, formattedFolio, userId);
       Number(folio++);
 
-      console.log(employeeMapped);
-
       const [employee] = await EmployeeRequestService.createEmployeeRequest(employeeMapped);
       createdEmployeesRequests.push(employee);
     }
