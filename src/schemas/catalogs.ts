@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { validateDate } from "./utils";
+import { validationMessages } from "@/common/validation/messages";
 
 const BaseCatalogFilterSchema = z.object({
   page: z.number().nullable(),
@@ -147,6 +149,55 @@ const AttendanceSchema = z.object({
   employee_request_detail: z.array(z.object({ id: z.number().int().positive() })).optional(),
 });
 
+const BaseCatalogPostSchema = z.object({
+  name: z.string().min(1, "El nombre es requerido"),
+  display_name: z.string().min(1, "El nombre para mostrar es requerido"),
+  active: z.boolean().optional().default(true),
+});
+
+const EmployeeTypePostSchema = BaseCatalogPostSchema;
+const CategoryPostSchema = BaseCatalogPostSchema;
+const HolidayPostSchema = BaseCatalogPostSchema.extend({
+  holiday_date: z.preprocess(
+    (val) => validateDate(val),
+    z.date({ required_error: "La fecha del día festivo es requerida" }),
+  ),
+  validation_date: z.preprocess(
+    (val) => validateDate(val),
+    z.date({ required_error: "La fecha de validación es requerida" }),
+  ),
+}).refine(
+  (data) => {
+    if (!data.holiday_date || !data.validation_date) return true;
+    const diffInMs = Math.abs(data.validation_date.getTime() - data.holiday_date.getTime());
+    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+    return diffInDays <= 10;
+  },
+  {
+    message: "La diferencia entre la fecha del día festivo y la fecha de validación no puede ser mayor a 10 días",
+    path: ["validation_date"],
+  },
+);
+const LocationPostSchema = BaseCatalogPostSchema;
+const MaritalStatusPostSchema = BaseCatalogPostSchema;
+const SchoolingPostSchema = BaseCatalogPostSchema.extend({
+  cve_code: z.string().min(1, "El código es requerido"),
+});
+const OccupationPostSchema = BaseCatalogPostSchema.extend({
+  cve_code: z.string().min(1, "El código es requerido"),
+});
+const ProfessionPostSchema = BaseCatalogPostSchema;
+const SecretariaPostSchema = BaseCatalogPostSchema;
+const DireccionPostSchema = BaseCatalogPostSchema.extend({
+  secretaria_id: z.preprocess(
+    (val) => (typeof val === "string" ? Number(val) : val),
+    z
+      .number()
+      .int()
+      .positive({ message: validationMessages.required("Secretaria") }),
+  ),
+});
+const TradeUnionPostSchema = BaseCatalogPostSchema;
 export {
   EmployeeTypeSchema,
   GenderSchema,
@@ -175,4 +226,15 @@ export {
   TradeUnionFilterSchema,
   MaritalStatusFilterSchema,
   SchoolingFilterSchema,
+  EmployeeTypePostSchema,
+  CategoryPostSchema,
+  HolidayPostSchema,
+  LocationPostSchema,
+  MaritalStatusPostSchema,
+  SchoolingPostSchema,
+  OccupationPostSchema,
+  ProfessionPostSchema,
+  SecretariaPostSchema,
+  DireccionPostSchema,
+  TradeUnionPostSchema,
 };

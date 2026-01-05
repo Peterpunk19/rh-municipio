@@ -19,6 +19,7 @@ import {
   Alert,
   CircularProgress,
   Snackbar,
+  Chip,
 } from "@mui/material";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import { Temporal } from "@js-temporal/polyfill";
@@ -613,6 +614,25 @@ const ShiftSchedulePage = () => {
                 />
               )}
             </Grid2>
+
+            {!isDuplicateMode && selectedEmployees.length > 0 && (
+              <Grid2 size={{ xs: 12 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Empleados seleccionados:
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {selectedEmployees.map((employee) => (
+                    <Chip
+                      key={employee.id}
+                      label={employee.label}
+                      onDelete={() => handleRemoveEmployee(employee.id)}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  ))}
+                </Box>
+              </Grid2>
+            )}
 
             {warnings && (
               <Grid2 size={{ xs: 12 }}>

@@ -25,10 +25,14 @@ const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
   attendanceType,
 }) => {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(initialEmployee);
+  const [searchKey, setSearchKey] = useState<number>(0);
 
   const handleSelectEmployee = (_: React.SyntheticEvent<Element, Event> | null, employee: any) => {
     setSelectedEmployee(employee);
     onEmployeeSelect(employee);
+    if (employee) {
+      setSearchKey(prev => prev + 1);
+    }
   };
 
   useEffect(() => {
@@ -42,6 +46,7 @@ const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
       <Grid2 size={{ xs: 12 }}>
         <CustomFormLabel sx={{ mb: 2, mt: -2 }}>{label}</CustomFormLabel>
         <CustomAutocompleteSearchField
+          key={searchKey}
           field={{
             url: attendanceType
               ? `/api/employees/autocomplete?attendanceType=${attendanceType}`

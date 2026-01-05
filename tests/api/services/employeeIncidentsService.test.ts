@@ -145,6 +145,12 @@ describe("EmployeeIncidentsService", () => {
           findFirst: jest.fn().mockResolvedValue(null),
           create: jest.fn().mockResolvedValue({ id: 123 }),
         },
+        employeeAttendanceType: {
+          findUnique: jest.fn().mockResolvedValue({ id: 1, name: "regular" }),
+        },
+        jobScheduleEmployee: {
+          findFirst: jest.fn().mockResolvedValue({ id: 1 }),
+        },
         employeeIncidents: {
           update: jest.fn(),
         },

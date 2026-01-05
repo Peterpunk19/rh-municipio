@@ -24,6 +24,8 @@ export interface Catalog {
   icon: React.ComponentType<any>;
   color: string;
   fetch: string;
+  canCreate: boolean;
+  textCreate: string;
 }
 
 export const catalogs: Record<string, Catalog> = {
@@ -34,6 +36,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconUsers,
     color: "primary",
     fetch: "employee-type",
+    canCreate: true,
+    textCreate: "Crear tipo de empleado",
   },
   category: {
     title: "Categorías",
@@ -42,6 +46,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconCategory,
     color: "secondary",
     fetch: "category",
+    canCreate: true,
+    textCreate: "Crear categoría",
   },
   holiday: {
     title: "Días Festivos",
@@ -50,6 +56,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconCalendarEvent,
     color: "success",
     fetch: "holiday",
+    canCreate: true,
+    textCreate: "Crear día festivo",
   },
   incident: {
     title: "Tipos de Incidencias",
@@ -58,6 +66,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconFileDescription,
     color: "warning",
     fetch: "incidents",
+    canCreate: false,
+    textCreate: "Crear tipo de incidencia",
   },
   location: {
     title: "Ubicaciones",
@@ -66,6 +76,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconMapPin,
     color: "error",
     fetch: "location",
+    canCreate: true,
+    textCreate: "Crear ubicación",
   },
   "marital-status": {
     title: "Estado Civil",
@@ -74,6 +86,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconHeart,
     color: "info",
     fetch: "marital-status",
+    canCreate: true,
+    textCreate: "Crear estado civil",
   },
   schooling: {
     title: "Escolaridad",
@@ -82,6 +96,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconSchool,
     color: "primary",
     fetch: "schooling",
+    canCreate: true,
+    textCreate: "Crear nivel de escolaridad",
   },
   occupation: {
     title: "Ocupaciones",
@@ -90,6 +106,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconBriefcase,
     color: "secondary",
     fetch: "occupation",
+    canCreate: true,
+    textCreate: "Crear ocupación",
   },
   profession: {
     title: "Profesiones",
@@ -98,6 +116,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconCertificate,
     color: "success",
     fetch: "profession",
+    canCreate: true,
+    textCreate: "Crear profesión",
   },
   request: {
     title: "Tipos de Solicitud",
@@ -106,6 +126,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconFileText,
     color: "warning",
     fetch: "requests",
+    canCreate: false,
+    textCreate: "Crear tipo de solicitud",
   },
   secretaria: {
     title: "Secretarías",
@@ -114,6 +136,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconBuilding,
     color: "error",
     fetch: "secretarias",
+    canCreate: true,
+    textCreate: "Crear secretaría",
   },
   direccion: {
     title: "Direcciones",
@@ -122,6 +146,8 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconBuildingSkyscraper,
     color: "info",
     fetch: "direcciones",
+    canCreate: true,
+    textCreate: "Crear dirección",
   },
   "trade-union": {
     title: "Sindicatos",
@@ -130,5 +156,7 @@ export const catalogs: Record<string, Catalog> = {
     icon: IconUsersGroup,
     color: "primary",
     fetch: "trade-union",
+    canCreate: true,
+    textCreate: "Crear sindicato",
   },
 };

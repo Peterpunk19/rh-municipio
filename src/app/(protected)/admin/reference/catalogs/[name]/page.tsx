@@ -12,6 +12,7 @@ import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import TableWithPagination from "@/components/tables/TableWithPagination";
 import { catalogs } from "@/app/(protected)/admin/reference/catalogs/_config";
 import { fetchCatalog } from "@/store/reference/catalogs/CatalogsSlice";
+import { Button } from "@mui/material";
 
 export default function Catalog({ params }: { params: Promise<{ name: string }> }) {
   const { name } = use(params);
@@ -43,7 +44,11 @@ export default function Catalog({ params }: { params: Promise<{ name: string }> 
   }, [dispatch, catalogFetch, page, limit, searchTerm, values]);
 
   const BCrumb = [{ to: "/admin/reference/catalogs", title: "Catálogos" }, { title: catalogConfig.title }];
-
+  const createLink = catalogConfig.canCreate ? (
+    <Button href={`/admin/reference/catalogs/${name}/create`} fullWidth variant="contained" color="primary">
+      {catalogConfig.textCreate}
+    </Button>
+  ) : undefined;
   return (
     <PageContainer title={catalogConfig.title} description={catalogConfig.title}>
       <Breadcrumb title={catalogConfig.title} items={BCrumb} />
@@ -56,6 +61,7 @@ export default function Catalog({ params }: { params: Promise<{ name: string }> 
         entity={name}
         emptyMessage={emptyMessage}
         showSearchBar={true}
+        createLink={createLink}
       />
     </PageContainer>
   );
