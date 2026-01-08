@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Typography, Grid2 as Grid } from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
-import { IconClockCheck, IconClockDown, IconClockUp } from "@tabler/icons-react";
+import {IconClock, IconClockCheck, IconClockDown, IconClockUp} from "@tabler/icons-react";
 import { ICalendarDay, IAttendanceCalendar, IScheduleData } from "@/components/types";
 import { formatDate } from "@/utils/formatter";
 import { generateUniqueKey } from "@/utils";
@@ -38,8 +38,14 @@ const CalendarDay = React.memo(
     const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
     const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
 
-    const bg = !day.isInMonth ? (isSelected ? "#2F6FED" : "#f6f6f6") : isSelected ? "#2F6FED" : "#FFF";
-    const color = isSelected ? "#FFF" : "#000";
+    const bg = !day.isInMonth ?
+      (isSelected ?
+        "rgba(28, 61, 90, 0.78)" :
+        "#f6f6f6") :
+      isSelected ?
+        "rgba(28, 61, 90, 0.88)" :
+        "#FFF";
+    const color = isSelected ? "rgba(255,255,255,0.75)" : "#64748B";
 
     return (
       <Grid
@@ -53,8 +59,8 @@ const CalendarDay = React.memo(
           backgroundColor: bg,
           position: "relative",
           transition: "all .25s ease",
-          "&:hover": day.isInMonth && {
-            backgroundColor: isSelected ? "#2F6FED" : "#E3F2FD",
+          "&:hover": {
+            backgroundColor: isSelected ? "rgba(28, 61, 90)" : "#E3F2FD",
             transform: "scale(1.02)",
           },
         }}
@@ -80,13 +86,17 @@ const CalendarDay = React.memo(
 
         {/* Horario */}
         {isWorkDay && showSchedule && schedule && (
-          <Typography sx={{ fontSize: "0.7rem", opacity: 0.6 }} color={color}>
+          <Typography sx={{ fontSize: "0.7rem" }} color={color}>
             {schedule.startHour} → {schedule.endHour}
           </Typography>
         )}
 
         {scheduleData && (
           <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            gap={0.5}
             onClick={(e) => {
               e.stopPropagation();
               onScheduleClick?.(dateStr, scheduleData);
@@ -96,29 +106,32 @@ const CalendarDay = React.memo(
               bottom: 8,
               left: 8,
               right: 8,
-              backgroundColor: "#e07a5f",
-              borderRadius: "4px",
+              backgroundColor: "#2A4F6A",
+              borderRadius: "6px",
+              boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.15)",
               px: 1,
               py: 0.5,
               cursor: "pointer",
               "&:hover": {
-                backgroundColor: "#c96a52",
+                backgroundColor: "#244A66",
               },
             }}
           >
+            <IconClock size={12} color="#FFF" />
             <Typography
               variant="caption"
               sx={{
-                color: "#fff",
+                color: "#FFF",
                 fontSize: "0.7rem",
                 fontWeight: 500,
-                display: "block",
-                textAlign: "center",
+                lineHeight: 1,
+                whiteSpace: "nowrap",
               }}
             >
-              {scheduleData.startDisplay} - {scheduleData.endDisplay}
+              {scheduleData.startDisplay} – {scheduleData.endDisplay}
             </Typography>
           </Box>
+
         )}
 
         {/* Contenido */}
@@ -193,14 +206,14 @@ const CalendarDay = React.memo(
                         gap={1}
                         sx={{
                           mb: 0.3,
-                          backgroundColor: "#eee",
+                          backgroundColor: "#F1F5F9",
                           borderRadius: "6px",
                           px: 1,
                           py: 0.3,
                         }}
                       >
-                        <IconClockUp size={14} />
-                        <Typography fontWeight={600} variant="body2" sx={{ fontSize: "0.75rem" }}>
+                        <IconClockUp size={14} color="#64748B" />
+                        <Typography fontWeight={500} variant="body2" sx={{ fontSize: "0.75rem", color: "#64748B" }}>
                           Entrada: {attendance.checkIn ? formatDate(new Date(attendance.checkIn), "HH:mm") : ""}
                         </Typography>
                       </Box>
@@ -213,14 +226,14 @@ const CalendarDay = React.memo(
                         gap={1}
                         sx={{
                           mb: 0.3,
-                          backgroundColor: "#eee",
+                          backgroundColor: "#F1F5F9",
                           borderRadius: "6px",
                           px: 1,
                           py: 0.3,
                         }}
                       >
-                        <IconClockDown size={14} color="#000" />
-                        <Typography fontWeight={600} variant="body2" sx={{ fontSize: "0.75rem", color: "#000" }}>
+                        <IconClockDown size={14} color="#64748B" />
+                        <Typography fontWeight={500} variant="body2" sx={{ fontSize: "0.75rem", color: "#64748B" }}>
                           Salida: {attendance.checkOut ? formatDate(new Date(attendance.checkOut), "HH:mm") : ""}
                         </Typography>
                       </Box>
@@ -231,7 +244,7 @@ const CalendarDay = React.memo(
             ) : (
               isPast &&
               isWorkDay && (
-                <Typography textAlign="center" fontWeight={600} color={color}>
+                <Typography textAlign="center" fontWeight={500} color={color}>
                   SIN REGISTROS
                 </Typography>
               )
