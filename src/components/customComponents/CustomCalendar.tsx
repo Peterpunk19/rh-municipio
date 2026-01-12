@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Grid2 as Grid, Box, Typography, Button, DialogActions, FormControlLabel } from "@mui/material";
 
 import { ICustomCalendarProps } from "@/components/types";
@@ -48,9 +48,7 @@ const CustomCalendar = ({
   const handleMouseDown = (date: string) => {
     setIsDragging(true);
 
-    dragActionRef.current = selectedDates.has(date)
-      ? "deselect"
-      : "select";
+    dragActionRef.current = selectedDates.has(date) ? "deselect" : "select";
 
     actions.handleDateClick(date);
   };
@@ -74,7 +72,27 @@ const CustomCalendar = ({
     dragActionRef.current = null;
   };
 
-  const [showSchedule, setShowSchedule] = useState(false);
+  const storageKey = React.useMemo(() => `customCalendar:showSchedule:${employeeId ?? "global"}`, [employeeId]);
+
+  const [showSchedule, setShowSchedule] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const saved = window.localStorage.getItem(storageKey);
+      return saved === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem(storageKey);
+    setShowSchedule(saved === "1");
+  }, [storageKey]);
+
+  useEffect(() => {
+    window.localStorage.setItem(storageKey, showSchedule ? "1" : "0");
+  }, [showSchedule, storageKey]);
 
   return (
     <Box
@@ -113,7 +131,7 @@ const CustomCalendar = ({
 
       <CalendarDaysHeader days={days} mb={2} />
 
-      <Box onMouseLeave={handleMouseUp}>
+      <Box onMouseLeave={handleMouseUp} sx={{ position: "relative", zIndex: 1 }}>
         <Grid container columns={7} flexGrow={1}>
           {monthCalendar.map((day) => {
             const dateStr = day.date.toString();

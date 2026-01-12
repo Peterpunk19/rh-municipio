@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -20,10 +20,11 @@ import {
   CircularProgress,
   Snackbar,
   Chip,
+  Link,
 } from "@mui/material";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import { Temporal } from "@js-temporal/polyfill";
-import { IconCalendar, IconUsers } from "@tabler/icons-react";
+import { IconCalendar, IconUsers, IconUser, IconDeviceFloppy } from "@tabler/icons-react";
 import CustomCalendar from "@/components/customComponents/CustomCalendar";
 import ApplyScheduleModal from "@/components/customComponents/ApplyScheduleModal";
 import EmployeeFinder from "@/components/shared/EmployeeFinder";
@@ -31,6 +32,7 @@ import { FormErrors, ShiftType, SelectedEmployee } from "./_config";
 import { saveJobScheduleCalendar, getJobScheduleCalendar } from "@/services/job-schedule-calendar";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import PageContainer from "@/app/components/container/PageContainer";
+import { EmployeeDetailCard } from "@/components/shared/EmployeeDetailCard";
 
 const BCrumb = [
   {
@@ -69,19 +71,43 @@ const ShiftSchedulePage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentStartHourId, setCurrentStartHourId] = useState(0);
   const [currentEndHourId, setCurrentEndHourId] = useState(0);
+  const [selectedEmployeeEdit, setSelectedEmployeeEdit] = useState<any | null>(null);
+  const [showEmployeeDetails, setShowEmployeeDetails] = useState(false);
+  const [employeeFinderKey, setEmployeeFinderKey] = useState(0);
+  const [originalSchedules, setOriginalSchedules] = useState<Map<string, IScheduleData>>(new Map());
+  const [openSaveDialog, setOpenSaveDialog] = useState(false);
 
   const MAX_SELECTIONS = 365;
 
-  const handleMonthChange = useCallback(
-    (newYear: number, newMonth: number) => {
-      if (newYear !== currentYear || newMonth !== currentMonth) {
-        setCurrentYear(newYear);
-        setCurrentMonth(newMonth);
-        setShiftType("");
+  const visibleMonthDates = useMemo(() => {
+    const monthStr = String(currentMonth).padStart(2, "0");
+    const filtered = Array.from(selectedDates).filter((d) => d.startsWith(`${currentYear}-${monthStr}-`));
+    return new Set(filtered);
+  }, [selectedDates, currentYear, currentMonth]);
+
+  const displayedSelectedDates = useMemo(() => {
+    return selectedEmployeeEdit ? visibleMonthDates : selectedDates;
+  }, [selectedEmployeeEdit, visibleMonthDates, selectedDates]);
+
+  const hasChanges = useMemo(() => {
+    if (!selectedEmployeeEdit) return false;
+    if (originalSchedules.size !== appliedSchedules.size) return true;
+    let changes = false;
+    appliedSchedules.forEach((item, key) => {
+      if (changes) return;
+      const original = originalSchedules.get(key);
+      if (!original) {
+        changes = true;
+        return;
       }
-    },
-    [currentYear, currentMonth],
-  );
+      if (original.startHourId !== item.startHourId || original.endHourId !== item.endHourId) changes = true;
+    });
+    if (changes) return true;
+    originalSchedules.forEach((_, key) => {
+      if (!appliedSchedules.has(key)) changes = true;
+    });
+    return changes;
+  }, [selectedEmployeeEdit, originalSchedules, appliedSchedules]);
 
   const getDatesInMonth = (filterFn: (dayOfWeek: number) => boolean): Set<string> => {
     const dates = new Set<string>();
@@ -200,14 +226,6 @@ const ShiftSchedulePage = () => {
   };
 
   const handleApplyToEmployees = () => {
-    if (selectedDates.size === 0) {
-      setSnackbar({
-        open: true,
-        message: "Debe seleccionar al menos una fecha antes de aplicar a empleados",
-        severity: "warning",
-      });
-      return;
-    }
     setOpenDialog(true);
   };
 
@@ -277,6 +295,7 @@ const ShiftSchedulePage = () => {
       newMap.delete(date);
       return newMap;
     });
+    setSnackbar({ open: true, message: "Horario eliminado correctamente", severity: "success" });
   };
 
   const scheduleDataMap = useMemo(() => appliedSchedules, [appliedSchedules]);
@@ -305,7 +324,57 @@ const ShiftSchedulePage = () => {
     }
 
     if (selectedDates.size === 0) {
-      setSubmitError("Debe seleccionar al menos una fecha");
+      setIsSubmitting(true);
+      try {
+        const year = currentYear;
+        const month = currentMonth;
+        const firstDay = Temporal.PlainDate.from({ year, month, day: 1 }).toString();
+        const lastDay = Temporal.PlainYearMonth.from({ year, month })
+          .toPlainDate({ day: Temporal.PlainYearMonth.from({ year, month }).daysInMonth })
+          .toString();
+
+        const payload = {
+          employees: selectedEmployees.map((emp) => emp.id),
+          schedules: [],
+          from: firstDay,
+          to: lastDay,
+        } as any;
+
+        const response = await saveJobScheduleCalendar(payload);
+
+        if (!response.success) {
+          setSubmitError(response.message);
+          if (response.responseObject?.warnings) {
+            setWarnings(response.responseObject.warnings);
+            setWarningSnackbar(response.responseObject.warnings[0]);
+          }
+          return;
+        }
+
+        const disabledCount = response.responseObject?.disabled ?? 0;
+        setSubmitSuccess(
+          disabledCount > 0
+            ? `Se desactivaron ${disabledCount} fecha(s) del mes seleccionado`
+            : "No habían fechas para desactivar",
+        );
+
+        if (response.responseObject?.warnings) {
+          setWarnings(response.responseObject.warnings);
+          setWarningSnackbar(response.responseObject.warnings[0]);
+        }
+
+        setSelectedEmployees([]);
+        setSelectedDates(new Set());
+        setAppliedSchedules(new Map());
+        setTimeout(() => {
+          setOpenDialog(false);
+          setSubmitSuccess(null);
+        }, 1500);
+      } catch (error: any) {
+        setSubmitError(error.message || "Error al eliminar horarios");
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
 
@@ -321,7 +390,9 @@ const ShiftSchedulePage = () => {
     setIsSubmitting(true);
 
     try {
-      const schedules = Array.from(selectedDates).map((date) => {
+      const allDates = Array.from(selectedDates).sort();
+
+      const schedules = allDates.map((date) => {
         const schedule = appliedSchedules.get(date);
         return {
           date,
@@ -342,7 +413,7 @@ const ShiftSchedulePage = () => {
 
         if (response.responseObject?.warnings) {
           setWarnings(response.responseObject.warnings);
-          setWarningSnackbar(response.responseObject.warnings[0]); // también en snackbar
+          setWarningSnackbar(response.responseObject.warnings[0]);
         }
         return;
       }
@@ -357,10 +428,13 @@ const ShiftSchedulePage = () => {
       setSelectedEmployees([]);
       setSelectedDates(new Set());
       setAppliedSchedules(new Map());
-      setTimeout(() => {
-        setOpenDialog(false);
-        setSubmitSuccess(null);
-      }, 1500);
+
+      if (!response.responseObject?.warnings?.length) {
+        setTimeout(() => {
+          setOpenDialog(false);
+          setSubmitSuccess(null);
+        }, 1500);
+      }
     } catch (error: any) {
       setSubmitError(error.message || "Error al guardar los horarios");
     } finally {
@@ -449,6 +523,214 @@ const ShiftSchedulePage = () => {
     setErrors({});
   };
 
+  const loadEmployeeCalendarForEdit = useCallback(
+    async (employee: any) => {
+      if (!employee) return;
+      setIsLoadingCalendar(true);
+      try {
+        const year = currentYear;
+        const firstDay = Temporal.PlainDate.from({ year, month: 1, day: 1 }).toString();
+        const lastDay = Temporal.PlainDate.from({ year, month: 12, day: 31 }).toString();
+
+        const response = await getJobScheduleCalendar(
+          `search=${employee.number_employee ?? employee.label?.split(" - ")?.[1] ?? ""}&from=${firstDay}&to=${lastDay}`,
+        );
+
+        const newDates = new Set<string>();
+        const newSchedules = new Map<string, IScheduleData>();
+
+        if (response.success && response.responseObject?.data?.length > 0) {
+          const employeeData = response.responseObject.data[0];
+          const calendarDates = employeeData.job_schedule_calendar || [];
+          calendarDates.forEach((item: any) => {
+            const dateStr = new Date(item.date).toISOString().split("T")[0];
+            newDates.add(dateStr);
+            newSchedules.set(dateStr, {
+              startHourId: item.start_hour_id,
+              endHourId: item.end_hour_id,
+              startDisplay: item.start_hour?.display_name || "",
+              endDisplay: item.end_hour?.display_name || "",
+            });
+          });
+        }
+
+        setSelectedDates(newDates);
+        setAppliedSchedules(newSchedules);
+        setOriginalSchedules(new Map(newSchedules));
+      } catch (e) {
+        setSnackbar({ open: true, message: "Error al cargar el calendario del empleado", severity: "error" });
+      } finally {
+        setIsLoadingCalendar(false);
+      }
+    },
+    [currentYear],
+  );
+
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (!hasChanges) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [hasChanges]);
+
+  const handleMonthChange = useCallback(
+    (newYear: number, newMonth: number) => {
+      if (newYear !== currentYear || newMonth !== currentMonth) {
+        setCurrentYear(newYear);
+        setCurrentMonth(newMonth);
+        setShiftType("");
+
+        if (selectedEmployeeEdit) {
+          setSelectedDates(new Set());
+          setAppliedSchedules(new Map());
+          setOriginalSchedules(new Map());
+          void loadEmployeeCalendarForEdit(selectedEmployeeEdit);
+        }
+      }
+    },
+    [currentYear, currentMonth, selectedEmployeeEdit, loadEmployeeCalendarForEdit],
+  );
+
+  const handleTopEmployeeSelect = async (employee: any) => {
+    if (!employee) return;
+    if (selectedEmployeeEdit && selectedEmployeeEdit.id === employee.id) return;
+
+    if (selectedEmployeeEdit && hasChanges) {
+      const ok = window.confirm("Tienes cambios sin guardar. ¿Deseas descartarlos y cambiar de empleado?");
+      if (!ok) return;
+    }
+
+    setSelectedEmployeeEdit(employee);
+    setShowEmployeeDetails(false);
+    setSelectedDates(new Set());
+    setAppliedSchedules(new Map());
+    setOriginalSchedules(new Map());
+    await loadEmployeeCalendarForEdit(employee);
+  };
+
+  const getChangeSummary = useMemo(() => {
+    const removed: string[] = [];
+    const added: { date: string; start: string; end: string }[] = [];
+    const modified: { date: string; start: string; end: string }[] = [];
+
+    originalSchedules.forEach((orig, date) => {
+      const cur = appliedSchedules.get(date);
+      if (!cur) removed.push(date);
+      else if (cur.startHourId !== orig.startHourId || cur.endHourId !== orig.endHourId)
+        modified.push({ date, start: cur.startDisplay, end: cur.endDisplay });
+    });
+    appliedSchedules.forEach((cur, date) => {
+      if (!originalSchedules.has(date)) added.push({ date, start: cur.startDisplay, end: cur.endDisplay });
+    });
+    return { removed, added, modified };
+  }, [originalSchedules, appliedSchedules]);
+
+  const monthChangeSummary = useMemo(() => {
+    const monthStr = String(currentMonth).padStart(2, "0");
+    const inMonth = (d: string) => d.startsWith(`${currentYear}-${monthStr}-`);
+    return {
+      removed: getChangeSummary.removed.filter(inMonth),
+      added: getChangeSummary.added.filter((x) => inMonth(x.date)),
+      modified: getChangeSummary.modified.filter((x) => inMonth(x.date)),
+    };
+  }, [getChangeSummary, currentYear, currentMonth]);
+
+  const handleSaveCalendar = () => {
+    if (!selectedEmployeeEdit) return;
+    setOpenSaveDialog(true);
+  };
+
+  const confirmSaveCalendar = async () => {
+    if (!selectedEmployeeEdit) return;
+    setIsSubmitting(true);
+    try {
+      if (appliedSchedules.size === 0) {
+        const ym = Temporal.PlainYearMonth.from({ year: currentYear, month: currentMonth });
+        const from = ym.toPlainDate({ day: 1 }).toString();
+        const to = ym.toPlainDate({ day: ym.daysInMonth }).toString();
+
+        const payload = { employees: [selectedEmployeeEdit.id], from, to, schedules: [] as any[] };
+        const response = await saveJobScheduleCalendar(payload);
+        if (!response.success) {
+          setSubmitError(response.message);
+          if (response.responseObject?.warnings) setWarnings(response.responseObject.warnings);
+          if (response.message) setSnackbar({ open: true, message: response.message, severity: "error" });
+          return;
+        }
+        setOriginalSchedules(new Map());
+        setOpenSaveDialog(false);
+        setSnackbar({ open: true, message: "Calendario limpiado correctamente", severity: "success" });
+        if (response.responseObject?.warnings) setWarnings(response.responseObject.warnings);
+        await loadEmployeeCalendarForEdit(selectedEmployeeEdit);
+        return;
+      }
+
+      if (
+        getChangeSummary.removed.length === 0 &&
+        getChangeSummary.added.length === 0 &&
+        getChangeSummary.modified.length === 0
+      ) {
+        setIsSubmitting(false);
+        setOpenSaveDialog(false);
+        setSnackbar({ open: true, message: "No hay cambios por guardar", severity: "warning" });
+        return;
+      }
+      const schedules: any[] = [];
+      let invalidCount = 0;
+      const invalidDates: string[] = [];
+      const monthStr = String(currentMonth).padStart(2, "0");
+      appliedSchedules.forEach((s, date) => {
+        if (!date.startsWith(`${currentYear}-${monthStr}-`)) return;
+        const startId = Number(s.startHourId);
+        const endId = Number(s.endHourId);
+        if (!startId || !endId) {
+          invalidCount++;
+          invalidDates.push(date);
+          return;
+        }
+        schedules.push({ date, startHourId: startId, endHourId: endId });
+      });
+
+      const ym = Temporal.PlainYearMonth.from({ year: currentYear, month: currentMonth });
+      const rangeFrom = ym.toPlainDate({ day: 1 }).toString();
+      const rangeTo = ym.toPlainDate({ day: ym.daysInMonth }).toString();
+
+      if (invalidCount > 0) {
+        setIsSubmitting(false);
+        setSubmitError("Hay fecha(s) con horas inválidas. Corrige las horas antes de guardar.");
+        setSnackbar({ open: true, message: "Corrige horas inválidas antes de guardar", severity: "error" });
+        return;
+      }
+      const payload: any = { employees: [selectedEmployeeEdit.id], schedules };
+      payload.from = rangeFrom;
+      payload.to = rangeTo;
+      const response = await saveJobScheduleCalendar(payload);
+      if (!response.success) {
+        setSubmitError(response.message);
+        if (response.responseObject?.warnings) setWarnings(response.responseObject.warnings);
+        if (response.message) setSnackbar({ open: true, message: response.message, severity: "error" });
+        return;
+      }
+      setOriginalSchedules(new Map(appliedSchedules));
+      setOpenSaveDialog(false);
+      setSnackbar({ open: true, message: "Calendario guardado correctamente", severity: "success" });
+      if (response.responseObject?.warnings) setWarnings(response.responseObject.warnings);
+      setSelectedEmployeeEdit(null);
+      setShowEmployeeDetails(false);
+      setSelectedDates(new Set());
+      setAppliedSchedules(new Map());
+      setOriginalSchedules(new Map());
+      setEmployeeFinderKey((k) => k + 1);
+    } catch (e: any) {
+      setSubmitError(e.message || "Error al guardar los horarios");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleRemoveEmployee = (employeeId: number) => {
     setSelectedEmployees((prev) => prev.filter((emp) => emp.id !== employeeId));
   };
@@ -456,6 +738,72 @@ const ShiftSchedulePage = () => {
   return (
     <PageContainer title="Horarios Intercalados" description="Horarios Intercalados">
       <Breadcrumb title="Horarios Intercalados" items={BCrumb} />
+      <Box sx={{ mb: 2 }}>
+        <EmployeeFinder
+          key={employeeFinderKey}
+          onEmployeeSelect={handleTopEmployeeSelect}
+          error={null}
+          showDetails={false}
+          attendanceType="intercalated"
+          label="Buscar empleado (RFC, CURP, nombre o número de empleado)"
+          initialEmployee={null}
+        />
+        {selectedEmployeeEdit && (
+          <Box
+            sx={{
+              mt: 1,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              bgcolor: "#FAFAFA",
+              border: "1px solid #E6EAF2",
+              borderRadius: 2,
+              px: 2,
+              py: 1.25,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Box
+                sx={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  bgcolor: "#E6EAF2",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#64748B",
+                }}
+              >
+                <IconUser size={16} />
+              </Box>
+              <Box>
+                <Typography variant="body1" sx={{ fontWeight: 700, lineHeight: 1.1 }}>
+                  {selectedEmployeeEdit.label}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  #{selectedEmployeeEdit.number_employee ?? selectedEmployeeEdit.id} ·{" "}
+                  {selectedEmployeeEdit.attendance_type_display_name}
+                </Typography>
+              </Box>
+            </Box>
+            <Link
+              component="button"
+              underline="hover"
+              color="primary"
+              sx={{ textTransform: "none", fontWeight: 500, fontSize: 13, p: 0, minWidth: 0 }}
+              onClick={() => setShowEmployeeDetails((v) => !v)}
+            >
+              {showEmployeeDetails ? "Ocultar detalles" : "Ver detalles"}
+            </Link>
+          </Box>
+        )}
+        {selectedEmployeeEdit && showEmployeeDetails && (
+          <Box sx={{ mt: 2 }}>
+            <EmployeeDetailCard employee={selectedEmployeeEdit} />
+          </Box>
+        )}
+      </Box>
 
       <Grid2 container spacing={3}>
         <Grid2 size={{ xs: 12, md: 9 }}>
@@ -471,6 +819,7 @@ const ShiftSchedulePage = () => {
               hideActions
               scheduleData={scheduleDataMap}
               onScheduleClick={handleScheduleClick}
+              employeeId={selectedEmployeeEdit?.id}
             />
           </Paper>
         </Grid2>
@@ -519,14 +868,14 @@ const ShiftSchedulePage = () => {
                     fontWeight: 500,
                   }}
                 >
-                  {selectedDates.size}
+                  {displayedSelectedDates.size}
                 </Box>
               </Box>
 
               <Paper variant="outlined" sx={{ p: 1, maxHeight: 200, overflow: "auto" }}>
-                {selectedDates.size > 0 ? (
+                {displayedSelectedDates.size > 0 ? (
                   <List dense>
-                    {Array.from(selectedDates).map((date) => (
+                    {Array.from(displayedSelectedDates).map((date) => (
                       <ListItem key={date} dense disablePadding>
                         <ListItemText primary={formatDate(date)} />
                       </ListItem>
@@ -540,7 +889,13 @@ const ShiftSchedulePage = () => {
               </Paper>
             </Box>
 
-            <Button color="error" variant="contained" fullWidth onClick={handleOpenApplySchedule}>
+            <Button
+              color="error"
+              variant="contained"
+              fullWidth
+              onClick={handleOpenApplySchedule}
+              disabled={selectedDates.size === 0}
+            >
               Aplicar horarios
             </Button>
             <ApplyScheduleModal
@@ -557,6 +912,19 @@ const ShiftSchedulePage = () => {
               editingDate={editingDate}
               isEditMode={isEditMode}
             />
+            {selectedEmployeeEdit && (
+              <Button
+                startIcon={<IconDeviceFloppy size={18} />}
+                sx={{ mt: 1 }}
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled={!hasChanges}
+                onClick={handleSaveCalendar}
+              >
+                Guardar calendario para {selectedEmployeeEdit.label}
+              </Button>
+            )}
             <Divider sx={{ my: 2 }} />
 
             <Box>
@@ -674,6 +1042,55 @@ const ShiftSchedulePage = () => {
               {isSubmitting ? <CircularProgress size={24} color="inherit" /> : "Continuar"}
             </Button>
           )}
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openSaveDialog} onClose={() => setOpenSaveDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle variant="h5">Confirmar guardado</DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="subtitle2" gutterBottom>
+            Se aplicarán los siguientes cambios para {selectedEmployeeEdit?.label}:
+          </Typography>
+          {monthChangeSummary.removed.length === 0 &&
+          monthChangeSummary.added.length === 0 &&
+          monthChangeSummary.modified.length === 0 ? (
+            <Typography variant="body2">No hay cambios</Typography>
+          ) : (
+            <>
+              {monthChangeSummary.removed.length > 0 && (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2">Fechas eliminadas:</Typography>
+                  <List dense>
+                    {monthChangeSummary.removed.map((d) => (
+                      <ListItem key={d}>
+                        <ListItemText primary={d} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
+              {(monthChangeSummary.added.length > 0 || monthChangeSummary.modified.length > 0) && (
+                <Box>
+                  <Typography variant="subtitle2">Fechas agregadas/modificadas:</Typography>
+                  <List dense>
+                    {[...monthChangeSummary.added, ...monthChangeSummary.modified].map((it) => (
+                      <ListItem key={it.date}>
+                        <ListItemText primary={`${it.date} → ${it.start}–${it.end}`} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenSaveDialog(false)} color="inherit">
+            Cancelar
+          </Button>
+          <Button onClick={confirmSaveCalendar} color="primary" variant="contained" disabled={isSubmitting}>
+            {isSubmitting ? <CircularProgress size={24} color="inherit" /> : "Guardar"}
+          </Button>
         </DialogActions>
       </Dialog>
 

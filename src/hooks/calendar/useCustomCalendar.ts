@@ -79,10 +79,12 @@ export const useCustomCalendar = ({
     const from = formatDate(new Date(newCalendar[0].date.toString()), "yyyy-MM-dd");
     const to = formatDate(new Date(newCalendar[newCalendar.length - 1].date.toString()), "yyyy-MM-dd");
 
-    fetchEmployeesAttendances(from, to);
-    fetchJobSchedule();
-    fetchCalendarDays(from, to);
-  }, [year, month]);
+    if (employeeId) {
+      fetchEmployeesAttendances(from, to);
+      fetchJobSchedule();
+      fetchCalendarDays(from, to);
+    }
+  }, [year, month, employeeId]);
 
   /* ---------------- ATTENDANCE MAP ---------------- */
   const attendanceMap = useMemo(() => {

@@ -118,11 +118,39 @@ export const JobScheduleCalendarService = {
   },
 
   async saveJobScheduleCalendar(payload: IJobScheduleCalendar, createdById: number) {
-    const { employees, schedules } = payload;
+    const { employees, schedules, from, to } = payload;
 
     return prisma.$transaction(async (tx) => {
       const results = [];
       const warnings: string[] = [];
+      let disabled = 0;
+
+      if ((!schedules || schedules.length === 0) && from && to) {
+        const minDate = new Date(from);
+        const maxDate = new Date(to);
+        for (const employeeId of employees) {
+          const existing = await tx.jobScheduleCalendar.findMany({
+            where: {
+              employee_id: Number(employeeId),
+              active: true,
+              date: {
+                gte: minDate,
+                lte: maxDate,
+              },
+            },
+          });
+
+          for (const schedule of existing) {
+            await tx.jobScheduleCalendar.update({
+              where: { id: schedule.id },
+              data: { active: false },
+            });
+            disabled++;
+          }
+        }
+
+        return { results, warnings, disabled };
+      }
 
       const hourIds = schedules.flatMap((s) => [Number(s.startHourId), Number(s.endHourId)]);
 
@@ -136,8 +164,17 @@ export const JobScheduleCalendarService = {
       };
 
       const payloadDates = schedules.map((s) => new Date(s.date));
-      const minDate = new Date(Math.min(...payloadDates));
-      const maxDate = new Date(Math.max(...payloadDates));
+      let minDate = new Date(Math.min(...payloadDates));
+      let maxDate = new Date(Math.max(...payloadDates));
+
+      if (from) {
+        const fromDate = new Date(from);
+        if (fromDate < minDate) minDate = fromDate;
+      }
+      if (to) {
+        const toDate = new Date(to);
+        if (toDate > maxDate) maxDate = toDate;
+      }
 
       const scheduleDates = schedules.map((s) => s.date);
       const datesToKeep = new Set(scheduleDates);
@@ -177,6 +214,7 @@ export const JobScheduleCalendarService = {
             where: { id: old.id },
             data: { active: false },
           });
+          disabled++;
         }
 
         for (const c of schedules) {
@@ -245,7 +283,7 @@ export const JobScheduleCalendarService = {
         }
       }
 
-      return { results, warnings };
+      return { results, warnings, disabled };
     });
   },
 };

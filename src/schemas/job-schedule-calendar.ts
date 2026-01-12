@@ -32,15 +32,53 @@ const ScheduleItemSchema = z
     path: ["endHourId"],
   });
 
-export const JobScheduleCalendarPostSchema = z.object({
-  employees: z
-    .array(z.number(), { message: validationMessages.returnMessage("Debe seleccionar al menos un empleado.") })
-    .min(1, { message: validationMessages.returnMessage("Debe seleccionar al menos un empleado.") }),
-
-  schedules: z
-    .array(ScheduleItemSchema, { message: validationMessages.returnMessage("Debe enviar al menos un horario.") })
-    .min(1, { message: validationMessages.returnMessage("Debe enviar al menos un horario.") }),
-});
+export const JobScheduleCalendarPostSchema = z
+  .object({
+    employees: z
+      .array(z.number(), { message: validationMessages.returnMessage("Debe seleccionar al menos un empleado.") })
+      .min(1, { message: validationMessages.returnMessage("Debe seleccionar al menos un empleado.") }),
+    schedules: z
+      .array(ScheduleItemSchema, { message: validationMessages.returnMessage("Debe enviar al menos un horario.") })
+      .min(0),
+    from: z
+      .string()
+      .refine((v) => !v || !isNaN(Date.parse(v)), {
+        message: validationMessages.returnMessage("Fecha de inicio inválida."),
+      })
+      .optional()
+      .nullable(),
+    to: z
+      .string()
+      .refine((v) => !v || !isNaN(Date.parse(v)), {
+        message: validationMessages.returnMessage("Fecha de fin inválida"),
+      })
+      .optional()
+      .nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.schedules.length === 0) {
+        return !!data.from && !!data.to;
+      }
+      return true;
+    },
+    {
+      message: validationMessages.returnMessage("Debe enviar fecha de inicio y fin cuando no hay horario."),
+      path: ["from"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.from && data.to) {
+        return new Date(data.from) <= new Date(data.to);
+      }
+      return true;
+    },
+    {
+      message: validationMessages.returnMessage("El rango de fechas es inválido."),
+      path: ["from"],
+    },
+  );
 
 export const JobScheduleCalendarGetSchema = z.object({
   page: z

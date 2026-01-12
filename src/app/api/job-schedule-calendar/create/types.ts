@@ -5,6 +5,8 @@ export interface ISchedules {
 }
 
 export interface IJobScheduleCalendar {
-  employees: [];
+  employees: number[];
   schedules: ISchedules[];
+  from?: string | null;
+  to?: string | null;
 }
