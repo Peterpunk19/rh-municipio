@@ -36,6 +36,7 @@ const holidays = require("./seeds/holiday");
 const jobSchedulesEmployees = require("./seeds/job-schedules-employees");
 const { scheduleMappings } = require("./seeds/schedule-mappings");
 const configYear = require("./seeds/config-year");
+const incapacityRule = require("./seeds/incapacity-rule");
 
 const prisma = new PrismaClient();
 
@@ -132,6 +133,7 @@ async function main() {
   await prisma.categoryEmployeeType.createMany({ data: categoryEmployeeType });
   await prisma.incidentRules.createMany({ data: incidentRules });
   await prisma.holiday.createMany({ data: holidays });
+  await prisma.incapacityRule.createMany({ data: incapacityRule });
 
   await prisma.module.createMany({ data: modules });
 

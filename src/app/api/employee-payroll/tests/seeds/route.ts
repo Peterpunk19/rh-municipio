@@ -56,12 +56,22 @@ import seedDC_Complex from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_
 import seedDC_Complex_Retardos3OmisionEntradaOmisionSalida from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_complex_retardos3_omision_entrada_omision_salida";
 import seedDC_Complex_InasistenciaViernesSabadoDomingo from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_complex_inasistencia_viernes_sabado_domingo";
 import seedDC_Complex_RetardoMayorPermisoSinGoce from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_complex_retardo_mayor_permiso_sin_goce";
-import seedDC_Complex_AllIncidencias from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_complex_all_incidencias";
 import seedIntercalated_LMV_InasistenciaTotal from "@/app/api/employee-payroll/tests/seeds/scenarios/intercalated_lmv_inasistencia_total";
 import seedDC_LV_Nocturno_OmisionSalidaInasistencia from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_lv_nocturno_omision_salida_inasistencia";
 import seedAL_VSD_Falta_SabadoDomingo from "@/app/api/employee-payroll/tests/seeds/scenarios/al_vsd_falta_sabado_domingo";
 import seedDC_Complex_AllIncidencias01 from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_complex_all_incidencias01";
 import seedDC_Complex_AllIncidencias02 from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_complex_all_incidencias02";
+import { seedAL_IncapacidadMenor1Anio_30Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/al_incapacidad_menor_1_30_dias";
+import { seedAL_IncapacidadMenor1Anio_45Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/al_incapacidad_menor_1_45_dias";
+import { seedAL_Incapacidad_1a5_30Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/al_incapacidad_1_5_30_dias";
+import { seedAL_Incapacidad_1a5_60Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/al_incapacidad_1_5_60_dias";
+import { seedAL_Incapacidad_1a5_75Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/al_incapacidad_1_5_75_dias";
+import { seedAL_IncapacidadMayor10_2FoliosContinuos } from "@/app/api/employee-payroll/tests/seeds/scenarios/al_incapacidad_mayor_10_2_folios";
+import { seedAL_IncapacidadRuptura } from "@/app/api/employee-payroll/tests/seeds/scenarios/al_incapacidad_mayor_10_ruptura";
+import { seedDC_Incapacidad_1a5_30Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_incapacidad_1_5_30_dias";
+import { seedDC_IncapacidadMenor1Anio_30Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/dc_incapacidad_menor_1_30_dias";
+import { seedIntercalated_IncapacidadMenor1Anio_30Dias } from "@/app/api/employee-payroll/tests/seeds/scenarios/intercalated_incapacidad_menor_1_30_dias";
+import { seedIntercalated_IncapacidadMenor1Anio_5Dias_PermisoSinGoce } from "@/app/api/employee-payroll/tests/seeds/scenarios/intercalated_incapacidad_menor_1_5_dias_permiso_sin_goce";
 
 const REQUIRED_SECRET = process.env.SEED_SECRET ?? "dev_secret";
 
@@ -78,7 +88,7 @@ export async function GET(req: Request) {
     // 3. Ejecutar seeds
     console.log("🌱 Sembrando escenarios de nómina de prueba...");
 
-    let numberEmployee = 110000;
+    let numberEmployee = 173800;
 
     await seedDC_LV_Asistencia(String(numberEmployee++));
     await seedDC_LV_Inasistencia(String(numberEmployee++));
@@ -146,7 +156,19 @@ export async function GET(req: Request) {
     await seedDC_Complex_AllIncidencias01(String(numberEmployee++));
     await seedDC_Complex_AllIncidencias02(String(numberEmployee++));
 
-    // ... importar y ejecutar los 12 escenarios completos
+    await seedAL_IncapacidadMenor1Anio_30Dias(String(numberEmployee++));
+    await seedAL_IncapacidadMenor1Anio_45Dias(String(numberEmployee++));
+    await seedAL_Incapacidad_1a5_30Dias(String(numberEmployee++));
+    await seedAL_Incapacidad_1a5_60Dias(String(numberEmployee++));
+    await seedAL_Incapacidad_1a5_75Dias(String(numberEmployee++));
+    await seedAL_IncapacidadMayor10_2FoliosContinuos(String(numberEmployee++));
+    await seedAL_IncapacidadRuptura(String(numberEmployee++));
+
+    await seedDC_Incapacidad_1a5_30Dias(String(numberEmployee++));
+    await seedDC_IncapacidadMenor1Anio_30Dias(String(numberEmployee++));
+
+    await seedIntercalated_IncapacidadMenor1Anio_30Dias(String(numberEmployee++));
+    await seedIntercalated_IncapacidadMenor1Anio_5Dias_PermisoSinGoce(String(numberEmployee++));
 
     console.log("✅ Seeds completados.");
 

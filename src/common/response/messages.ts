@@ -20,6 +20,8 @@ export const HttpMessages = {
   employeeIncidents: {
     invalidData: "Ya existe una incidencia con estos datos",
     incidentsRolesPermissionsCreateFailed: "No puedes crear este tipo de incidencia",
+    openIncapacity:
+      "El empleado ya tiene una incapacidad creada. Debe aprobarse o rechazarse antes de crear una nueva.",
     incidentsRolesPermissionsViewFailed: "No puedes ver este tipo de incidencia",
     incidentsRolesPermissionsUpdateFailed: "No puedes cambiar el estatus este tipo de incidencia",
     createdSuccess: "Incidencia creada correctamente",
@@ -35,6 +37,7 @@ export const HttpMessages = {
     invalidUserToCancel: "La incidencia puede ser cancelada unicamente por el empleado que la creó.",
     employeeWithoutHiringOrLocation: "El empleado no tiene una contratación o una ubicación asignada.",
     foundById: "Incidencia encontrada correctamente",
+    incidentDatesOutOfRange: "Las fechas de incidencia no coinciden con la fecha de inicio y fin",
     notAllowedToCreateForDifferentDireccion:
       "No tienes permiso para crear incidencias para empleados de otra dirección",
   },

@@ -286,8 +286,82 @@ export const normalizeText = (text: string): string => {
     .replace(/[^a-z0-9_]/g, "");
 };
 
+export const withTime = (base: Date, hours: number, minutes = 0) => {
+  const d = new Date(base);
+  d.setHours(hours, minutes, 0, 0);
+  return d;
+};
+
+export const hiringDateForAntiguedad = (baseDate: Date, years: number, months = 0) => {
+  const d = new Date(baseDate);
+  d.setFullYear(d.getFullYear() - years);
+  d.setMonth(d.getMonth() - months);
+  return d;
+};
+
+export const startOfCurrentMonth = (): Date => {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+};
+
 export const getFirstDayMonthString = (d: Date) => {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   return `${y}-${m}-01`;
 };
+
+export const validateIncidentDatesRange = (incidentDates: string[], startDate: string, endDate: string): string[] => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  return incidentDates.filter((dateStr) => {
+    const d = new Date(dateStr);
+    return d < start || d > end;
+  });
+};
+
+export function calculateAntiguedad(antiguedadStartDate: Date, referenceDate: Date = new Date()) {
+  const start = new Date(antiguedadStartDate);
+  const end = new Date(referenceDate);
+
+  start.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+
+  if (end < start) {
+    return {
+      antiguedadStartDate: start,
+      antiguedadYears: 0,
+      antiguedadMonths: 0,
+      antiguedadDaysTotal: 0,
+      antiguedadDaysResidual: 0,
+      antiguedadMonthsTotal: 0,
+    };
+  }
+
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    const previousMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+    days += previousMonth.getDate();
+  }
+
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  const daysTotal = Math.floor((end.getTime() - start.getTime()) / 86400000);
+  const monthsTotal = years * 12 + months;
+
+  return {
+    antiguedadStartDate: start,
+    antiguedadYears: years,
+    antiguedadMonths: months,
+    antiguedadDaysTotal: daysTotal,
+    antiguedadDaysResidual: days,
+    antiguedadMonthsTotal: monthsTotal,
+  };
+}

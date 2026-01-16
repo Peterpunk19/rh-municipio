@@ -21,6 +21,7 @@ export type IAttendanceCalendar = {
     status: string;
   };
   hasIncidents?: boolean;
+  percentageSalary?: string;
 };
 
 export type ICalendarDay = {

@@ -1,6 +1,4 @@
 import { createEmployeeSeed } from "@/app/api/employee-payroll/tests/seeds/helpers/createEmployee";
-import { createWeeklySchedule } from "@/app/api/employee-payroll/tests/seeds/helpers/createSchedule";
-import { createAttendance } from "@/app/api/employee-payroll/tests/seeds/helpers/createAttendance";
 import { createIncident } from "@/app/api/employee-payroll/tests/seeds/helpers/createIncident";
 import { generateMonthlyAttendances } from "@/app/api/employee-payroll/tests/seeds/helpers/generateAttendances";
 

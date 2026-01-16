@@ -110,6 +110,7 @@ export const useCustomCalendar = ({
         checkOut: r.check_out,
         incidents,
         hasIncidents: incidents.length > 0,
+        percentageSalary: r.percentage_salary,
       });
     }
 

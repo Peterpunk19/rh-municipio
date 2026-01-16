@@ -355,7 +355,7 @@ const TableWithPagination = <T extends TableItemBase>({
             </Box>
             <Box p={2} sx={{width: "50%"}}>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, {label: "Ver todo", value: -1}]}
+                rowsPerPageOptions={[10, 20, 50, 100, 200, {label: "Ver todo", value: -1}]}
                 component="div"
                 count={total}
                 rowsPerPage={limit}
