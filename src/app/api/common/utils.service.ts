@@ -293,7 +293,7 @@ export const exceedsConsecutiveLimit = (
     const diffTime = currDate.getTime() - prevDate.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 1) {
+    if (diffDays === 0 || diffDays === 1) {
       currentStreak++;
       maxStreak = Math.max(maxStreak, currentStreak);
 

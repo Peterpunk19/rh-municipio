@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Grid2 as Grid } from "@mui/material";
+import {Box, Typography, Grid2 as Grid, Chip} from "@mui/material";
+import { IconMoon, IconSun } from "@tabler/icons-react";
 import { Temporal } from "@js-temporal/polyfill";
-import {IconClock, IconClockCheck, IconClockDown, IconClockUp} from "@tabler/icons-react";
+import { IconClockCheck, IconClockDown, IconClockUp} from "@tabler/icons-react";
 import { ICalendarDay, IAttendanceCalendar, IScheduleData } from "@/components/types";
 import { formatDate } from "@/utils/formatter";
-import { generateUniqueKey } from "@/utils";
 
 interface Props {
   day: ICalendarDay;
@@ -19,7 +19,21 @@ interface Props {
   showSchedule?: boolean;
   scheduleData?: IScheduleData;
   onScheduleClick?: (date: string, schedule: IScheduleData) => void;
+  onMouseDown?: (date: string) => void;
+  onMouseEnter?: (date: string) => void;
+  onMouseUp?: () => void;
+  isDragging?: boolean;
 }
+
+const isNightSchedule = (start: string, end: string) => {
+  const startHour = Number(start.split(":")[0]);
+  const endHour = Number(end.split(":")[0]);
+
+  if (endHour < startHour) return true;
+
+  return startHour >= 18 || endHour <= 6;
+};
+
 
 const CalendarDay = React.memo(
   ({
@@ -33,7 +47,16 @@ const CalendarDay = React.memo(
     showSchedule,
     scheduleData,
     onScheduleClick,
+    onMouseDown,
+    onMouseEnter,
+    onMouseUp,
+    isDragging
   }: Props) => {
+
+    const isNight = schedule
+      ? isNightSchedule(schedule.startHour, schedule.endHour)
+      : false;
+
     const dateStr = day.date.toString();
     const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
     const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
@@ -50,15 +73,18 @@ const CalendarDay = React.memo(
     return (
       <Grid
         size={{ xs: 1 }}
-        onClick={() => onClick(dateStr)}
+        onMouseDown={() => onMouseDown?.(dateStr)}
+        onMouseEnter={() => onMouseEnter?.(dateStr)}
+        onMouseUp={onMouseUp}
         sx={{
           p: 1,
           minHeight: 140,
           border: "1px solid #eee",
-          cursor: "pointer",
           backgroundColor: bg,
           position: "relative",
           transition: "all .25s ease",
+          userSelect: "none",
+          cursor: isDragging ? "grabbing" : "pointer",
           "&:hover": {
             backgroundColor: isSelected ? "rgba(28, 61, 90)" : "#E3F2FD",
             transform: "scale(1.02)",
@@ -85,11 +111,38 @@ const CalendarDay = React.memo(
         </Box>
 
         {/* Horario */}
-        {isWorkDay && showSchedule && schedule && (
-          <Typography sx={{ fontSize: "0.7rem" }} color={color}>
-            {schedule.startHour} → {schedule.endHour}
-          </Typography>
-        )}
+        <Box
+          sx={{
+            height: 2,
+            position: "relative",
+          }}
+        >
+          {isWorkDay && showSchedule && schedule && (
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={0.5}
+            >
+              {isNight ? (
+                <IconMoon size={14} color="#FACC15" />
+              ) : (
+                <IconSun size={14} color="#FDE047" />
+              )}
+
+              <Typography
+                sx={{
+                  fontSize: "0.7rem",
+                  opacity: 0.6,
+                  lineHeight: 1,
+                  color: isSelected ? "#fff" : "#64748B"
+                }}
+              >
+                {schedule.startHour} → {schedule.endHour}
+              </Typography>
+            </Box>
+          )}
+
+        </Box>
 
         {scheduleData && (
           <Box
@@ -97,10 +150,6 @@ const CalendarDay = React.memo(
             alignItems="center"
             justifyContent="center"
             gap={0.5}
-            onClick={(e) => {
-              e.stopPropagation();
-              onScheduleClick?.(dateStr, scheduleData);
-            }}
             sx={{
               position: "absolute",
               bottom: 8,
@@ -108,7 +157,6 @@ const CalendarDay = React.memo(
               right: 8,
               backgroundColor: "#2A4F6A",
               borderRadius: "6px",
-              boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.15)",
               px: 1,
               py: 0.5,
               cursor: "pointer",
@@ -117,21 +165,18 @@ const CalendarDay = React.memo(
               },
             }}
           >
-            <IconClock size={12} color="#FFF" />
             <Typography
               variant="caption"
               sx={{
                 color: "#FFF",
                 fontSize: "0.7rem",
                 fontWeight: 500,
-                lineHeight: 1,
                 whiteSpace: "nowrap",
               }}
             >
               {scheduleData.startDisplay} – {scheduleData.endDisplay}
             </Typography>
           </Box>
-
         )}
 
         {/* Contenido */}
@@ -155,6 +200,19 @@ const CalendarDay = React.memo(
                         }}
                       >
                         {inc.type}
+
+                        {inc.type === 'INCAPACIDADES' && (
+                          <Chip
+                            size="small"
+                            label={`${attendance.percentageSalary}% salario`}
+                            sx={{
+                              mt: 0.25,
+                              height: 18,
+                              fontSize: "0.65rem",
+                              bgcolor: "rgba(255,255,255,0.25)",
+                            }}
+                          />
+                        )}
                       </Box>
                     ))
                   : (() => {
@@ -200,7 +258,7 @@ const CalendarDay = React.memo(
                   <>
                     {attendance.checkIn && (
                       <Box
-                        key={generateUniqueKey()}
+                        key={`checkin-${attendance.checkIn}`}
                         display="flex"
                         alignItems="center"
                         gap={1}
@@ -220,7 +278,7 @@ const CalendarDay = React.memo(
                     )}
                     {attendance.checkOut && (
                       <Box
-                        key={generateUniqueKey()}
+                        key={`checkout-${attendance.checkOut}`}
                         display="flex"
                         alignItems="center"
                         gap={1}

@@ -384,6 +384,12 @@ export const EmployeeAttendanceService = {
                     colorOnCalendar: true,
                   },
                 },
+                employee_incident_days: {
+                  select: {
+                    date: true,
+                    percentage_salary: true,
+                  },
+                },
                 incident_status: {
                   select: {
                     id: true,
@@ -473,45 +479,70 @@ export const EmployeeAttendanceService = {
       },
     });
 
-    console.log(attendances);
-    const data = attendances.map((item: any) => ({
-      id: item.id,
-      employee_attendance_incident: item.employee_attendance_incident,
-      check_in: item.check_in,
-      check_out: item.check_out,
-      created_at: item.created_at,
-      active: item.active,
-      description: item.description,
-      location: {
-        id: item.employee_location.location_id,
-        active: item.employee_location.active,
-        name: item.employee_location.location.name,
-        display_name: item.employee_location.location.display_name,
-      },
-      type_attendance: item.employee_attendance_type.attendance,
-      employee: {
-        id: item.employee_ascriptions.employee.id,
-        number_employee: item.employee_ascriptions.employee.number_employee,
-        name: item.employee_ascriptions.employee.name,
-        paternal_last_name: item.employee_ascriptions.employee.paternal_last_name,
-        maternal_last_name: item.employee_ascriptions.employee.maternal_last_name,
-        fullName: `${item.employee_ascriptions.employee.name} ${item.employee_ascriptions.employee.paternal_last_name} ${item.employee_ascriptions.employee.maternal_last_name}`,
-        rfc: item.employee_ascriptions.employee.rfc,
-        curp: item.employee_ascriptions.employee.curp,
-      },
-      organism_public: item.employee_ascriptions.direccion?.secretaria,
-      organism_administrative: {
-        id: item.employee_ascriptions.direccion?.id,
-        name: item.employee_ascriptions.direccion?.name,
-        display_name: item.employee_ascriptions.direccion?.display_name,
-      },
-      created_by: {
-        id: item.created_by.id,
-        username: item.created_by.username,
-      },
-      job_schedule_calendar: item.job_schedule_calendar,
-      job_schedule_employee: item.job_schedule_employee,
-    }));
+    const incidentDayMap = new Map<string, number>();
+
+    for (const attendance of attendances) {
+      for (const ai of attendance.employee_attendance_incident ?? []) {
+        const days = ai.employee_incident?.employee_incident_days ?? [];
+        for (const day of days) {
+          const key = day.date.toISOString().slice(0, 10);
+          incidentDayMap.set(key, day.percentage_salary);
+        }
+      }
+    }
+
+    const data = attendances.map((item: any) => {
+      const dateKey = item.check_in ? item.check_in.toISOString().slice(0, 10) : null;
+
+      const percentageSalary = dateKey ? (incidentDayMap.get(dateKey) ?? 100) : 100;
+
+      return {
+        id: item.id,
+        percentage_salary: percentageSalary,
+        employee_attendance_incident: item.employee_attendance_incident.map((eai) => ({
+          employee_incident: {
+            id: eai.employee_incident.id,
+            active: eai.employee_incident.active,
+            incident: eai.employee_incident.incident,
+            incident_status: eai.employee_incident.incident_status,
+          },
+        })),
+        check_in: item.check_in,
+        check_out: item.check_out,
+        created_at: item.created_at,
+        active: item.active,
+        description: item.description,
+        location: {
+          id: item.employee_location.location_id,
+          active: item.employee_location.active,
+          name: item.employee_location.location.name,
+          display_name: item.employee_location.location.display_name,
+        },
+        type_attendance: item.employee_attendance_type.attendance,
+        employee: {
+          id: item.employee_ascriptions.employee.id,
+          number_employee: item.employee_ascriptions.employee.number_employee,
+          name: item.employee_ascriptions.employee.name,
+          paternal_last_name: item.employee_ascriptions.employee.paternal_last_name,
+          maternal_last_name: item.employee_ascriptions.employee.maternal_last_name,
+          fullName: `${item.employee_ascriptions.employee.name} ${item.employee_ascriptions.employee.paternal_last_name} ${item.employee_ascriptions.employee.maternal_last_name}`,
+          rfc: item.employee_ascriptions.employee.rfc,
+          curp: item.employee_ascriptions.employee.curp,
+        },
+        organism_public: item.employee_ascriptions.direccion?.secretaria,
+        organism_administrative: {
+          id: item.employee_ascriptions.direccion?.id,
+          name: item.employee_ascriptions.direccion?.name,
+          display_name: item.employee_ascriptions.direccion?.display_name,
+        },
+        created_by: {
+          id: item.created_by.id,
+          username: item.created_by.username,
+        },
+        job_schedule_calendar: item.job_schedule_calendar,
+        job_schedule_employee: item.job_schedule_employee,
+      };
+    });
 
     const total = await prisma.employeeAttendance.count({ where: whereClause });
     const pagination = await getPaginationData(total, limit, page);

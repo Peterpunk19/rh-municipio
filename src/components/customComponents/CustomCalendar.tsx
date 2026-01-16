@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import { Grid2 as Grid, Box, Typography, Button, DialogActions, FormControlLabel } from "@mui/material";
 
 import { ICustomCalendarProps } from "@/components/types";
@@ -26,6 +26,9 @@ const CustomCalendar = ({
   scheduleData,
   onScheduleClick,
 }: ICustomCalendarProps) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const dragActionRef = useRef<"select" | "deselect" | null>(null);
+
   const { today, days, monthCalendar, selectedDates, attendanceMap, monthYearDisplay, scheduleMap, actions } =
     useCustomCalendar({
       employeeId,
@@ -40,6 +43,35 @@ const CustomCalendar = ({
 
   const handleSave = () => {
     onSave?.(Array.from(selectedDates).sort());
+  };
+
+  const handleMouseDown = (date: string) => {
+    setIsDragging(true);
+
+    dragActionRef.current = selectedDates.has(date)
+      ? "deselect"
+      : "select";
+
+    actions.handleDateClick(date);
+  };
+
+  const handleMouseEnter = (date: string) => {
+    if (!isDragging || !dragActionRef.current) return;
+
+    const isSelected = selectedDates.has(date);
+
+    if (dragActionRef.current === "select" && !isSelected) {
+      actions.handleDateClick(date);
+    }
+
+    if (dragActionRef.current === "deselect" && isSelected) {
+      actions.handleDateClick(date);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    dragActionRef.current = null;
   };
 
   const [showSchedule, setShowSchedule] = useState(false);
@@ -81,28 +113,34 @@ const CustomCalendar = ({
 
       <CalendarDaysHeader days={days} mb={2} />
 
-      <Grid container columns={7} flexGrow={1}>
-        {monthCalendar.map((day) => {
-          const dateStr = day.date.toString();
-          const isSelected = selectedDates.has(dateStr);
-          const schedule = scheduleData?.get(dateStr);
-          return (
-            <CalendarDay
-              key={dateStr}
-              day={day}
-              today={today}
-              isSelected={isSelected}
-              attendance={attendanceMap.get(dateStr)}
-              isWorkDay={scheduleMap?.has(dateStr)}
-              schedule={scheduleMap?.get(dateStr)}
-              showSchedule={showSchedule}
-              onClick={actions.handleDateClick}
-              scheduleData={schedule}
-              onScheduleClick={onScheduleClick}
-            />
-          );
-        })}
-      </Grid>
+      <Box onMouseLeave={handleMouseUp}>
+        <Grid container columns={7} flexGrow={1}>
+          {monthCalendar.map((day) => {
+            const dateStr = day.date.toString();
+            const isSelected = selectedDates.has(dateStr);
+            const schedule = scheduleData?.get(dateStr);
+            return (
+              <CalendarDay
+                key={dateStr}
+                day={day}
+                today={today}
+                isSelected={isSelected}
+                attendance={attendanceMap.get(dateStr)}
+                isWorkDay={scheduleMap?.has(dateStr)}
+                schedule={scheduleMap?.get(dateStr)}
+                showSchedule={showSchedule}
+                onClick={actions.handleDateClick}
+                onMouseDown={handleMouseDown}
+                onMouseEnter={handleMouseEnter}
+                onMouseUp={handleMouseUp}
+                scheduleData={schedule}
+                onScheduleClick={onScheduleClick}
+                isDragging={isDragging}
+              />
+            );
+          })}
+        </Grid>
+      </Box>
 
       {!hideActions && (
         <DialogActions sx={{ p: 2, justifyContent: "space-between" }}>

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { encryptPassword, endOfDay, startOfDay } from "@/common/utils";
+import { calculateAntiguedad, encryptPassword, endOfDay, startOfDay } from "@/common/utils";
 import type { IEmployee, IEmployeeFilters, IEmployeeHiring } from "@/app/api/employees/interface";
 import { ROLES } from "@/common/constants/Roles";
 import { STATUS_EMPLOYEE } from "@/common/constants/StatusEmployee";
@@ -735,6 +735,7 @@ export const EmployeeService = {
                e.paternal_last_name,
                e.maternal_last_name,
                e.number_employee,
+               e.antiguedad_start_date,
                e.birthday,
                e.rfc,
                e.curp,
@@ -815,22 +816,34 @@ export const EmployeeService = {
       employees = await prisma.$queryRawUnsafe(`${baseQuery} ORDER BY e.id DESC`, ...baseParams);
     }
 
-    return employees.map((emp: any) => ({
-      id: emp.id,
-      label: `${emp.name} ${emp.paternal_last_name} ${emp.maternal_last_name} - ${emp.number_employee}`,
-      number_employee: emp.number_employee,
-      birthday: emp.birthday,
-      rfc: emp.rfc,
-      curp: emp.curp,
-      direccion_display_name: emp.direccion_display_name,
-      secretaria_display_name: emp.secretaria_display_name,
-      category_display_name: emp.category_display_name,
-      employee_type_display_name: emp.employee_type_display_name,
-      trade_union_display_name: emp.trade_union_display_name,
-      location_display_name: emp.location_display_name,
-      attendance_type_display_name: emp.attendance_type_display_name,
-      gender_name: emp.gender_name,
-    }));
+    return employees.map((emp: any) => {
+      const antiguedad = emp.antiguedad_start_date ? calculateAntiguedad(new Date(emp.antiguedad_start_date)) : null;
+
+      return {
+        id: emp.id,
+        label: `${emp.name} ${emp.paternal_last_name} ${emp.maternal_last_name} - ${emp.number_employee}`,
+        full_name: `${emp.name} ${emp.paternal_last_name} ${emp.maternal_last_name}`,
+        number_employee: emp.number_employee,
+        date_hiring: emp.start_job_date,
+        birthday: emp.birthday,
+        rfc: emp.rfc,
+        curp: emp.curp,
+        antiguedad_start_date: emp.antiguedad_start_date,
+        antiguedad_years: antiguedad?.antiguedadYears ?? 0,
+        antiguedad_months: antiguedad?.antiguedadMonths ?? 0,
+        antiguedad_days: antiguedad?.antiguedadDaysTotal ?? 0,
+        antiguedad_residual_days: antiguedad?.antiguedadDaysResidual ?? 0,
+        antiguedad_months_total: antiguedad?.antiguedadMonthsTotal ?? 0,
+        direccion_display_name: emp.direccion_display_name,
+        secretaria_display_name: emp.secretaria_display_name,
+        category_display_name: emp.category_display_name,
+        employee_type_display_name: emp.employee_type_display_name,
+        trade_union_display_name: emp.trade_union_display_name,
+        location_display_name: emp.location_display_name,
+        attendance_type_display_name: emp.attendance_type_display_name,
+        gender_name: emp.gender_name,
+      };
+    });
   },
 
   async getEmployeeByIdTest(): Promise<{ id: number } | null> {
@@ -1049,5 +1062,25 @@ export const EmployeeService = {
         },
       },
     });
+  },
+
+  async getEmployeeWithHiring(employeeId: number, referenceDate: Date = new Date()) {
+    const employee = await prisma.employee.findUnique({
+      where: { id: employeeId },
+      select: {
+        antiguedad_start_date: true,
+      },
+    });
+
+    if (!employee?.antiguedad_start_date) {
+      throw new Error(`Employee ${employeeId} has no antiguedad_start_date`);
+    }
+
+    const antiguedad = calculateAntiguedad(employee.antiguedad_start_date, referenceDate);
+
+    return {
+      employeeId,
+      ...antiguedad,
+    };
   },
 };

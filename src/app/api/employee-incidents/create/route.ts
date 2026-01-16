@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { handleHttpResponse } from "@/common/response/handler";
 import { HttpResponse } from "@/common/response/model";
 import { validateRequest } from "@/common/request/validateRequest";
@@ -7,22 +7,22 @@ import type { IEmployeeIncident } from "@/app/api/employee-incidents/types";
 import { EmployeeIncidentsPostSchema } from "@/schemas/employee-incidents";
 import { EmployeeIncidentsService } from "@/app/api/services/employee-incidents.service";
 import { authMiddleware } from "@/middleware/authMiddleware";
-import { NextResponse } from "next/server";
 import {
+  assignPercentageDays,
+  getEmployeeDireccion,
   getFolio,
   getIncidentStatus,
   validateEmployee,
   validateEmployeeIncident,
   validateIncidentsRolesPermissions,
-  getEmployeeDireccion,
-  assignPercentageDays,
 } from "@/app/api/common/utils.service";
 import { logger } from "@/lib/logger";
-import { failureResponse, getRoleValueById, validateDireccionAccess } from "@/common/utils";
+import { failureResponse, getRoleValueById, validateDireccionAccess, validateIncidentDatesRange } from "@/common/utils";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPermissions";
 import { IncidentRulesService } from "@/app/api/services/incident-rules.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
+import EmployeesIncidents from "@/app/(protected)/admin/employees-incidents/EmployeesIncidents";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -80,6 +80,22 @@ export async function POST(request: NextRequest) {
       body.incidentDates = dates;
     }
 
+    const datesToValidate = body.incidentDates || [];
+
+    if (datesToValidate.length > 0) {
+      const outOfRangeDates = validateIncidentDatesRange(datesToValidate, body.startDate, body.endDate);
+
+      if (outOfRangeDates.length > 0) {
+        return handleHttpResponse(
+          HttpResponse.failure(HttpMessages.employeeIncidents.incidentDatesOutOfRange, {
+            startDate: body.startDate,
+            endDate: body.endDate,
+            invalidDates: outOfRangeDates,
+          }),
+        );
+      }
+    }
+
     const rulesValidation = await IncidentRulesService.validateIncidentRules(body);
     if (rulesValidation && !rulesValidation.success) {
       return handleHttpResponse(rulesValidation);
@@ -87,8 +103,7 @@ export async function POST(request: NextRequest) {
 
     if (rulesValidation && rulesValidation.success && body.incidentId === INCIDENT_TYPES_ID.LICENCIA_MEDICA) {
       const licenciaMedicaData = rulesValidation.responseObject as any;
-      const assigned = assignPercentageDays(body.incidentDates, licenciaMedicaData);
-      body.incidentDatesWithPercentage = assigned;
+      body.incidentDatesWithPercentage = assignPercentageDays(body.incidentDates, licenciaMedicaData);
     }
 
     const datesToCheck = body.incidentDates || [];
@@ -113,6 +128,15 @@ export async function POST(request: NextRequest) {
       createdBy: employeeId ? Number(employeeId) : userId,
       direccionId: direccionId ? Number(direccionId) : null,
     };
+
+    if (body.incidentId === INCIDENT_TYPES_ID.INCAPACIDAD) {
+      const hasOpenIncapacity = await EmployeeIncidentsService.hasOpenIncapacity(Number(body.employeeId));
+      console.log(hasOpenIncapacity);
+
+      if (hasOpenIncapacity) {
+        return failureResponse(HttpMessages.employeeIncidents.openIncapacity);
+      }
+    }
 
     const [createEmployeeIncidents] = await EmployeeIncidentsService.createEmployeeIncidents(createData);
     const response = HttpResponse.success(HttpMessages.employeeIncidents.createdSuccess, createEmployeeIncidents);

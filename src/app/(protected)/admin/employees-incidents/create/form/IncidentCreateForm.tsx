@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useCallback, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateFormData,
@@ -8,6 +9,8 @@ import {
   setErrors,
   clearErrors,
   setIncidentDates,
+  setCreatedIncident,
+  clearCreatedIncident,
 } from "@/store/employees-incidents/EmployeesIncidentsSlice";
 import ParentCard from "@/app/components/shared/ParentCard";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
@@ -49,6 +52,8 @@ import { HttpMessages } from "@/common/response/messages";
 import { getFirstDayMonthString } from "@/common/utils";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { GENDER } from "@/common/constants/Gender";
+import { MiniMonthCalendar } from "@/components/customComponents/MiniMonthCalendar";
+import { SuccessActionDialog } from "@/components/customComponents/SuccessActionDialog";
 
 type IncidentCreateFormProps = {
   selectedEmployee?: any;
@@ -57,6 +62,30 @@ type IncidentCreateFormProps = {
   isSubmitting?: boolean;
 };
 
+function safeDateFromISO(date: string) {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(y, m - 1, d, 12); // 👈 hora fija
+}
+
+function getMonthsBetween(start: string, end: string) {
+  const months: { year: number; month: number }[] = [];
+
+  const startDate = safeDateFromISO(start);
+  const endDate = safeDateFromISO(end);
+
+  const cursor = new Date(startDate.getFullYear(), startDate.getMonth(), 1, 12);
+
+  while (cursor <= endDate) {
+    months.push({
+      year: cursor.getFullYear(),
+      month: cursor.getMonth(),
+    });
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  return months;
+}
+
 const IncidentCreateForm = ({
   selectedEmployee,
   onSuccess,
@@ -64,9 +93,11 @@ const IncidentCreateForm = ({
   isSubmitting: externalSubmitting,
 }: IncidentCreateFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const { user } = useCurrentUser();
   const { formData, errors } = useSelector((state: RootState) => state.createEmployeeIncident);
   const selectedEmployeeFromStore = useSelector((state: RootState) => state.employeeIncident.selectedEmployee);
+  const createdIncident = useSelector((state: RootState) => state.createEmployeeIncident.createdIncident);
   const currentEmployee = selectedEmployee || selectedEmployeeFromStore;
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -80,6 +111,7 @@ const IncidentCreateForm = ({
   const [visibleMonthStart, setVisibleMonthStart] = useState<string>(getFirstDayMonthString(new Date()));
 
   const submitting = externalSubmitting !== undefined ? externalSubmitting : isSubmitting;
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
   React.useEffect(() => {
     if (selectedEmployee && selectedEmployee.id) {
@@ -88,6 +120,50 @@ const IncidentCreateForm = ({
       dispatch(updateFormData({ field: "employeeId", value: selectedEmployee.id.toString() }));
     }
   }, [selectedEmployee, dispatch]);
+
+  const recalculateIncidentDates = (startDate?: string, endDate?: string) => {
+    if (!startDate || !endDate) {
+      dispatch(setIncidentDates([]));
+      return;
+    }
+
+    const start = safeDateFromISO(startDate);
+    const end = safeDateFromISO(endDate);
+
+    if (start > end) {
+      dispatch(setIncidentDates([]));
+      return;
+    }
+
+    const dates: string[] = [];
+    const cursor = new Date(start);
+
+    while (cursor <= end) {
+      dates.push(cursor.toISOString().split("T")[0]);
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    dispatch(setIncidentDates(dates));
+  };
+
+  const toggleIncidentDate = (date: string) => {
+    const exists = formData.incidentDates.includes(date);
+
+    let nextDates = exists ? formData.incidentDates.filter((d) => d !== date) : [...formData.incidentDates, date];
+
+    if (nextDates.length === 0) {
+      dispatch(updateFormData({ field: "startDate", value: "" }));
+      dispatch(updateFormData({ field: "endDate", value: "" }));
+      dispatch(setIncidentDates([]));
+      return;
+    }
+
+    nextDates = nextDates.sort();
+
+    dispatch(setIncidentDates(nextDates));
+    dispatch(updateFormData({ field: "startDate", value: nextDates[0] }));
+    dispatch(updateFormData({ field: "endDate", value: nextDates[nextDates.length - 1] }));
+  };
 
   const validateIncident = async (employeeId: string, incidentId: string, startDate?: string, endDate?: string) => {
     if (!employeeId || !incidentId) {
@@ -104,7 +180,7 @@ const IncidentCreateForm = ({
       setValidationData(response);
 
       if (response.success && response.responseObject) {
-        const maxDays = response.responseObject.hasRules === false ? 20 : response.responseObject.remaining_days;
+        const maxDays = response.responseObject.hasRules === false ? 365 : response.responseObject.remaining_days;
         setMaxSelections(maxDays);
         return maxDays;
       }
@@ -165,42 +241,19 @@ const IncidentCreateForm = ({
       );
     }
 
-    if (name === "startDate" && Number(updatedFormData.incidentId) === INCIDENT_TYPES_ID.LACTANCIA) {
-      const startDate = new Date(value);
-      const validationResult = await validateIncident(
-        updatedFormData.employeeId,
-        updatedFormData.incidentId,
-        value,
-        value,
-      );
-      const availableDays = validationResult !== null ? validationResult : maxSelections;
-      if (!isNaN(startDate.getTime()) && availableDays > 0) {
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + availableDays - 1);
-        const formattedEndDate = endDate.toISOString().split("T")[0];
-        dispatch(updateFormData({ field: "endDate", value: formattedEndDate }));
+    if (name === "startDate") {
+      recalculateIncidentDates(value, formData.endDate);
+
+      if (formData.employeeId && formData.incidentId) {
+        await validateIncident(formData.employeeId, formData.incidentId, value, formData.endDate);
       }
     }
 
     if (name === "endDate") {
-      const start = new Date(formData.startDate);
-      const end = new Date(value);
+      recalculateIncidentDates(formData.startDate, value);
 
-      if (!isNaN(start.getTime()) && !isNaN(end.getTime()) && start <= end) {
-        const dates: string[] = [];
-        const current = new Date(start);
-
-        while (current <= end) {
-          dates.push(current.toISOString().split("T")[0]);
-          current.setDate(current.getDate() + 1);
-        }
-        dispatch(setIncidentDates(dates));
-
-        if (formData.employeeId && formData.incidentId) {
-          await validateIncident(formData.employeeId, formData.incidentId, formData.startDate, value);
-        }
-      } else {
-        dispatch(setIncidentDates([]));
+      if (formData.employeeId && formData.incidentId) {
+        await validateIncident(formData.employeeId, formData.incidentId, formData.startDate, value);
       }
     }
   };
@@ -218,6 +271,10 @@ const IncidentCreateForm = ({
       const employeeId = employee.id.toString();
       dispatch(updateFormData({ field: "employeeId", value: employeeId }));
       dispatch(updateFormData({ field: "incidentId", value: "0" }));
+      dispatch(updateFormData({ field: "startDate", value: "" }));
+      dispatch(updateFormData({ field: "endDate", value: "" }));
+      dispatch(updateFormData({ field: "incidentDates", value: [] }));
+
       const newErrors = { ...errors };
       delete newErrors.employeeId;
       const filteredErrors = Object.fromEntries(
@@ -227,7 +284,32 @@ const IncidentCreateForm = ({
     } else {
       dispatch(updateFormData({ field: "employeeId", value: "" }));
       dispatch(updateFormData({ field: "incidentId", value: "0" }));
+      dispatch(updateFormData({ field: "startDate", value: "" }));
+      dispatch(updateFormData({ field: "endDate", value: "" }));
+      dispatch(updateFormData({ field: "incidentDates", value: [] }));
     }
+  };
+
+  const goToForm = () => {
+    dispatch(resetForm());
+    setOpenSuccessDialog(false);
+  };
+
+  const goToDetail = () => {
+    const id = createdIncident?.id;
+    if (!id) return;
+
+    router.push(`/admin/employees-incidents/${id}`);
+
+    dispatch(resetForm());
+    dispatch(clearCreatedIncident());
+  };
+
+  const goToList = () => {
+    router.push("/admin/employees-incidents");
+
+    dispatch(resetForm());
+    dispatch(clearCreatedIncident());
   };
 
   const error = loadError as string | null;
@@ -383,12 +465,9 @@ const IncidentCreateForm = ({
       } else {
         setIsSuccess(true);
         setResponseMessage(response.message);
-        dispatch(resetForm());
-        if (onSuccess) onSuccess();
-        setTimeout(() => {
-          if (onClose) onClose();
-          if (!onClose) window.location.href = "/admin/employees-incidents";
-        }, 3000);
+
+        dispatch(setCreatedIncident(response.responseObject));
+        setOpenSuccessDialog(true);
       }
     } catch (err) {
       setResponseMessage("Hubo un error inesperado.");
@@ -541,71 +620,93 @@ const IncidentCreateForm = ({
               </FormControl>
             </Grid2>
 
-            {isVacationIncident && (
-              <Grid2 size={{ lg: 12 }}>
-                <FormControl fullWidth>
-                  <CustomFormLabel sx={{ mt: 1 }}>Fechas de incidencia</CustomFormLabel>
-                  <Box
-                    sx={{
-                      border: 1,
-                      borderColor: "grey.300",
-                      borderRadius: 1,
-                      p: 2,
-                      minHeight: 56,
-                      display: "flex",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      gap: 1,
-                      backgroundColor: "primary.light",
-                    }}
-                  >
-                    {formData.incidentDates && formData.incidentDates.length > 0 ? (
-                      <>
-                        {formData.incidentDates.map((date, index) => (
-                          <Chip
-                            key={index}
-                            label={formatDate(date, "dd/MM/yyyy")}
-                            color="primary"
-                            variant="outlined"
-                            size="small"
-                          />
-                        ))}
-                        <Stack
-                          justifyContent="space-between"
-                          direction="row"
-                          alignItems="center"
-                          my={2}
-                          sx={{ ml: "auto" }}
-                        >
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={() => setOpenCalendar(true)}
-                            sx={{ ml: "auto", mr: 2 }}
-                          >
-                            Modificar fechas
-                          </Button>
-                          <Button variant="outlined" color="warning" size="small" onClick={removeDates}>
-                            Quitar fechas
-                          </Button>
-                        </Stack>
-                      </>
-                    ) : (
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}
-                      >
-                        <Typography variant="body2" color="textSecondary">
-                          No se han seleccionado fechas de incidencia
-                        </Typography>
-                        <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
-                          Seleccionar fechas
-                        </Button>
-                      </Box>
+            <Grid2 size={{ lg: 12 }}>
+              <FormControl fullWidth>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    mb: 1,
+                  }}
+                >
+                  <Box>
+                    <CustomFormLabel sx={{ mt: 0 }}>Fechas de incidencia</CustomFormLabel>
+                    {formData.incidentDates && formData.incidentDates.length > 0 && (
+                      <Typography variant="caption" color="text.secondary">
+                        {formData.incidentDates.length} días seleccionados
+                      </Typography>
                     )}
                   </Box>
-                </FormControl>
-              </Grid2>
-            )}
+                </Box>
+
+                <Box
+                  sx={{
+                    border: 1,
+                    borderColor: "grey.300",
+                    borderRadius: 1,
+                    p: 2,
+                    minHeight: 56,
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 1,
+                    backgroundColor: "primary.light",
+                  }}
+                >
+                  {formData.incidentDates && formData.incidentDates.length > 0 ? (
+                    <>
+                      {formData.startDate && formData.endDate && (
+                        <>
+                          <Box
+                            sx={{
+                              display: "grid",
+                              gridTemplateColumns: {
+                                xs: "1fr",
+                                sm: "repeat(2, 1fr)",
+                                md: "repeat(3, 1fr)",
+                                lg: "repeat(4, 1fr)",
+                              },
+                              gap: 2,
+                            }}
+                          >
+                            {getMonthsBetween(formData.startDate, formData.endDate).map(({ year, month }) => (
+                              <MiniMonthCalendar
+                                key={`${year}-${month}`}
+                                year={year}
+                                month={month}
+                                selectedDates={formData.incidentDates}
+                                onToggleDate={toggleIncidentDate} // 👈 opcional
+                              />
+                            ))}
+                          </Box>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                      <Typography variant="body2" color="textSecondary">
+                        No se han seleccionado fechas de incidencia
+                      </Typography>
+                      <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
+                        Seleccionar fechas
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
+
+                {formData.incidentDates && formData.incidentDates.length > 0 && (
+                  <Stack direction="row" spacing={1} mt={2}>
+                    <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
+                      Modificar fechas
+                    </Button>
+                    <Button variant="outlined" color="warning" size="small" onClick={removeDates}>
+                      Quitar fechas
+                    </Button>
+                  </Stack>
+                )}
+              </FormControl>
+            </Grid2>
 
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
@@ -620,16 +721,6 @@ const IncidentCreateForm = ({
                 />
                 <CustomLabelError field={errors.description && errors.description} />
               </FormControl>
-            </Grid2>
-
-            <Grid2 size={12}>
-              {responseMessage && (
-                <Alert severity={isSuccess ? "success" : "error"}>
-                  <Typography variant="body1" fontWeight={600}>
-                    {responseMessage}
-                  </Typography>
-                </Alert>
-              )}
             </Grid2>
 
             <Grid2 size={12}>
@@ -672,6 +763,30 @@ const IncidentCreateForm = ({
           </DialogActions>
         </Box>
       </Dialog>
+
+      <SuccessActionDialog
+        open={openSuccessDialog}
+        title="Datos enviados"
+        message={responseMessage}
+        actions={[
+          {
+            label: "Ver incidencia",
+            primary: true,
+            onClick: goToDetail,
+          },
+          {
+            label: "Ver listado",
+            variant: "outlined",
+            onClick: goToList,
+          },
+          {
+            label: "Crear otra",
+            variant: "text",
+            color: "error",
+            onClick: goToForm,
+          },
+        ]}
+      />
     </ParentCard>
   );
 };

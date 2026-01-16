@@ -6,6 +6,7 @@ import { updateTotal } from "@/store/tables/PaginationSlice";
 interface StateType {
   employeesIncidents: any[];
   employeeData: any;
+  createdIncident: any | null;
   formData: {
     employeeId: string,
     incidentId: string,
@@ -46,6 +47,7 @@ const initialState: StateType = {
   total: 0,
   page: 1,
   limit: 10,
+  createdIncident: null,
   formData: {
     employeeId: "0",
     incidentId: "0",
@@ -104,7 +106,12 @@ export const EmployeesIncidentsSlice = createSlice({
     emptyMessage: (state, action) => {
       state.emptyMessage = action.payload;
     },
-
+    setCreatedIncident(state, action: PayloadAction<any>) {
+      state.createdIncident = action.payload;
+    },
+    clearCreatedIncident(state) {
+      state.createdIncident = null;
+    },
     setEmployeeData(state, action: PayloadAction<any>) {
       state.employeeData = action.payload;
     },
@@ -156,7 +163,9 @@ export const {
   setIncidentDates,
   setErrors,
   clearErrors,
-  resetForm
+  resetForm,
+  setCreatedIncident,
+  clearCreatedIncident
 } = EmployeesIncidentsSlice.actions;
 
 export default EmployeesIncidentsSlice.reducer;

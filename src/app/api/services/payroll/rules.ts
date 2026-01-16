@@ -221,30 +221,35 @@ export function computeFaltasPorInasistencias(
 /**
  * Incapacidad: sumamos días de incapacidad del periodo y calculamos factor de salario.
  * Si total > 45, aplicamos factor según antigüedad.
- * (Si quisieras que los 45 días sean anuales, habría que traer todo el año).
  */
-export function computeIncapacitySummary(dailies: DailyContext[], antiguedadYears: number): IncapacitySummary {
+export function computeIncapacitySummary(dailies: DailyContext[]): IncapacitySummary {
   let totalDias = 0;
+  let totalFactor = 0;
 
   for (const day of dailies) {
     for (const di of day.incidents) {
       if (di.incident.name === "incapacidad") {
-        totalDias += 1; // o di.incidentDay.value si manejas fracciones
+        totalDias += 1;
+
+        const percentage = di.incidentDay.percentage_salary ?? 0;
+        totalFactor += percentage / 100;
       }
     }
   }
 
-  if (totalDias <= 45) {
-    return { totalDiasIncapacidad: totalDias, factorSalario: 1 };
+  if (totalDias === 0) {
+    return {
+      totalDiasIncapacidad: 0,
+      factorSalario: 1,
+    };
   }
 
-  let factor = 0.5;
-  if (antiguedadYears < 1) factor = 0.5;
-  else if (antiguedadYears < 5) factor = 0.6;
-  else if (antiguedadYears < 10) factor = 0.7;
-  else factor = 0.8;
+  const factorPromedio = totalFactor / totalDias;
 
-  return { totalDiasIncapacidad: totalDias, factorSalario: factor };
+  return {
+    totalDiasIncapacidad: totalDias,
+    factorSalario: factorPromedio,
+  };
 }
 
 /**

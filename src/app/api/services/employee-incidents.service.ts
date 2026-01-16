@@ -12,6 +12,7 @@ import { getVacationDayValue, getActiveDaysFromSchedules } from "@/app/api/commo
 import { HolidayService } from "@/app/api/services/holiday.service";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
+import { resolveIncapacityContinuation } from "@/app/api/services/helpers/employeeIncidentsHelper";
 
 async function resolveSchedule({ employeeId, date, attendanceTypeId, tx }) {
   const attendanceType = await tx.employeeAttendanceType.findUnique({
@@ -34,8 +35,6 @@ async function resolveSchedule({ employeeId, date, attendanceTypeId, tx }) {
       },
     });
 
-    console.log(calendar);
-
     if (calendar) {
       return {
         job_schedule_calendar: {
@@ -43,7 +42,6 @@ async function resolveSchedule({ employeeId, date, attendanceTypeId, tx }) {
         },
       };
     }
-
     return {};
   }
 
@@ -69,21 +67,20 @@ async function resolveSchedule({ employeeId, date, attendanceTypeId, tx }) {
 
 export const EmployeeIncidentsService = {
   async getFolio() {
-    const lastFolio = await prisma.employeeIncidents.findFirst({
-      orderBy: {
-        folio: "desc",
+    const lastNumeric = await prisma.employeeIncidents.findFirst({
+      where: {
+        AND: [{ folio: { not: { contains: "-" } } }, { folio: { not: { contains: "INC" } } }],
       },
-      select: {
-        folio: true,
-      },
+      orderBy: { folio: "desc" },
+      select: { folio: true },
     });
 
-    if (!lastFolio) {
+    if (!lastNumeric) {
       return "000001";
     }
 
-    const lastNumber = Number.parseInt(lastFolio.folio, 10);
-    return (lastNumber + 1).toString().padStart(6, "0");
+    const lastNumber = parseInt(lastNumeric.folio, 10);
+    return String(lastNumber + 1).padStart(6, "0");
   },
 
   async validateEmployeeIncident(params: IEmployeeIncident) {
@@ -100,6 +97,8 @@ export const EmployeeIncidentsService = {
 
   async createEmployeeIncidents(employeeIncident: IEmployeeIncident) {
     return prisma.$transaction(async (tx) => {
+      const employeeId = Number(employeeIncident.employeeId);
+
       const createData: any = {
         folio: employeeIncident.folio,
         oficio: employeeIncident.oficio ?? "",
@@ -113,7 +112,7 @@ export const EmployeeIncidentsService = {
           connect: { id: Number(employeeIncident.incidentStatusId) },
         },
         employee: {
-          connect: { id: Number(employeeIncident.employeeId) },
+          connect: { id: employeeId },
         },
         created_by: {
           connect: { id: Number(employeeIncident.createdBy) },
@@ -146,48 +145,87 @@ export const EmployeeIncidentsService = {
         },
       });
 
-      if (employeeIncident.incidentDates && employeeIncident.incidentDates.length > 0) {
-        const jobSchedules = await EmployeeService.getCurrentJobSchedule(Number(employeeIncident.employeeId));
-        const daysActive = getActiveDaysFromSchedules(jobSchedules);
-        const isVacationIncident = employeeIncident.incidentId === INCIDENT_TYPES_ID.VACACIONES;
-        const isEconomicLeave = employeeIncident.incidentId === INCIDENT_TYPES_ID.PERMISO_ECONOMICO;
-        const isMedicalLeave = employeeIncident.incidentId === INCIDENT_TYPES_ID.LICENCIA_MEDICA;
-        const vacationDayRecords = await Promise.all(
-          employeeIncident.incidentDates.map(async (dateStr) => {
-            const date = new Date(dateStr);
-            let value = 1;
-            let percentage_salary = 0;
-
-            if (isVacationIncident || isEconomicLeave) {
-              const isHoliday = await HolidayService.isHoliday(date);
-              value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : value;
-            }
-
-            if (isMedicalLeave && employeeIncident.incidentDatesWithPercentage) {
-              const found = employeeIncident.incidentDatesWithPercentage.find((d) => d.date === dateStr);
-              percentage_salary = found?.percentage || 100;
-            }
-
-            return {
-              date,
-              value,
-              percentage_salary,
-              employee_incident_id: createEmployeeIncidents.id,
-              created_at: new Date(),
-            };
-          }),
-        );
-
-        if (vacationDayRecords.length > 0) {
-          const BATCH_SIZE = 50;
-          for (let i = 0; i < vacationDayRecords.length; i += BATCH_SIZE) {
-            const batch = vacationDayRecords.slice(i, i + BATCH_SIZE);
-            await tx.employeeIncidentDays.createMany({
-              data: batch as any[],
-            });
-          }
-        }
+      if (!employeeIncident.incidentDates?.length) {
+        return createEmployeeIncidents;
       }
+
+      const isVacationIncident = employeeIncident.incidentId === INCIDENT_TYPES_ID.VACACIONES;
+      const isEconomicLeave = employeeIncident.incidentId === INCIDENT_TYPES_ID.PERMISO_ECONOMICO;
+      const isMedicalLeave = employeeIncident.incidentId === INCIDENT_TYPES_ID.LICENCIA_MEDICA;
+      const isIncapacity = employeeIncident.incidentId === INCIDENT_TYPES_ID.INCAPACIDAD;
+
+      const incidentDates = employeeIncident.incidentDates
+        .map((d) => new Date(d))
+        .sort((a, b) => a.getTime() - b.getTime());
+
+      const jobSchedules = await EmployeeService.getCurrentJobSchedule(employeeId);
+      const daysActive = getActiveDaysFromSchedules(jobSchedules);
+
+      let previousDays = 0;
+      let fullSalaryDays = 0;
+      let halfSalaryDays = 0;
+
+      if (isIncapacity) {
+        previousDays = await resolveIncapacityContinuation({
+          tx,
+          employeeId,
+          startDate: incidentDates[0],
+        });
+
+        const employee = await EmployeeService.getEmployeeWithHiring(employeeId, incidentDates[0]);
+
+        const rule = await tx.incapacityRule.findFirst({
+          where: {
+            active: true,
+            min_years: { lte: employee.antiguedadYears },
+            OR: [{ max_years: null }, { max_years: { gte: employee.antiguedadYears } }],
+          },
+          orderBy: { min_years: "desc" },
+        });
+
+        if (!rule) throw new Error("No incapacity rule configured");
+
+        fullSalaryDays = rule.full_salary_days;
+        halfSalaryDays = rule.half_salary_days;
+      }
+
+      const records: any[] = [];
+      let dayCounter = previousDays;
+
+      for (const date of incidentDates) {
+        let value = 1;
+        let percentage_salary = 100;
+
+        if (isVacationIncident || isEconomicLeave) {
+          const isHoliday = await HolidayService.isHoliday(date);
+          value = daysActive.has(date.getDay()) ? getVacationDayValue(date, isHoliday) : value;
+        }
+
+        if (isIncapacity) {
+          dayCounter++;
+
+          if (dayCounter <= fullSalaryDays) percentage_salary = 100;
+          else if (dayCounter <= fullSalaryDays + halfSalaryDays) percentage_salary = 50;
+          else percentage_salary = 0;
+        }
+
+        if (isMedicalLeave && employeeIncident.incidentDatesWithPercentage) {
+          const found = employeeIncident.incidentDatesWithPercentage.find(
+            (d) => new Date(d.date).getTime() === date.getTime(),
+          );
+          percentage_salary = found?.percentage ?? 100;
+        }
+
+        records.push({
+          date,
+          value,
+          percentage_salary,
+          employee_incident_id: createEmployeeIncidents.id,
+          created_at: new Date(),
+        });
+      }
+
+      await tx.employeeIncidentDays.createMany({ data: records });
 
       return [createEmployeeIncidents, createEmployeeIncidentsStatus];
     });
@@ -724,5 +762,19 @@ export const EmployeeIncidentsService = {
     }
 
     return allConflicts.map((c) => c.date);
+  },
+
+  async hasOpenIncapacity(employeeId: number) {
+    const openIncapacity = await prisma.employeeIncidents.findFirst({
+      where: {
+        employee_id: employeeId,
+        incident_id: INCIDENT_TYPES_ID.INCAPACIDAD,
+        incident_status_id: {
+          in: [INCIDENT_STATUS_ID.CREADA],
+        },
+      },
+    });
+
+    return Boolean(openIncapacity);
   },
 };

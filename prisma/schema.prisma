@@ -51,6 +51,7 @@ model Employee {
   birthday                             DateTime?
   rfc                                  String                              @unique
   curp                                 String
+  antiguedad_start_date DateTime?
   active                               Boolean                             @default(true)
   created_at                           DateTime?                           @default(now())
   updated_at                           DateTime?                           @updatedAt
@@ -826,7 +827,9 @@ model ConfigYear {
   active                Boolean                @default(false)
   created_at            DateTime               @default(now())
   updated_at            DateTime               @updatedAt
-  categoryEmployeeTypes CategoryEmployeeType[]
+  category_employee_types CategoryEmployeeType[]
+
+  incapacity_rule IncapacityRule[]
 }
 
 model CategoryEmployeeType {
@@ -868,4 +871,18 @@ model SystemLogs {
   @@index([affected_user_id], map: "SystemLogs_affected_user_id_fkey")
   @@index([type], map: "SystemLogs_type_idx")
   @@index([created_at], map: "SystemLogs_created_at_idx")
+}
+
+model IncapacityRule {
+  id               Int     @id @default(autoincrement())
+  config_year_id   Int
+  min_years        Int
+  max_years        Int?
+  full_salary_days Int
+  half_salary_days Int
+  active           Boolean @default(true)
+
+  config_year      ConfigYear @relation(fields: [config_year_id], references: [id])
+
+  @@index([config_year_id, min_years, max_years])
 }

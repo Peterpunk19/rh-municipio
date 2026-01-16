@@ -71,11 +71,18 @@ const CalendarAttendanceDay = React.memo(
         </Box>
 
         {/* Horario */}
-        {isWorkDay && showSchedule && schedule && (
-          <Typography sx={{ fontSize: "0.7rem", opacity: 0.6 }}>
-            {schedule.startHour} → {schedule.endHour}
-          </Typography>
-        )}
+        <Box
+          sx={{
+            height: 2,
+            position: "relative",
+          }}
+        >
+          {isWorkDay && showSchedule && schedule && (
+            <Typography sx={{ fontSize: "0.7rem", opacity: 0.6 }}>
+              {schedule.startHour} → {schedule.endHour}
+            </Typography>
+          )}
+        </Box>
 
         {/* Contenido */}
         {/* No se valida showSchedule porque aqui siempre se deben mostrar las incidencias */}
@@ -101,10 +108,23 @@ const CalendarAttendanceDay = React.memo(
                       backgroundColor: inc.bgColorOnCalendar,
                     }}
                   >
-                    <IconClockCheck size={14} color={inc.colorOnCalendar || "#000"} />
-                    <Typography fontWeight={600} sx={{ fontSize: "0.75rem" }}>
-                      {inc.type}
-                    </Typography>
+                    <Box display="flex" flexDirection="column" lineHeight={1}>
+                      <Typography fontWeight={600} sx={{ fontSize: "0.75rem" }}>
+                        {inc.type}
+                      </Typography>
+
+                      {inc.type === 'INCAPACIDADES' && (
+                        <Typography
+                          sx={{
+                            fontSize: "0.65rem",
+                            color: 'text.secondary',
+                            fontWeight: 500,
+                          }}
+                        >
+                          {attendance.percentageSalary} % salario
+                        </Typography>
+                      )}
+                    </Box>
                   </Box>
                 ))
               ) : (
