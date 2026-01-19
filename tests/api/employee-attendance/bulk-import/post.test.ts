@@ -16,6 +16,7 @@ jest.mock("@/app/api/common/attendance-validator.service", () => ({
   AttendanceValidator: {
     shouldSaveAttendance: jest.fn(),
     validateAttendance: jest.fn(),
+    getScheduleForPersistence: jest.fn(),
   },
 }));
 
@@ -42,6 +43,7 @@ jest.mock("@/lib/logger", () => ({
 beforeEach(() => {
   (AttendanceValidator.shouldSaveAttendance as jest.Mock).mockResolvedValue(true);
   (AttendanceValidator.validateAttendance as jest.Mock).mockResolvedValue(0);
+  (AttendanceValidator.getScheduleForPersistence as jest.Mock).mockReturnValue({});
 
   (EmployeeAttendanceService.findMatchingRecordForCheckIn as jest.Mock).mockResolvedValue(null);
   (EmployeeAttendanceService.findMatchingRecordForCheckOut as jest.Mock).mockResolvedValue(null);

@@ -1,3 +1,5 @@
+import { HttpMessages } from "@/common/response/messages";
+import { ICatalogCreate } from "@/interfaces/Catalogs";
 import { prisma } from "@/lib/prisma";
 
 export const EmployeeTypeService = {
@@ -12,5 +14,18 @@ export const EmployeeTypeService = {
     });
 
     return employeeType ? employeeType.id : null;
+  },
+  async createEmployeeType(data: ICatalogCreate) {
+    const existingEmployeeType = await EmployeeTypeService.getEmployeeTypeByName(data.name);
+    if (existingEmployeeType) {
+      throw new Error(HttpMessages.employeeType.alreadyExists);
+    }
+    return prisma.employeeType.create({
+      data: {
+        name: data.name,
+        display_name: data.display_name,
+        active: data.active,
+      },
+    });
   },
 };

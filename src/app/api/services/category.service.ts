@@ -1,4 +1,6 @@
+import { HttpMessages } from "@/common/response/messages";
 import { prisma } from "@/lib/prisma";
+import { ICatalogCreate } from "@/interfaces/Catalogs";
 
 export const CategoryService = {
   normalizeCategoryName(displayName: string): string {
@@ -19,5 +21,19 @@ export const CategoryService = {
     });
 
     return category ? category.id : null;
+  },
+
+  async createCategory(data: ICatalogCreate) {
+    const categoryExists = await CategoryService.getCategoryByDisplayName(data.display_name);
+    if (categoryExists) {
+      throw new Error(HttpMessages.category.alreadyExists);
+    }
+    return prisma.category.create({
+      data: {
+        name: data.name,
+        display_name: data.display_name,
+        active: data.active ?? true,
+      },
+    });
   },
 };

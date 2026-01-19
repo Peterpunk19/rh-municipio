@@ -314,4 +314,6 @@ const CalendarDay = React.memo(
   },
 );
 
+CalendarDay.displayName = "CalendarDay";
+
 export default CalendarDay;

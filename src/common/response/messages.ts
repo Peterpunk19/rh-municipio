@@ -132,6 +132,8 @@ export const HttpMessages = {
   },
   location: {
     notFoundById: "No se encontró la ubicación con el ID proporcionado",
+    createdSuccess: "Ubicación creada correctamente",
+    alreadyExists: "Ya existe una ubicación con estos datos",
   },
   attendance: {
     notFoundById: "No se encontró la asistencia con el ID proporcionado",
@@ -219,5 +221,47 @@ export const HttpMessages = {
     notFound: "No se encontraron empleados con los filtros proporcionados",
     createdSuccess: "Calendario de horarios creado correctamente",
     notCreated: "Ocurrio un error al crear el calendario de horarios",
+  },
+  employeeType: {
+    createdSuccess: "Tipo de empleado creado correctamente",
+    alreadyExists: "El tipo de empleado ya existe",
+  },
+  category: {
+    createdSuccess: "Categoría creada correctamente",
+    alreadyExists: "La categoría ya existe",
+  },
+  holiday: {
+    createdSuccess: "Día festivo creado correctamente",
+    alreadyExists: "El día festivo ya existe",
+  },
+  maritalStatus: {
+    createdSuccess: "Estado civil creado correctamente",
+    alreadyExists: "El estado civil ya existe",
+  },
+  schooling: {
+    createdSuccess: "Nivel educativo creado correctamente",
+    alreadyExists: "El nivel educativo ya existe",
+    cveCodeExists: "El código CVE ya existe",
+  },
+  occupation: {
+    createdSuccess: "Ocupación creada correctamente",
+    alreadyExists: "La ocupación ya existe",
+    cveCodeExists: "El código CVE ya existe",
+  },
+  profession: {
+    createdSuccess: "Profesión creada correctamente",
+    alreadyExists: "La profesión ya existe",
+  },
+  secretaria: {
+    createdSuccess: "Secretaría creada correctamente",
+    alreadyExists: "La secretaría ya existe",
+  },
+  direccion: {
+    createdSuccess: "Dirección creada correctamente",
+    alreadyExists: "La dirección ya existe",
+  },
+  tradeUnion: {
+    createdSuccess: "Sindicato creado correctamente",
+    alreadyExists: "El sindicato ya existe",
   },
 };

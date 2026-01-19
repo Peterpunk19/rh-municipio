@@ -3,11 +3,7 @@
 import React from "react";
 import { Grid2 as Grid, Box, Typography } from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
-import {
-  IconClockUp,
-  IconClockDown,
-  IconClockCheck,
-} from "@tabler/icons-react";
+import { IconClockUp, IconClockDown, IconClockCheck } from "@tabler/icons-react";
 import { formatDate } from "@/utils/formatter";
 import { ICalendarDay, IAttendanceCalendar } from "@/components/types";
 
@@ -22,15 +18,7 @@ interface Props {
 }
 
 const CalendarAttendanceDay = React.memo(
-  ({
-     day,
-     today,
-     attendance,
-     isWorkDay,
-     schedule,
-     showSchedule,
-     onIncidentClick,
-   }: Props) => {
+  ({ day, today, attendance, isWorkDay, schedule, showSchedule, onIncidentClick }: Props) => {
     const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
     const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
 
@@ -224,7 +212,9 @@ const CalendarAttendanceDay = React.memo(
         </Box>
       </Grid>
     );
-  }
+  },
 );
+
+CalendarAttendanceDay.displayName = "CalendarAttendanceDay";
 
 export default CalendarAttendanceDay;
