@@ -64,12 +64,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { results, warnings } = await JobScheduleCalendarService.saveJobScheduleCalendar(body, authResponse.userId);
+    const { results, warnings, disabled } = await JobScheduleCalendarService.saveJobScheduleCalendar(
+      body,
+      authResponse.userId,
+    );
 
-    if (results && results.length > 0) {
+    if ((results && results.length > 0) || (disabled && disabled > 0)) {
       return handleHttpResponse(
         HttpResponse.success(HttpMessages.jobScheduleCalendar.createdSuccess, {
           created: results,
+          disabled,
           warnings: warnings.length > 0 ? warnings : null,
         }),
       );
@@ -79,6 +83,7 @@ export async function POST(request: NextRequest) {
       return handleHttpResponse(
         HttpResponse.failure(HttpMessages.jobScheduleCalendar.notCreated, {
           created: [],
+          disabled,
           warnings,
         }),
       );
@@ -87,6 +92,7 @@ export async function POST(request: NextRequest) {
     return handleHttpResponse(
       HttpResponse.failure(HttpMessages.jobScheduleCalendar.notCreated, {
         created: [],
+        disabled,
         warnings: null,
       }),
     );

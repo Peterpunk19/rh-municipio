@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import {Box, Typography, Grid2 as Grid, Chip} from "@mui/material";
+import { Box, Typography, Grid2 as Grid, Chip } from "@mui/material";
 import { IconMoon, IconSun } from "@tabler/icons-react";
 import { Temporal } from "@js-temporal/polyfill";
-import { IconClockCheck, IconClockDown, IconClockUp} from "@tabler/icons-react";
+import { IconClockCheck, IconClockDown, IconClockUp } from "@tabler/icons-react";
 import { ICalendarDay, IAttendanceCalendar, IScheduleData } from "@/components/types";
 import { formatDate } from "@/utils/formatter";
 
@@ -34,7 +34,6 @@ const isNightSchedule = (start: string, end: string) => {
   return startHour >= 18 || endHour <= 6;
 };
 
-
 const CalendarDay = React.memo(
   ({
     day,
@@ -50,24 +49,21 @@ const CalendarDay = React.memo(
     onMouseDown,
     onMouseEnter,
     onMouseUp,
-    isDragging
+    isDragging,
   }: Props) => {
-
-    const isNight = schedule
-      ? isNightSchedule(schedule.startHour, schedule.endHour)
-      : false;
+    const isNight = schedule ? isNightSchedule(schedule.startHour, schedule.endHour) : false;
 
     const dateStr = day.date.toString();
     const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
     const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
 
-    const bg = !day.isInMonth ?
-      (isSelected ?
-        "rgba(28, 61, 90, 0.78)" :
-        "#f6f6f6") :
-      isSelected ?
-        "rgba(28, 61, 90, 0.88)" :
-        "#FFF";
+    const bg = !day.isInMonth
+      ? isSelected
+        ? "rgba(28, 61, 90, 0.78)"
+        : "#f6f6f6"
+      : isSelected
+        ? "rgba(28, 61, 90, 0.88)"
+        : "#FFF";
     const color = isSelected ? "rgba(255,255,255,0.75)" : "#64748B";
 
     return (
@@ -118,30 +114,21 @@ const CalendarDay = React.memo(
           }}
         >
           {isWorkDay && showSchedule && schedule && (
-            <Box
-              display="flex"
-              alignItems="center"
-              gap={0.5}
-            >
-              {isNight ? (
-                <IconMoon size={14} color="#FACC15" />
-              ) : (
-                <IconSun size={14} color="#FDE047" />
-              )}
+            <Box display="flex" alignItems="center" gap={0.5}>
+              {isNight ? <IconMoon size={14} color="#FACC15" /> : <IconSun size={14} color="#FDE047" />}
 
               <Typography
                 sx={{
                   fontSize: "0.7rem",
                   opacity: 0.6,
                   lineHeight: 1,
-                  color: isSelected ? "#fff" : "#64748B"
+                  color: isSelected ? "#fff" : "#64748B",
                 }}
               >
                 {schedule.startHour} → {schedule.endHour}
               </Typography>
             </Box>
           )}
-
         </Box>
 
         {scheduleData && (
@@ -150,6 +137,12 @@ const CalendarDay = React.memo(
             alignItems="center"
             justifyContent="center"
             gap={0.5}
+            onClick={(e) => {
+              e.stopPropagation();
+              onScheduleClick?.(dateStr, scheduleData);
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
             sx={{
               position: "absolute",
               bottom: 8,
@@ -160,6 +153,7 @@ const CalendarDay = React.memo(
               px: 1,
               py: 0.5,
               cursor: "pointer",
+              pointerEvents: "auto",
               "&:hover": {
                 backgroundColor: "#244A66",
               },
@@ -201,7 +195,7 @@ const CalendarDay = React.memo(
                       >
                         {inc.type}
 
-                        {inc.type === 'INCAPACIDADES' && (
+                        {inc.type === "INCAPACIDADES" && (
                           <Chip
                             size="small"
                             label={`${attendance.percentageSalary}% salario`}
