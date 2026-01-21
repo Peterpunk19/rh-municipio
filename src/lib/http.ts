@@ -1,46 +1,49 @@
-import axios, { type AxiosInstance, type CancelTokenSource } from "axios";
+import axios, { type AxiosInstance } from "axios";
 
 const http: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000",
   headers: {
-    "Content-type": "application/json",
+    "Content-Type": "application/json",
   },
   timeout: 20000,
 });
 
-http.interceptors.request.use((config) => {
-  const source: CancelTokenSource = axios.CancelToken.source();
-  const originalCancelToken = config.cancelToken;
-  const signal = config?.signal;
+/* ===========================
+   Interceptors (INIT ONCE)
+=========================== */
 
-  if (signal) {
-    config.cancelToken = source.token;
-    const abortHandler = () => {
-      source.cancel("Operation canceled by the user");
-      if (signal) {
-        signal?.removeEventListener("abort", abortHandler);
+let interceptorsInitialized = false;
+
+if (!interceptorsInitialized) {
+  // REQUEST
+  http.interceptors.request.use((config) => {
+    // ✅ Solo en cliente
+    if (typeof window !== "undefined") {
+      const token = window.localStorage.getItem("authjs.session-token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    };
-
-    if (signal.aborted) {
-      abortHandler();
-    } else {
-      signal?.addEventListener("abort", abortHandler);
     }
-  }
-  config.cancelToken = originalCancelToken || config.cancelToken;
-  const token = localStorage.getItem("authjs.session-token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
 
-  return config;
-});
+    // ❌ NO CancelToken
+    // ❌ NO Abort listeners manuales
+    // Axios ya soporta `signal` nativamente
 
-http.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    return Promise.reject(error.response?.data || "Service Error");
-  },
-);
+    return config;
+  });
+
+  // RESPONSE
+  http.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (axios.isAxiosError(error)) {
+        return Promise.reject(error.response?.data ?? error.message ?? "Service Error");
+      }
+      return Promise.reject("Service Error");
+    },
+  );
+
+  interceptorsInitialized = true;
+}
+
 export default http;

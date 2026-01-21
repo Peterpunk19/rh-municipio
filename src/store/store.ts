@@ -1,7 +1,25 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
+
+// 🔥 Storage SSR-safe
+const createNoopStorage = () => ({
+  getItem() {
+    return Promise.resolve(null);
+  },
+  setItem() {
+    return Promise.resolve();
+  },
+  removeItem() {
+    return Promise.resolve();
+  },
+});
+
+const storage = typeof window !== "undefined" ? require("redux-persist/lib/storage").default : createNoopStorage();
+
+/* ===========================
+   Reducers
+=========================== */
 
 import counterReducer from "./counter/counterSlice";
 import CustomizerReducer from "./customizer/CustomizerSlice";
@@ -26,48 +44,71 @@ import SalaryConfigSlice from "@/store/reference/salaries/SalaryConfigSlice";
 import employeeIncidentReducer from "@/store/slices/employeeIncidentSlice";
 import CatalogsListSlice from "@/store/reference/catalogs/CatalogsSlice";
 
-const persistConfig = {
-  key: "root",
+/* ===========================
+   Persist config (SOLO Customizer)
+=========================== */
+
+const customizerPersistConfig = {
+  key: "customizer",
   storage,
+  whitelist: ["activeMode", "direction", "sidebarType"], // ajusta a tu slice
 };
 
-export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-    customizer: persistReducer<any>(persistConfig, CustomizerReducer),
-    employeesReducer: EmployeesReducer,
-    employeeIncident: employeeIncidentReducer,
-    filterEmployeesSlice: EmployeesFiltersReducer,
-    employeesIncidentsSlice: EmployeesIncidentsSlice,
-    employeeRequestsSlice: EmployeesRequestsFiltersSlice,
-    usersReducer: UsersReducer,
-    filterUsersSlice: UsersFiltersReducer,
-    filters: FiltersReducer,
-    pagination: PaginationReducer,
-    catalogs: catalogsReducer,
-    createEmployeeRequest: CreateEmployeeRequestReducer,
-    createEmployeeIncident: EmployeesIncidentsSlice,
-    createEmployeeAttendance: CreateEmployeeAttendanceReducer,
-    employeesAttendancesSlice: EmployeesAttendancesSlice,
-    employeesPayrollSlice: EmployeesPayrollSlice,
-    incidentsRolesPermissions: IncidentsRolesPermissionsListSlice,
-    requestsRolesPermissions: RequestsRolesPermissionsListSlice,
-    incidentsRules: IncidentsRulesListSlice,
-    salaries: SalariesListSlice,
-    catalogsList: CatalogsListSlice,
-    salaryConfig: SalaryConfigSlice,
-  },
-  devTools: process.env.NODE_ENV !== "production",
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
-});
+/* ===========================
+   Root reducer
+=========================== */
 
 const rootReducer = combineReducers({
   counter: counterReducer,
-  customizer: CustomizerReducer,
+  customizer: persistReducer(customizerPersistConfig, CustomizerReducer),
   employeesReducer: EmployeesReducer,
+  employeeIncident: employeeIncidentReducer,
+  filterEmployeesSlice: EmployeesFiltersReducer,
+  employeesIncidentsSlice: EmployeesIncidentsSlice,
+  employeeRequestsSlice: EmployeesRequestsFiltersSlice,
+  usersReducer: UsersReducer,
+  filterUsersSlice: UsersFiltersReducer,
+  filters: FiltersReducer,
+  pagination: PaginationReducer,
+  catalogs: catalogsReducer,
+  createEmployeeRequest: CreateEmployeeRequestReducer,
+  createEmployeeIncident: EmployeesIncidentsSlice,
+  createEmployeeAttendance: CreateEmployeeAttendanceReducer,
+  employeesAttendancesSlice: EmployeesAttendancesSlice,
+  employeesPayrollSlice: EmployeesPayrollSlice,
+  incidentsRolesPermissions: IncidentsRolesPermissionsListSlice,
+  requestsRolesPermissions: RequestsRolesPermissionsListSlice,
+  incidentsRules: IncidentsRulesListSlice,
+  salaries: SalariesListSlice,
+  catalogsList: CatalogsListSlice,
+  salaryConfig: SalaryConfigSlice,
 });
 
-export const persistor = persistStore(store);
+/* ===========================
+   Store
+=========================== */
+
+export const store = configureStore({
+  reducer: rootReducer,
+  devTools: process.env.NODE_ENV !== "production",
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+      immutableCheck: false,
+    }),
+});
+
+/* ===========================
+   Persistor (SOLO CLIENTE)
+=========================== */
+
+export const persistor = typeof window !== "undefined" ? persistStore(store) : null;
+
+/* ===========================
+   Types
+=========================== */
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-export type AppState = ReturnType<typeof rootReducer>;

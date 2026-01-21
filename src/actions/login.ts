@@ -3,21 +3,15 @@
 import type * as z from "zod";
 import { LoginSchema } from "@/schemas/authentication";
 import { signIn } from "@/auth";
-import { login as loginService } from "@/services/authentication";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
-  const validateFields = LoginSchema.safeParse(values);
-  if (!validateFields.success) {
-    return { error: "Campos invalidos!" };
+  const parsed = LoginSchema.safeParse(values);
+
+  if (!parsed.success) {
+    return { error: "Campos inválidos" };
   }
 
-  const { username, password } = validateFields.data;
-
-  const authResponse = await loginService(validateFields.data);
-
-  if (!authResponse?.success) {
-    return { error: authResponse?.message || "Credenciales incorrectas!" };
-  }
+  const { username, password } = parsed.data;
 
   try {
     await signIn("credentials", {
@@ -27,7 +21,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     });
 
     return { success: "Login exitoso!" };
-  } catch (error: any) {
-    return { error: "Error al iniciar sesión" };
+  } catch {
+    return { error: "Usuario o contraseña incorrectos" };
   }
 };

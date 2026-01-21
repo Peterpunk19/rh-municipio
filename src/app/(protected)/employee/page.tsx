@@ -7,6 +7,7 @@ import { useEmployeeData } from "@/hooks/useEmployeeData";
 import LoadingComponent from "@/components/customComponents/LoadingComponent";
 import CustomCalendarAttendance from "@/components/customComponents/CustomCalendarAttendance";
 import { ProfileLayout } from "@/app/(protected)/employee/(home)/components/ProfileLayout";
+import * as React from "react";
 
 const UserProfile = () => {
   const { employeeData, loading, error, sessionStatus } = useEmployeeData();
@@ -32,7 +33,7 @@ const UserProfile = () => {
                 p: 2,
               }}
             >
-              <CustomCalendarAttendance />
+              <CustomCalendarAttendance employeeData={employeeData} />
             </CardContent>
           </BlankCard>
         }

@@ -131,13 +131,21 @@ NEXT_PUBLIC_BASE_API_AUTH=https://rhadmin-1005155783559.us-central1.run.app/api/
 NEXTAUTH_URL=https://rhadmin-1005155783559.us-central1.run.app,\
 NEXTAUTH_SECRET=llXfTO6YPwUg4/1wNMTNkpy96KsYZqiI67CHKpYoE9I=,\
 DB_ENABLED=true,DB_TYPE=mysql,DB_USER=admin,DB_PASSWORD=zPX5mf3e63BM,\
-DB_DATABASE=rh_municipio_db,DB_HOST=35.208.222.57,DB_PORT=3306,\
-DATABASE_URL=mysql://admin:zPX5mf3e63BM@35.208.222.57:3306/rh_municipio_db,\
-DATABASE_URL_NON_POOLING=mysql://admin:zPX5mf3e63BM@35.208.222.57:3306/rh_municipio_db,\
+DB_DATABASE=rh_municipio_db,DB_HOST=35.208.106.58,DB_PORT=3306,\
+DATABASE_URL=mysql://admin:zPX5mf3e63BM@35.208.106.58:3306/rh_municipio_db,\
+DATABASE_URL_NON_POOLING=mysql://admin:zPX5mf3e63BM@35.208.106.58:3306/rh_municipio_db,\
 JWT_ENABLED=true,JWT_SECRET_KEY=eYn1y9ZAjhzhCkfb77gx,JWT_ALGORITHM=HS512,\
-JWT_ISSUER=guardbuildinginvestments.com,JWT_ACCESS_EXPIRES_IN=1h,JWT_REFRESH_EXPIRES_IN=2h
+JWT_ISSUER=rhmunicipio.com,JWT_ACCESS_EXPIRES_IN=1h,JWT_REFRESH_EXPIRES_IN=2h
 ```
+## Connect to gcloud ssh
+gcloud compute ssh pedro_diaz@api-asistencias --zone=us-central1-c
 
+## Reset database prod
+```
+.env with prod credentials
+run npx prisma db push --force-reset
+run npx yarn ts-node prisma/seed.ts --employees=500
+```
 > `dcli` is an alias for `docker-compose -f docker-compose.cli.yml run --rm`
 
 #### Run Dev

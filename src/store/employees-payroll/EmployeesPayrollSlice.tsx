@@ -28,7 +28,7 @@ const initialState = {
   limit: 10,
   filters: {
     employeeId: "",
-    from: new Date(),
+    from: "",
     to: "",
   },
   emptyMessage: "",

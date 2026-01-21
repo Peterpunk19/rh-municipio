@@ -11,6 +11,10 @@ export const UserService = {
       where: {
         username,
       },
+      include: {
+        employee: true,
+        role: true,
+      },
     });
   },
 

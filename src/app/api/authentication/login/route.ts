@@ -61,6 +61,10 @@ export async function POST(request: NextRequest) {
     const response = HttpResponse.success(HttpMessages.user.loginSuccess, {
       payload: {
         ...validatedUser,
+        name: `${user.employee?.name} ${user.employee?.paternal_last_name} ${user.employee?.maternal_last_name}`,
+        number_employee: user.employee?.number_employee,
+        role_name: user.role.name,
+        role_display_name: user.role.display_name,
         menuItems,
       },
       token,

@@ -1,7 +1,20 @@
 "use client";
 import { use, useState } from "react";
 import { notFound, useRouter } from "next/navigation";
-import { Box, Button, Grid2, Alert, Switch, MenuItem, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid2,
+  Alert,
+  Switch,
+  MenuItem,
+  FormControl,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 import PageContainer from "@/app/components/container/PageContainer";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import CustomFormLabel from "@/components/theme-elements/CustomFormLabel";
@@ -82,7 +95,8 @@ export default function CreateCatalog({ params }: { params: Promise<{ name: stri
             const diffInDays = calculateDaysBetweenDates(dates[i].value!, dates[j].value!);
 
             if (diffInDays > 10) {
-              newErrors[dates[j].name] = `La diferencia entre ${dates[i].label} y ${dates[j].label} no puede ser mayor a 10 días`;
+              newErrors[dates[j].name] =
+                `La diferencia entre ${dates[i].label} y ${dates[j].label} no puede ser mayor a 10 días`;
               break;
             }
           }
@@ -129,10 +143,10 @@ export default function CreateCatalog({ params }: { params: Promise<{ name: stri
 
       if (!response.ok) {
         let errorMessage = result.message || "Error al crear el registro";
-        
+
         if (result.responseObject?.error) {
           errorMessage += `: ${result.responseObject.error}`;
-        } else if (result.responseObject && typeof result.responseObject === 'object') {
+        } else if (result.responseObject && typeof result.responseObject === "object") {
           const validationErrors: string[] = [];
           Object.keys(result.responseObject).forEach((field) => {
             if (result.responseObject[field]?.messages) {
@@ -140,10 +154,10 @@ export default function CreateCatalog({ params }: { params: Promise<{ name: stri
             }
           });
           if (validationErrors.length > 0) {
-            errorMessage = validationErrors.join(', ');
+            errorMessage = validationErrors.join(", ");
           }
         }
-        
+
         setSubmitError(errorMessage);
         setLoading(false);
         return;
@@ -272,9 +286,7 @@ export default function CreateCatalog({ params }: { params: Promise<{ name: stri
         aria-labelledby="confirm-dialog-title"
         aria-describedby="confirm-dialog-description"
       >
-        <DialogTitle id="confirm-dialog-title">
-          Confirmar creación
-        </DialogTitle>
+        <DialogTitle id="confirm-dialog-title">Confirmar creación</DialogTitle>
         <DialogContent>
           <DialogContentText id="confirm-dialog-description">
             ¿Estás seguro de que deseas crear este registro? Verifica que todos los datos sean correctos.

@@ -33,9 +33,12 @@ export default {
         return {
           id: response.responseObject.payload.id.toString(),
           employee_id: response.responseObject.payload.employee_id?.toString(),
+          number_employee: response.responseObject.payload.number_employee,
           name: response.responseObject.payload.name,
           email: response.responseObject.payload.email,
           role: response.responseObject.payload.role_id.toString(),
+          role_name: response.responseObject.payload.role_name.toString(),
+          role_display_name: response.responseObject.payload.role_display_name.toString(),
           accessToken: response.responseObject.token,
           menuItems: response.responseObject.payload.menuItems,
           errorMessage: response?.message,
