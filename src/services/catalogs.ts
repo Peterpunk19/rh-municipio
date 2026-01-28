@@ -38,7 +38,7 @@ export const fetchDireccionesData = async (secretariaId: string): Promise<IRespo
   if (!secretariaId || secretariaId === "0") return { success: false, responseObject: [] };
 
   try {
-    const response = await http.get<IResponseObject>(`/api/catalogs/direcciones?id=${secretariaId}`);
+    const response = await http.get<IResponseObject>(`/api/catalogs/direcciones?secretaria_id=${secretariaId}`);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch direcciones:", error);

@@ -21,7 +21,6 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -33,8 +32,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { fetchCatalogData } from "@/services/catalogs";
-import { useFetchOptions } from "@/components/customHooks/useFetchOptions";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import "dayjs/locale/es";
 import { createEmployeeIncident } from "@/services/employees-incidents";
 import type { Employee } from "@/app/api/interfaces/Employee";
 import { setSelectedEmployee } from "@/store/slices/employeeIncidentSlice";
@@ -42,7 +45,6 @@ import CustomLabelError from "@/components/theme-elements/CustomLabelError";
 import Link from "next/link";
 import EmployeeFinder from "@/components/shared/EmployeeFinder";
 import { AppDispatch, RootState } from "@/store/store";
-import { formatDate } from "@/utils/formatter";
 import { EmployeeDetailCard } from "@/components/shared/EmployeeDetailCard";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { validateIncidentDays } from "@/services/incident-validation";
@@ -51,10 +53,13 @@ import IncidentDaysInfo from "@/components/customComponents/IncidentDaysInfo";
 import { HttpMessages } from "@/common/response/messages";
 import { getFirstDayMonthString } from "@/common/utils";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
-import { GENDER } from "@/common/constants/Gender";
 import { MiniMonthCalendar } from "@/components/customComponents/MiniMonthCalendar";
 import { SuccessActionDialog } from "@/components/customComponents/SuccessActionDialog";
-import { ROLES_ID_VALUES } from "@/common/constants/Roles";
+import { fetchCatalogData } from "@/services/catalogs";
+import { fetchHoursData } from "@/services/catalogs";
+
+dayjs.extend(utc);
+dayjs.locale("es");
 
 type IncidentCreateFormProps = {
   selectedEmployee?: any;
@@ -65,14 +70,17 @@ type IncidentCreateFormProps = {
 
 function safeDateFromISO(date: string) {
   const [y, m, d] = date.split("-").map(Number);
-  return new Date(y, m - 1, d, 12); // 👈 hora fija
+  return new Date(y, m - 1, d, 12);
 }
 
 function getMonthsBetween(start: string, end: string) {
   const months: { year: number; month: number }[] = [];
 
-  const startDate = safeDateFromISO(start);
-  const endDate = safeDateFromISO(end);
+  const startDateOnly = start.split(" ")[0];
+  const endDateOnly = end.split(" ")[0];
+
+  const startDate = safeDateFromISO(startDateOnly);
+  const endDate = safeDateFromISO(endDateOnly);
 
   const cursor = new Date(startDate.getFullYear(), startDate.getMonth(), 1, 12);
 
@@ -114,6 +122,42 @@ const IncidentCreateForm = ({
   const submitting = externalSubmitting !== undefined ? externalSubmitting : isSubmitting;
   const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
+  const [incidentTypes, setIncidentTypes] = useState<any[]>([]);
+  const [isLoadingIncidents, setIsLoadingIncidents] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [hours, setHours] = useState<any[]>([]);
+  const [startHourId, setStartHourId] = useState<number>(0);
+  const [endHourId, setEndHourId] = useState<number>(0);
+
+  const fetchIncidentTypes = useCallback(async (employeeId: string) => {
+    if (!employeeId) {
+      return;
+    }
+
+    setIsLoadingIncidents(true);
+    setLoadError(null);
+
+    try {
+      const response = await fetchCatalogData(`incidents/by-employee`, {
+        employee_id: employeeId,
+      });
+
+      if (response?.success && response.responseObject) {
+        setIncidentTypes(response.responseObject);
+      } else {
+        setLoadError(response?.message || "Error al cargar tipos de incidencia");
+        setIncidentTypes([]);
+      }
+    } catch (error) {
+      setLoadError("Error al cargar tipos de incidencia");
+      setIncidentTypes([]);
+    } finally {
+      setIsLoadingIncidents(false);
+    }
+  }, []);
+
+  const isLoading = isLoadingIncidents;
+
   React.useEffect(() => {
     if (selectedEmployee && selectedEmployee.id) {
       dispatch(setSelectedEmployee(selectedEmployee));
@@ -121,6 +165,26 @@ const IncidentCreateForm = ({
       dispatch(updateFormData({ field: "employeeId", value: selectedEmployee.id.toString() }));
     }
   }, [selectedEmployee, dispatch]);
+
+  React.useEffect(() => {
+    if (selectedEmployee?.id) {
+      fetchIncidentTypes(selectedEmployee.id.toString());
+    }
+  }, [selectedEmployee?.id, fetchIncidentTypes]);
+
+  React.useEffect(() => {
+    const loadHours = async () => {
+      try {
+        const response = await fetchHoursData();
+        if (response?.success && response.responseObject) {
+          setHours(response.responseObject);
+        }
+      } catch (error) {
+        console.error("Error loading hours:", error);
+      }
+    };
+    loadHours();
+  }, []);
 
   const recalculateIncidentDates = (startDate?: string, endDate?: string) => {
     if (!startDate || !endDate) {
@@ -166,6 +230,75 @@ const IncidentCreateForm = ({
     dispatch(updateFormData({ field: "endDate", value: nextDates[nextDates.length - 1] }));
   };
 
+  const getHourDisplayName = (hourId: number) => {
+    const hour = hours.find((h) => h.id === hourId);
+    return hour?.display_name || "";
+  };
+
+  const combineDateAndHour = (date: string, hourId: number) => {
+    if (!date || !hourId) return date;
+    const hourDisplay = getHourDisplayName(hourId);
+    if (!hourDisplay) return date;
+    return `${date} ${hourDisplay}:00`;
+  };
+
+  const handleDateChange = async (name: string, newValue: dayjs.Dayjs | null) => {
+    const dateOnly = newValue ? newValue.format("YYYY-MM-DD") : "";
+
+    let finalValue = dateOnly;
+    if (isArrestoIncident && dateOnly) {
+      if (name === "startDate" && startHourId) {
+        finalValue = combineDateAndHour(dateOnly, startHourId);
+      } else if (name === "endDate" && endHourId) {
+        finalValue = combineDateAndHour(dateOnly, endHourId);
+      }
+    }
+
+    dispatch(updateFormData({ field: name, value: finalValue }));
+
+    if (name === "startDate") {
+      const endDateForCalc = formData.endDate?.split(" ")[0] || formData.endDate;
+
+      if (!isLactanciaIncident && !isVacationIncident) {
+        recalculateIncidentDates(dateOnly, endDateForCalc);
+      }
+
+      if (formData.employeeId && formData.incidentId) {
+        await validateIncident(formData.employeeId, formData.incidentId, dateOnly, endDateForCalc);
+      }
+    }
+
+    if (name === "endDate") {
+      const startDateForCalc = formData.startDate?.split(" ")[0] || formData.startDate;
+
+      if (!isVacationIncident) {
+        recalculateIncidentDates(startDateForCalc, dateOnly);
+      }
+
+      if (formData.employeeId && formData.incidentId) {
+        await validateIncident(formData.employeeId, formData.incidentId, startDateForCalc, dateOnly);
+      }
+    }
+  };
+
+  const handleHourChange = (name: string, hourId: number) => {
+    if (name === "startHourId") {
+      setStartHourId(hourId);
+      if (formData.startDate) {
+        const dateOnly = formData.startDate.split(" ")[0];
+        const newValue = combineDateAndHour(dateOnly, hourId);
+        dispatch(updateFormData({ field: "startDate", value: newValue }));
+      }
+    } else if (name === "endHourId") {
+      setEndHourId(hourId);
+      if (formData.endDate) {
+        const dateOnly = formData.endDate.split(" ")[0];
+        const newValue = combineDateAndHour(dateOnly, hourId);
+        dispatch(updateFormData({ field: "endDate", value: newValue }));
+      }
+    }
+  };
+
   const validateIncident = async (employeeId: string, incidentId: string, startDate?: string, endDate?: string) => {
     if (!employeeId || !incidentId) {
       setValidationData(null);
@@ -183,6 +316,15 @@ const IncidentCreateForm = ({
       if (response.success && response.responseObject) {
         const maxDays = response.responseObject.hasRules === false ? 365 : response.responseObject.remaining_days;
         setMaxSelections(maxDays);
+
+        if (Number(incidentId) === INCIDENT_TYPES_ID.LACTANCIA && startDate && maxDays > 0) {
+          const start = new Date(startDate);
+          const calculatedEndDate = new Date(start);
+          calculatedEndDate.setDate(calculatedEndDate.getDate() + maxDays - 1);
+          const endDateStr = calculatedEndDate.toISOString().split("T")[0];
+          dispatch(updateFormData({ field: "endDate", value: endDateStr }));
+        }
+
         return maxDays;
       }
       setValidationData(null);
@@ -214,7 +356,8 @@ const IncidentCreateForm = ({
     }
 
     if (name === "incidentId") {
-      const isCalendarIncident = incidentTypes?.find((item) => item.id === value)?.display_calendar_dates;
+      const selectedIncident = incidentTypes?.find((item) => item.id === value);
+      const isCalendarIncident = selectedIncident?.display_calendar_dates;
       dispatch(updateFormData({ field: "startDate", value: "" }));
       dispatch(updateFormData({ field: "endDate", value: "" }));
       dispatch(updateFormData({ field: "incidentDates", value: [] }));
@@ -259,11 +402,6 @@ const IncidentCreateForm = ({
     }
   };
 
-  const userRoleId = (user as any)?.role_id || "";
-  const catalogName = `incidents?roleId=${userRoleId}`;
-  const fetchData = useCallback(() => fetchCatalogData(catalogName), [catalogName]);
-  const { options: incidentTypes = [], isLoading, error: loadError } = useFetchOptions(fetchData);
-
   const handleSelectEmployee = async (employee: Employee) => {
     dispatch(setSelectedEmployee(employee));
     dispatch(setEmployeeData(employee));
@@ -282,12 +420,15 @@ const IncidentCreateForm = ({
         Object.entries(newErrors).filter(([_, v]) => typeof v === "string" && v !== undefined),
       );
       dispatch(setErrors(filteredErrors as { [key: string]: string }));
+
+      await fetchIncidentTypes(employeeId);
     } else {
       dispatch(updateFormData({ field: "employeeId", value: "" }));
       dispatch(updateFormData({ field: "incidentId", value: "0" }));
       dispatch(updateFormData({ field: "startDate", value: "" }));
       dispatch(updateFormData({ field: "endDate", value: "" }));
       dispatch(updateFormData({ field: "incidentDates", value: [] }));
+      setIncidentTypes([]);
     }
   };
 
@@ -317,36 +458,8 @@ const IncidentCreateForm = ({
 
   const filteredIncidentTypes = useMemo(() => {
     if (!incidentTypes || !Array.isArray(incidentTypes)) return [];
-
-    if (!currentEmployee) {
-      return incidentTypes;
-    }
-
-    return incidentTypes.filter((type) => {
-      const id = Number(type.id);
-      const userRoleId = Number((user as any).role);
-
-      if (currentEmployee.gender_name === GENDER.MALE && id === INCIDENT_TYPES_ID.LACTANCIA) {
-        return false;
-      }
-
-      if (currentEmployee.gender_name !== GENDER.MALE && id === INCIDENT_TYPES_ID.PATERNIDAD) {
-        return false;
-      }
-
-      if (
-        id === INCIDENT_TYPES_ID.SUSPENSION &&
-        userRoleId !== ROLES_ID_VALUES.admin &&
-        userRoleId !== ROLES_ID_VALUES.admin_incidencias
-      ) {
-        return false;
-      }
-
-      return !(
-        id === INCIDENT_TYPES_ID.FALTA && currentEmployee.attendance_type_display_name !== "LISTA DE ASISTENCIA"
-      );
-    });
-  }, [incidentTypes, currentEmployee]);
+    return incidentTypes;
+  }, [incidentTypes]);
 
   const calendarIncidentIds = useMemo(() => {
     return filteredIncidentTypes?.filter((item) => item.display_calendar_dates).map((item) => item.id) || [];
@@ -356,8 +469,17 @@ const IncidentCreateForm = ({
     return calendarIncidentIds.includes(formData.incidentId);
   }, [formData.incidentId, calendarIncidentIds]);
 
+  const shouldDisplayCalendarDates = useMemo(() => {
+    const incident = filteredIncidentTypes?.find((item) => item.id === formData.incidentId);
+    return incident?.display_calendar_dates ?? false;
+  }, [formData.incidentId, filteredIncidentTypes]);
+
   const isLactanciaIncident = useMemo(() => {
     return Number(formData.incidentId) === INCIDENT_TYPES_ID.LACTANCIA;
+  }, [formData.incidentId]);
+
+  const isArrestoIncident = useMemo(() => {
+    return Number(formData.incidentId) === INCIDENT_TYPES_ID.ARRESTO;
   }, [formData.incidentId]);
 
   const isEntryOrExitIncident = useMemo(() => {
@@ -450,10 +572,14 @@ const IncidentCreateForm = ({
     dispatch(clearErrors());
 
     try {
-      const submitData = {
-        ...formData,
+      const shouldIncludeIncidentDates = isVacationIncident && !isArrestoIncident;
+
+      const { incidentDates, ...formDataWithoutDates } = formData;
+
+      const submitData: any = {
+        ...formDataWithoutDates,
         employeeId: Number(formData.employeeId),
-        ...(isVacationIncident && { incidentDates: formData.incidentDates }),
+        ...(shouldIncludeIncidentDates && { incidentDates }),
       };
 
       const response = await createEmployeeIncident(submitData);
@@ -506,6 +632,7 @@ const IncidentCreateForm = ({
               <Grid2 size={{ lg: 12 }}>
                 <EmployeeDetailCard
                   employee={{
+                    full_name: selectedEmployee.full_name || "",
                     label: selectedEmployee.label || "",
                     number_employee: selectedEmployee.number_employee || "",
                     birthday: selectedEmployee.birthday ? String(selectedEmployee.birthday) : "",
@@ -538,11 +665,15 @@ const IncidentCreateForm = ({
                   name="incidentId"
                   value={formData.incidentId}
                   onChange={handleChange}
-                  disabled={isLoading || error}
+                  disabled={!formData.employeeId || formData.employeeId === "0" || isLoading || !!loadError}
                   error={!!errors.incidentId}
                 >
                   <MenuItem key="default" value="0">
-                    Selecciona el tipo de incidencia
+                    {!formData.employeeId || formData.employeeId === "0"
+                      ? "Primero selecciona un empleado"
+                      : isLoading
+                        ? "Cargando tipos de incidencia..."
+                        : "Selecciona el tipo de incidencia"}
                   </MenuItem>
                   {isLoading ? (
                     <MenuItem disabled> Cargando...</MenuItem>
@@ -597,38 +728,90 @@ const IncidentCreateForm = ({
               </DialogContent>
             </Dialog>
 
-            <Grid2 size={{ xs: 12, md: 6 }}>
+            <Grid2 size={{ xs: 12, md: isArrestoIncident ? 4 : 6 }}>
               <FormControl fullWidth>
                 <CustomFormLabel sx={{ mt: 1 }}>Fecha de inicio</CustomFormLabel>
-                <CustomTextField
-                  id="startDate"
-                  name="startDate"
-                  type="date"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  disabled={isVacationIncident}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                  <DatePicker
+                    value={formData.startDate ? dayjs(formData.startDate.split(" ")[0]) : null}
+                    onChange={(newValue) => handleDateChange("startDate", newValue)}
+                    disabled={isVacationIncident}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!errors.startDate,
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
                 <CustomLabelError field={errors.startDate} />
               </FormControl>
             </Grid2>
-            <Grid2 size={{ xs: 12, md: 6 }}>
+            {isArrestoIncident && (
+              <Grid2 size={{ xs: 12, md: 2 }}>
+                <FormControl fullWidth>
+                  <CustomFormLabel sx={{ mt: 1 }}>Hora inicio</CustomFormLabel>
+                  <CustomSelect
+                    value={startHourId}
+                    onChange={(e: any) => handleHourChange("startHourId", Number(e.target.value))}
+                    size="small"
+                    fullWidth
+                    displayEmpty
+                  >
+                    <MenuItem value={0} disabled>
+                      --:--
+                    </MenuItem>
+                    {hours.map((hour) => (
+                      <MenuItem key={hour.id} value={hour.id}>
+                        {hour.display_name}
+                      </MenuItem>
+                    ))}
+                  </CustomSelect>
+                </FormControl>
+              </Grid2>
+            )}
+            <Grid2 size={{ xs: 12, md: isArrestoIncident ? 4 : 6 }}>
               <FormControl fullWidth>
                 <CustomFormLabel sx={{ mt: 1 }}>Fecha de terminación</CustomFormLabel>
-                <CustomTextField
-                  id="endDate"
-                  name="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  variant="outlined"
-                  fullWidth
-                  disabled={isVacationIncident || isLactanciaIncident}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                  <DatePicker
+                    value={formData.endDate ? dayjs(formData.endDate.split(" ")[0]) : null}
+                    onChange={(newValue) => handleDateChange("endDate", newValue)}
+                    disabled={isVacationIncident || isLactanciaIncident}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!errors.endDate,
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
                 <CustomLabelError field={errors.endDate && errors.endDate} />
               </FormControl>
             </Grid2>
+            {isArrestoIncident && (
+              <Grid2 size={{ xs: 12, md: 2 }}>
+                <FormControl fullWidth>
+                  <CustomFormLabel sx={{ mt: 1 }}>Hora fin</CustomFormLabel>
+                  <CustomSelect
+                    value={endHourId}
+                    onChange={(e: any) => handleHourChange("endHourId", Number(e.target.value))}
+                    size="small"
+                    fullWidth
+                    displayEmpty
+                  >
+                    <MenuItem value={0} disabled>
+                      --:--
+                    </MenuItem>
+                    {hours.map((hour) => (
+                      <MenuItem key={hour.id} value={hour.id}>
+                        {hour.display_name}
+                      </MenuItem>
+                    ))}
+                  </CustomSelect>
+                </FormControl>
+              </Grid2>
+            )}
 
             <Grid2 size={{ lg: 12 }}>
               <FormControl fullWidth>
@@ -686,7 +869,7 @@ const IncidentCreateForm = ({
                                 year={year}
                                 month={month}
                                 selectedDates={formData.incidentDates}
-                                onToggleDate={toggleIncidentDate} // 👈 opcional
+                                onToggleDate={shouldDisplayCalendarDates ? toggleIncidentDate : undefined}
                               />
                             ))}
                           </Box>
@@ -698,14 +881,16 @@ const IncidentCreateForm = ({
                       <Typography variant="body2" color="textSecondary">
                         No se han seleccionado fechas de incidencia
                       </Typography>
-                      <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
-                        Seleccionar fechas
-                      </Button>
+                      {shouldDisplayCalendarDates && (
+                        <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
+                          Seleccionar fechas
+                        </Button>
+                      )}
                     </Box>
                   )}
                 </Box>
 
-                {formData.incidentDates && formData.incidentDates.length > 0 && (
+                {formData.incidentDates && formData.incidentDates.length > 0 && shouldDisplayCalendarDates && (
                   <Stack direction="row" spacing={1} mt={2}>
                     <Button variant="outlined" size="small" onClick={() => setOpenCalendar(true)}>
                       Modificar fechas

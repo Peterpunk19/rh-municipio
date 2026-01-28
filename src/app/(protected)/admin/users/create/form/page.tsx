@@ -93,7 +93,7 @@ const UserCreateForm = () => {
         } else {
           setSecretariasError(true);
         }
-      } catch (error) {
+      } catch (error: any) {
         logger.error("Error al cargar secretarías:", error);
         setSecretariasError(true);
       } finally {
@@ -123,7 +123,7 @@ const UserCreateForm = () => {
         } else {
           setDireccionesError(true);
         }
-      } catch (error) {
+      } catch (error: any) {
         logger.error("Error al cargar direcciones:", error);
         setDireccionesError(true);
       } finally {

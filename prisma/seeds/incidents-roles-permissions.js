@@ -202,6 +202,17 @@ const basePermissions = [
     can_reject: false,
     can_edit: false,
   },
+  {
+    incident_id: 17,
+    // name: "arresto",
+    can_view: false,
+    can_create: false,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  },
 ];
 
 const incidentsRolesPermission = [];
@@ -212,7 +223,7 @@ for (const base of basePermissions) {
     incident_id: base.incident_id,
     can_view: true,
     can_create: true,
-    can_validate: false,
+    can_validate: true,
     can_approve: true,
     can_cancel: true,
     can_delete: true,
@@ -236,45 +247,59 @@ for (const base of basePermissions) {
   incidentsRolesPermission.push({
     role_id: roles.ENLACE,
     incident_id: base.incident_id,
-    ...base,
+    can_view: base.incident_id === 17 ? true : base.can_view,
+    can_create: base.incident_id === 17 ? true : base.can_create,
+    can_validate: base.incident_id === 17 ? true : base.can_validate,
+    can_approve: base.incident_id === 17 ? true : base.can_approve,
+    can_cancel: base.incident_id === 17 ? true : base.can_cancel,
+    can_delete: base.incident_id === 17 ? true : base.can_delete,
+    can_reject: base.incident_id === 17 ? true : base.can_reject,
+    can_edit: base.incident_id === 17 ? true : base.can_edit,
   });
 
   incidentsRolesPermission.push({
     role_id: roles.SUBENLACE,
     incident_id: base.incident_id,
-    ...base,
+    can_view: base.incident_id !== 17 ? base.can_view : false,
+    can_create: base.incident_id !== 17 ? base.can_create : false,
+    can_validate: base.incident_id !== 17 ? base.can_validate : false,
+    can_approve: base.incident_id !== 17 ? base.can_approve : false,
+    can_cancel: base.incident_id !== 17 ? base.can_cancel : false,
+    can_delete: base.incident_id !== 17 ? base.can_delete : false,
+    can_reject: base.incident_id !== 17 ? base.can_reject : false,
+    can_edit: base.incident_id !== 17 ? base.can_edit : false,
   });
 
   incidentsRolesPermission.push({
     role_id: roles.CAPTURISTA,
     incident_id: base.incident_id,
-    can_view: true,
-    can_create: true,
+    can_view: base.incident_id !== 17,
+    can_create: base.incident_id !== 17,
     can_validate: false,
-    can_approve: true,
+    can_approve: base.incident_id !== 17,
     can_cancel: false,
     can_delete: false,
-    can_reject: true,
+    can_reject: base.incident_id !== 17,
     can_edit: false,
   });
 
   incidentsRolesPermission.push({
     role_id: roles.ANALISTA,
     incident_id: base.incident_id,
-    can_view: true,
+    can_view: base.incident_id !== 17,
     can_create: false,
     can_validate: false,
-    can_approve: true,
+    can_approve: base.incident_id !== 17,
     can_cancel: false,
-    can_delete: true,
-    can_reject: true,
+    can_delete: base.incident_id !== 17,
+    can_reject: base.incident_id !== 17,
     can_edit: false,
   });
 
   incidentsRolesPermission.push({
     role_id: roles.SERVICIO_SOCIAL,
     incident_id: base.incident_id,
-    can_view: true,
+    can_view: base.incident_id !== 17,
     can_create: false,
     can_validate: false,
     can_approve: false,
