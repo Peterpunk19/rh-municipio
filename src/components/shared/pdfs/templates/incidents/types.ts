@@ -10,6 +10,7 @@ import {
   CommissionIncident,
   EntryJustificationIncident,
   VacationIncident,
+  SuspensionIncident,
 } from ".";
 import { IncidentTypes } from "@/common/constants/IncidentTypes";
 
@@ -26,6 +27,7 @@ export const INCIDENT_COMPONENTS = {
   [IncidentTypes.VACACIONES]: VacationIncident,
   [IncidentTypes.COMISION]: CommissionIncident,
   [IncidentTypes.LICENCIA_FALLECIMIENTO]: DeathLeaveIncident,
+  [IncidentTypes.SUSPENSION]: SuspensionIncident,
 };
 
 export interface EmployeeHiring {

@@ -8,3 +8,4 @@ export { default as UnpaidLeaveIncident } from "./UnpaidLeaveIncident";
 export { default as CommissionIncident } from "./CommissionIncident";
 export { default as EntryJustificationIncident } from "./EntryJustificationIncident";
 export { default as VacationIncident } from "./VacationIncident";
+export { default as SuspensionIncident } from "./SuspensionIncident";

@@ -14,6 +14,7 @@ export enum IncidentTypes {
   LICENCIA_FALLECIMIENTO = "licencia_fallecimiento",
   LICENCIA_MEDICA = "licencia_medica",
   RETARDO_MAYOR = "retardo_mayor",
+  SUSPENSION = "suspension",
 }
 
 export const INCIDENT_TYPES_ID = {
@@ -32,4 +33,5 @@ export const INCIDENT_TYPES_ID = {
   FALTA: 13,
   LICENCIA_MEDICA: 14,
   RETARDO_MAYOR: 15,
+  SUSPENSION: 16,
 };

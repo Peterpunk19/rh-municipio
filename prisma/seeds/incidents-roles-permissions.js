@@ -166,7 +166,7 @@ const basePermissions = [
     can_edit: true,
   },
   {
-    incident_id: 12,
+    incident_id: 15,
     // name: "retardo_mayor",
     can_view: true,
     can_create: true,
@@ -175,6 +175,17 @@ const basePermissions = [
     can_delete: true,
     can_reject: false,
     can_edit: true,
+  },
+  {
+    incident_id: 16,
+    // name: "suspension",
+    can_view: true,
+    can_create: false,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
   },
 ];
 
