@@ -54,6 +54,7 @@ import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { GENDER } from "@/common/constants/Gender";
 import { MiniMonthCalendar } from "@/components/customComponents/MiniMonthCalendar";
 import { SuccessActionDialog } from "@/components/customComponents/SuccessActionDialog";
+import { ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 type IncidentCreateFormProps = {
   selectedEmployee?: any;
@@ -323,12 +324,21 @@ const IncidentCreateForm = ({
 
     return incidentTypes.filter((type) => {
       const id = Number(type.id);
+      const userRoleId = Number((user as any).role);
 
       if (currentEmployee.gender_name === GENDER.MALE && id === INCIDENT_TYPES_ID.LACTANCIA) {
         return false;
       }
 
       if (currentEmployee.gender_name !== GENDER.MALE && id === INCIDENT_TYPES_ID.PATERNIDAD) {
+        return false;
+      }
+
+      if (
+        id === INCIDENT_TYPES_ID.SUSPENSION &&
+        userRoleId !== ROLES_ID_VALUES.admin &&
+        userRoleId !== ROLES_ID_VALUES.admin_incidencias
+      ) {
         return false;
       }
 

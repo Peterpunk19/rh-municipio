@@ -149,5 +149,15 @@ const incident = [
     display_time_on_calendar: true,
     bgColorOnCalendar: "incident.retardo",
   },
+  {
+    id: 16,
+    name: "suspension",
+    display_name: "SUSPENSIÓN",
+    type: 1,
+    active: true,
+    display_calendar_dates: true,
+    display_time_on_calendar: false,
+    bgColorOnCalendar: "error.main",
+  },
 ];
 module.exports = incident;

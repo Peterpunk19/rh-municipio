@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
-import {Grid2 as Grid, Typography, Divider, Paper} from "@mui/material";
+import { Grid2 as Grid, Typography, Divider, Paper } from "@mui/material";
 import Box from "@mui/material/Box";
-import {IEmployeeIncidentDetails} from "@/components/types/IEmployeeIncident";
-import {formatDate} from "@/utils/formatter";
+import { IEmployeeIncidentDetails } from "@/components/types/IEmployeeIncident";
+import { formatDate } from "@/utils/formatter";
+import { calculateDaysBetweenDates } from "@/common/utils";
 
 type Props = {
   data: IEmployeeIncidentDetails & {
@@ -22,10 +23,7 @@ type Props = {
 };
 
 const IncidentDetails: React.FC<Props> = ({ data }) => {
-  const {
-    start_date,
-    end_date,
-  } = data;
+  const { start_date, end_date } = data;
 
   return (
     <Paper variant="outlined" sx={{ height: "100%" }}>
@@ -67,6 +65,20 @@ const IncidentDetails: React.FC<Props> = ({ data }) => {
               {formatDate(end_date)}
             </Typography>
           </Grid>
+          {start_date && end_date && (
+            <>
+              <Grid size={{ lg: 3, xs: 12 }}>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Días Totales
+                </Typography>
+              </Grid>
+              <Grid size={{ lg: 9, xs: 12 }}>
+                <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
+                  {calculateDaysBetweenDates(start_date, end_date)}
+                </Typography>
+              </Grid>
+            </>
+          )}
           <Grid size={{ lg: 3, xs: 12 }}>
             <Typography variant="subtitle1" color="text.secondary">
               Solicitado por
@@ -74,8 +86,12 @@ const IncidentDetails: React.FC<Props> = ({ data }) => {
           </Grid>
           <Grid size={{ lg: 9, xs: 12 }}>
             <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-              {data.created_by && Object.keys(data.created_by).length > 0 ? 
-                data.created_by.name + " " + data.created_by.paternal_last_name + " " + data.created_by.maternal_last_name 
+              {data.created_by && Object.keys(data.created_by).length > 0
+                ? data.created_by.name +
+                  " " +
+                  data.created_by.paternal_last_name +
+                  " " +
+                  data.created_by.maternal_last_name
                 : "-"}
             </Typography>
           </Grid>
@@ -86,8 +102,12 @@ const IncidentDetails: React.FC<Props> = ({ data }) => {
           </Grid>
           <Grid size={{ lg: 9, xs: 12 }}>
             <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-              {data.validated_by && Object.keys(data.validated_by).length > 0 ? 
-                data.validated_by.name + " " + data.validated_by.paternal_last_name + " " + data.validated_by.maternal_last_name 
+              {data.validated_by && Object.keys(data.validated_by).length > 0
+                ? data.validated_by.name +
+                  " " +
+                  data.validated_by.paternal_last_name +
+                  " " +
+                  data.validated_by.maternal_last_name
                 : "-"}
             </Typography>
           </Grid>
