@@ -63,7 +63,6 @@ export async function POST(request: NextRequest) {
     });
     return handleHttpResponse(response);
   } catch (error: any) {
-
     const response = HttpResponse.internalServerError("Error interno del servidor al resetear la contraseña", {
       error: error.message,
     });

@@ -13,6 +13,15 @@ import REQUEST_TYPES from "@/common/constants/RequestTypes";
 import { ROLES_ID_VALUES, ROLES } from "@/common/constants/Roles";
 import { REQUEST_TYPES_NAME } from "@/common/constants/RequestTypes";
 
+const REQUEST_COLORS: Record<string, string> = {
+  tipo_checado: "primary",
+  cambio_adscripcion: "secondary",
+  comision: "info",
+  horario_especial: "warning",
+  permiso: "success",
+  default: "grey",
+};
+
 export const EmployeeRequestService = {
   async getFolio() {
     const lastFolio = await prisma.employeeRequest.findFirst({
@@ -1329,5 +1338,92 @@ export const EmployeeRequestService = {
       leaveDate: requestDetail?.end_date || null,
       requestDetail,
     };
+  },
+
+  async dashboardRequests(params: { createdAt: string }) {
+    const { createdAt } = params;
+
+    const start = new Date(`${createdAt}T00:00:00.000Z`);
+    const end = new Date(`${createdAt}T23:59:59.999Z`);
+
+    const grouped = await prisma.employeeRequest.groupBy({
+      by: ["request_id"],
+      where: {
+        created_at: {
+          gte: start,
+          lte: end,
+        },
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    if (!grouped.length) return [];
+
+    const requests = await prisma.request.findMany({
+      where: {
+        id: { in: grouped.map((g) => g.request_id) },
+      },
+    });
+
+    return requests.map((request) => {
+      const count = grouped.find((g) => g.request_id === request.id)?._count._all ?? 0;
+
+      const color = REQUEST_COLORS[request.name] || REQUEST_COLORS.default;
+
+      return {
+        id: request.id,
+        name: request.name,
+        label: request.display_name,
+        value: count,
+        color,
+      };
+    });
+  },
+
+  async dashboardRequestsStatus(params: { createdAt: string }) {
+    const { createdAt } = params;
+
+    if (!createdAt) return [];
+
+    const start = new Date(`${createdAt}T00:00:00.000Z`);
+    const end = new Date(`${createdAt}T23:59:59.999Z`);
+
+    const grouped = await prisma.employeeRequest.groupBy({
+      by: ["request_status_id"],
+      where: {
+        created_at: {
+          gte: start,
+          lte: end,
+        },
+        active: true,
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    if (!grouped.length) return [];
+
+    const statuses = await prisma.requestStatus.findMany({
+      where: {
+        id: {
+          in: grouped.map((g) => g.request_status_id),
+        },
+      },
+    });
+
+    return statuses.map((status) => {
+      const count = grouped.find((g) => g.request_status_id === status.id)?._count._all ?? 0;
+
+      return {
+        id: status.id,
+        name: status.name,
+        label: status.display_name,
+        value: count,
+        color: status.btn_color,
+      };
+    });
   },
 };

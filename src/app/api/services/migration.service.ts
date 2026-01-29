@@ -7,6 +7,8 @@ import { ImportResult, LegacyEnlaceUser } from "@/app/api/migration/enlace-users
 import { encryptPassword } from "@/common/utils";
 import { ImportResultLeaders, LegacyLeaders } from "@/app/api/migration/types";
 import { HttpMessages } from "@/common/response/messages";
+import fs from "fs/promises";
+import path from "path";
 
 const DIRECCION_EXCEPTIONS: Record<string, string> = {
   "DIRECCION DE AUDITORIAS A FONDOS DE APORTACIONES FEDERALES ESTATALES Y MUNICIPALES":
@@ -25,6 +27,14 @@ const DIRECCION_EXCEPTIONS: Record<string, string> = {
     "DIR DE IDENTIFICACION Y REDUCCION DE RIESGOS, INSPECCIONES Y EVE",
 };
 
+const toIsoDateTime = (value: string, fieldName: string) => {
+  // value esperado "YYYY-MM-DD"
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    throw new Error(`Invalid date format for ${fieldName}: "${value}"`);
+  }
+  return new Date(`${value}T00:00:00.000Z`);
+};
+
 const normalizeName = (displayName: string): string => {
   if (!displayName) return "";
   const normalized = displayName
@@ -38,6 +48,12 @@ const normalizeName = (displayName: string): string => {
 
   return DIRECCION_EXCEPTIONS[normalized] || normalized;
 };
+
+async function loadJsonFile<T>(relativePath: string): Promise<T[]> {
+  const filePath = path.join(process.cwd(), relativePath);
+  const raw = await fs.readFile(filePath, "utf-8");
+  return JSON.parse(raw) as T[];
+}
 
 export const MigrationService = {
   createLegacyPrismaClient() {
@@ -65,159 +81,142 @@ export const MigrationService = {
       errors: [],
     };
 
-    const prismaLegacy = this.createLegacyPrismaClient();
+    const legacyUsers = await loadJsonFile<LegacyEnlaceUser>("src/data/migration/enlaces.json");
 
-    try {
-      const legacyUsers = await prismaLegacy.$queryRaw<LegacyEnlaceUser[]>`
-                SELECT enlace.Username, enlace.idSecretaria, empleado.NumeroEmpleado, 
-                       cat_secretarias.Secretaria, enlace.Activo, CASE WHEN empleado.StatusEmpl = 'A' THEN 'Activo' WHEN empleado.StatusEmpl = 'D' THEN 'Baja' ELSE 'Fallecimiento' END AS StatusEmployee 
-                FROM enlace 
-                INNER JOIN empleado ON empleado.IdEmpleado = enlace.idEmpleado 
-                INNER JOIN cat_secretarias ON cat_secretarias.idSecretaria = enlace.idSecretaria
-                WHERE enlace.Activo = 1
-            `;
+    logger.info(`Loaded ${legacyUsers.length} enlace users from JSON`);
+    result.total = legacyUsers.length;
 
-      logger.info(`Found ${legacyUsers.length} enlace users in legacy database`);
-      result.total = legacyUsers.length;
+    if (legacyUsers.length === 0) {
+      return result;
+    }
 
-      if (legacyUsers.length === 0) {
-        return result;
-      }
+    const employeeNumbers = legacyUsers.map((u) => String(u.NumeroEmpleado));
 
-      const employeeNumbers = legacyUsers.map((u) => String(u.NumeroEmpleado));
+    const [employees, direcciones] = await Promise.all([
+      prisma.employee.findMany({
+        where: { number_employee: { in: employeeNumbers } },
+        select: { id: true, number_employee: true },
+      }),
+      prisma.direccion.findMany({
+        where: { active: true },
+        select: { id: true, display_name: true },
+        orderBy: { display_name: "asc" },
+      }),
+    ]);
 
-      const [employees, direcciones] = await Promise.all([
-        prisma.employee.findMany({
-          where: { number_employee: { in: employeeNumbers } },
-          select: { id: true, number_employee: true },
-        }),
-        prisma.direccion.findMany({
-          where: { active: true },
-          select: { id: true, display_name: true },
-          orderBy: { display_name: "asc" },
-        }),
-      ]);
+    const employeeMap = new Map(employees.map((e) => [e.number_employee, e.id]));
+    const direccionMap = new Map(direcciones.map((d) => [normalizeName(d.display_name), d.id]));
 
-      const employeeMap = new Map(employees.map((e) => [e.number_employee, e.id]));
-      const direccionMap = new Map(direcciones.map((d) => [normalizeName(d.display_name), d.id]));
+    const employeeIds = Array.from(employees.map((e) => e.id));
+    const existingEnlaceUsers = await prisma.user.findMany({
+      where: {
+        employee_id: { in: employeeIds },
+        role_id: ROLES_ID_VALUES.enlace,
+      },
+      select: { id: true, employee_id: true },
+    });
+    const enlaceUserMap = new Map(existingEnlaceUsers.map((u) => [u.employee_id, u.id]));
 
-      const employeeIds = Array.from(employees.map((e) => e.id));
-      const existingEnlaceUsers = await prisma.user.findMany({
-        where: {
-          employee_id: { in: employeeIds },
-          role_id: ROLES_ID_VALUES.enlace,
-        },
-        select: { id: true, employee_id: true },
-      });
-      const enlaceUserMap = new Map(existingEnlaceUsers.map((u) => [u.employee_id, u.id]));
+    const userIds = Array.from(existingEnlaceUsers.map((u) => u.id));
+    const existingRelations = await prisma.userDireccion.findMany({
+      where: { user_id: { in: userIds } },
+      select: { user_id: true, direccion_id: true },
+    });
 
-      const userIds = Array.from(existingEnlaceUsers.map((u) => u.id));
-      const existingRelations = await prisma.userDireccion.findMany({
-        where: { user_id: { in: userIds } },
-        select: { user_id: true, direccion_id: true },
-      });
+    const relationSet = new Set(existingRelations.map((rel) => `${rel.user_id}-${rel.direccion_id}`));
 
-      const relationSet = new Set(existingRelations.map((rel) => `${rel.user_id}-${rel.direccion_id}`));
+    for (const legacyUser of legacyUsers) {
+      try {
+        const employeeNumber = String(legacyUser.NumeroEmpleado);
+        const employeeId = employeeMap.get(employeeNumber);
 
-      for (const legacyUser of legacyUsers) {
-        try {
-          const employeeNumber = String(legacyUser.NumeroEmpleado);
-          const employeeId = employeeMap.get(employeeNumber);
+        if (!employeeId) {
+          result.errors.push({
+            numero_empleado: legacyUser.NumeroEmpleado,
+            reason: `Employee ${legacyUser.NumeroEmpleado} not found in main database`,
+          });
+          logger.info(`Employee ${legacyUser.NumeroEmpleado} not found in main database`);
+          result.skipped++;
+          continue;
+        }
 
-          if (!employeeId) {
-            result.errors.push({
-              numero_empleado: legacyUser.NumeroEmpleado,
-              reason: `Employee ${legacyUser.NumeroEmpleado} not found in main database`,
-            });
-            logger.info(`Employee ${legacyUser.NumeroEmpleado} not found in main database`);
-            result.skipped++;
-            continue;
-          }
+        const normalizedDireccionName = normalizeName(legacyUser.Secretaria);
+        const direccionId = direccionMap.get(normalizedDireccionName);
+        if (!direccionId) {
+          result.errors.push({
+            numero_empleado: legacyUser.NumeroEmpleado,
+            reason: `Direccion ${normalizedDireccionName} not found in main database`,
+          });
+          logger.info(`Direccion ${normalizedDireccionName} not found in main database`);
+          result.skipped++;
+          continue;
+        }
 
-          const normalizedDireccionName = normalizeName(legacyUser.Secretaria);
-          const direccionId = direccionMap.get(normalizedDireccionName);
-          if (!direccionId) {
-            result.errors.push({
-              numero_empleado: legacyUser.NumeroEmpleado,
-              reason: `Direccion ${normalizedDireccionName} not found in main database`,
-            });
-            logger.info(`Direccion ${normalizedDireccionName} not found in main database`);
-            result.skipped++;
-            continue;
-          }
+        const existingUserId = enlaceUserMap.get(employeeId);
+        const relationKey = `${existingUserId}-${direccionId}`;
+        const relationExists = relationSet.has(relationKey);
 
-          const existingUserId = enlaceUserMap.get(employeeId);
-          const relationKey = `${existingUserId}-${direccionId}`;
-          const relationExists = relationSet.has(relationKey);
+        if (!existingUserId) {
+          const tempPassword = await encryptPassword(employeeNumber);
 
-          if (!existingUserId) {
-            const tempPassword = await encryptPassword(employeeNumber);
-
-            await prisma.$transaction(async (tx) => {
-              const newUser = await tx.user.create({
-                data: {
-                  uuid: uuidv4(),
-                  username: legacyUser.Username,
-                  password: tempPassword,
-                  must_change_password: true,
-                  active: legacyUser.Activo === 1,
-                  employee_id: employeeId,
-                  role_id: ROLES_ID_VALUES.enlace,
-                  created_by_id: authResponse.userId,
-                },
-              });
-
-              await tx.userDireccion.create({
-                data: {
-                  user_id: newUser.id,
-                  direccion_id: direccionId,
-                  created_by_id: authResponse.userId,
-                },
-              });
-
-              enlaceUserMap.set(employeeId, newUser.id);
-              relationSet.add(`${newUser.id}-${direccionId}`);
-            });
-            result.imported++;
-            logger.info(`Created user and relationship: ${legacyUser.NumeroEmpleado}`);
-          } else if (!relationExists) {
-            await prisma.userDireccion.create({
+          await prisma.$transaction(async (tx) => {
+            const newUser = await tx.user.create({
               data: {
-                user_id: existingUserId,
+                uuid: uuidv4(),
+                username: legacyUser.Username,
+                password: tempPassword,
+                must_change_password: true,
+                active: legacyUser.Activo === 1,
+                employee_id: employeeId,
+                role_id: ROLES_ID_VALUES.enlace,
+                created_by_id: authResponse.userId,
+              },
+            });
+
+            await tx.userDireccion.create({
+              data: {
+                user_id: newUser.id,
                 direccion_id: direccionId,
                 created_by_id: authResponse.userId,
               },
             });
-            relationSet.add(relationKey);
-            result.imported++;
-            logger.info(`Created relationship for existing user: ${legacyUser.NumeroEmpleado}`);
-          } else {
-            result.skipped++;
-            logger.info(`Relationship already exists for user: ${legacyUser.NumeroEmpleado}`);
-          }
-        } catch (error: any) {
-          result.errors.push({
-            numero_empleado: legacyUser.NumeroEmpleado,
-            reason: error.message,
-          });
-          logger.error(`Error importing user ${legacyUser.NumeroEmpleado}:`, error);
-        }
-      }
 
-      logger.info(
-        `Migration completed: ${result.imported} imported, ${result.skipped} skipped, ${result.errors.length} errors`,
-      );
-      return result;
-    } catch (error: any) {
-      logger.error("Error in importEnlaceUsers:", error);
-      throw new Error(`Migration failed: ${error.message}`);
-    } finally {
-      await prismaLegacy.$disconnect();
+            enlaceUserMap.set(employeeId, newUser.id);
+            relationSet.add(`${newUser.id}-${direccionId}`);
+          });
+          result.imported++;
+          logger.info(`Created user and relationship: ${legacyUser.NumeroEmpleado}`);
+        } else if (!relationExists) {
+          await prisma.userDireccion.create({
+            data: {
+              user_id: existingUserId,
+              direccion_id: direccionId,
+              created_by_id: authResponse.userId,
+            },
+          });
+          relationSet.add(relationKey);
+          result.imported++;
+          logger.info(`Created relationship for existing user: ${legacyUser.NumeroEmpleado}`);
+        } else {
+          result.skipped++;
+          logger.info(`Relationship already exists for user: ${legacyUser.NumeroEmpleado}`);
+        }
+      } catch (error: any) {
+        result.errors.push({
+          numero_empleado: legacyUser.NumeroEmpleado,
+          reason: error.message,
+        });
+        logger.error(`Error importing user ${legacyUser.NumeroEmpleado}:`, error);
+      }
     }
+
+    logger.info(
+      `Migration completed: ${result.imported} imported, ${result.skipped} skipped, ${result.errors.length} errors`,
+    );
+    return result;
   },
 
   async importAdministrativeOrganizationsLeaders(authResponse: any): Promise<ImportResultLeaders> {
-    const prismaLegacy = this.createLegacyPrismaClient();
     const result: ImportResultLeaders = {
       success: true,
       total: 0,
@@ -226,134 +225,107 @@ export const MigrationService = {
       errors: [],
     };
 
-    try {
-      const legacyLeaders = await prismaLegacy.$queryRaw<LegacyLeaders[]>`
-        SELECT
-          cs.Secretaria AS direccion_display_name,
-          dir.NumeroEmpleado AS director_number_employee,
-          res.NumeroEmpleado AS responsible_number_employee,
-          cd.FechaInicia AS start_date,
-          cd.FechaFinal AS end_date
-        FROM
-          cat_directores cd
-        INNER JOIN empleado dir
-          ON cd.NombreD = dir.Nombre
-          AND cd.ApaternoD = dir.Apaterno
-          AND cd.AmaternoD = dir.Amaterno
-          AND dir.NumeroEmpleado IS NOT NULL
-        LEFT JOIN empleado res 
-          ON cd.NombreSuplente = CONCAT_WS(' ', res.Nombre, res.Apaterno, res.Amaterno)
-          AND res.NumeroEmpleado IS NOT NULL
-          AND res.NumeroEmpleado != dir.NumeroEmpleado
-        INNER JOIN cat_secretarias cs 
-          ON cd.IdSecretaria = cs.IdSecretaria
-        WHERE
-          cd.FechaFinal > '2025-01-01'
-          AND cd.Estatus = 1
-      `;
+    const legacyLeaders = await loadJsonFile<LegacyLeaders>("src/data/migration/directores.json");
 
-      logger.info(`Found ${legacyLeaders.length} leaders in legacy database`);
-      result.total = legacyLeaders.length;
+    logger.info(`Loaded ${legacyLeaders.length} leaders from JSON`);
+    result.total = legacyLeaders.length;
 
-      if (legacyLeaders.length === 0) {
-        return result;
-      }
-
-      const allEmployeeNumbers = new Set<string>();
-      legacyLeaders.forEach((leader) => {
-        allEmployeeNumbers.add(String(leader.director_number_employee));
-        if (leader.responsible_number_employee) {
-          allEmployeeNumbers.add(String(leader.responsible_number_employee));
-        }
-      });
-
-      const employees = await prisma.employee.findMany({
-        where: {
-          number_employee: { in: Array.from(allEmployeeNumbers) },
-        },
-        select: {
-          id: true,
-          number_employee: true,
-        },
-      });
-      const employeeMap = new Map(employees.map((e) => [e.number_employee, e.id]));
-
-      const direcciones = await prisma.direccion.findMany({
-        where: { active: true },
-        select: { id: true, display_name: true },
-      });
-
-      const direccionMap = new Map();
-      direcciones.forEach((dir) => {
-        const normalized = normalizeName(dir.display_name);
-        if (normalized) {
-          direccionMap.set(normalized, dir.id);
-        }
-      });
-
-      for (const leader of legacyLeaders) {
-        const directorNumberEmployee = String(leader.director_number_employee);
-        const directorId = employeeMap.get(directorNumberEmployee);
-        const responsableId = leader.responsible_number_employee
-          ? employeeMap.get(String(leader.responsible_number_employee))
-          : null;
-
-        const normalizedDireccionName = normalizeName(leader.direccion_display_name);
-        const direccionId = direccionMap.get(normalizedDireccionName);
-
-        if (!direccionId) {
-          result.errors.push({
-            numero_empleado: directorNumberEmployee,
-            reason: `No se encontró la dirección: ${leader.direccion_display_name} (normalizado como: ${normalizedDireccionName})`,
-          });
-          result.skipped++;
-          continue;
-        }
-
-        if (directorId) {
-          const director = await prisma.administrativeOrganizationLeaders.create({
-            data: {
-              direccion_id: direccionId,
-              employee_id: directorId,
-              role_id: ROLES_ID_VALUES.director,
-              created_by_id: authResponse.userId,
-              active: true,
-              start_date: leader.start_date,
-              end_date: leader.end_date,
-              sign_incidents: true,
-              sign_requests: true,
-            },
-          });
-          if (director) result.imported++;
-        }
-
-        if (responsableId && directorId !== responsableId) {
-          const responsable = await prisma.administrativeOrganizationLeaders.create({
-            data: {
-              direccion_id: direccionId,
-              employee_id: responsableId,
-              role_id: ROLES_ID_VALUES.responsable_inmediato,
-              created_by_id: authResponse.userId,
-              active: true,
-              start_date: leader.start_date,
-              end_date: leader.end_date,
-              sign_incidents: false,
-              sign_requests: false,
-            },
-          });
-          if (responsable) result.imported++;
-        }
-      }
-
-      logger.info(
-        `Migration completed: ${result.imported} imported, ${result.skipped} skipped, ${result.errors.length} errors`,
-      );
+    if (legacyLeaders.length === 0) {
       return result;
-    } catch (error: any) {
-      logger.error("Error in importAdministrativeOrganizationLeaders:", error);
-      throw new Error(`Migration failed: ${error.message}`);
-    } finally {
-      await prismaLegacy.$disconnect();
     }
+
+    const allEmployeeNumbers = new Set<string>();
+    legacyLeaders.forEach((leader) => {
+      allEmployeeNumbers.add(String(leader.director_number_employee));
+      if (leader.responsible_number_employee) {
+        allEmployeeNumbers.add(String(leader.responsible_number_employee));
+      }
+    });
+
+    const employees = await prisma.employee.findMany({
+      where: {
+        number_employee: { in: Array.from(allEmployeeNumbers) },
+      },
+      select: {
+        id: true,
+        number_employee: true,
+      },
+    });
+    const employeeMap = new Map(employees.map((e) => [e.number_employee, e.id]));
+
+    const direcciones = await prisma.direccion.findMany({
+      where: { active: true },
+      select: { id: true, display_name: true },
+    });
+
+    const direccionMap = new Map();
+    direcciones.forEach((dir) => {
+      const normalized = normalizeName(dir.display_name);
+      if (normalized) {
+        direccionMap.set(normalized, dir.id);
+      }
+    });
+
+    for (const leader of legacyLeaders) {
+      const directorNumberEmployee = String(leader.director_number_employee);
+      const directorId = employeeMap.get(directorNumberEmployee);
+      const responsableId = leader.responsible_number_employee
+        ? employeeMap.get(String(leader.responsible_number_employee))
+        : null;
+
+      const normalizedDireccionName = normalizeName(leader.direccion_display_name);
+      const direccionId = direccionMap.get(normalizedDireccionName);
+
+      if (!direccionId) {
+        result.errors.push({
+          numero_empleado: directorNumberEmployee,
+          reason: `No se encontró la dirección: ${leader.direccion_display_name} (normalizado como: ${normalizedDireccionName})`,
+        });
+        result.skipped++;
+        continue;
+      }
+
+      const startDate = new Date(`${leader.start_date}T00:00:00.000Z`);
+      const endDate = new Date(`${leader.end_date}T00:00:00.000Z`);
+
+      if (directorId) {
+        const director = await prisma.administrativeOrganizationLeaders.create({
+          data: {
+            direccion_id: direccionId,
+            employee_id: directorId,
+            role_id: ROLES_ID_VALUES.director,
+            created_by_id: authResponse.userId,
+            active: true,
+            start_date: startDate,
+            end_date: endDate,
+            sign_incidents: true,
+            sign_requests: true,
+          },
+        });
+        if (director) result.imported++;
+      }
+
+      if (responsableId && directorId !== responsableId) {
+        const responsable = await prisma.administrativeOrganizationLeaders.create({
+          data: {
+            direccion_id: direccionId,
+            employee_id: responsableId,
+            role_id: ROLES_ID_VALUES.responsable_inmediato,
+            created_by_id: authResponse.userId,
+            active: true,
+            start_date: startDate,
+            end_date: endDate,
+            sign_incidents: false,
+            sign_requests: false,
+          },
+        });
+        if (responsable) result.imported++;
+      }
+    }
+
+    logger.info(
+      `Migration completed: ${result.imported} imported, ${result.skipped} skipped, ${result.errors.length} errors`,
+    );
+    return result;
   },
 };

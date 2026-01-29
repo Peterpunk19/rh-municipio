@@ -42,7 +42,11 @@ export async function POST(request: NextRequest) {
 
     if (!changeResult.success) {
       const statusCode = changeResult.message === "La contraseña actual es incorrecta" ? 401 : 400;
-      const response = HttpResponse.failure(changeResult.message || HttpMessages.user.changePasswordServiceError, {}, statusCode);
+      const response = HttpResponse.failure(
+        changeResult.message || HttpMessages.user.changePasswordServiceError,
+        {},
+        statusCode,
+      );
       return handleHttpResponse(response);
     }
 
@@ -61,7 +65,9 @@ export async function POST(request: NextRequest) {
     });
     return handleHttpResponse(response);
   } catch (error: any) {
-    logger.error(`Error changing user password: ${error.message} - Stack: ${error.stack} - Timestamp: ${new Date().toISOString()}`);
+    logger.error(
+      `Error changing user password: ${error.message} - Stack: ${error.stack} - Timestamp: ${new Date().toISOString()}`,
+    );
 
     const response = HttpResponse.internalServerError("Error interno del servidor al cambiar la contraseña", {
       error: error.message,

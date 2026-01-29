@@ -155,12 +155,7 @@ const Profile = () => {
                   label="Datos Personales"
                   {...a11yProps(0)}
                 />
-                <Tab
-                  iconPosition="start"
-                  icon={<IconLock size="22" />}
-                  label="Seguridad"
-                  {...a11yProps(1)}
-                />
+                <Tab iconPosition="start" icon={<IconLock size="22" />} label="Seguridad" {...a11yProps(1)} />
               </Tabs>
             </Box>
             <Divider />

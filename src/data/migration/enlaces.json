@@ -1,0 +1,1458 @@
+[
+  {
+    "Username": "MARCELA ",
+    "idSecretaria": 242,
+    "NumeroEmpleado": 52359,
+    "Secretaria": "Coordinación de Agencias y Delegaciones",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MERCEDES",
+    "idSecretaria": 96,
+    "NumeroEmpleado": 54600,
+    "Secretaria": "Instituto de la Juventud",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LUVIA",
+    "idSecretaria": 74,
+    "NumeroEmpleado": 53602,
+    "Secretaria": "Dirección de Recursos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMCH",
+    "idSecretaria": 247,
+    "NumeroEmpleado": 51402,
+    "Secretaria": "Agencia Municipal Cerro Hueco",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMC",
+    "idSecretaria": 244,
+    "NumeroEmpleado": 61359,
+    "Secretaria": "Agencia Municipal Copoya",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMJ",
+    "idSecretaria": 243,
+    "NumeroEmpleado": 6335,
+    "Secretaria": "Agencia Municipal El Jobo",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMEZ",
+    "idSecretaria": 245,
+    "NumeroEmpleado": 62126,
+    "Secretaria": "Agencia Municipal Emiliano Zapata",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMFM",
+    "idSecretaria": 246,
+    "NumeroEmpleado": 59500,
+    "Secretaria": "Agencia Municipal Francisco I Madero",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMG",
+    "idSecretaria": 250,
+    "NumeroEmpleado": 60795,
+    "Secretaria": "Agencia Municipal Las Granjas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMPN",
+    "idSecretaria": 251,
+    "NumeroEmpleado": 100955,
+    "Secretaria": "Agencia Municipal Patria Nueva",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMPA",
+    "idSecretaria": 249,
+    "NumeroEmpleado": 57439,
+    "Secretaria": "Agencia Municipal Plan De Ayala",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMSJT",
+    "idSecretaria": 248,
+    "NumeroEmpleado": 61807,
+    "Secretaria": "Agencia Municipal San Jose Teran",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARCELAAMT",
+    "idSecretaria": 252,
+    "NumeroEmpleado": 60409,
+    "Secretaria": "Agencia Municipal Teran",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GISELACM",
+    "idSecretaria": 29,
+    "NumeroEmpleado": 62406,
+    "Secretaria": "Contraloría Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GISELACS",
+    "idSecretaria": 85,
+    "NumeroEmpleado": 50413,
+    "Secretaria": "Contraloría Social",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GISELAAFAFEM",
+    "idSecretaria": 24,
+    "NumeroEmpleado": 106434,
+    "Secretaria": "Dirección de Auditorias a Fondos de Aportaciones Federales Estatales y Municipales",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GISELAAAF",
+    "idSecretaria": 25,
+    "NumeroEmpleado": 60920,
+    "Secretaria": "Dirección de Auditorias Administrativas y Financieras",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GISELAIFAEP",
+    "idSecretaria": 27,
+    "NumeroEmpleado": 50434,
+    "Secretaria": "Dirección De Investigación De Faltas Administrativas Y Evolución Patrimonial",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "GISELAPRA",
+    "idSecretaria": 221,
+    "NumeroEmpleado": 6243,
+    "Secretaria": "Dirección de Procedimientos de Responsabilidad Administrativa",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GISELAVAOP",
+    "idSecretaria": 26,
+    "NumeroEmpleado": 57748,
+    "Secretaria": "Dirección de Verificación y Auditoría a la Obra Pública",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ELSARMSGP-PA",
+    "idSecretaria": 238,
+    "NumeroEmpleado": 107203,
+    "Secretaria": "Dirección de Recursos Materiales Servicios Grales y Patrimonio Mpal-Prog Mantto de Instalaciones del H Ayuntamiento",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "RAFAELCCS",
+    "idSecretaria": 86,
+    "NumeroEmpleado": 102117,
+    "Secretaria": "Coordinación de Comunicación Social y Relaciones Públicas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "KARLAPM",
+    "idSecretaria": 21,
+    "NumeroEmpleado": 60080,
+    "Secretaria": "Presidencia Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "KARLASPDP",
+    "idSecretaria": 20,
+    "NumeroEmpleado": 104473,
+    "Secretaria": "Secretaría Particular del Despacho del Presidente",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "KARLAST",
+    "idSecretaria": 137,
+    "NumeroEmpleado": 104868,
+    "Secretaria": "Secretaría Técnica",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAYRACM",
+    "idSecretaria": 259,
+    "NumeroEmpleado": 61832,
+    "Secretaria": "Cronista Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAYRABDC",
+    "idSecretaria": 260,
+    "NumeroEmpleado": 101017,
+    "Secretaria": "Dirección de Bibliotecas y Desarrollo Cultural",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ELSAIDT",
+    "idSecretaria": 56,
+    "NumeroEmpleado": 53489,
+    "Secretaria": "Instituto del Deporte Tuxtleco",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAYRAITAC",
+    "idSecretaria": 55,
+    "NumeroEmpleado": 101345,
+    "Secretaria": "Instituto Tuxtleco de Arte y Cultura",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRA-DGCRFA",
+    "idSecretaria": 224,
+    "NumeroEmpleado": 51516,
+    "Secretaria": "Centro de Cumplimiento de Sanciones Administrativas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "FERMINA-DJA",
+    "idSecretaria": 91,
+    "NumeroEmpleado": 104487,
+    "Secretaria": "Direccion Juridica Ambiental ",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "FERMINA-DMUEA",
+    "idSecretaria": 92,
+    "NumeroEmpleado": 102684,
+    "Secretaria": "Dirección de Movilidad Urbana y Educación Ambiental",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "FERMINA-DPACC",
+    "idSecretaria": 90,
+    "NumeroEmpleado": 61272,
+    "Secretaria": "Dirección de Proyectos Ambientales y Cambios Climáticos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "FERMINA-SMAMU",
+    "idSecretaria": 94,
+    "NumeroEmpleado": 51122,
+    "Secretaria": "Secretaría de Medio Ambiente y Movilidad Urbana",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "incidencias",
+    "idSecretaria": 74,
+    "NumeroEmpleado": 60464,
+    "Secretaria": "Dirección de Recursos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "nominas",
+    "idSecretaria": 74,
+    "NumeroEmpleado": 53678,
+    "Secretaria": "Dirección de Recursos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "control_personal",
+    "idSecretaria": 74,
+    "NumeroEmpleado": 51069,
+    "Secretaria": "Dirección de Recursos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "archivo",
+    "idSecretaria": 74,
+    "NumeroEmpleado": 62125,
+    "Secretaria": "Dirección de Recursos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "Iver_Adrian",
+    "idSecretaria": 74,
+    "NumeroEmpleado": 106705,
+    "Secretaria": "Dirección de Recursos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "EFRAIN-CPF",
+    "idSecretaria": 38,
+    "NumeroEmpleado": 56317,
+    "Secretaria": "Coordinación General de Política Fiscal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "YARANETHCJ",
+    "idSecretaria": 34,
+    "NumeroEmpleado": 99721,
+    "Secretaria": "Consejería Jurídica",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LUISCTIC",
+    "idSecretaria": 39,
+    "NumeroEmpleado": 100743,
+    "Secretaria": "Coordinación de Tecnologías de la Información y Comunicaciones",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ANDREAOM",
+    "idSecretaria": 76,
+    "NumeroEmpleado": 101447,
+    "Secretaria": "Oficialia Mayor",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "DANIELAOM",
+    "idSecretaria": 76,
+    "NumeroEmpleado": 101796,
+    "Secretaria": "Oficialia Mayor",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ELSADRMSGPM",
+    "idSecretaria": 75,
+    "NumeroEmpleado": 55154,
+    "Secretaria": "Dirección de Recursos Materiales, Servicios Generales y Patrimonio Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRADAEC",
+    "idSecretaria": 217,
+    "NumeroEmpleado": 101175,
+    "Secretaria": "Dirección de Administración de Emergencias y Capacitación",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ALMACTIC",
+    "idSecretaria": 39,
+    "NumeroEmpleado": 101909,
+    "Secretaria": "Coordinación de Tecnologías de la Información y Comunicaciones",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ANADEA",
+    "idSecretaria": 73,
+    "NumeroEmpleado": 101556,
+    "Secretaria": "Dirección de Adquisiciones",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RICARDOSSM",
+    "idSecretaria": 83,
+    "NumeroEmpleado": 61494,
+    "Secretaria": "Secretaría de Servicios Municipales",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAGDALENASSM",
+    "idSecretaria": 83,
+    "NumeroEmpleado": 60232,
+    "Secretaria": "Secretaría de Servicios Municipales",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ISAIDCC",
+    "idSecretaria": 63,
+    "NumeroEmpleado": 60302,
+    "Secretaria": "Dirección de Costos y Concursos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ISAIDP",
+    "idSecretaria": 66,
+    "NumeroEmpleado": 49748,
+    "Secretaria": "Dirección de Proyectos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ISAIDI",
+    "idSecretaria": 64,
+    "NumeroEmpleado": 60822,
+    "Secretaria": "Dirección de Infraestructura",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ISAIBCMA",
+    "idSecretaria": 233,
+    "NumeroEmpleado": 107200,
+    "Secretaria": "Bacheo de Calles y Mantto a Alcantarillas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ISAISOP",
+    "idSecretaria": 67,
+    "NumeroEmpleado": 1004,
+    "Secretaria": "Secretaría de Obras Públicas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ILIANADA",
+    "idSecretaria": 73,
+    "NumeroEmpleado": 61450,
+    "Secretaria": "Dirección de Adquisiciones",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "PAULINABTM",
+    "idSecretaria": 59,
+    "NumeroEmpleado": 106358,
+    "Secretaria": "Buro de Turismo Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "NOECCSA",
+    "idSecretaria": 224,
+    "NumeroEmpleado": 53765,
+    "Secretaria": "Centro de Cumplimiento de Sanciones Administrativas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LUISCCSA",
+    "idSecretaria": 224,
+    "NumeroEmpleado": 53765,
+    "Secretaria": "Centro de Cumplimiento de Sanciones Administrativas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "CELENEDPGP",
+    "idSecretaria": 133,
+    "NumeroEmpleado": 99938,
+    "Secretaria": "Dirección de Planeación y Gestión de Proyectos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "CELENEDPI",
+    "idSecretaria": 171,
+    "NumeroEmpleado": 60018,
+    "Secretaria": "Dirección de Promoción de la Igualdad",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "CELENESIM",
+    "idSecretaria": 97,
+    "NumeroEmpleado": 62318,
+    "Secretaria": "Secretaría para la Igualdad de las Mujeres",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ADRIANACCGS",
+    "idSecretaria": 258,
+    "NumeroEmpleado": 51951,
+    "Secretaria": "Coordinación de Control Gestion y Seguimiento",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ADRIANADCU",
+    "idSecretaria": 62,
+    "NumeroEmpleado": 60718,
+    "Secretaria": "Dirección de Control Urbano",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ADRIANADOT",
+    "idSecretaria": 65,
+    "NumeroEmpleado": 106157,
+    "Secretaria": "Dirección de Ordenamiento Territorial",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "ADRIANADPJ",
+    "idSecretaria": 170,
+    "NumeroEmpleado": 104755,
+    "Secretaria": "Dirección de Procedimientos Jurídicos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ADRIANASDU",
+    "idSecretaria": 163,
+    "NumeroEmpleado": 53491,
+    "Secretaria": "Secretaría de Desarrollo Urbano",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ESTHERCGUT",
+    "idSecretaria": 36,
+    "NumeroEmpleado": 60310,
+    "Secretaria": "Coordinación General de la Unidad de Transparencia",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RAFAELCRP",
+    "idSecretaria": 88,
+    "NumeroEmpleado": 59297,
+    "Secretaria": "Coordinación de Comunicación Social y Relaciones Públicas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RODOLFODFD",
+    "idSecretaria": 37,
+    "NumeroEmpleado": 60713,
+    "Secretaria": "Dirección de Financiamiento para el Desarrollo",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRACASGA",
+    "idSecretaria": 165,
+    "NumeroEmpleado": 102136,
+    "Secretaria": "Coordinación Administrativa de la Secretaria General del Ayuntamiento",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRADADAG",
+    "idSecretaria": 225,
+    "NumeroEmpleado": 101068,
+    "Secretaria": "Dirección del Ayuntamiento - Departamento de Archivo General",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRADG",
+    "idSecretaria": 31,
+    "NumeroEmpleado": 34076,
+    "Secretaria": "Dirección de Gobierno",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRASTSGA",
+    "idSecretaria": 222,
+    "NumeroEmpleado": 60995,
+    "Secretaria": "Secretaría Técnica de la Secretaría General del Ayuntamiento",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRADA",
+    "idSecretaria": 33,
+    "NumeroEmpleado": 104546,
+    "Secretaria": "Dirección del Ayuntamiento",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRADTT",
+    "idSecretaria": 32,
+    "NumeroEmpleado": 53445,
+    "Secretaria": "Dirección de Tenencia de la Tierra",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRASGA",
+    "idSecretaria": 35,
+    "NumeroEmpleado": 99718,
+    "Secretaria": "Secretaría General del Ayuntamiento",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SANDRADMDH",
+    "idSecretaria": 256,
+    "NumeroEmpleado": 107698,
+    "Secretaria": "Defensoria Municipal de los Derechos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAUROCA",
+    "idSecretaria": 264,
+    "NumeroEmpleado": 107710,
+    "Secretaria": "Coordinación Administrativa",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAUROSDSE",
+    "idSecretaria": 58,
+    "NumeroEmpleado": 107919,
+    "Secretaria": "Secretaría de Desarrollo Social y Educación",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAURODSE",
+    "idSecretaria": 57,
+    "NumeroEmpleado": 99382,
+    "Secretaria": "Dirección de Servicios Educativos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAURODICS",
+    "idSecretaria": 169,
+    "NumeroEmpleado": 53748,
+    "Secretaria": "Dirección de Inclusión y Cohesión Social",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAURODDC",
+    "idSecretaria": 168,
+    "NumeroEmpleado": 59926,
+    "Secretaria": "Dirección de Desarrollo Comunitario",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAURODPC",
+    "idSecretaria": 51,
+    "NumeroEmpleado": 107711,
+    "Secretaria": "Dirección de Participación Ciudadana",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "DANIELCA",
+    "idSecretaria": 264,
+    "NumeroEmpleado": 107710,
+    "Secretaria": "Coordinación Administrativa",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "DANIELSDSE",
+    "idSecretaria": 58,
+    "NumeroEmpleado": 107919,
+    "Secretaria": "Secretaría de Desarrollo Social y Educación",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "DANIELDSE",
+    "idSecretaria": 57,
+    "NumeroEmpleado": 99382,
+    "Secretaria": "Dirección de Servicios Educativos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "DANIELDICS",
+    "idSecretaria": 169,
+    "NumeroEmpleado": 53748,
+    "Secretaria": "Dirección de Inclusión y Cohesión Social",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "DANIELDDC",
+    "idSecretaria": 168,
+    "NumeroEmpleado": 59926,
+    "Secretaria": "Dirección de Desarrollo Comunitario",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "DANIELDPC",
+    "idSecretaria": 51,
+    "NumeroEmpleado": 107711,
+    "Secretaria": "Dirección de Participación Ciudadana",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ELIZABETHCMR",
+    "idSecretaria": 129,
+    "NumeroEmpleado": 60667,
+    "Secretaria": "Coordinación de Mejora Regulatoria",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "TANIADFC",
+    "idSecretaria": 41,
+    "NumeroEmpleado": 62393,
+    "Secretaria": "Dirección Financiera y Contable",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MAGDALENATM",
+    "idSecretaria": 40,
+    "NumeroEmpleado": 61197,
+    "Secretaria": "Tesorería Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "KRYSTHELTM",
+    "idSecretaria": 40,
+    "NumeroEmpleado": 107026,
+    "Secretaria": "Tesorería Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "WILERLRMEPCA",
+    "idSecretaria": 202,
+    "NumeroEmpleado": 4411,
+    "Secretaria": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "CLEOCGP",
+    "idSecretaria": 38,
+    "NumeroEmpleado": 57978,
+    "Secretaria": "Coordinación General de Política Fiscal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "WILERDAP",
+    "idSecretaria": 77,
+    "NumeroEmpleado": 52567,
+    "Secretaria": "Dirección de Alumbrado Público",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LUZMARIASPC",
+    "idSecretaria": 43,
+    "NumeroEmpleado": 107701,
+    "Secretaria": "Secretaría Protección Civil",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARISOLLRMEPCA",
+    "idSecretaria": 202,
+    "NumeroEmpleado": 104997,
+    "Secretaria": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "pedro",
+    "idSecretaria": 74,
+    "NumeroEmpleado": 107991,
+    "Secretaria": "Dirección de Recursos Humanos",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "VIVIANACDMO",
+    "idSecretaria": 68,
+    "NumeroEmpleado": 101035,
+    "Secretaria": "Clínica de Diagnóstico de la Mujer Oriente",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "VIVIANADSM",
+    "idSecretaria": 70,
+    "NumeroEmpleado": 100523,
+    "Secretaria": "Dirección de Servicios Médicos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "VIVIANACAS",
+    "idSecretaria": 185,
+    "NumeroEmpleado": 62128,
+    "Secretaria": "Coordinación Administrativa de Salud",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "VIVIANADVC",
+    "idSecretaria": 71,
+    "NumeroEmpleado": 51487,
+    "Secretaria": "Dirección de Verificaciones y Clausuras",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "VIVIANACDMP",
+    "idSecretaria": 101,
+    "NumeroEmpleado": 52772,
+    "Secretaria": "Clínica de Diagnóstico de la Mujer Poniente",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "VIVIANADPCR",
+    "idSecretaria": 69,
+    "NumeroEmpleado": 62375,
+    "Secretaria": "Dirección de Protección Contra Riesgos Sanitarios",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "VIVIANASS",
+    "idSecretaria": 72,
+    "NumeroEmpleado": 6334,
+    "Secretaria": "Secretaría de Salud",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "VIVIANAPPCETV",
+    "idSecretaria": 203,
+    "NumeroEmpleado": 105497,
+    "Secretaria": "Programa de Prevención y Control de ETV",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "ITZELCGGAC",
+    "idSecretaria": 30,
+    "NumeroEmpleado": 103303,
+    "Secretaria": "Coordinación General de Gabinete y Atención Ciudadana",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RICARDORRS",
+    "idSecretaria": 198,
+    "NumeroEmpleado": 107904,
+    "Secretaria": "Recuperación de Residuos Solidos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RICARDOLRMEPCA",
+    "idSecretaria": 202,
+    "NumeroEmpleado": 105359,
+    "Secretaria": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RICARDOMLLPBTG",
+    "idSecretaria": 239,
+    "NumeroEmpleado": 106230,
+    "Secretaria": "Mantenimiento y Limpieza de Libramientos y principales Boulevares de Tuxtla Gutiérrez",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RITARRS",
+    "idSecretaria": 198,
+    "NumeroEmpleado": 107904,
+    "Secretaria": "Recuperación de Residuos Solidos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RITARPV",
+    "idSecretaria": 231,
+    "NumeroEmpleado": 107057,
+    "Secretaria": "Recolección de Producto Verde",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RITALRMEPCA",
+    "idSecretaria": 202,
+    "NumeroEmpleado": 105359,
+    "Secretaria": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "KENIARRS",
+    "idSecretaria": 198,
+    "NumeroEmpleado": 107904,
+    "Secretaria": "Recuperación de Residuos Solidos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "KENIARPV",
+    "idSecretaria": 231,
+    "NumeroEmpleado": 107057,
+    "Secretaria": "Recolección de Producto Verde",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "KENIALRMEPCV",
+    "idSecretaria": 202,
+    "NumeroEmpleado": 105359,
+    "Secretaria": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LIZBETHLRMEPCA",
+    "idSecretaria": 202,
+    "NumeroEmpleado": 104997,
+    "Secretaria": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "JULIOSTP",
+    "idSecretaria": 166,
+    "NumeroEmpleado": 60340,
+    "Secretaria": "Secretaría Técnica del Presidente",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "KENIADLAP",
+    "idSecretaria": 80,
+    "NumeroEmpleado": 3142,
+    "Secretaria": "Dirección de Limpia y Aseo Público",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "RITADLAP",
+    "idSecretaria": 80,
+    "NumeroEmpleado": 3142,
+    "Secretaria": "Dirección de Limpia y Aseo Público",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARISOLDIUAV",
+    "idSecretaria": 78,
+    "NumeroEmpleado": 6202,
+    "Secretaria": "Dirección de Imagen Urbana y Áreas Verdes ",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARISOLAMLLPBTG",
+    "idSecretaria": 239,
+    "NumeroEmpleado": 106230,
+    "Secretaria": "Mantenimiento y Limpieza de Libramientos y principales Boulevares de Tuxtla Gutiérrez",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARISOLRPV",
+    "idSecretaria": 231,
+    "NumeroEmpleado": 107057,
+    "Secretaria": "Recolección de Producto Verde",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LIZBETHDIUAV",
+    "idSecretaria": 78,
+    "NumeroEmpleado": 6202,
+    "Secretaria": "Dirección de Imagen Urbana y Áreas Verdes ",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LIZBETHAMLLPVTG",
+    "idSecretaria": 239,
+    "NumeroEmpleado": 106230,
+    "Secretaria": "Mantenimiento y Limpieza de Libramientos y principales Boulevares de Tuxtla Gutiérrez",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "LIZBETHRPV",
+    "idSecretaria": 231,
+    "NumeroEmpleado": 107057,
+    "Secretaria": "Recolección de Producto Verde",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ZIBBLEYDPOP",
+    "idSecretaria": 253,
+    "NumeroEmpleado": 60457,
+    "Secretaria": "Direccion De Patrimonio y Obra Publica",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ZIBBLEYDCSN",
+    "idSecretaria": 179,
+    "NumeroEmpleado": 61443,
+    "Secretaria": "Dirección de Control y Seguimiento Normativo",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ZIBBLEYS",
+    "idSecretaria": 23,
+    "NumeroEmpleado": 61794,
+    "Secretaria": "Sindicatura",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ZIBBLEYDAL",
+    "idSecretaria": 178,
+    "NumeroEmpleado": 61271,
+    "Secretaria": "Dirección de Asuntos Legales",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ZIBBLEYDSCP",
+    "idSecretaria": 180,
+    "NumeroEmpleado": 50943,
+    "Secretaria": "Dirección de Supervisión de Cuenta Pública",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "JULIOSST",
+    "idSecretaria": 137,
+    "NumeroEmpleado": 49793,
+    "Secretaria": "Secretaría Técnica",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "NIDIADMP",
+    "idSecretaria": 81,
+    "NumeroEmpleado": 10961,
+    "Secretaria": "Dirección de Mercados y Panteones",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "NIDIALRMEPCA",
+    "idSecretaria": 202,
+    "NumeroEmpleado": 107020,
+    "Secretaria": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "MARISOLPELRRS",
+    "idSecretaria": 271,
+    "NumeroEmpleado": 108253,
+    "Secretaria": "Programa Emergente De Limpieza Alrededor de los Contenedores y Recoleccion de Residuos Solidos en Distintos Puntos de la Ciudad",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "KENIAPELRRS",
+    "idSecretaria": 271,
+    "NumeroEmpleado": 108253,
+    "Secretaria": "Programa Emergente De Limpieza Alrededor de los Contenedores y Recoleccion de Residuos Solidos en Distintos Puntos de la Ciudad",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "KARLADOV",
+    "idSecretaria": 82,
+    "NumeroEmpleado": 6049,
+    "Secretaria": "Dirección de Obras Viales",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "PENELOPEDRRIE",
+    "idSecretaria": 216,
+    "NumeroEmpleado": 61366,
+    "Secretaria": "Dirección de Identificación y Reducción de Riesgos Inspecciones y Eventos",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GLADYSCM",
+    "idSecretaria": 29,
+    "NumeroEmpleado": 104068,
+    "Secretaria": "Contraloría Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GLADYSDAFAFEM",
+    "idSecretaria": 24,
+    "NumeroEmpleado": 7846,
+    "Secretaria": "Dirección de Auditorias a Fondos de Aportaciones Federales Estatales y Municipales",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GLADYSDAAF",
+    "idSecretaria": 25,
+    "NumeroEmpleado": 61574,
+    "Secretaria": "Dirección de Auditorias Administrativas y Financieras",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GLADYSDIFAEP",
+    "idSecretaria": 27,
+    "NumeroEmpleado": 53393,
+    "Secretaria": "Dirección De Investigación De Faltas Administrativas Y Evolución Patrimonial",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GLADYSDPRA",
+    "idSecretaria": 221,
+    "NumeroEmpleado": 57020,
+    "Secretaria": "Dirección de Procedimientos de Responsabilidad Administrativa",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GLADYSDVAOP",
+    "idSecretaria": 26,
+    "NumeroEmpleado": 58443,
+    "Secretaria": "Dirección de Verificación y Auditoría a la Obra Pública",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GLADYSSCS",
+    "idSecretaria": 85,
+    "NumeroEmpleado": 108101,
+    "Secretaria": "Contraloría Social",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ILIANASPC",
+    "idSecretaria": 43,
+    "NumeroEmpleado": 102895,
+    "Secretaria": "Secretaría Protección Civil",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ALEJANDRAMSPBBD",
+    "idSecretaria": 201,
+    "NumeroEmpleado": 58351,
+    "Secretaria": "Mejora Salarial Prestaciones y Bonos por buen Desempeño",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ALEJANDRASSPTM",
+    "idSecretaria": 47,
+    "NumeroEmpleado": 62294,
+    "Secretaria": "Secretaría de Seguridad Pública y Tránsito Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ALEJANDRADSP",
+    "idSecretaria": 44,
+    "NumeroEmpleado": 62303,
+    "Secretaria": "Dirección de Seguridad Pública",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ALEJANDRADT",
+    "idSecretaria": 45,
+    "NumeroEmpleado": 107796,
+    "Secretaria": "Dirección de Tránsito",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "ALEJANDRACPD",
+    "idSecretaria": 42,
+    "NumeroEmpleado": 101069,
+    "Secretaria": "Coordinación de Prevención del Delito",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ALEJANDRACPCS",
+    "idSecretaria": 144,
+    "NumeroEmpleado": 60785,
+    "Secretaria": "Coordinación de la Policía Ciudadana Solidaria",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ROBERTOSTP",
+    "idSecretaria": 166,
+    "NumeroEmpleado": 60340,
+    "Secretaria": "Secretaría Técnica del Presidente",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ROBERTOST",
+    "idSecretaria": 137,
+    "NumeroEmpleado": 11031,
+    "Secretaria": "Secretaría Técnica",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ROCIODIPM",
+    "idSecretaria": 141,
+    "NumeroEmpleado": 59667,
+    "Secretaria": "Dirección de Inversión Pública Municipal",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ROCIODPE",
+    "idSecretaria": 49,
+    "NumeroEmpleado": 101273,
+    "Secretaria": "Dirección de Planeación Estratégica",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ROCIODSE",
+    "idSecretaria": 50,
+    "NumeroEmpleado": 60495,
+    "Secretaria": "Dirección de Seguimiento y Evaluación",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ROCIOSP",
+    "idSecretaria": 52,
+    "NumeroEmpleado": 51392,
+    "Secretaria": "Secretaría de Planeación",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "ROCIOFICRF",
+    "idSecretaria": 270,
+    "NumeroEmpleado": 108222,
+    "Secretaria": "Fort Integ y Control de los Rec del Fortamun 2025",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "SERGIO-1R",
+    "idSecretaria": 148,
+    "NumeroEmpleado": 99387,
+    "Secretaria": "Coordinación de Regidores (1er. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-2R",
+    "idSecretaria": 149,
+    "NumeroEmpleado": 51141,
+    "Secretaria": "Coordinación de Regidores (2do. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-3R",
+    "idSecretaria": 150,
+    "NumeroEmpleado": 105815,
+    "Secretaria": "Coordinación de Regidores (3er. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-4R",
+    "idSecretaria": 151,
+    "NumeroEmpleado": 103682,
+    "Secretaria": "Coordinación de Regidores (4to. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-5R",
+    "idSecretaria": 152,
+    "NumeroEmpleado": 103332,
+    "Secretaria": "Coordinación de Regidores (5to. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-6R",
+    "idSecretaria": 153,
+    "NumeroEmpleado": 101327,
+    "Secretaria": "Coordinación de Regidores (6to. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-7R",
+    "idSecretaria": 154,
+    "NumeroEmpleado": 52850,
+    "Secretaria": "Coordinación de Regidores (7mo. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-8R",
+    "idSecretaria": 155,
+    "NumeroEmpleado": 104477,
+    "Secretaria": "Coordinación de Regidores (8vo. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-9R",
+    "idSecretaria": 156,
+    "NumeroEmpleado": 54491,
+    "Secretaria": "Coordinación de Regidores (9no. Regidoria)",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-CR",
+    "idSecretaria": 218,
+    "NumeroEmpleado": 52757,
+    "Secretaria": "Coordinación de Regidores",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "SERGIO-SR",
+    "idSecretaria": 184,
+    "NumeroEmpleado": 107683,
+    "Secretaria": "Sala de Regidores",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "MARISOLFCN",
+    "idSecretaria": 276,
+    "NumeroEmpleado": 106953,
+    "Secretaria": "Fort A Cuad De L Y Desc De Cont C Rutas Noct",
+    "Activo": 1,
+    "StatusEmployee": "Baja"
+  },
+  {
+    "Username": "ARADITCGGAC",
+    "idSecretaria": 30,
+    "NumeroEmpleado": 103303,
+    "Secretaria": "Coordinación General de Gabinete y Atención Ciudadana",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GRISELDFE",
+    "idSecretaria": 60,
+    "NumeroEmpleado": 104773,
+    "Secretaria": "Dirección de Fomento Económico",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GRISELSE",
+    "idSecretaria": 61,
+    "NumeroEmpleado": 107703,
+    "Secretaria": "Secretaría de Economía",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GRISELDESS",
+    "idSecretaria": 54,
+    "NumeroEmpleado": 100846,
+    "Secretaria": "Dirección de Economía Social y Solidaria",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "GRISELDFR",
+    "idSecretaria": 257,
+    "NumeroEmpleado": 60731,
+    "Secretaria": "Dirección de Fomento Rural",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "JOSEDFE",
+    "idSecretaria": 60,
+    "NumeroEmpleado": 104773,
+    "Secretaria": "Dirección de Fomento Económico",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "JOSESE",
+    "idSecretaria": 61,
+    "NumeroEmpleado": 107703,
+    "Secretaria": "Secretaría de Economía",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "JOSEDESS",
+    "idSecretaria": 54,
+    "NumeroEmpleado": 100846,
+    "Secretaria": "Dirección de Economía Social y Solidaria",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  },
+  {
+    "Username": "JOSEDFR",
+    "idSecretaria": 257,
+    "NumeroEmpleado": 60731,
+    "Secretaria": "Dirección de Fomento Rural",
+    "Activo": 1,
+    "StatusEmployee": "Activo"
+  }
+]

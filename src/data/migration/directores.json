@@ -1,0 +1,1010 @@
+[
+  {
+    "direccion_display_name": "Clínica de Diagnóstico de la Mujer Oriente",
+    "director_number_employee": 2028,
+    "responsible_number_employee": null,
+    "start_date": "2024-06-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Mercados y Panteones",
+    "director_number_employee": 60361,
+    "responsible_number_employee": null,
+    "start_date": "2025-06-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Tesorería Municipal",
+    "director_number_employee": 60475,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (5to. Regidoria)",
+    "director_number_employee": 62144,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Clínica de Diagnóstico de la Mujer Oriente",
+    "director_number_employee": 62597,
+    "responsible_number_employee": null,
+    "start_date": "2024-06-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Mejora Regulatoria",
+    "director_number_employee": 99225,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (3er. Regidoria)",
+    "director_number_employee": 99914,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (2do. Regidoria)",
+    "director_number_employee": 99916,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Bacheo de Calles y Mantto a Alcantarillas",
+    "director_number_employee": 100147,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Obras Viales",
+    "director_number_employee": 100147,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección del Ayuntamiento",
+    "director_number_employee": 100379,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección del Ayuntamiento - Departamento de Archivo General",
+    "director_number_employee": 100379,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Seguimiento y Evaluación",
+    "director_number_employee": 100766,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Seguimiento y Evaluación",
+    "director_number_employee": 100766,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Programa Emergente De Limpieza Alrededor de los Contenedores y Recoleccion de Residuos Solidos en Distintos Puntos de la Ciudad",
+    "director_number_employee": 101586,
+    "responsible_number_employee": null,
+    "start_date": "2025-06-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Limpieza Recolección y Mantenimiento de Espacios Públicos Calles y Avenidas",
+    "director_number_employee": 101586,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Recuperación de Residuos Solidos",
+    "director_number_employee": 101586,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Recolección de Producto Verde",
+    "director_number_employee": 101586,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Mantenimiento y Limpieza de Libramientos y principales Boulevares de Tuxtla Gutiérrez",
+    "director_number_employee": 101586,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Servicios Municipales",
+    "director_number_employee": 101586,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Desarrollo Comunitario",
+    "director_number_employee": 101986,
+    "responsible_number_employee": null,
+    "start_date": "2024-11-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Centro de Cumplimiento de Sanciones Administrativas",
+    "director_number_employee": 102070,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Gobierno",
+    "director_number_employee": 102070,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación Administrativa de la Secretaria General del Ayuntamiento",
+    "director_number_employee": 102136,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Limpia y Aseo Público",
+    "director_number_employee": 102411,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Prevención del Delito",
+    "director_number_employee": 102795,
+    "responsible_number_employee": 108346,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Adquisiciones",
+    "director_number_employee": 103068,
+    "responsible_number_employee": null,
+    "start_date": "2025-06-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Contraloría Social",
+    "director_number_employee": 103075,
+    "responsible_number_employee": null,
+    "start_date": "2025-06-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (4to. Regidoria)",
+    "director_number_employee": 103682,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Asuntos Legales",
+    "director_number_employee": 104217,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Contraloría Social",
+    "director_number_employee": 104453,
+    "responsible_number_employee": null,
+    "start_date": "2025-06-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Desarrollo Comunitario",
+    "director_number_employee": 104458,
+    "responsible_number_employee": null,
+    "start_date": "2024-11-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (8vo. Regidoria)",
+    "director_number_employee": 104477,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Identificación y Reducción de Riesgos Inspecciones y Eventos",
+    "director_number_employee": 104496,
+    "responsible_number_employee": null,
+    "start_date": "2025-06-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Administración de Emergencias y Capacitación",
+    "director_number_employee": 104496,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría Protección Civil",
+    "director_number_employee": 104496,
+    "responsible_number_employee": null,
+    "start_date": "2022-07-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (3er. Regidoria)",
+    "director_number_employee": 104508,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección del Ayuntamiento",
+    "director_number_employee": 104546,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección del Ayuntamiento - Departamento de Archivo General",
+    "director_number_employee": 104546,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Desarrollo Urbano",
+    "director_number_employee": 104767,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Limpia y Aseo Público",
+    "director_number_employee": 104842,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Imagen Urbana y Áreas Verdes ",
+    "director_number_employee": 104857,
+    "responsible_number_employee": null,
+    "start_date": "2023-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Proyectos Ambientales y Cambios Climáticos",
+    "director_number_employee": 105250,
+    "responsible_number_employee": null,
+    "start_date": "2024-04-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación General de la Unidad de Transparencia",
+    "director_number_employee": 106371,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Contraloría Municipal",
+    "director_number_employee": 106533,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Planeación",
+    "director_number_employee": 107655,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Control Urbano",
+    "director_number_employee": 107659,
+    "responsible_number_employee": null,
+    "start_date": "2025-04-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Financiamiento para el Desarrollo",
+    "director_number_employee": 107660,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Ordenamiento Territorial",
+    "director_number_employee": 107661,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Promoción de la Igualdad",
+    "director_number_employee": 107663,
+    "responsible_number_employee": 107693,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección Financiera y Contable",
+    "director_number_employee": 107666,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Sindicatura",
+    "director_number_employee": 107667,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Asuntos Legales",
+    "director_number_employee": 107669,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Inclusión y Cohesión Social",
+    "director_number_employee": 107673,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Presidencia Municipal",
+    "director_number_employee": 107674,
+    "responsible_number_employee": 107691,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Control y Seguimiento Normativo",
+    "director_number_employee": 107675,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación General de la Unidad de Transparencia",
+    "director_number_employee": 107678,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (6to. Regidoria)",
+    "director_number_employee": 107680,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (2do. Regidoria)",
+    "director_number_employee": 107681,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Contraloría Municipal",
+    "director_number_employee": 107682,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (1er. Regidoria)",
+    "director_number_employee": 107683,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Instituto de la Juventud",
+    "director_number_employee": 107684,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría General del Ayuntamiento",
+    "director_number_employee": 107685,
+    "responsible_number_employee": null,
+    "start_date": "2024-12-01",
+    "end_date": "2027-12-31"
+  },
+  {
+    "direccion_display_name": "Secretaría Técnica del Presidente",
+    "director_number_employee": 107686,
+    "responsible_number_employee": null,
+    "start_date": "2024-12-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría Técnica",
+    "director_number_employee": 107686,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Asesores",
+    "director_number_employee": 107686,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Buro de Turismo Municipal",
+    "director_number_employee": 107689,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Tecnologías de la Información y Comunicaciones",
+    "director_number_employee": 107690,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría Particular del Despacho del Presidente",
+    "director_number_employee": 107691,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Cronista Municipal",
+    "director_number_employee": 107692,
+    "responsible_number_employee": null,
+    "start_date": "2025-08-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Bibliotecas y Desarrollo Cultural",
+    "director_number_employee": 107692,
+    "responsible_number_employee": null,
+    "start_date": "2025-08-16",
+    "end_date": "2025-09-30"
+  },
+  {
+    "direccion_display_name": "Instituto Tuxtleco de Arte y Cultura",
+    "director_number_employee": 107692,
+    "responsible_number_employee": null,
+    "start_date": "2025-08-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Planeación y Gestión de Proyectos",
+    "director_number_employee": 107693,
+    "responsible_number_employee": null,
+    "start_date": "2025-08-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría para la Igualdad de las Mujeres",
+    "director_number_employee": 107693,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Comunicación Social y Relaciones Públicas",
+    "director_number_employee": 107694,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Giras",
+    "director_number_employee": 107694,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Comunicación Social y Relaciones Públicas",
+    "director_number_employee": 107694,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Defensoria Municipal de los Derechos Humanos",
+    "director_number_employee": 107698,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Tenencia de la Tierra",
+    "director_number_employee": 107700,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Economía",
+    "director_number_employee": 107703,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Economía Social y Solidaria",
+    "director_number_employee": 107704,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación General de Gabinete y Atención Ciudadana",
+    "director_number_employee": 107706,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (9no. Regidoria)",
+    "director_number_employee": 107708,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Participación Ciudadana",
+    "director_number_employee": 107711,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Servicios Educativos",
+    "director_number_employee": 107713,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Desarrollo Social y Educación",
+    "director_number_employee": 107714,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Servicios Médicos",
+    "director_number_employee": 107715,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Verificaciones y Clausuras",
+    "director_number_employee": 107716,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Protección Contra Riesgos Sanitarios",
+    "director_number_employee": 107718,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores",
+    "director_number_employee": 107719,
+    "responsible_number_employee": null,
+    "start_date": "2025-10-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Sala de Regidores",
+    "director_number_employee": 107719,
+    "responsible_number_employee": null,
+    "start_date": "2025-10-16",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Regidores (7mo. Regidoria)",
+    "director_number_employee": 107719,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Costos y Concursos",
+    "director_number_employee": 107721,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Obras Públicas",
+    "director_number_employee": 107722,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2025-01-31"
+  },
+  {
+    "direccion_display_name": "Dirección de Infraestructura",
+    "director_number_employee": 107723,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Bacheo de Calles y Mantto a Alcantarillas",
+    "director_number_employee": 107724,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Obras Viales",
+    "director_number_employee": 107724,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Recursos Humanos",
+    "director_number_employee": 107726,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Recursos Materiales, Servicios Generales y Patrimonio Municipal",
+    "director_number_employee": 107728,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Recursos Materiales Servicios Grales y Patrimonio Mpal-Prog Mantto de Instalaciones del H Ayuntamiento",
+    "director_number_employee": 107728,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Alumbrado Público",
+    "director_number_employee": 107730,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Cerro Hueco",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Francisco I Madero",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Emiliano Zapata",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Copoya",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal El Jobo",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal San Jose Teran",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Teran",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Las Granjas",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Patria Nueva",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Agencia Municipal Plan De Ayala",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Agencias y Delegaciones",
+    "director_number_employee": 107784,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Consejería Jurídica",
+    "director_number_employee": 107823,
+    "responsible_number_employee": null,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Procedimientos Jurídicos",
+    "director_number_employee": 107854,
+    "responsible_number_employee": null,
+    "start_date": "2025-03-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Medio Ambiente y Movilidad Urbana",
+    "director_number_employee": 107892,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-02",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría Técnica de la Secretaría General del Ayuntamiento",
+    "director_number_employee": 107922,
+    "responsible_number_employee": null,
+    "start_date": "2024-11-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación General de Política Fiscal",
+    "director_number_employee": 107976,
+    "responsible_number_employee": null,
+    "start_date": "2024-12-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Centro de Cumplimiento de Sanciones Administrativas",
+    "director_number_employee": 107978,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Gobierno",
+    "director_number_employee": 107978,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Fomento Económico",
+    "director_number_employee": 107979,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Fomento Rural",
+    "director_number_employee": 107982,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Supervisión de Cuenta Pública",
+    "director_number_employee": 107984,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación Administrativa de Salud",
+    "director_number_employee": 107995,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-08",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Salud",
+    "director_number_employee": 107995,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Programa de Prevención y Control de ETV",
+    "director_number_employee": 107995,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-08",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Clínica de Diagnóstico de la Mujer Poniente",
+    "director_number_employee": 107996,
+    "responsible_number_employee": null,
+    "start_date": "2025-01-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Planeación Estratégica",
+    "director_number_employee": 108010,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Verificación y Auditoría a la Obra Pública",
+    "director_number_employee": 108012,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Oficialia Mayor",
+    "director_number_employee": 108103,
+    "responsible_number_employee": null,
+    "start_date": "2025-06-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Procedimientos de Responsabilidad Administrativa",
+    "director_number_employee": 108106,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Movilidad Urbana y Educación Ambiental",
+    "director_number_employee": 108149,
+    "responsible_number_employee": null,
+    "start_date": "2025-02-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección De Investigación De Faltas Administrativas Y Evolución Patrimonial",
+    "director_number_employee": 108186,
+    "responsible_number_employee": null,
+    "start_date": "2025-03-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinación de Control Gestion y Seguimiento",
+    "director_number_employee": 108215,
+    "responsible_number_employee": null,
+    "start_date": "2025-04-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Inversión Pública Municipal",
+    "director_number_employee": 108242,
+    "responsible_number_employee": null,
+    "start_date": "2025-05-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Auditorias a Fondos de Aportaciones Federales Estatales y Municipales",
+    "director_number_employee": 108266,
+    "responsible_number_employee": null,
+    "start_date": "2025-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Direccion De Patrimonio y Obra Publica",
+    "director_number_employee": 108267,
+    "responsible_number_employee": null,
+    "start_date": "2025-07-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Direccion Juridica Ambiental ",
+    "director_number_employee": 108299,
+    "responsible_number_employee": null,
+    "start_date": "2025-07-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Mejora Salarial Prestaciones y Bonos por buen Desempeño",
+    "director_number_employee": 108334,
+    "responsible_number_employee": 108346,
+    "start_date": "2025-07-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Seguridad Pública",
+    "director_number_employee": 108334,
+    "responsible_number_employee": 108346,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Coordinacion Del Centro De Atencion Y Vigilancia Permanente",
+    "director_number_employee": 108334,
+    "responsible_number_employee": 108346,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Tránsito",
+    "director_number_employee": 108334,
+    "responsible_number_employee": 108346,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Secretaría de Seguridad Pública y Tránsito Municipal",
+    "director_number_employee": 108334,
+    "responsible_number_employee": 108346,
+    "start_date": "2024-10-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Dirección de Auditorias Administrativas y Financieras",
+    "director_number_employee": 108503,
+    "responsible_number_employee": null,
+    "start_date": "2025-11-01",
+    "end_date": "2027-09-30"
+  },
+  {
+    "direccion_display_name": "Instituto del Deporte Tuxtleco",
+    "director_number_employee": 108529,
+    "responsible_number_employee": null,
+    "start_date": "2026-01-01",
+    "end_date": "2027-09-30"
+  }
+]

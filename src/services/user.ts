@@ -51,11 +51,11 @@ export const resetUserPassword = async (data: { userId: number; password: string
     if (error.response?.data) {
       return error.response.data;
     }
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: "Error al resetear la contraseña",
       responseObject: {},
-      statusCode: error.response?.status || 500
+      statusCode: error.response?.status || 500,
     };
   }
 };
@@ -73,11 +73,11 @@ export const changeUserPassword = async (data: {
     if (error.response?.data) {
       return error.response.data;
     }
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: "Error al cambiar la contraseña",
       responseObject: {},
-      statusCode: error.response?.status || 500
+      statusCode: error.response?.status || 500,
     };
   }
 };

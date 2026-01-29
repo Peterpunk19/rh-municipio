@@ -1739,6 +1739,12 @@ const category = [
     display_name: "VULCANIZADOR",
     active: true,
   },
+  {
+    id: 291,
+    name: "resp_de_base_operat",
+    display_name: "RESP.DE BASE OPERAT.PENSIONADO",
+    active: true,
+  },
 ];
 
 module.exports = category;

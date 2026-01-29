@@ -53,7 +53,7 @@ function LoginContent() {
 
 export default function Login() {
   return (
-    (<PageContainer title="Login Page" description="this is Sample page">
+    (<PageContainer title="Iniciar sesión" description="this is Sample page">
       <Box
         sx={{
           position: "relative",

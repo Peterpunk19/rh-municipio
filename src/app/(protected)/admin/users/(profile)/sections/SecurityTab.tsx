@@ -118,7 +118,11 @@ const SecurityTab = ({ userData }: SecurityTabProps) => {
         setTemporaryPassword("");
       } else {
         // Handle validation errors from API
-        if (response.responseObject && typeof response.responseObject === "object" && Object.keys(response.responseObject).length > 0) {
+        if (
+          response.responseObject &&
+          typeof response.responseObject === "object" &&
+          Object.keys(response.responseObject).length > 0
+        ) {
           const errorMessages: string[] = [];
           for (const [field, value] of Object.entries(response.responseObject)) {
             if ((value as any)?.messages && Array.isArray((value as any).messages)) {
@@ -256,12 +260,7 @@ const SecurityTab = ({ userData }: SecurityTabProps) => {
               severity="success"
               sx={{ mb: 2 }}
               action={
-                <Button
-                  color="inherit"
-                  size="small"
-                  startIcon={<ContentCopyIcon />}
-                  onClick={handleCopyPassword}
-                >
+                <Button color="inherit" size="small" startIcon={<ContentCopyIcon />} onClick={handleCopyPassword}>
                   {copied ? "¡Copiado!" : "Copiar"}
                 </Button>
               }
@@ -316,14 +315,14 @@ const SecurityTab = ({ userData }: SecurityTabProps) => {
               </Typography>
 
               <Box display="flex" justifyContent="flex-end" gap={1}>
-                <Button 
-                  variant="outlined" 
-                  sx={{ 
-                    color: "error.main", 
+                <Button
+                  variant="outlined"
+                  sx={{
+                    color: "error.main",
                     borderColor: "error.light",
-                    "&:hover": { borderColor: "error.main", bgcolor: "error.50" }
-                  }} 
-                  onClick={handleCancelReset} 
+                    "&:hover": { borderColor: "error.main", bgcolor: "error.50" },
+                  }}
+                  onClick={handleCancelReset}
                   disabled={resetLoading}
                 >
                   Cancelar
@@ -443,14 +442,14 @@ const SecurityTab = ({ userData }: SecurityTabProps) => {
           </Box>
 
           <Box display="flex" justifyContent="flex-end" gap={1}>
-            <Button 
-              variant="outlined" 
-              sx={{ 
-                color: "error.main", 
+            <Button
+              variant="outlined"
+              sx={{
+                color: "error.main",
                 borderColor: "error.light",
-                "&:hover": { borderColor: "error.main", bgcolor: "error.50" }
+                "&:hover": { borderColor: "error.main", bgcolor: "error.50" },
               }}
-              onClick={handleCancelChange} 
+              onClick={handleCancelChange}
               disabled={changeLoading}
             >
               Cancelar

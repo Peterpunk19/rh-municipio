@@ -1,143 +1,69 @@
 "use client";
+
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
+import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 
 import PageContainer from "@/app/components/container/PageContainer";
+
 // components
-import YearlyBreakup from "@/app/components/dashboards/modern/YearlyBreakup";
-import MonthlyEarnings from "@/app/components/dashboards/modern/MonthlyEarnings";
-import TopCards from "@/app/components/dashboards/modern/TopCards";
-import RevenueUpdates from "@/app/components/dashboards/modern/RevenueUpdates";
-import EmployeeSalary from "@/app/components/dashboards/modern/EmployeeSalary";
-import Customers from "@/app/components/dashboards/modern/Customers";
-import Projects from "@/app/components/dashboards/modern/Projects";
-import Social from "@/app/components/dashboards/modern/Social";
-import SellingProducts from "@/app/components/dashboards/modern/SellingProducts";
-import WeeklyStats from "@/app/components/dashboards/modern/WeeklyStats";
 import TopPerformers from "@/app/components/dashboards/modern/TopPerformers";
+import IncidentsByTypeChart from "@/app/components/dashboards/modern/IncidentsByTypeChart";
+import IncidentsStatusChart from "@/app/components/dashboards/modern/IncidentsStatusChart";
+import RequestsByTypeChart from "@/app/components/dashboards/modern/RequestsByTypeChart";
+import RequestsStatusChart from "@/app/components/dashboards/modern/RequestsStatusChart";
 
 export default function Dashboard() {
   const [isLoading, setLoading] = useState(true);
+
+  // 📅 Fecha única del dashboard
+  const today = new Date().toISOString().slice(0, 10);
+  const [date, setDate] = useState(today);
+
   useEffect(() => {
     setLoading(false);
   }, []);
 
   return (
-    <PageContainer title="Dashboard" description="this is Dashboard">
+    <PageContainer title="Dashboard" description="Dashboard de Incidencias">
       <Box mt={3}>
+        {/* 🔍 Buscador de empleados */}
         <Grid container spacing={3}>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 12,
-            }}
-          >
-            <TopCards />
-          </Grid>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 8,
-            }}
-          >
-            <RevenueUpdates isLoading={isLoading} />
-          </Grid>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 4,
-            }}
-          >
-            <Grid container spacing={3}>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                  lg: 12,
-                }}
-              >
-                <YearlyBreakup isLoading={isLoading} />
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                  lg: 12,
-                }}
-              >
-                <MonthlyEarnings isLoading={isLoading} />
-              </Grid>
-            </Grid>
-          </Grid>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 4,
-            }}
-          >
-            <EmployeeSalary isLoading={isLoading} />
-          </Grid>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 4,
-            }}
-          >
-            <Grid container spacing={3}>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <Customers isLoading={isLoading} />
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <Projects isLoading={isLoading} />
-              </Grid>
-              <Grid size={12}>
-                <Social />
-              </Grid>
-            </Grid>
-          </Grid>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 4,
-            }}
-          >
-            <SellingProducts />
-          </Grid>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 4,
-            }}
-          >
-            <WeeklyStats isLoading={isLoading} />
-          </Grid>
-          {/* column */}
-          <Grid
-            size={{
-              xs: 12,
-              lg: 8,
-            }}
-          >
+          <Grid size={{ xs: 12 }}>
             <TopPerformers />
           </Grid>
+
+          {/* 📅 Selector de fecha (global) */}
+          <Grid size={{ xs: 12 }} display="flex" justifyContent="flex-end">
+            <TextField
+              type="date"
+              size="small"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              inputProps={{ max: today }}
+            />
+          </Grid>
+
+          {/* 📊 Incidencias por tipo */}
+          <Grid size={{ xs: 12, lg: 8 }}>
+            <IncidentsByTypeChart date={date} isLoading={isLoading} title="Incidencias por tipo" />
+          </Grid>
+
+          {/* 🍩 Estatus de incidencias */}
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <IncidentsStatusChart date={date} title="Estatus de Incidencias" />
+          </Grid>
+
+          <Grid size={{ xs: 12, lg: 8 }}>
+            <RequestsByTypeChart date={date} isLoading={isLoading} title="Solicitudes por tipo" />
+          </Grid>
+
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <RequestsStatusChart date={date} title="Estatus de Solicitudes" />
+          </Grid>
+
+          {/* 🔜 Aquí después replicas el patrón para Solicitudes */}
         </Grid>
       </Box>
     </PageContainer>

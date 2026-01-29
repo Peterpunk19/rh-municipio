@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import {
   IEmployeeIncident,
-  IEmployeeIncidentUpdate,
   IEmployeeIncidentFilters,
   IEmployeeIncidentGetById,
+  IEmployeeIncidentUpdate,
 } from "@/app/api/employee-incidents/types";
 import { buildWhereClause, getPaginationData } from "@/common/utils";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
 import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
-import { getVacationDayValue, getActiveDaysFromSchedules } from "@/app/api/common/utils.service";
+import { getActiveDaysFromSchedules, getVacationDayValue } from "@/app/api/common/utils.service";
 import { HolidayService } from "@/app/api/services/holiday.service";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
@@ -776,5 +776,90 @@ export const EmployeeIncidentsService = {
     });
 
     return Boolean(openIncapacity);
+  },
+
+  async dashboardIncidents(params: { createdAt: string }) {
+    const { createdAt } = params;
+
+    const start = new Date(`${createdAt}T00:00:00.000Z`);
+    const end = new Date(`${createdAt}T23:59:59.999Z`);
+
+    const grouped = await prisma.employeeIncidents.groupBy({
+      by: ["incident_id"],
+      where: {
+        created_at: {
+          gte: start,
+          lte: end,
+        },
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    if (!grouped.length) return [];
+
+    const incidents = await prisma.incident.findMany({
+      where: {
+        id: { in: grouped.map((g) => g.incident_id) },
+      },
+    });
+
+    return incidents.map((incident) => {
+      const count = grouped.find((g) => g.incident_id === incident.id)?._count._all ?? 0;
+
+      return {
+        id: incident.id,
+        name: incident.name,
+        label: incident.display_name,
+        value: count,
+        color: incident.bgColorOnCalendar,
+      };
+    });
+  },
+
+  async dashboardIncidentsStatus(params: { createdAt: string }) {
+    const { createdAt } = params;
+
+    if (!createdAt) return [];
+
+    const start = new Date(`${createdAt}T00:00:00.000Z`);
+    const end = new Date(`${createdAt}T23:59:59.999Z`);
+
+    const grouped = await prisma.employeeIncidents.groupBy({
+      by: ["incident_status_id"],
+      where: {
+        created_at: {
+          gte: start,
+          lte: end,
+        },
+        active: true,
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    if (!grouped.length) return [];
+
+    const statuses = await prisma.incidentStatus.findMany({
+      where: {
+        id: {
+          in: grouped.map((g) => g.incident_status_id),
+        },
+      },
+    });
+
+    return statuses.map((status) => {
+      const count = grouped.find((g) => g.incident_status_id === status.id)?._count._all ?? 0;
+
+      return {
+        id: status.id,
+        name: status.name,
+        label: status.display_name,
+        value: count,
+        color: status.btn_color,
+      };
+    });
   },
 };

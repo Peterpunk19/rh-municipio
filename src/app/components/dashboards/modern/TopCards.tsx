@@ -5,39 +5,27 @@ import { Box, CardContent, Grid, Typography } from "@mui/material";
 const topcards = [
   {
     icon: '/images/svgs/icon-user-male.svg',
-    title: "Employees",
-    digits: "96",
+    title: "Empleados activos",
+    digits: "1,284",
     bgcolor: "primary",
   },
   {
     icon: '/images/svgs/icon-briefcase.svg',
-    title: "Clients",
-    digits: "3,650",
+    title: "Asistencias hoy",
+    digits: "912",
     bgcolor: "warning",
   },
   {
     icon: '/images/svgs/icon-mailbox.svg',
-    title: "Projects",
-    digits: "356",
+    title: "Incidencias en revisión ",
+    digits: "43",
     bgcolor: "secondary",
   },
   {
     icon: '/images/svgs/icon-favorites.svg',
-    title: "Events",
-    digits: "696",
+    title: "Solicitudes pendientes",
+    digits: "18",
     bgcolor: "error",
-  },
-  {
-    icon: '/images/svgs/icon-speech-bubble.svg',
-    title: "Payroll",
-    digits: "$96k",
-    bgcolor: "success",
-  },
-  {
-    icon: '/images/svgs/icon-connect.svg',
-    title: "Reports",
-    digits: "59",
-    bgcolor: "info",
   },
 ];
 

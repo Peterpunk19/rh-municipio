@@ -126,13 +126,7 @@ export const EmployeePostSchema = z
       .string({ message: validationMessages.required("Folio de identificación") })
       .optional()
       .nullable(),
-    tradeUnionId: z
-      .string()
-      .optional()
-      .nullable()
-      .refine((val) => val === null || val === "" || val, {
-        message: validationMessages.required("Sindicato"),
-      }),
+    tradeUnionId: z.union([z.number(), z.string()]).optional().nullable(),
   })
   .refine(
     (data) => {

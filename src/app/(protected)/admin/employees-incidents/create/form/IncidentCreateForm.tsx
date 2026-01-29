@@ -734,6 +734,16 @@ const IncidentCreateForm = ({
             </Grid2>
 
             <Grid2 size={12}>
+              {responseMessage && (
+                <Alert severity={isSuccess ? "success" : "error"}>
+                  <Typography variant="body1" fontWeight={600}>
+                    {responseMessage}
+                  </Typography>
+                </Alert>
+              )}
+            </Grid2>
+
+            <Grid2 size={12}>
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Link href={"/admin/employees-incidents"} passHref>
                   <Button variant="contained" color="error" sx={{ display: "flex" }}>

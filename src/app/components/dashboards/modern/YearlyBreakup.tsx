@@ -11,9 +11,10 @@ import SkeletonYearlyBreakupCard from "../skeleton/YearlyBreakupCard";
 
 interface YearlyBreakupCardProps {
   isLoading?: boolean;
+  title?: string;
 }
 
-const YearlyBreakup = ({ isLoading }: YearlyBreakupCardProps) => {
+const YearlyBreakup = ({ isLoading, title }: YearlyBreakupCardProps) => {
   // chart color
   const theme = useTheme();
   const primary = theme.palette.primary.main;
@@ -73,7 +74,7 @@ const YearlyBreakup = ({ isLoading }: YearlyBreakupCardProps) => {
       isLoading ? (
         <SkeletonYearlyBreakupCard />
       ) : (
-        <DashboardCard title="Yearly Breakup">
+        <DashboardCard title={title}>
           <Grid container spacing={3}>
             {/* column */}
             <Grid

@@ -131,7 +131,7 @@ const FormWizardSteps = <T,>({ isEdit }: FormWizarStepsProps<T>) => {
 
               <Box textAlign="right">
                 <Button onClick={handleReset} variant="contained" color="error">
-                  Reset
+                  Continuar
                 </Button>
               </Box>
             </Stack>
