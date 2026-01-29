@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { buildWhereClause, encryptPassword, getPaginationData } from "@/common/utils";
 import type { IUser, IUserFilters } from "@/app/api/users/interface";
-import { logger } from "@/lib/logger";
 import { SYSTEM_LOG_ACTIONS } from "@/common/constants/SystemLogActions";
 
 export const UserService = {
@@ -405,13 +404,102 @@ export const UserService = {
         temporaryPassword,
       };
     } catch (error: any) {
-      logger.error("Error resetting user password", {
-        userId,
-        adminUserId,
-        error: error.message,
-        stack: error.stack,
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  },
+
+  async verifyUserPassword(userId: number, password: string): Promise<boolean> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { password: true },
       });
 
+      if (!user) {
+        return false;
+      }
+
+      const bcryptjs = require("bcryptjs");
+      return await bcryptjs.compare(password, user.password);
+    } catch (error: any) {
+      return false;
+    }
+  },
+
+  async changeUserPassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<{
+    success: boolean;
+    message?: string;
+  }> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { password: true, must_change_password: true },
+      });
+
+      if (!user) {
+        return {
+          success: false,
+          message: "Usuario no encontrado",
+        };
+      }
+
+      const bcryptjs = require("bcryptjs");
+      const isPasswordValid = await bcryptjs.compare(currentPassword, user.password);
+
+      if (!isPasswordValid) {
+        return {
+          success: false,
+          message: "La contraseña actual es incorrecta",
+        };
+      }
+
+      const isSamePassword = await bcryptjs.compare(newPassword, user.password);
+      if (isSamePassword) {
+        return {
+          success: false,
+          message: "La nueva contraseña debe ser diferente a la contraseña actual",
+        };
+      }
+
+      const hashedPassword = await encryptPassword(newPassword);
+
+      await prisma.$transaction(async (tx) => {
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            password: hashedPassword,
+            must_change_password: false,
+            updated_at: new Date(),
+          },
+        });
+
+        await tx.systemLogs.create({
+          data: {
+            type: "change-password",
+            performed_by_id: userId,
+            affected_user_id: userId,
+            description: `Usuario ID ${userId} cambió su propia contraseña`,
+            metadata: {
+              action: SYSTEM_LOG_ACTIONS.PASSWORD_CHANGE,
+              timestamp: new Date().toISOString(),
+              mustChangePasswordBefore: user.must_change_password,
+              mustChangePasswordAfter: false,
+            },
+          },
+        });
+      });
+
+      return {
+        success: true,
+      };
+    } catch (error: any) {
       return {
         success: false,
         message: error.message,

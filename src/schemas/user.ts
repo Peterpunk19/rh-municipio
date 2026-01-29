@@ -161,3 +161,25 @@ export const UserResetPasswordSchema = z.object({
     .regex(/[a-z]/, { message: validationMessages.oneLowercaseLetter("Contraseña") })
     .regex(/[0-9]/, { message: validationMessages.oneNumber("Contraseña") }),
 });
+
+export const UserChangePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string({ message: validationMessages.required("Contraseña actual") })
+      .min(1, { message: validationMessages.required("Contraseña actual") }),
+    newPassword: z
+      .string({ message: validationMessages.required("Nueva contraseña") })
+      .min(8, { message: validationMessages.minLength("Nueva contraseña", 8) })
+      .max(30, { message: validationMessages.maxLength("Nueva contraseña", 30) })
+      .regex(/[A-Z]/, { message: validationMessages.oneUppercaseLetter("Nueva contraseña") })
+      .regex(/[a-z]/, { message: validationMessages.oneLowercaseLetter("Nueva contraseña") })
+      .regex(/[0-9]/, { message: validationMessages.oneNumber("Nueva contraseña") })
+      .regex(/[^A-Za-z0-9]/, { message: validationMessages.oneSymbol("Nueva contraseña") }),
+    confirmNewPassword: z
+      .string({ message: validationMessages.required("Confirmar nueva contraseña") })
+      .min(1, { message: validationMessages.required("Confirmar nueva contraseña") }),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: validationMessages.passwordsMustMatch,
+    path: ["confirmNewPassword"],
+  });

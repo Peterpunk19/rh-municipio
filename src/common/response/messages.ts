@@ -115,6 +115,11 @@ export const HttpMessages = {
     resetPasswordCannotAdmin: "No se puede resetear la contraseña de otro administrador",
     resetPasswordUserNotFound: "Usuario no encontrado",
     resetPasswordServiceError: "Error al resetear la contraseña",
+    changePasswordSuccess: "Contraseña cambiada exitosamente",
+    changePasswordCurrentInvalid: "La contraseña actual es incorrecta",
+    changePasswordMismatch: "Las contraseñas no coinciden",
+    changePasswordSameAsOld: "La nueva contraseña debe ser diferente a la contraseña actual",
+    changePasswordServiceError: "Error al cambiar la contraseña",
   },
   role: {
     notFound: "El rol no existe",

@@ -41,3 +41,43 @@ export const changeStatusUser = async (data: object): Promise<IResponse> => {
     return error;
   }
 };
+
+export const resetUserPassword = async (data: { userId: number; password: string }): Promise<IResponse> => {
+  try {
+    const response = await http.post<IResponse>("/api/users/reset-password", data);
+    return response.data;
+  } catch (error: any) {
+    // Return API validation errors if available
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return { 
+      success: false, 
+      message: "Error al resetear la contraseña",
+      responseObject: {},
+      statusCode: error.response?.status || 500
+    };
+  }
+};
+
+export const changeUserPassword = async (data: {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}): Promise<IResponse> => {
+  try {
+    const response = await http.post<IResponse>("/api/users/change-password", data);
+    return response.data;
+  } catch (error: any) {
+    // Return API validation errors if available
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return { 
+      success: false, 
+      message: "Error al cambiar la contraseña",
+      responseObject: {},
+      statusCode: error.response?.status || 500
+    };
+  }
+};

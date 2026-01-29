@@ -28,6 +28,7 @@ export const {
         token.number_employee = (user as any).number_employee ?? "";
         token.accessToken = (user as any).accessToken;
         token.menuItems = (user as any).menuItems ?? [];
+        token.must_change_password = (user as any).must_change_password ?? false;
         token.jwt = "JWT";
       }
 
@@ -42,6 +43,7 @@ export const {
         role_name: token.role_name as string,
         role_display_name: token.role_display_name as string,
         number_employee: token.number_employee as string,
+        must_change_password: token.must_change_password as boolean,
         session: "SESSION",
       };
 
