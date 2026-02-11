@@ -22,6 +22,7 @@ import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPermissions";
 import { IncidentRulesService } from "@/app/api/services/incident-rules.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
+import { generateIncidentDates, validateIncidentDateConflicts } from "@/common/utils";
 import EmployeesIncidents from "@/app/(protected)/admin/employees-incidents/EmployeesIncidents";
 
 export async function POST(request: NextRequest) {
@@ -67,17 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (body.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
-      const startDate = new Date(body.startDate);
-      const endDate = new Date(body.endDate);
-      const dates: string[] = [];
-      const currentDate = new Date(startDate);
-
-      while (currentDate <= endDate) {
-        dates.push(currentDate.toISOString().split("T")[0]);
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-
-      body.incidentDates = dates;
+      body.incidentDates = generateIncidentDates(body.startDate, body.endDate);
     }
 
     const datesToValidate = body.incidentDates || [];
@@ -107,19 +98,14 @@ export async function POST(request: NextRequest) {
     }
 
     const datesToCheck = body.incidentDates || [];
+    const conflictValidation = await validateIncidentDateConflicts(
+      Number(body.employeeId),
+      datesToCheck,
+      Number(body.incidentId),
+    );
 
-    if (datesToCheck.length > 0) {
-      const conflicts = await EmployeeIncidentsService.findDateConflicts(
-        Number(body.employeeId),
-        datesToCheck,
-        Number(body.incidentId),
-      );
-      if (conflicts.length > 0) {
-        const response = HttpResponse.failure(HttpMessages.incidentRules.notSameDay, {
-          dates: conflicts.map((d) => d.toISOString().slice(0, 10)),
-        });
-        return handleHttpResponse(response);
-      }
+    if (conflictValidation.hasConflicts) {
+      return handleHttpResponse(conflictValidation.error);
     }
 
     const direccionId = await getEmployeeDireccion(Number(body.employeeId));
@@ -131,7 +117,6 @@ export async function POST(request: NextRequest) {
 
     if (body.incidentId === INCIDENT_TYPES_ID.INCAPACIDAD) {
       const hasOpenIncapacity = await EmployeeIncidentsService.hasOpenIncapacity(Number(body.employeeId));
-      console.log(hasOpenIncapacity);
 
       if (hasOpenIncapacity) {
         return failureResponse(HttpMessages.employeeIncidents.openIncapacity);

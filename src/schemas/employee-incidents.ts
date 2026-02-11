@@ -39,7 +39,65 @@ export const EmployeeIncidentsPostSchema = z
       .number({ message: validationMessages.required("Asistencia") })
       .optional()
       .nullable(),
-    incidentDates: z.array(z.string()).optional(),
+    incidentDates: z
+      .array(
+        z.preprocess(
+          (val) => validateDate(val),
+          z.date({ message: validationMessages.invalidaFormat("Fechas de incidencia") }),
+        ),
+      )
+      .optional(),
+  })
+  .refine((data) => data.endDate >= data.startDate, {
+    message: validationMessages.invalidDateRange("Fecha de Terminación", "Fecha de Inicio"),
+    path: ["endDate"],
+  })
+  .refine(
+    (data) => {
+      if (data.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+        return true;
+      }
+      return data.incidentDates && data.incidentDates.length > 0;
+    },
+    {
+      message: validationMessages.required("Fechas de incidencia"),
+      path: ["incidentDates"],
+    },
+  );
+
+export const EmployeeIncidentsBulkCreateSchema = z
+  .object({
+    employeeIds: z
+      .array(z.number({ message: validationMessages.required("Empleado") }))
+      .min(1, { message: validationMessages.required("Empleado") })
+      .default([]),
+    incidentId: z.number({ message: validationMessages.required("Tipo de Incidencia") }),
+    startDate: z.preprocess(
+      (val) => validateDate(val),
+      z.date({ message: validationMessages.invalidaFormat("Fecha de Inicio") }),
+    ),
+    endDate: z.preprocess(
+      (val) => validateDate(val),
+      z.date({ message: validationMessages.invalidaFormat("Fecha de Terminación") }),
+    ),
+    description: z
+      .string({ message: validationMessages.required("Descripción") })
+      .min(1, { message: validationMessages.required("Descripción") })
+      .max(255, { message: validationMessages.maxLength("Descripción", 255) }),
+    oficio: z
+      .string({ message: validationMessages.required("Oficio") })
+      .min(1, { message: validationMessages.required("Oficio") })
+      .max(30, { message: validationMessages.maxLength("Oficio", 30) })
+      .nullable()
+      .optional(),
+    incidentDates: z
+      .array(
+        z.preprocess(
+          (val) => validateDate(val),
+          z.date({ message: validationMessages.invalidaFormat("Fechas de incidencia") }),
+        ),
+      )
+      .optional(),
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: validationMessages.invalidDateRange("Fecha de Terminación", "Fecha de Inicio"),

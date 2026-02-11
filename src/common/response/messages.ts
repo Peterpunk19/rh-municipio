@@ -40,6 +40,8 @@ export const HttpMessages = {
     incidentDatesOutOfRange: "Las fechas de incidencia no coinciden con la fecha de inicio y fin",
     notAllowedToCreateForDifferentDireccion:
       "No tienes permiso para crear incidencias para empleados de otra dirección",
+    bulkNotAllowed: "Este tipo de incidencia no permite creación masiva",
+    bulkProcessed: "Incidencias masivas creadas correctamente",
   },
   employeeAttendance: {
     invalidData: "Ya existe un dia registrado con estos datos",

@@ -1,10 +1,12 @@
 import bcryptjs from "bcryptjs";
 import type React from "react";
 import { formatDateStringTS } from "@/utils/formatter";
+import { prisma } from "@/lib/prisma";
+import { HttpMessages } from "@/common/response/messages";
+import { HttpResponse } from "@/common/response/model";
 
 import type { WhereKey } from "@/interfaces/WhereConfig";
 import { handleHttpResponse } from "@/common/response/handler";
-import { HttpResponse } from "@/common/response/model";
 import { ROLES, ROLES_ID, RoleValue } from "@/common/constants/Roles";
 import { ROLES_ID_VALUES } from "@/common/constants/Roles";
 
@@ -365,3 +367,65 @@ export function calculateAntiguedad(antiguedadStartDate: Date, referenceDate: Da
     antiguedadMonthsTotal: monthsTotal,
   };
 }
+
+export const generateIncidentDates = (startDate: string | Date, endDate: string | Date): string[] => {
+  const dates: string[] = [];
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+
+  while (current <= end) {
+    dates.push(current.toISOString().split("T")[0]);
+    current.setDate(current.getDate() + 1);
+  }
+
+  return dates;
+};
+
+export const validateIncidentDateConflicts = async (
+  employeeId: number,
+  incidentDates: string[],
+  incidentId: number,
+  transaction?: any,
+): Promise<{ hasConflicts: boolean; conflicts?: any; error?: any }> => {
+  if (incidentDates.length === 0) {
+    return { hasConflicts: false };
+  }
+
+  const dateObjects = incidentDates.map((date) => new Date(date));
+
+  const conflicts = transaction
+    ? await transaction.employeeIncidentDays.findMany({
+        where: {
+          date: { in: dateObjects },
+          employee_incident: {
+            employee_id: employeeId,
+            incident_id: { not: incidentId },
+            active: true,
+          },
+        },
+        select: { date: true },
+      })
+    : await prisma.employeeIncidentDays.findMany({
+        where: {
+          date: { in: dateObjects },
+          employee_incident: {
+            employee_id: employeeId,
+            incident_id: { not: incidentId },
+            active: true,
+          },
+        },
+        select: { date: true },
+      });
+
+  if (conflicts.length > 0) {
+    return {
+      hasConflicts: true,
+      conflicts,
+      error: HttpResponse.failure(HttpMessages.incidentRules.notSameDay, {
+        dates: conflicts.map((d: any) => d.date.toISOString().slice(0, 10)),
+      }),
+    };
+  }
+
+  return { hasConflicts: false };
+};

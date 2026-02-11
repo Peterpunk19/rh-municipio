@@ -62,9 +62,6 @@ export const response = {
       direccionId: {
         messages: [validationMessages.required("Órgano administrativo")],
       },
-      tradeUnionId: {
-        messages: [validationMessages.required("Sindicato")],
-      },
     },
   }),
   emptyNumberEmployee: generator.response({
