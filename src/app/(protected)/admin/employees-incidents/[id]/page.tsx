@@ -271,15 +271,6 @@ const EmployeeIncident = () => {
                     },
                   }}
                 >
-                  <Typography variant="h5">Oficio: {employeeIncidentData.folio}</Typography>
-                  <Box mt={1}>
-                    <Chip
-                      size="medium"
-                      color="secondary"
-                      variant="outlined"
-                      label={formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}
-                    ></Chip>
-                  </Box>
                 </Box>
 
                 <Box textAlign="right">
@@ -288,7 +279,7 @@ const EmployeeIncident = () => {
                     <Chip
                       size="medium"
                       color={employeeIncidentData.incident_status.btn_color}
-                      label={employeeIncidentData.incident_status.display_name}
+                      label={`${employeeIncidentData.incident_status.display_name} - ${formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}`}
                     />
                   </Box>
                 </Box>

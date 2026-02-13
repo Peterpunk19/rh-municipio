@@ -235,15 +235,7 @@ const EmployeeRequest = () => {
           <CardContent>
             <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="space-between" mb={2}>
               <Box textAlign="left">
-                <Typography variant="h5">Oficio: {employeeRequestData.folio}</Typography>
-                <Box mt={1}>
-                  <Chip
-                    size="medium"
-                    color="secondary"
-                    variant="outlined"
-                    label={formatDate(employeeRequestData.created_at, "dd/MM/yyyy HH:mm")}
-                  />
-                </Box>
+
               </Box>
               <Box
                 sx={{
@@ -259,7 +251,7 @@ const EmployeeRequest = () => {
                   <Chip
                     size="medium"
                     color={employeeRequestData.request_status.btn_color}
-                    label={employeeRequestData.request_status.display_name}
+                    label={`${employeeRequestData.request_status.display_name} - ${formatDate(employeeRequestData.created_at, "dd/MM/yyyy HH:mm")}`}
                   />
                 </Box>
               </Box>
