@@ -3,7 +3,7 @@
 import React from "react";
 import { Grid2 as Grid, Box, Typography } from "@mui/material";
 import { Temporal } from "@js-temporal/polyfill";
-import { IconClockUp, IconClockDown, IconClockCheck } from "@tabler/icons-react";
+import {IconClockUp, IconClockDown, IconClockCheck, IconMoon, IconSun} from "@tabler/icons-react";
 import { formatDate } from "@/utils/formatter";
 import { ICalendarDay, IAttendanceCalendar } from "@/components/types";
 
@@ -17,10 +17,21 @@ interface Props {
   onIncidentClick: (id: number) => void;
 }
 
+const isNightSchedule = (start: string, end: string) => {
+  const startHour = Number(start.split(":")[0]);
+  const endHour = Number(end.split(":")[0]);
+
+  if (endHour < startHour) return true;
+
+  return startHour >= 18 || endHour <= 6;
+};
+
 const CalendarAttendanceDay = React.memo(
   ({ day, today, attendance, isWorkDay, schedule, showSchedule, onIncidentClick }: Props) => {
     const isToday = Temporal.PlainDate.compare(day.date, today) === 0;
     const isPast = Temporal.PlainDate.compare(day.date, today) < 0;
+
+    const isNight = schedule ? isNightSchedule(schedule.startHour, schedule.endHour) : false;
 
     const checkIn = attendance?.checkIn;
     const checkOut = attendance?.checkOut;
@@ -49,7 +60,7 @@ const CalendarAttendanceDay = React.memo(
             borderRadius: "50%",
             textAlign: "center",
             position: "absolute",
-            top: 4,
+            top: 0,
             right: 4,
             fontWeight: 700,
             border: isToday ? "1px solid #000" : "1px solid transparent",
@@ -66,9 +77,20 @@ const CalendarAttendanceDay = React.memo(
           }}
         >
           {isWorkDay && showSchedule && schedule && (
-            <Typography sx={{ fontSize: "0.7rem", opacity: 0.6 }}>
-              {schedule.startHour} → {schedule.endHour}
-            </Typography>
+            <Box display="flex" alignItems="center" gap={0.5}>
+              {isNight ? <IconMoon size={14} color="#FACC15" /> : <IconSun size={14} color="#FDE047" />}
+
+              <Typography
+                sx={{
+                  fontSize: "0.7rem",
+                  opacity: 0.6,
+                  lineHeight: 1,
+                  color: "#64748B",
+                }}
+              >
+                {schedule.startHour} → {schedule.endHour}
+              </Typography>
+            </Box>
           )}
         </Box>
 

@@ -5,7 +5,7 @@ import CreateRequestForm from "./form-requests/CreateRequestForm";
 
 const BCrumb = [
   {
-    to: "/admin/employees-requets",
+    to: "/admin/employees-requests",
     title: "Listado de solicitudes de empleados",
   },
   {

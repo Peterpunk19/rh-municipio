@@ -180,6 +180,9 @@ const IncidentDetailModal = ({ id }: any) => {
                     title="Formato de incidencia"
                     fileName={`incidencia-${employeeIncidentData.folio}`}
                     template={IncidentTemplate as any}
+                    optionsConfig={{
+                      displayMode: "button",
+                    }}
                   />
                 </Box>
               </Stack>

@@ -280,14 +280,14 @@ module.exports = async function seedEmployeesOptimized({
     }
 
     /* ---------- HIRING + ASCRIPTION ---------- */
-    if (e.startJobDate) {
+    if (e.hiringDate) {
       const resolvedDireccionName = direccionAliases[e._direccionKey] ?? e._direccionKey;
 
       const direccionId = resolvedDireccionName ? direccionMap[resolvedDireccionName]?.id : null;
 
       hirings.push({
         employee_id: employeeId,
-        start_job_date: new Date(e.startJobDate),
+        start_job_date: new Date(e.hiringDate),
         end_job_date: e.endJobDate ? new Date(e.endJobDate) : null,
         category_id: categoriesMap[e._categoryKey]?.id ?? null,
         employee_type_id: employeeTypesMap[e._employeeTypeKey]?.id ?? null,
@@ -297,7 +297,7 @@ module.exports = async function seedEmployeesOptimized({
 
       ascriptions.push({
         employee_id: employeeId,
-        start_date: new Date(e.startJobDate),
+        start_date: new Date(e.hiringDate),
         end_date: e.endJobDate ? new Date(e.endJobDate) : null,
         direccion_id: direccionId,
         created_by_id: 1,
