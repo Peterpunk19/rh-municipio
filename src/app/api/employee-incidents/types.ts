@@ -193,3 +193,13 @@ export interface IEmployeeIncidentGetById {
     created_at: Date;
   }>;
 }
+
+export interface IEmployeeIncidentsBulkCreate {
+  employeeIds: number[];
+  incidentId: number;
+  startDate: Date;
+  endDate: Date;
+  description: string;
+  oficio?: string | null;
+  incidentDates?: string[];
+}

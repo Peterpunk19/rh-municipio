@@ -7,6 +7,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "secondary.main",
   },
   {
@@ -17,6 +18,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    allow_bulk_creation: true,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -27,6 +29,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    allow_bulk_creation: true,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -37,6 +40,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    allow_bulk_creation: true,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -47,6 +51,7 @@ const incident = [
     active: true,
     display_calendar_dates: false,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -57,6 +62,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -67,6 +73,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -77,6 +84,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -87,6 +95,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "incident.permiso_sin_goce",
   },
   {
@@ -97,6 +106,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -107,6 +117,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -117,6 +128,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "incident.retardo",
   },
   {
@@ -127,6 +139,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: true,
     bgColorOnCalendar: "error.attendance",
   },
   {
@@ -137,6 +150,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "warning.main",
   },
   {
@@ -147,6 +161,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: true,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "incident.retardo",
   },
   {
@@ -157,6 +172,7 @@ const incident = [
     active: true,
     display_calendar_dates: true,
     display_time_on_calendar: false,
+    allow_bulk_creation: false,
     bgColorOnCalendar: "error.main",
   },
 ];
