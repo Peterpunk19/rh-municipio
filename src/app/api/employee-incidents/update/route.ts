@@ -120,6 +120,7 @@ export async function PUT(request: NextRequest) {
   } catch (error: any) {
     logger.error({ error: error.message, stack: error.stack });
 
+    console.log(error.message)
     return handleHttpResponse(
       HttpResponse.internalServerError(HttpMessages.error.internalServerError, {
         error: HttpMessages.error.internalServerError,

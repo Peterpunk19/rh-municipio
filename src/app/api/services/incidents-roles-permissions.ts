@@ -51,6 +51,7 @@ export const IncidentsRolesPermissionsService = {
         },
         can_view: true,
         can_create: true,
+        can_validate: true,
         can_approve: true,
         can_reject: true,
         can_cancel: true,
@@ -78,6 +79,7 @@ export const IncidentsRolesPermissionsService = {
     incidentId: number,
     permissionType:
       | "can_create"
+      | "can_validate"
       | "can_update"
       | "can_reject"
       | "can_approve"

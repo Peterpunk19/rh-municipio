@@ -26,6 +26,12 @@ export const header: readonly HeadCell[] = [
     label: "CREAR",
   },
   {
+    id: "can_validate",
+    numeric: false,
+    disablePadding: false,
+    label: "VALIDAR",
+  },
+  {
     id: "can_approve",
     numeric: false,
     disablePadding: false,

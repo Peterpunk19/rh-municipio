@@ -99,7 +99,9 @@ async function findDateConflictsTx(tx: any, employeeId: number, incidentDates: (
           employee_incident: {
             employee_id: Number(employeeId),
             incident_id: incidentId,
-            incident_status_id: { in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA] },
+            incident_status_id: {
+              in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.VALIDADA, INCIDENT_STATUS_ID.APROBADA],
+            },
           },
         })),
       },
@@ -866,7 +868,7 @@ export const EmployeeIncidentsService = {
               const existingRelation = await tx.employeeAttendanceIncident.findFirst({
                 where: {
                   employee_attendance_id: existingAttendance.id,
-                  employee_incident_id: employeeIncident.id,
+                  employee_incident_id: Number(employeeIncident.id),
                 },
               });
 
