@@ -1,5 +1,6 @@
 export const INCIDENT_STATUS = {
   CREADA: "creada",
+  VALIDADA: "validada",
   APROBADA: "aprobada",
   RECHAZADA: "rechazada",
   ELIMINADA: "eliminada",
@@ -8,8 +9,9 @@ export const INCIDENT_STATUS = {
 
 export const INCIDENT_STATUS_ID = {
   CREADA: 1,
-  APROBADA: 2,
-  RECHAZADA: 3,
-  ELIMINADA: 4,
-  CANCELADA: 5,
+  VALIDADA: 2,
+  APROBADA: 3,
+  RECHAZADA: 4,
+  ELIMINADA: 5,
+  CANCELADA: 6,
 };

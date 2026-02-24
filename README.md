@@ -154,4 +154,16 @@ It will start mysql, adminer and nextjs
 
 ```bash
 docker-compose up
+
+```
+# Setup Test Environment And Run Test Integration
+
+It will start mysql, adminer and nextjs
+
+```bash
+docker exec -it mysql-db sh
+mysql -u root -p
+CREATE DATABASE rh_municipio_test;
+dcli yarn db:test:reset
+dcli yarn ts-node prisma/seed.ts --employees=500
 ```

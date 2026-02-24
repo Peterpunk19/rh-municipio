@@ -11,6 +11,7 @@ export const IncidentsRolesPermissionsByIdSchema = z.object({
 
 export const IncidentsRolesPermissionsUpdateStatusSchema = z.object({
   can_view: z.boolean().optional(),
+  can_validate: z.boolean().optional(),
   can_create: z.boolean().optional(),
   can_approve: z.boolean().optional(),
   can_cancel: z.boolean().optional(),

@@ -25,6 +25,15 @@ export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
       fetchAction: fetchData,
     },
   },
+  can_validate: {
+    renderType: "switch",
+    switchConfig: {
+      url,
+      field: "can_validate",
+      entity,
+      fetchAction: fetchData,
+    },
+  },
   can_approve: {
     renderType: "switch",
     switchConfig: {

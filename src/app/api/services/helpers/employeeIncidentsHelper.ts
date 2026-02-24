@@ -13,7 +13,7 @@ export async function resolveIncapacityContinuation({
   const normalizedStart = new Date(startDate);
   normalizedStart.setHours(0, 0, 0, 0);
 
-  // 1️⃣ Último día de incapacidad (CREADA o APROBADA)
+  // 1️⃣ Último día de incapacidad (CREADA, VALIDADA o APROBADA)
   const lastDay = await tx.employeeIncidentDays.findFirst({
     where: {
       date: { lt: normalizedStart },
@@ -21,7 +21,7 @@ export async function resolveIncapacityContinuation({
         employee_id: employeeId,
         incident: { name: IncidentTypes.INCAPACIDAD },
         incident_status_id: {
-          in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA],
+          in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.VALIDADA, INCIDENT_STATUS_ID.APROBADA],
         },
       },
     },
@@ -82,7 +82,7 @@ export async function resolveIncapacityContinuation({
           name: { not: IncidentTypes.INCAPACIDAD },
         },
         incident_status_id: {
-          in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA],
+          in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.VALIDADA, INCIDENT_STATUS_ID.APROBADA],
         },
       },
     },
@@ -102,7 +102,7 @@ export async function resolveIncapacityContinuation({
           employee_id: employeeId,
           incident: { name: IncidentTypes.INCAPACIDAD },
           incident_status_id: {
-            in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.APROBADA],
+            in: [INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.VALIDADA, INCIDENT_STATUS_ID.APROBADA],
           },
         },
       },

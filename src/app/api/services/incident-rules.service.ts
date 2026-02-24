@@ -91,7 +91,7 @@ export const IncidentRulesService = {
           incident_id: incidentTypeId,
           active: true,
           incident_status_id: {
-            in: [INCIDENT_STATUS_ID.APROBADA, INCIDENT_STATUS_ID.CREADA],
+            in: [INCIDENT_STATUS_ID.APROBADA, INCIDENT_STATUS_ID.CREADA, INCIDENT_STATUS_ID.VALIDADA],
           },
         },
       },
