@@ -9,7 +9,9 @@
     "lint": "next lint",
     "format": "biome format .",
     "fix": "biome format --fix",
-    "test": "jest"
+    "db:test:reset": "cp .env.test .env && prisma db push --schema=prisma/test/schema.prisma --force-reset",
+    "test:unit": "jest --config jest.unit.config.js",
+    "test:integration": "NODE_ENV=test jest --config jest.integration.config.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
