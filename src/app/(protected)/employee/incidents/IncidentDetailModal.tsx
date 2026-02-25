@@ -205,7 +205,7 @@ const IncidentDetailModal = ({ id }: any) => {
             <CardContent>
               <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="space-between" mb={2}>
                 <Box textAlign="left">
-                  <Typography variant="h5">Folio: {employeeIncidentData.oficio || "PM/OM/DRH/1511/2025"}</Typography>
+                  <Typography variant="h5">Folio: {employeeIncidentData.folio}</Typography>
                   <Box mt={1}>
                     <Chip
                       size="medium"

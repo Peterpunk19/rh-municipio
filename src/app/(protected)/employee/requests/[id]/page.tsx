@@ -81,7 +81,7 @@ const EmployeeRequest = () => {
                   },
                 }}
               >
-                <Typography variant="h5">Folio: {employeeRequestData.oficio || "PM/OM/DRH/1511/2025"}</Typography>
+                <Typography variant="h5">Folio: {employeeRequestData.folio}</Typography>
 
                 <Box mt={1}>
                   <Chip

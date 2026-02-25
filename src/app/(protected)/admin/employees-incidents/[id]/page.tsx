@@ -274,7 +274,7 @@ const EmployeeIncident = () => {
                 </Box>
 
                 <Box textAlign="right">
-                  <Typography variant="h5">Folio: {employeeIncidentData.oficio || "PM/OM/DRH/1511/2025"}</Typography>
+                  <Typography variant="h5">Folio: {employeeIncidentData.folio}</Typography>
                   <Box mt={1}>
                     <Chip
                       size="medium"

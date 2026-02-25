@@ -2,10 +2,10 @@ import type { HeadCell } from "@/interfaces/HeadCell";
 
 export const header: readonly HeadCell[] = [
   {
-    id: "oficio",
+    id: "folio",
     numeric: false,
     disablePadding: false,
-    label: "Oficio",
+    label: "Folio",
   },
   {
     id: "request.displayName",
