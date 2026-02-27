@@ -370,8 +370,12 @@ export function calculateAntiguedad(antiguedadStartDate: Date, referenceDate: Da
 
 export const generateIncidentDates = (startDate: string | Date, endDate: string | Date): string[] => {
   const dates: string[] = [];
-  const current = new Date(startDate);
-  const end = new Date(endDate);
+
+  const startDateStr = typeof startDate === "string" ? startDate.split(" ")[0] : startDate;
+  const endDateStr = typeof endDate === "string" ? endDate.split(" ")[0] : endDate;
+
+  const current = new Date(startDateStr);
+  const end = new Date(endDateStr);
 
   while (current <= end) {
     dates.push(current.toISOString().split("T")[0]);

@@ -198,6 +198,12 @@ const DireccionPostSchema = BaseCatalogPostSchema.extend({
   ),
 });
 const TradeUnionPostSchema = BaseCatalogPostSchema;
+const IncidentByEmployeeGetSchema = z.object({
+  employee_id: z
+    .number({ message: validationMessages.number("Empleado") })
+    .optional()
+    .nullable(),
+});
 export {
   EmployeeTypeSchema,
   GenderSchema,
@@ -237,4 +243,5 @@ export {
   SecretariaPostSchema,
   DireccionPostSchema,
   TradeUnionPostSchema,
+  IncidentByEmployeeGetSchema,
 };

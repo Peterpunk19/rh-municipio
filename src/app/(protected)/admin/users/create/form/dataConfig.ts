@@ -4,6 +4,7 @@ export interface FormErrors {
   role_id?: string;
   direcciones_ids?: number[];
   secretaria_id?: string;
+  employeeId?: string;
   [key: string]: string | string[] | number[] | number | undefined;
 }
 

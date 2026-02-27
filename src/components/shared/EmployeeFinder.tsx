@@ -9,7 +9,7 @@ import { EmployeeDetailCard } from "@/components/shared/EmployeeDetailCard";
 
 interface EmployeeFinderProps {
   onEmployeeSelect: (employee: any) => void;
-  error: string | null;
+  error: string | null | undefined;
   label?: string;
   initialEmployee?: any;
   showDetails?: boolean;
@@ -31,7 +31,7 @@ const EmployeeFinder: React.FC<EmployeeFinderProps> = ({
     setSelectedEmployee(employee);
     onEmployeeSelect(employee);
     if (employee) {
-      setSearchKey(prev => prev + 1);
+      setSearchKey((prev) => prev + 1);
     }
   };
 

@@ -23,7 +23,6 @@ import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPe
 import { IncidentRulesService } from "@/app/api/services/incident-rules.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { generateIncidentDates, validateIncidentDateConflicts } from "@/common/utils";
-import EmployeesIncidents from "@/app/(protected)/admin/employees-incidents/EmployeesIncidents";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -67,13 +66,17 @@ export async function POST(request: NextRequest) {
       if (validationResponse) return handleHttpResponse(validationResponse);
     }
 
-    if (body.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+    if (body.incidentId === INCIDENT_TYPES_ID.LACTANCIA || body.incidentId === INCIDENT_TYPES_ID.ARRESTO) {
       body.incidentDates = generateIncidentDates(body.startDate, body.endDate);
     }
 
     const datesToValidate = body.incidentDates || [];
 
-    if (datesToValidate.length > 0) {
+    if (
+      datesToValidate.length > 0 &&
+      body.incidentId !== INCIDENT_TYPES_ID.LACTANCIA &&
+      body.incidentId !== INCIDENT_TYPES_ID.ARRESTO
+    ) {
       const outOfRangeDates = validateIncidentDatesRange(datesToValidate, body.startDate, body.endDate);
 
       if (outOfRangeDates.length > 0) {

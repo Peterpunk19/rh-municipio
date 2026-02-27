@@ -175,5 +175,16 @@ const incident = [
     allow_bulk_creation: false,
     bgColorOnCalendar: "error.main",
   },
+  {
+    id: 17,
+    name: "arresto",
+    display_name: "ARRESTO",
+    type: 1,
+    active: true,
+    display_calendar_dates: false,
+    display_time_on_calendar: false,
+    allow_bulk_creation: false,
+    bgColorOnCalendar: "error.main",
+  },
 ];
 module.exports = incident;

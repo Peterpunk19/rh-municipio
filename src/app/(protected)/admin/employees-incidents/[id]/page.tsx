@@ -32,6 +32,8 @@ import IncidentDetails from "@/components/customComponents/IncidentDetails";
 import LoadingComponent from "@/components/customComponents/LoadingComponent";
 import PDFGenerator from "@/components/shared/pdfs/PDFGenerator";
 import IncidentTemplate from "@/components/shared/pdfs/templates/IncidentTemplate";
+import ArrestoIncident from "@/components/shared/pdfs/templates/incidents/ArrestoIncident";
+import { IncidentTypes } from "@/common/constants/IncidentTypes";
 import IncidentDays from "@/components/customComponents/IncidentDays";
 import Link from "next/link";
 import { IconArrowBack } from "@tabler/icons-react";
@@ -238,7 +240,11 @@ const EmployeeIncident = () => {
                     }}
                     title="Formato de incidencia"
                     fileName={`incidencia-${employeeIncidentData.folio}`}
-                    template={IncidentTemplate as any}
+                    template={
+                      employeeIncidentData.incident?.name === IncidentTypes.ARRESTO
+                        ? (ArrestoIncident as any)
+                        : (IncidentTemplate as any)
+                    }
                     optionsConfig={{
                       displayMode: "button",
                     }}

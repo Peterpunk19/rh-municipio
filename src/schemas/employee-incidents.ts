@@ -54,7 +54,7 @@ export const EmployeeIncidentsPostSchema = z
   })
   .refine(
     (data) => {
-      if (data.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+      if (data.incidentId === INCIDENT_TYPES_ID.LACTANCIA || data.incidentId === INCIDENT_TYPES_ID.ARRESTO) {
         return true;
       }
       return data.incidentDates && data.incidentDates.length > 0;
@@ -105,7 +105,7 @@ export const EmployeeIncidentsBulkCreateSchema = z
   })
   .refine(
     (data) => {
-      if (data.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+      if (data.incidentId === INCIDENT_TYPES_ID.LACTANCIA || data.incidentId === INCIDENT_TYPES_ID.ARRESTO) {
         return true;
       }
       return data.incidentDates && data.incidentDates.length > 0;

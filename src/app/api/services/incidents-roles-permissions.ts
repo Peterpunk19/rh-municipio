@@ -104,4 +104,18 @@ export const IncidentsRolesPermissionsService = {
       },
     });
   },
+
+  async getIncidentsByRoleWithCreatePermission(roleId: number) {
+    return await prisma.incident.findMany({
+      where: {
+        incidents_roles_permissions: {
+          some: {
+            role_id: roleId,
+            can_create: true,
+          },
+        },
+      },
+      orderBy: { display_name: "asc" },
+    });
+  },
 };
