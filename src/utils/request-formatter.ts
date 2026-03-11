@@ -32,10 +32,10 @@ interface FormData {
   };
   adscriptionForm: {
     secretariaId: number;
-    attendanceId: number | string;
-    locationId: number;
     direccionId: number;
+    requestDate: string;
     startDate: string;
+    oficio: string;
   };
 }
 
@@ -95,9 +95,9 @@ export const formatRequestData = (formData: FormData) => {
       return {
         ...baseData,
         secretariaId: formData.adscriptionForm.secretariaId,
-        locationId: formData.adscriptionForm.locationId,
         direccionId: formData.adscriptionForm.direccionId,
-        attendanceId: Number(formData.adscriptionForm.attendanceId),
+        oficio: formData.adscriptionForm.oficio,
+        requestDate: formData.adscriptionForm.requestDate,
         startDate: formData.adscriptionForm.startDate,
       };
 

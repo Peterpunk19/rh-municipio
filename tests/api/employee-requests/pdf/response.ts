@@ -28,6 +28,7 @@ export const response = {
     message: "Datos de solicitud obtenidos exitosamente",
     responseObject: {
       folio: "000001",
+      oficio: "000001",
       request_date: "09/07/2025",
       created_at: "09/07/2025",
       employee: {
@@ -95,6 +96,7 @@ export const response = {
     message: "Datos de solicitud obtenidos exitosamente",
     responseObject: {
       folio: "000001",
+      oficio: "000001",
       request_date: "09/07/2025",
       created_at: "09/07/2025",
       employee: {
@@ -162,6 +164,7 @@ export const response = {
     message: "Datos de solicitud obtenidos exitosamente",
     responseObject: {
       folio: "000001",
+      oficio: "000001",
       request_date: "09/07/2025",
       created_at: "09/07/2025",
       employee: {

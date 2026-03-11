@@ -35,8 +35,8 @@ interface StateType {
     adscriptionForm: {
       secretariaId: number;
       direccionId: number;
-      locationId: number;
-      attendanceId: number | string;
+      oficio: string;
+      requestDate: string;
       startDate: string;
     };
   };
@@ -77,8 +77,8 @@ const initialState: StateType = {
     adscriptionForm: {
       secretariaId: 0,
       direccionId: 0,
-      attendanceId: 0,
-      locationId: 0,
+      requestDate: "",
+      oficio: "",
       startDate: "",
     },
   },

@@ -8,20 +8,12 @@ export interface RequestAdscriptionDetailsProps {
       display_name: string;
     }
   };
-  currentLocation?: {
-    display_name?: string;
-  };
-  newLocation?: {
-    display_name?: string;
-  };
-  attendance?: {
-    display_name?: string;
-  };
   start_date?: string;
+  request_date?: string;
 }
 
 export const RequestAdscriptionDetails = (
-  { newDireccion, newLocation, attendance, start_date }: RequestAdscriptionDetailsProps
+  { newDireccion, request_date, start_date }: RequestAdscriptionDetailsProps
 ) => {
 
   return (
@@ -38,30 +30,26 @@ export const RequestAdscriptionDetails = (
           </Typography>
         </Stack>
       </Grid>
-      <Grid size={{ lg: 5, xs: 12 }}>
-        <Typography variant="subtitle1" color="text.secondary">
-          Ubicación
-        </Typography>
-      </Grid>
-      <Grid size={{ lg: 7, xs: 12 }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="subtitle1" fontWeight={600} mb={0.5}>
-            {newLocation?.display_name?.toUpperCase() || "-"}
-          </Typography>
-        </Stack>
-      </Grid>
-      <Grid size={{ lg: 5, xs: 12 }}>
-        <Typography variant="subtitle1" color="text.secondary">
-          Tipo de checado
-        </Typography>
-      </Grid>
-      <Grid size={{ lg: 7, xs: 12 }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="subtitle1" fontWeight={600} mb={0.5}>
-            {attendance?.display_name?.toUpperCase() || "-"}
-          </Typography>
-        </Stack>
-      </Grid>
+      {request_date && (
+        <>
+          <Grid size={{ lg: 5, xs: 12 }}>
+            <Typography variant="subtitle1" color="text.secondary">
+              Fecha de solicitud
+            </Typography>
+          </Grid>
+          <Grid size={{ lg: 7, xs: 12 }}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography variant="subtitle1" fontWeight={600} mb={0.5}>
+                {new Date(request_date).toLocaleDateString('es-ES', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </Typography>
+            </Stack>
+          </Grid>
+        </>
+      )}
       {start_date && (
         <>
           <Grid size={{ lg: 5, xs: 12 }}>

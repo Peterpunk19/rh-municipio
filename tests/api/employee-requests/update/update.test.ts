@@ -119,7 +119,7 @@ describe("API: /employee-requests/update", () => {
             id: 32,
             username: "abram.gutierrez",
           },
-          employee_attendance_status: [
+          employee_request_status: [
             {
               id: 1,
               created_at: "2025-04-10T00:07:52.068Z",

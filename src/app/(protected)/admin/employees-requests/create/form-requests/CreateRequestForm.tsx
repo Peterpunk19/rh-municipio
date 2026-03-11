@@ -98,7 +98,7 @@ const CreateRequestForm = ({
       dispatch(
         updateFormData({
           field: "adscriptionForm",
-          value: { secretariaId: 0, attendanceType: "", locationId: 0, direccionId: 0, startDate: "" },
+          value: { secretariaId: 0, attendanceType: "", requestDate: "", oficio: "", startDate: "" },
         }),
       );
     }

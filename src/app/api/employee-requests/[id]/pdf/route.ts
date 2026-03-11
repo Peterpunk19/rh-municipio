@@ -37,6 +37,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const pdfData: RequestTemplateData = {
       folio: employeeRequest.folio,
+      oficio: employeeRequest.oficio ?? "",
       request_date: formatDate(employeeRequest.request_date, "dd/MM/yyyy"),
       created_at: formatDate(employeeRequest.created_at, "dd/MM/yyyy"),
       employee: {

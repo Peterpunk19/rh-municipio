@@ -8,7 +8,7 @@ import { generateUniqueKey } from "@/utils";
 
 type Props = {
   data: {
-    employee_attendance_status: Array<{
+    employee_request_status: Array<{
       request_status: {
         id: number;
         display_name: string;
@@ -36,7 +36,7 @@ const RequestStatusHistory: React.FC<Props> = ({ data }) => {
             <Divider />
           </Grid>
           <Grid mt={2} size={{ lg: 12, xs: 12 }}>
-            {data.employee_attendance_status?.map((row) => {
+            {data.employee_request_status?.map((row) => {
                 return (
               <Box key={generateUniqueKey()} display="flex" alignItems="center">
                 <Box

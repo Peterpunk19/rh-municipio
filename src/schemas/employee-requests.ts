@@ -88,7 +88,6 @@ const EmployeeRequestPostBaseSchema = {
     .max(10, { message: validationMessages.maxLength("Folio", 10) })
     .optional()
     .nullable(),
-  oficio: z.string().optional().nullable(),
   employeeId: z
     .number({ message: validationMessages.required("Empleado") })
     .positive({ message: validationMessages.required("Empleado") }),
@@ -159,15 +158,14 @@ const FingerprintRegistrationSchema = z.object({
 
 const AscriptionChangeSchema = z.object({
   requestId: z.literal(5),
+  oficio: z.string().min(1, "El oficio es obligatorio"),
   direccionId: z
     .number({ message: validationMessages.number("El organismo administrativo es requerido") })
     .min(1, { message: validationMessages.minNumber("ID de Organismo Administrativo", 1) }),
-  locationId: z
-    .number({ message: validationMessages.required("Ubicación") })
-    .positive({ message: validationMessages.required("Ubicación") }),
-  attendanceId: z
-    .number({ message: validationMessages.required("Tipo de checado") })
-    .positive({ message: validationMessages.required("Tipo de checado") }),
+  requestDate: z.preprocess(
+    (val) => validateDate(val),
+    z.date({ message: validationMessages.invalidaFormat("Fecha de solicitud") }),
+  ),
   startDate: z.preprocess(
     (val) => validateDate(val),
     z.date({ message: validationMessages.invalidaFormat("Fecha de inicio") }),

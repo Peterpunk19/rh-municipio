@@ -135,3 +135,11 @@ export const getMonthName = (monthNumber: any) => {
 export const nextDay = (d: string) => {
   return dayjs(d).add(1, "day").format("YYYY-MM-DD");
 };
+
+export const toTitleCase = (str: string) => {
+  return str
+    ?.toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};

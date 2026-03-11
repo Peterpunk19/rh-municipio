@@ -3,7 +3,7 @@ import { GET as getIncidentById } from "@/app/api/employee-incidents/[id]/route"
 import { POST as createIncident } from "@/app/api/employee-incidents/create/route";
 import { PUT as updateIncident } from "@/app/api/employee-incidents/update/route";
 import { createRequest } from "../helpers/createRequest";
-import {auth} from "@/auth";
+import { auth } from "@/auth";
 
 jest.mock("@/auth", () => ({
   auth: jest.fn(),
@@ -28,7 +28,6 @@ describe("E2E employee incident creation and validation flow", () => {
     (auth as jest.Mock).mockResolvedValue({
       user: { id: admin.userId, role: admin.roleId },
     });
-
 
     const req = createRequest("/api/employee-incidents/create", {
       method: "POST",
@@ -82,7 +81,7 @@ describe("E2E employee incident creation and validation flow", () => {
 
     const res = await updateIncident(req);
     const body = await res.json();
-    
+
     expect(res.status).toBe(200);
     expect(body.responseObject.incident_status_id).toBe(2);
   });

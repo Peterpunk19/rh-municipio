@@ -15,6 +15,7 @@ export const REQUEST_COMPONENTS = {
 
 export interface RequestTemplateData {
   folio: string;
+  oficio: string;
   request_date: string;
   created_at: string;
   employee: {
