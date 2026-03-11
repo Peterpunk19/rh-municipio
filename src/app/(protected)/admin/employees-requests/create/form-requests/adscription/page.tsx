@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, FormControl, FormControlLabel, Grid2, MenuItem, Radio, RadioGroup, Typography } from "@mui/material";
+import { Box, FormControl, Grid2, MenuItem } from "@mui/material";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import CustomTextField from "@/app/components/forms/theme-elements/CustomTextField";
@@ -18,11 +18,7 @@ const AdscriptionForm = () => {
   const { formData, errors, employeeData } = useSelector((state: RootState) => state.createEmployeeRequest);
   const [direcciones, setDirecciones] = useState<ICatalog[]>([]);
 
-  const fetchDataAttendance = React.useCallback(() => fetchCatalogData("attendance"), []);
   const fetchDataSecretarias = React.useCallback(() => fetchCatalogData("secretarias"), []);
-  const fetchDataLocations = React.useCallback(() => fetchCatalogData("location"), []);
-
-  const { options: attendanceTypes, isLoading, error } = useFetchOptions(fetchDataAttendance);
 
   const {
     options: secretarias,
@@ -30,15 +26,8 @@ const AdscriptionForm = () => {
     error: errorSecretaria,
   } = useFetchOptions(fetchDataSecretarias);
 
-  const {
-    options: locations,
-    isLoading: isLoadingLocations,
-    error: errorLocations,
-  } = useFetchOptions(fetchDataLocations);
-
   const handleChange = (event: any) => {
     const { name, value } = event.target;
-    console.log("handleChange", name, value);
     dispatch(updateFormData({ field: `adscriptionForm.${name}`, value }));
   };
 
@@ -59,7 +48,7 @@ const AdscriptionForm = () => {
   return (
     <Box>
       <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, md: 6 }}>
+        <Grid2 size={{ xs: 12, md: 4 }}>
           <FormControl fullWidth>
             <CustomFormLabel sx={{ m: 0, p: 0 }}>Organismo Público</CustomFormLabel>
             <CustomSelect
@@ -88,7 +77,7 @@ const AdscriptionForm = () => {
           </FormControl>
         </Grid2>
 
-        <Grid2 size={{ xs: 12, md: 6 }}>
+        <Grid2 size={{ xs: 12, md: 8 }}>
           <FormControl fullWidth>
             <CustomFormLabel sx={{ m: 0, p: 0 }}>Organismo Administrativo</CustomFormLabel>
             <CustomSelect
@@ -116,46 +105,41 @@ const AdscriptionForm = () => {
           </FormControl>
         </Grid2>
 
-        <Grid2 size={{ xs: 12, md: 6 }} sx={{ mt: 0, pt: 0 }}>
+        <Grid2 size={{ xs: 12, md: 4 }} sx={{ mt: 0, pt: 0 }}>
           <FormControl fullWidth sx={{ mt: 0, pt: 0 }}>
-            <CustomFormLabel sx={{ m: 0, p: 0 }}>Seleccione la nueva ubicación</CustomFormLabel>
-            <CustomSelect
-              fullWidth
-              name="locationId"
-              value={formData.adscriptionForm.locationId || "0"}
+            <CustomFormLabel sx={{ m: 0, p: 0 }}>Oficio</CustomFormLabel>
+            <CustomTextField
+              type="text"
+              name="oficio"
+              value={formData.adscriptionForm.oficio || ""}
               onChange={handleChange}
-              disabled={isLoading || error}
-            >
-              <MenuItem key="default" value={0}>
-                Selecciona una opción
-              </MenuItem>
-              {isLoadingLocations ? (
-                <MenuItem disabled>Cargando...</MenuItem>
-              ) : errorLocations ? (
-                <MenuItem disabled>Error al cargar</MenuItem>
-              ) : (
-                locations?.map((location) => {
-                  const isSameLocation = location.display_name === employeeData?.location_display_name;
-
-                  return (
-                    <MenuItem
-                      key={location.id}
-                      value={location.id}
-                      sx={{
-                        backgroundColor: isSameLocation ? "primary.light" : "inherit",
-                      }}
-                    >
-                      {location.display_name}
-                    </MenuItem>
-                  );
-                })
-              )}
-            </CustomSelect>
-            <CustomLabelError field={errors.locationId} />
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <CustomLabelError field={errors.oficio} />
           </FormControl>
         </Grid2>
 
-        <Grid2 size={{ xs: 12, md: 6 }} sx={{ mt: 0, pt: 0 }}>
+        <Grid2 size={{ xs: 12, md: 4 }} sx={{ mt: 0, pt: 0 }}>
+          <FormControl fullWidth sx={{ mt: 0, pt: 0 }}>
+            <CustomFormLabel sx={{ m: 0, p: 0 }}>Fecha de solicitud</CustomFormLabel>
+            <CustomTextField
+              type="date"
+              name="requestDate"
+              value={formData.adscriptionForm.requestDate}
+              onChange={handleChange}
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <CustomLabelError field={errors.requestDate} />
+          </FormControl>
+        </Grid2>
+
+        <Grid2 size={{ xs: 12, md: 4 }} sx={{ mt: 0, pt: 0 }}>
           <FormControl fullWidth sx={{ mt: 0, pt: 0 }}>
             <CustomFormLabel sx={{ m: 0, p: 0 }}>Fecha de inicio</CustomFormLabel>
             <CustomTextField
@@ -170,35 +154,6 @@ const AdscriptionForm = () => {
             />
             <CustomLabelError field={errors.startDate} />
           </FormControl>
-        </Grid2>
-
-        <Grid2 size={{ xs: 12, md: 12 }}>
-          <CustomFormLabel sx={{ m: 0, p: 0 }}> Registro de Asistencia</CustomFormLabel>
-
-          {!isLoading && error ? (
-            <Typography variant="body1" gutterBottom>
-              Error al cargar los tipos de checado
-            </Typography>
-          ) : (
-            <FormControl component="fieldset">
-              <RadioGroup
-                row
-                name="attendanceId"
-                value={formData.adscriptionForm.attendanceId || ""}
-                onChange={handleChange}
-              >
-                {attendanceTypes.map((attendanceType) => (
-                  <FormControlLabel
-                    key={`attendance-${attendanceType.id}`}
-                    value={attendanceType.id}
-                    control={<Radio />}
-                    label={attendanceType.display_name}
-                  />
-                ))}
-              </RadioGroup>
-              <CustomLabelError field={errors.attendanceId} />
-            </FormControl>
-          )}
         </Grid2>
       </Grid2>
     </Box>

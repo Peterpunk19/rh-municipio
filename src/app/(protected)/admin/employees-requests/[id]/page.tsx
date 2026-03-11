@@ -48,6 +48,8 @@ const BCrumb = [
 const EmployeeRequest = () => {
   const [loading, setLoading] = useState(false);
   const [employeeRequestData, setEmployeeRequestData] = useState<any>(null);
+  const [currentStatusDate, setCurrentStatusDate] = useState<any>(null);
+  const [labelText, setLabelText] = useState<any>(null);
   const { id } = useParams();
   const router = useRouter();
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -55,6 +57,13 @@ const EmployeeRequest = () => {
   const [responseMessage, setResponseMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [data, setData] = useState<any>({});
+
+  const statusLabelMap: any = {
+    creada: "Fecha de creación",
+    aprobada: "Fecha de aprobación",
+    rechazada: "Fecha de rechazo",
+    validada: "Fecha de validación",
+  };
 
   const fetchEmployeeRequestById = useCallback(
     (id: any) => {
@@ -68,6 +77,17 @@ const EmployeeRequest = () => {
                 id: data.responseObject.id,
               });
               fetchStatus(data.responseObject.request_id);
+
+              const currentStatusDate =
+                data.responseObject.employee_request_status?.find(
+                  (status: any) => status.request_status.id === data.responseObject.request_status.id,
+                )?.created_at || data.responseObject.created_at;
+
+              const statusName = data.responseObject.request_status.name;
+
+              setLabelText(statusLabelMap[statusName] || "Fecha");
+
+              setCurrentStatusDate(currentStatusDate);
             } else {
               if (data.message && data.message.includes("permisos")) {
                 setErrorResponse(data.message);
@@ -234,14 +254,11 @@ const EmployeeRequest = () => {
         <BlankCard>
           <CardContent>
             <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="space-between" mb={2}>
-              <Box textAlign="left">
-
-              </Box>
               <Box
                 sx={{
                   textAlign: {
                     xs: "center",
-                    sm: "right",
+                    sm: "left",
                   },
                 }}
               >
@@ -251,7 +268,22 @@ const EmployeeRequest = () => {
                   <Chip
                     size="medium"
                     color={employeeRequestData.request_status.btn_color}
-                    label={`${employeeRequestData.request_status.display_name} - ${formatDate(employeeRequestData.created_at, "dd/MM/yyyy HH:mm")}`}
+                    label={`Estatus: ${employeeRequestData.request_status.display_name}`}
+                  />
+                </Box>
+              </Box>
+              <Box textAlign="right">
+                {employeeRequestData.oficio ? (
+                  <Typography variant="h5">Oficio: {employeeRequestData.oficio}</Typography>
+                ) : (
+                  ""
+                )}
+                <Box mt={1}>
+                  <Chip
+                    size="medium"
+                    color="secondary"
+                    variant="outlined"
+                    label={`${labelText}: ${formatDate(currentStatusDate, "dd/MM/yyyy HH:mm")}`}
                   />
                 </Box>
               </Box>

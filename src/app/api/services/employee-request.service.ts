@@ -754,7 +754,7 @@ export const EmployeeRequestService = {
       approvedBy: {
         ...employeeRequest.resolved_by,
       },
-      employee_attendance_status: employeeRequest.EmployeeRequestStatus,
+      employee_request_status: employeeRequest.EmployeeRequestStatus,
     } as IEmployeeRequestResponse;
   },
   async updateEmployeeRequests(employeeRequest: IEmployeeRequestUpdateService) {
@@ -1219,7 +1219,7 @@ export const EmployeeRequestService = {
       schedule,
       prevSchedule,
     };
-    const direccionRH = await DireccionService.getDireccionByName("direccion_recursos_humanos");
+    const direccionRH = await DireccionService.getDireccionByName("direccion_de_recursos_humanos");
 
     const rhDirector = await prisma.administrativeOrganizationLeaders.findFirst({
       where: {

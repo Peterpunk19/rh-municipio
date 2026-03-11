@@ -18,6 +18,7 @@ describe("API: GET /employee-requests/:id/pdf", () => {
       }
       return {
         folio: "000001",
+        oficio: "000001",
         request_date: "2025-07-09T00:00:00.000Z",
         created_at: "2025-07-09T00:00:00.000Z",
         employee: {
@@ -89,6 +90,7 @@ describe("API: GET /employee-requests/:id/pdf", () => {
       if (description.includes("incomplete data")) {
         (EmployeeRequestService.getEmployeeRequestForPDF as jest.Mock).mockResolvedValueOnce({
           folio: "000001",
+          oficio: "000001",
           request_date: "2025-07-09T00:00:00.000Z",
           created_at: "2025-07-09T00:00:00.000Z",
           employee: {

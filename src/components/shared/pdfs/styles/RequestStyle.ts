@@ -139,19 +139,16 @@ const style = StyleSheet.create({
   },
   recipient: {
     marginTop: 20,
-    marginBottom: 20,
-  },
-  recipientName: {
-    fontSize: 11,
-    textTransform: "uppercase",
+    marginBottom: 15,
   },
   recipientTitle: {
-    fontSize: 11,
+    fontSize: 10,
+    fontWeight: "bold",
     textTransform: "uppercase",
   },
   present: {
-    fontSize: 11,
-    textTransform: "uppercase",
+    fontWeight: "bold",
+    fontSize: 10,
   },
   body: {
     marginTop: 20,
@@ -169,12 +166,12 @@ const style = StyleSheet.create({
     marginTop: 20,
   },
   signature: {
-    marginTop: 70,
+    marginTop: 30,
     textAlign: "center",
   },
   signatureLine: {
     fontSize: 10,
-    marginTop: 30,
+    marginTop: 20,
     borderTop: "1 solid black",
     paddingTop: 5,
     width: "60%",

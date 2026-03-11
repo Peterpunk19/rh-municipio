@@ -171,7 +171,7 @@ export interface IEmployeeRequestResponse {
     paternal_last_name: string;
     maternal_last_name: string;
   } | null;
-  employee_attendance_status: {
+  employee_request_status: {
     id: number;
     created_at: Date | null;
     created_by: {

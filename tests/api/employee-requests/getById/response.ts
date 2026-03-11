@@ -84,7 +84,7 @@ export const response = {
         username: "carloszh",
       },
       approvedBy: {},
-      employee_attendance_status: [
+      employee_request_status: [
         {
           id: 1,
           created_at: "2025-05-01T20:29:10.785Z",
