@@ -15,6 +15,7 @@ const PDFGenerator: React.FC<PDFGeneratorProps> = ({
   buttonProps = {},
   optionsConfig,
   buttonLabel,
+  validateBeforeDownload
 }) => {
   const options = optionsConfig?.options || [];
   const displayMode = optionsConfig?.displayMode || (options.length === 1 ? "button" : "dropdown");
@@ -24,6 +25,14 @@ const PDFGenerator: React.FC<PDFGeneratorProps> = ({
 
   const handleDownload = async (option?: PDFOption) => {
     if (!option) return;
+
+    if (validateBeforeDownload) {
+      const error = validateBeforeDownload(data);
+      if (error) {
+        alert(error);
+        return;
+      }
+    }
 
     const doc = <CustomTemplate data={data} title={title} />;
     const blob = await pdf(doc).toBlob();

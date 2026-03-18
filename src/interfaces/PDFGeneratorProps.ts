@@ -8,6 +8,7 @@ export interface PDFGeneratorProps {
   buttonProps?: any;
   optionsConfig?: PDFOptionsConfig;
   buttonLabel?: string;
+  validateBeforeDownload?: (data: any) => string | null;
 }
 
 export interface PDFOption {

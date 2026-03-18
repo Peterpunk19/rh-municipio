@@ -103,7 +103,7 @@ const formatDateTextHelper = (day: string, month: string, year: string, showYear
   if (year === currentYear && !showYearNumber) {
     return `${dayFormatted} de ${capitalizedMonth} del presente año`;
   } else {
-    return `${dayFormatted} de ${capitalizedMonth} del ${year}`;
+    return `${dayFormatted} de ${capitalizedMonth} de ${year}`;
   }
 };
 

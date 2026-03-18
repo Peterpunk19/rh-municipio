@@ -24,6 +24,7 @@ export async function GET(request: Request) {
       start_date: null,
       end_date: null,
       search: null,
+      created_at: null,
     };
 
     const requestParams = await getParamsFromUrl(request, params);

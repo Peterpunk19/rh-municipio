@@ -12,7 +12,7 @@ import { header as adminHeader } from "./(list)/Header";
 import type { RootState } from "@/store/store";
 import PageContainer from "@/app/components/container/PageContainer";
 import CustomIncidentStatusComponent from "@/components/customComponents/CustomIncidentStatusComponent";
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import Breadcrumb from "@/components/shared/breadcrumb/Breadcrumb";
 import { IncidentCreateModal } from "./IncidentCreateModal";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -22,6 +22,9 @@ import IncidentDetailModal from "@/app/(protected)/employee/incidents/IncidentDe
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
+import PDFGenerator from "@/components/shared/pdfs/PDFGenerator";
+import EmployeeIncidentsReportTemplate from "@/components/shared/pdfs/templates/EmployeeIncidentsReportTemplate";
+import { formatDate } from "@/utils/formatter";
 
 const BCrumb = [
   {
@@ -74,14 +77,32 @@ export default function EmployeesIncidents({
   const emptyMessage = useSelector((state) => state.employeesIncidentsSlice.emptyMessage);
 
   const createLink = (
-    <Button
-      {...(role === ROLES.ADMIN ? { href: "/admin/employees-incidents/create" } : { onClick: handleOpenModal })}
-      fullWidth
-      variant="contained"
-      color="primary"
-    >
-      Crear Incidencia
-    </Button>
+    <Stack direction="row" spacing={2}>
+      <Button
+        {...(role === ROLES.ADMIN ? { href: "/admin/employees-incidents/create" } : { onClick: handleOpenModal })}
+        variant="contained"
+        color="primary"
+      >
+        Crear Incidencia
+      </Button>
+
+      <PDFGenerator
+        data={{
+          items,
+          date: values.created_at ?? "",
+        }}
+        title="Formato de incidencia"
+        fileName={`Reporte_Incidencias_${formatDate(values.created_at, "ddMMyyyy")}`}
+        template={EmployeeIncidentsReportTemplate as any}
+        optionsConfig={{
+          displayMode: "button",
+        }}
+        validateBeforeDownload={(data) => {
+          if (!data?.date) return "Debes seleccionar una fecha";
+          return null;
+        }}
+      />
+    </Stack>
   );
 
   const handleOpenDetailModal = (incidentId: string) => {

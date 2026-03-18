@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import {useTheme} from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -31,6 +30,7 @@ import {RowDetail} from "@/components/tables/RowDetail";
 import {RowSwitch} from "@/components/tables/RowSwitch";
 import {Chip} from "@mui/material";
 import {generateUniqueKey} from "@/utils";
+import ActiveFiltersChips from "@/components/tables/ActiveFiltersChips";
 
 interface TableItemBase {
   id: number;
@@ -82,7 +82,7 @@ const TableWithPagination = <T extends TableItemBase>({
 
     return `${adjustedFrom}–${adjustedTo} de ${count}`;
   };
-  const {values: initialValuesFromRedux} = useSelector((state: RootState) => state.filters[entity]);
+  const {values: initialValuesFromRedux, filterOpen} = useSelector((state: RootState) => state.filters[entity]);
 
   const {filters, selectedValues, handleFilterChange} = useDynamicFilters(filtersConfig(), initialValuesFromRedux);
 
@@ -92,9 +92,6 @@ const TableWithPagination = <T extends TableItemBase>({
     dispatch(updateLimit(newLimit));
     dispatch(updatePage(1));
   };
-
-  const theme = useTheme();
-  const borderColor = theme.palette.divider;
 
   const DynamicCell = ({row, headCell}: { row: T; headCell: HeadCell }) => {
     const value = getNestedValue(row, headCell.id);
@@ -304,6 +301,9 @@ const TableWithPagination = <T extends TableItemBase>({
           }))}
           entity={entity}
         />
+
+        {!filterOpen && <ActiveFiltersChips entity={entity} filters={filters}/>}
+
         {children}
         <Paper sx={{mt: 1}}>
           <TableContainer>

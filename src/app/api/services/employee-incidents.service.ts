@@ -6,7 +6,7 @@ import {
   IEmployeeIncidentUpdate,
   IEmployeeIncidentsBulkCreate,
 } from "@/app/api/employee-incidents/types";
-import { buildWhereClause, getPaginationData } from "@/common/utils";
+import { buildWhereClause, endOfDay, getPaginationData, startOfDay } from "@/common/utils";
 import { INCIDENT_STATUS_ID } from "@/common/constants/IncidentStatus";
 import { ROLES, ROLES_ID_VALUES } from "@/common/constants/Roles";
 import { getActiveDaysFromSchedules, getVacationDayValue } from "@/app/api/common/utils.service";
@@ -475,6 +475,13 @@ export const EmployeeIncidentsService = {
       incident_status_id: "incident_status_id",
       start_date: "start_date",
       end_date: "end_date",
+      created_at: {
+        path: "created_at",
+        transform: (value: any) => ({
+          gte: startOfDay(value),
+          lte: endOfDay(value),
+        }),
+      },
     };
 
     const whereClause: any = await buildWhereClause(filterMappings, employeeIncidentsFilters);
