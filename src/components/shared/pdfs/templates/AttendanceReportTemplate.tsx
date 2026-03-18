@@ -2,7 +2,6 @@ import React from "react";
 import { Document, Page, View, Text, Image } from "@react-pdf/renderer";
 import styles from "@/components/shared/pdfs/styles/AttendanceStyle";
 import { formatDate, formatScheduleText } from "@/utils/formatter";
-import { split } from "lodash";
 
 type AttendanceItem = {
   check_in: string | Date | null;

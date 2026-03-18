@@ -148,6 +148,13 @@ export const EmployeeIncidentsGetFilterSchema = z.object({
     )
     .optional()
     .nullable(),
+  created_at: z
+    .preprocess(
+      (val) => validateDate(val),
+      z.date({ message: validationMessages.invalidaFormat("Fecha de terminacion") }),
+    )
+    .optional()
+    .nullable(),
   search: z
     .union([
       z

@@ -1,4 +1,5 @@
 import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
+import {formatDate} from "@/utils/formatter";
 
 interface EntityFiltersState {
   sortBy: string;
@@ -15,6 +16,7 @@ interface EntityConfig {
   initialSearchTerm?: string;
   title?: string;
   showSearchBar?: boolean;
+  values?: Record<string, any>;
 }
 
 export const createFiltersSlice = (configs: EntityConfig[]) => {
@@ -24,7 +26,7 @@ export const createFiltersSlice = (configs: EntityConfig[]) => {
     initialState[config.name] = {
       sortBy: config.initialSortBy || "id",
       searchTerm: config.initialSearchTerm || "",
-      values: {},
+      values: config.values || {},
       filterOpen: false,
       title: config.title || "",
       showSearchBar: config.showSearchBar ?? true,
@@ -98,6 +100,9 @@ const employeesIncidentsConfig: EntityConfig = {
   initialSortBy: "name",
   title: "Incidencias de empleados",
   showSearchBar: true,
+  values: {
+    created_at: formatDate(new Date(), "yyyy-MM-dd")
+  }
 };
 
 const employeeRequestsConfig: EntityConfig = {
