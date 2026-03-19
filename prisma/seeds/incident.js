@@ -186,5 +186,16 @@ const incident = [
     allow_bulk_creation: false,
     bgColorOnCalendar: "error.main",
   },
+  {
+    id: 18,
+    name: "permiso_economico_cumpleanos",
+    display_name: "PERMISO ECONOMICO POR CUMPLEAÑOS",
+    type: 1,
+    active: true,
+    display_calendar_dates: true,
+    display_time_on_calendar: false,
+    allow_bulk_creation: false,
+    bgColorOnCalendar: "error.main",
+  },
 ];
 module.exports = incident;

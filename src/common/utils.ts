@@ -433,3 +433,10 @@ export const validateIncidentDateConflicts = async (
 
   return { hasConflicts: false };
 };
+
+export const isSameDayAndMonth = (date1: Date | string, date2: Date | string) => {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+
+  return d1.getUTCDate() === d2.getUTCDate() && d1.getUTCMonth() === d2.getUTCMonth();
+};

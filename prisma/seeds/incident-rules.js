@@ -1,4 +1,4 @@
-const { generateRules } = require("./incident-rules-generator");
+const { generateRules, generateForAllEmployeeTypes } = require("./incident-rules-generator");
 const employeeTypeData = require("./employee-type");
 const incidentData = require("./incident");
 
@@ -48,6 +48,7 @@ const incident = {
   VACACIONES: incidentData.find((i) => i.name === "vacaciones").id,
   COMISION: incidentData.find((i) => i.name === "comision").id,
   LICENCIA_MEDICA: incidentData.find((i) => i.name === "licencia_medica").id,
+  PERMISO_ECONOMICO_CUMPLEANOS: incidentData.find((i) => i.name === "permiso_economico_cumpleanos").id,
 };
 
 const paternityRules = [
@@ -506,6 +507,11 @@ const contratoLaudoPermisoEconomico = [
   }),
 ];
 
+const permisoCumpleanosRules = generateForAllEmployeeTypes(employeeTypes, incident.PERMISO_ECONOMICO_CUMPLEANOS, {
+  days: 1,
+  allMonths: true,
+});
+
 module.exports = [
   ...lactanciaRules,
   ...paternityRules,
@@ -517,4 +523,5 @@ module.exports = [
   ...contratoLaudoPermisoEconomico,
   ...contratoGastoCorrienteRules,
   ...contratoFondoIVRules,
+  ...permisoCumpleanosRules,
 ];

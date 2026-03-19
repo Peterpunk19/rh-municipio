@@ -20,6 +20,7 @@ export const HttpMessages = {
   employeeIncidents: {
     invalidData: "Ya existe una incidencia con estos datos",
     incidentsRolesPermissionsCreateFailed: "No puedes crear este tipo de incidencia",
+    incidentPermissionByBirthdayFailed: "Solo puede ser seleccionada la fecha de cumpleaños",
     openIncapacity:
       "El empleado ya tiene una incapacidad creada. Debe aprobarse o rechazarse antes de crear una nueva.",
     incidentsRolesPermissionsViewFailed: "No puedes ver este tipo de incidencia",

@@ -16,6 +16,7 @@ export enum IncidentTypes {
   RETARDO_MAYOR = "retardo_mayor",
   SUSPENSION = "suspension",
   ARRESTO = "arresto",
+  PERMISO_ECONOMICO_CUMPLEANOS = "permiso_economico_cumpleanos",
 }
 
 export const INCIDENT_TYPES_ID = {
@@ -36,4 +37,5 @@ export const INCIDENT_TYPES_ID = {
   RETARDO_MAYOR: 15,
   SUSPENSION: 16,
   ARRESTO: 17,
+  PERMISO_ECONOMICO_CUMPLEANOS: 18,
 };
