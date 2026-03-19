@@ -39,6 +39,15 @@ export const updateEmployee = async (employeeId: number, data: object): Promise<
   }
 };
 
+export const getEmployeesByLocation = async (locationId: number): Promise<IResponse> => {
+  try {
+    const response = await http.get<IResponse>(`/api/employees?location=${locationId}`);
+    return response.data;
+  } catch (error: any) {
+    return error;
+  }
+};
+
 export const getEmployeeJobSchedule = async (employeeId: number) => {
   try {
     const response = await fetch(`/api/employees/${employeeId}/job-schedule`);

@@ -308,6 +308,8 @@ export const EmployeeIncidentsService = {
       description,
       oficio,
       incidentDates,
+      startHour,
+      endHour,
       roleId,
       userId,
       createdBy,
@@ -327,10 +329,50 @@ export const EmployeeIncidentsService = {
       incidentDates: incidentDates ?? [],
     };
 
-    const buildBodyForEmployee = (employeeId: number) => {
+    const buildBodyForEmployee = async (employeeId: number, tx?: any) => {
       const b: any = { ...baseBody, employeeId: Number(employeeId) };
 
       if (b.incidentId === INCIDENT_TYPES_ID.LACTANCIA) {
+        b.incidentDates = generateIncidentDates(b.startDate, b.endDate);
+      }
+
+      if (b.incidentId === INCIDENT_TYPES_ID.ARRESTO) {
+        const getHourDisplayName = async (hourId: number) => {
+          const prismaClient = tx || prisma;
+          const hour = await prismaClient.hour.findUnique({
+            where: { id: hourId },
+            select: { display_name: true },
+          });
+          return hour?.display_name || "00:00:00";
+        };
+
+        const combineDateAndHour = (date: Date, hourId: number | null, hourDisplayName?: string): Date => {
+          if (!hourId) {
+            return new Date(date.toISOString().split("T")[0] + "T00:00:00.000Z");
+          }
+
+          const hourStr = hourDisplayName || "00:00:00";
+          const [hours, minutes, seconds] = hourStr.split(":").map(Number);
+
+          const combined = new Date(date);
+          combined.setHours(hours, minutes, seconds || 0, 0);
+
+          return combined;
+        };
+
+        let startHourDisplayName = "00:00:00";
+        let endHourDisplayName = "00:00:00";
+
+        if (startHour) {
+          startHourDisplayName = await getHourDisplayName(startHour);
+        }
+        if (endHour) {
+          endHourDisplayName = await getHourDisplayName(endHour);
+        }
+
+        b.startDate = combineDateAndHour(b.startDate, startHour || null, startHourDisplayName);
+        b.endDate = combineDateAndHour(b.endDate, endHour || null, endHourDisplayName);
+
         b.incidentDates = generateIncidentDates(b.startDate, b.endDate);
       }
 
@@ -338,7 +380,7 @@ export const EmployeeIncidentsService = {
     };
 
     const validateAndCreateOne = async (employeeId: number, folio: string, tx?: any) => {
-      const body = buildBodyForEmployee(employeeId);
+      const body = await buildBodyForEmployee(employeeId, tx);
 
       body.folio = folio;
 
@@ -376,7 +418,7 @@ export const EmployeeIncidentsService = {
       }
 
       const rulesValidation = await IncidentRulesService.validateIncidentRules(body);
-      if (rulesValidation && !rulesValidation.success) {
+      if (rulesValidation && !rulesValidation.success && (rulesValidation.responseObject as any)?.hasRules !== false) {
         return { ok: false, error: rulesValidation };
       }
 

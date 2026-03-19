@@ -202,4 +202,6 @@ export interface IEmployeeIncidentsBulkCreate {
   description: string;
   oficio?: string | null;
   incidentDates?: string[];
+  startHour?: number | null;
+  endHour?: number | null;
 }
