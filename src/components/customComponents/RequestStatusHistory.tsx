@@ -53,7 +53,7 @@ const RequestStatusHistory: React.FC<Props> = ({ data }) => {
                     {formatDate(row.created_at, "dd/MM/yyyy HH:mm")}
                   </Typography>
                   <Typography variant="subtitle2" fontWeight={600} component="div">
-                    {`SOLICITUD ${row.request_status.display_name} POR ${row.created_by.name} ${row.created_by.paternal_last_name} ${row.created_by.maternal_last_name}`}
+                    {`Solicitud ${row.request_status.display_name} por ${row.created_by.name} ${row.created_by.paternal_last_name} ${row.created_by.maternal_last_name}`}
                   </Typography>
                 </Box>
               </Box>

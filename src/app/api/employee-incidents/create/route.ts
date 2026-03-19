@@ -17,12 +17,19 @@ import {
   validateIncidentsRolesPermissions,
 } from "@/app/api/common/utils.service";
 import { logger } from "@/lib/logger";
-import { failureResponse, getRoleValueById, validateDireccionAccess, validateIncidentDatesRange } from "@/common/utils";
+import {
+  failureResponse,
+  getRoleValueById,
+  isSameDayAndMonth,
+  validateDireccionAccess,
+  validateIncidentDatesRange,
+} from "@/common/utils";
 import { EmployeeService } from "@/app/api/services/employee.service";
 import { INCIDENTS_ROLES_PERMISSIONS } from "@/common/constants/IncidentsRolesPermissions";
 import { IncidentRulesService } from "@/app/api/services/incident-rules.service";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { generateIncidentDates, validateIncidentDateConflicts } from "@/common/utils";
+import { isSameDay } from "date-fns";
 
 export async function POST(request: NextRequest) {
   const validationRequest = await validateRequest<IEmployeeIncident>(request, EmployeeIncidentsPostSchema);
@@ -98,6 +105,14 @@ export async function POST(request: NextRequest) {
     if (rulesValidation && rulesValidation.success && body.incidentId === INCIDENT_TYPES_ID.LICENCIA_MEDICA) {
       const licenciaMedicaData = rulesValidation.responseObject as any;
       body.incidentDatesWithPercentage = assignPercentageDays(body.incidentDates, licenciaMedicaData);
+    }
+
+    if (body.incidentId === INCIDENT_TYPES_ID.PERMISO_ECONOMICO_CUMPLEANOS) {
+      const employee = await EmployeeService.getEmployeeById(Number(body.employeeId));
+
+      if (!isSameDayAndMonth(employee.birthday, body.startDate)) {
+        return failureResponse(HttpMessages.employeeIncidents.incidentPermissionByBirthdayFailed);
+      }
     }
 
     const datesToCheck = body.incidentDates || [];

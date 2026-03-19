@@ -213,6 +213,17 @@ const basePermissions = [
     can_reject: false,
     can_edit: false,
   },
+  {
+    incident_id: 18,
+    // name: "permiso_economico_cumpleanos",
+    can_view: false,
+    can_create: false,
+    can_approve: false,
+    can_cancel: false,
+    can_delete: false,
+    can_reject: false,
+    can_edit: false,
+  },
 ];
 
 const incidentsRolesPermission = [];

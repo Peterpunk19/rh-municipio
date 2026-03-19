@@ -28,4 +28,18 @@ function generateRules({ employee_type_id, incidentConfigs, months = [] }) {
   return rules;
 }
 
-module.exports = { generateRules };
+const generateForAllEmployeeTypes = (employeeTypes, incident_id, config = {}) => {
+  return Object.values(employeeTypes).flatMap((employee_type_id) =>
+    generateRules({
+      employee_type_id,
+      incidentConfigs: [
+        {
+          incident_id,
+          ...config,
+        },
+      ],
+    }),
+  );
+};
+
+module.exports = { generateRules, generateForAllEmployeeTypes };

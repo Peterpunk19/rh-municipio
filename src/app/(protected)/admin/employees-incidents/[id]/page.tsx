@@ -62,6 +62,7 @@ const EmployeeIncident = () => {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [data, setData] = useState<any>({});
   const [incidentStatus, setIncidentStatus] = useState<any>([]);
+  const [currentStatus, setCurrentStatus] = useState<any>(null);
 
   const fetchEmployeeIncidentById = (id: any) => {
     try {
@@ -74,6 +75,13 @@ const EmployeeIncident = () => {
               id: data.responseObject.id,
             });
 
+            setCurrentStatus(
+              data.responseObject.employee_incidents_status?.find(
+                (s: any) => s.incident_status.id === data.responseObject.incident_status_id,
+              ),
+            );
+
+            console.log(currentStatus);
             await fetchStatus(data.responseObject.incident_id);
 
             getEmployeeIncidentById(id as string, true, data.responseObject.created_at)
@@ -269,6 +277,22 @@ const EmployeeIncident = () => {
           <BlankCard>
             <CardContent>
               <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="space-between" mb={2}>
+                <Box textAlign="left">
+                  <Typography variant="h5">Folio: {employeeIncidentData.folio}</Typography>
+                  <Box mt={1}>
+                    <Chip
+                      variant="outlined"
+                      size="medium"
+                      color={employeeIncidentData.incident_status.btn_color}
+                      label={`${employeeIncidentData.incident_status.display_name} - ${
+                        currentStatus
+                          ? formatDate(currentStatus.created_at, "dd/MM/yyyy HH:mm")
+                          : formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")
+                      }`}
+                    />
+                  </Box>
+                </Box>
+
                 <Box
                   sx={{
                     textAlign: {
@@ -277,26 +301,9 @@ const EmployeeIncident = () => {
                     },
                   }}
                 >
-                  <Typography variant="h5">Oficio: {employeeIncidentData.folio}</Typography>
-                  <Box mt={1}>
-                    <Chip
-                      size="medium"
-                      color="secondary"
-                      variant="outlined"
-                      label={formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}
-                    ></Chip>
-                  </Box>
-                </Box>
-
-                <Box textAlign="right">
-                  <Typography variant="h5">Folio: {employeeIncidentData.folio}</Typography>
-                  <Box mt={1}>
-                    <Chip
-                      size="medium"
-                      color={employeeIncidentData.incident_status.btn_color}
-                      label={`${employeeIncidentData.incident_status.display_name} - ${formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")}`}
-                    />
-                  </Box>
+                  {employeeIncidentData.oficio && (
+                    <Typography variant="h5">Oficio: {employeeIncidentData.oficio}</Typography>
+                  )}
                 </Box>
               </Stack>
               <Divider></Divider>
