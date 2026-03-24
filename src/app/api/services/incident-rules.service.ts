@@ -132,6 +132,10 @@ export const IncidentRulesService = {
     const rule = await this.getApplicableRule(incidentId, employeeTypeId, yearsOfService, month);
 
     if (!rule) {
+      return HttpResponse.failure(HttpMessages.incidentRules.notAllowedForEmployeeType, {});
+    }
+
+    /* if (!rule) {
       const hasRules = INCIDENT_TYPES_ID.VACACIONES === incidentId && yearsOfService === 0 ? true : false;
       return HttpResponse.success(
         hasRules ? HttpMessages.incidentRules.notMinYears : HttpMessages.incidentRules.notFound,
@@ -144,7 +148,7 @@ export const IncidentRulesService = {
           hasRules: hasRules,
         },
       );
-    }
+    } */
 
     let periodStart: Date | undefined;
     let periodEnd: Date | undefined;
@@ -153,7 +157,7 @@ export const IncidentRulesService = {
       periodStart = new Date(baseYear, startMonth - 1, 1);
       periodEnd = new Date(baseYear, endMonth, 0);
     };
-    let allowed_days = rule.days;
+    let allowed_days = rule.max_days;
 
     if (incidentId === INCIDENT_TYPES_ID.PERMISO_ECONOMICO) {
       const annualRule = await prisma.incidentRules.findFirst({
@@ -168,8 +172,8 @@ export const IncidentRulesService = {
         },
         orderBy: [{ min_years: "desc" }],
       });
-      if (annualRule && (annualRule.days ?? 0) > (allowed_days ?? 0)) {
-        allowed_days = annualRule.days;
+      if (annualRule && (annualRule.max_days ?? 0) > (allowed_days ?? 0)) {
+        allowed_days = annualRule.max_days;
         periodStart = undefined;
         periodEnd = undefined;
       } else if (rule.start_date && rule.end_date) {
@@ -211,6 +215,7 @@ export const IncidentRulesService = {
           used_days: 0,
           remaining_days: 0,
           hasRules: true,
+          rule,
         });
       }
     }
@@ -223,6 +228,7 @@ export const IncidentRulesService = {
         used_days: 0,
         remaining_days: 0,
         hasRules: true,
+        rule,
       });
     }
 
@@ -236,6 +242,7 @@ export const IncidentRulesService = {
       used_days,
       remaining_days,
       hasRules: true,
+      rule,
     });
   },
 
@@ -249,8 +256,8 @@ export const IncidentRulesService = {
         endDate: body.endDate ? new Date(body.endDate) : undefined,
       });
 
-      if (!ruleValidation?.success) {
-        return null;
+      if (!ruleValidation.success) {
+        return ruleValidation;
       }
 
       const responseObject = ruleValidation.responseObject as IncidentRulesValidationResult;
@@ -265,6 +272,22 @@ export const IncidentRulesService = {
 
       if (!body.incidentDates?.length) {
         return null;
+      }
+
+      const requestedDays = body.incidentDates.length;
+
+      if (requestedDays < (responseObject.rule?.min_days ?? 1)) {
+        return HttpResponse.failure("Debe solicitar al menos los días mínimos permitidos", {
+          requestedDays,
+          minDays: responseObject.rule?.min_days ?? 1,
+        });
+      }
+
+      if (requestedDays > responseObject.allowed_days) {
+        return HttpResponse.failure(HttpMessages.incidentRules.notAvailableDays, {
+          requestedDays,
+          allowedDays: responseObject.allowed_days,
+        });
       }
 
       const jobSchedules = await EmployeeService.getCurrentJobSchedule(Number(body.employeeId));
@@ -347,7 +370,7 @@ export const IncidentRulesService = {
             monthlyRule.start_date === month &&
             monthlyRule.end_date === month
           ) {
-            monthlyCap = monthlyRule.days;
+            monthlyCap = monthlyRule.max_days;
           }
 
           if ((usedInMonth ?? 0) + toInsert > monthlyCap) {

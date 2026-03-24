@@ -200,6 +200,7 @@ export const HttpMessages = {
   },
   incidentRules: {
     getSuccess: "Validaciones encontradas correctamente",
+    notAllowedForEmployeeType: "Esta incidencia no está permitida para el tipo de empleado",
     notFound: "No se encontraron validaciones para esta incidencia",
     notAvailableDays: "Se superó el numero de dias disponibles para esta incidencia",
     notMinYears: "El empleado aún no cumple con los años mínimos para esta incidencia",

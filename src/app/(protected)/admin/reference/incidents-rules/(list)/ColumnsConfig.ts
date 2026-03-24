@@ -3,7 +3,8 @@ import type { ColumnTypeConfig } from "@/interfaces/ColumnTypeConfig";
 export const columnTypeConfig: Record<string, ColumnTypeConfig> = {
   "employee_type.display_name": { renderType: "text" },
   "incident.name": { renderType: "text" },
-  days: { renderType: "text" },
+  min_days: { renderType: "text" },
+  max_days: { renderType: "text" },
   start_date: { renderType: "monthName" },
   end_date: { renderType: "monthName" },
   min_years: { renderType: "text" },

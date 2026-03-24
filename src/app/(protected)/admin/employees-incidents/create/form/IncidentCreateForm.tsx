@@ -51,7 +51,7 @@ import { validateIncidentDays } from "@/services/incident-validation";
 import type { IResponse } from "@/utils/types";
 import IncidentDaysInfo from "@/components/customComponents/IncidentDaysInfo";
 import { HttpMessages } from "@/common/response/messages";
-import { getFirstDayMonthString } from "@/common/utils";
+import { getFirstDayMonthString, getMonthsBetween } from "@/common/utils";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { MiniMonthCalendar } from "@/components/customComponents/MiniMonthCalendar";
 import { SuccessActionDialog } from "@/components/customComponents/SuccessActionDialog";
@@ -67,33 +67,6 @@ type IncidentCreateFormProps = {
   onClose?: () => void;
   isSubmitting?: boolean;
 };
-
-function safeDateFromISO(date: string) {
-  const [y, m, d] = date.split("-").map(Number);
-  return new Date(y, m - 1, d, 12);
-}
-
-function getMonthsBetween(start: string, end: string) {
-  const months: { year: number; month: number }[] = [];
-
-  const startDateOnly = start.split(" ")[0];
-  const endDateOnly = end.split(" ")[0];
-
-  const startDate = safeDateFromISO(startDateOnly);
-  const endDate = safeDateFromISO(endDateOnly);
-
-  const cursor = new Date(startDate.getFullYear(), startDate.getMonth(), 1, 12);
-
-  while (cursor <= endDate) {
-    months.push({
-      year: cursor.getFullYear(),
-      month: cursor.getMonth(),
-    });
-    cursor.setMonth(cursor.getMonth() + 1);
-  }
-
-  return months;
-}
 
 const IncidentCreateForm = ({
   selectedEmployee,

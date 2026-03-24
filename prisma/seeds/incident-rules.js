@@ -512,6 +512,20 @@ const permisoCumpleanosRules = generateForAllEmployeeTypes(employeeTypes, incide
   allMonths: true,
 });
 
+const permisoSinGoceRules = [
+  ...generateRules({
+    employee_type_id: employeeTypes.BASE_SINDICALIZADO,
+    incidentConfigs: [
+      {
+        incident_id: incident.PERMISO_SIN_GOCE,
+        min_days: 30,
+        days: 365,
+      },
+    ],
+    months: monthlyMonths,
+  }),
+];
+
 module.exports = [
   ...lactanciaRules,
   ...paternityRules,
@@ -524,4 +538,5 @@ module.exports = [
   ...contratoGastoCorrienteRules,
   ...contratoFondoIVRules,
   ...permisoCumpleanosRules,
+  ...permisoSinGoceRules,
 ];
