@@ -2,7 +2,7 @@ function generateRules({ employee_type_id, incidentConfigs, months = [] }) {
   const rules = [];
 
   for (const config of incidentConfigs) {
-    const { incident_id, min_years, max_years, days, allMonths = false } = config;
+    const { incident_id, min_years, max_years, days, min_days = 1, allMonths = false } = config;
 
     const targetMonths = allMonths ? [{ start_date: null, end_date: null }] : months;
 
@@ -10,7 +10,8 @@ function generateRules({ employee_type_id, incidentConfigs, months = [] }) {
       const rule = {
         incident_id,
         employee_type_id,
-        days,
+        min_days,
+        max_days: days,
         start_date,
         end_date,
         min_years,

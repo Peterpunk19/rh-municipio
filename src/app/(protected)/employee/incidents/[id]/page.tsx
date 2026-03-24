@@ -141,7 +141,7 @@ const EmployeeIncident = () => {
                         <Divider></Divider>
                       </Grid>
                       <Grid size={{ lg: 9, xs: 12 }}>
-                        <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
+                        <Typography variant="body2" color="text.secondary">
                           {employeeIncidentData.description}
                         </Typography>
                       </Grid>

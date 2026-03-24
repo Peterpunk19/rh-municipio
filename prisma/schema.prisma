@@ -284,7 +284,7 @@ model EmployeeIncidents {
   direccion                 Direccion?                @relation("direccion", fields: [direccion_id], references: [id])
   active                    Boolean                   @default(true)
 
-  @@unique([employee_id, start_date, end_date, incident_status_id, incident_id])
+  @@unique([employee_id, start_date, end_date, incident_id])
   employee_attendance_incident EmployeeAttendanceIncident[]
 }
 
@@ -354,7 +354,8 @@ model IncidentRules {
   incident         Incident @relation(fields: [incident_id], references: [id])
   employee_type_id Int
   employee_type    EmployeeType @relation(fields: [employee_type_id], references: [id])
-  days             Int
+  min_days             Int @default(1)
+  max_days             Int
   start_date       Int?
   end_date         Int?
   min_years        Int      @default(0)

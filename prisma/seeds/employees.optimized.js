@@ -194,6 +194,7 @@ module.exports = async function seedEmployeesOptimized({
       occupation_id: e.occupationId ?? null,
       identification_type_id: e.identificationTypeId ? Number(e.identificationTypeId) : null,
       identification_folio: e.identificationFolio,
+      antiguedad_start_date: e.hiringDate ? new Date(e.hiringDate) : e.startJobDate ? new Date(e.startJobDate) : null,
       trade_union_id: tradeUnionMap[normalizeName(e.tradeUnionDisplayName)]?.id ?? null,
       user_id: userId,
       active: true,

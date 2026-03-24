@@ -14,10 +14,16 @@ export const header: readonly HeadCell[] = [
     label: "Tipo de incidencia",
   },
   {
-    id: "days",
+    id: "min_days",
     numeric: false,
     disablePadding: false,
-    label: "Días",
+    label: "Minimo de Días",
+  },
+  {
+    id: "max_days",
+    numeric: false,
+    disablePadding: false,
+    label: "Máximo de Días",
   },
   {
     id: "start_date",

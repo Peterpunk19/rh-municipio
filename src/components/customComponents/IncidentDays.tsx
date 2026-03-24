@@ -6,15 +6,23 @@ import Box from "@mui/material/Box";
 import { IEmployeeIncidentDetails } from "@/components/types/IEmployeeIncident";
 import { formatDate } from "@/utils/formatter";
 import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
+import {MiniMonthCalendar} from "@/components/customComponents/MiniMonthCalendar";
+import {getMonthsBetween} from "@/common/utils";
 
 type Props = {
   data: IEmployeeIncidentDetails;
 };
 
 const IncidentDays: React.FC<Props> = ({ data }) => {
-  const { employee_incident_days, incident_id } = data;
+  const { employee_incident_days, incident_id, start_date, end_date } = data;
 
-  const groupDaysByPercentage = () => {
+  const selectedDates = employee_incident_days.map((d) =>
+    new Date(d.date).toISOString().split("T")[0]
+  );
+  const startDate = new Date(start_date).toISOString().split("T")[0];
+  const endDate = new Date(end_date).toISOString().split("T")[0];
+
+const groupDaysByPercentage = () => {
     const groups: { [key: number]: any[] } = {};
 
     employee_incident_days.forEach((item: any) => {
@@ -84,16 +92,41 @@ const IncidentDays: React.FC<Props> = ({ data }) => {
                 ))}
               </>
             ) : (
-              employee_incident_days.map((item: { date: string }, index) => (
-                <Chip
-                  key={index}
-                  label={formatDate(item.date, "dd/MM/yyyy")}
-                  color="primary"
-                  variant="outlined"
-                  size="small"
-                  sx={{ mr: 1 }}
-                />
-              ))
+              <Box
+                sx={{
+                  border: 1,
+                  borderColor: "grey.300",
+                  borderRadius: 1,
+                  p: 2,
+                  minHeight: 56,
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 1,
+                  backgroundColor: "primary.light",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      sm: "repeat(2, 1fr)",
+                    },
+                    gap: 2,
+                  }}
+                >
+                  {getMonthsBetween(startDate, endDate).map(({ year, month }) => (
+                    <MiniMonthCalendar
+                      key={`${year}-${month}`}
+                      year={year}
+                      month={month}
+                      selectedDates={selectedDates}
+                      onToggleDate={undefined}
+                    />
+                  ))}
+                </Box>
+              </Box>
             )}
           </Grid>
         </Grid>

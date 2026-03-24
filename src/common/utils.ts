@@ -440,3 +440,30 @@ export const isSameDayAndMonth = (date1: Date | string, date2: Date | string) =>
 
   return d1.getUTCDate() === d2.getUTCDate() && d1.getUTCMonth() === d2.getUTCMonth();
 };
+
+function safeDateFromISO(date: string) {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(y, m - 1, d, 12);
+}
+
+export const getMonthsBetween = (start: string, end: string) => {
+  const months: { year: number; month: number }[] = [];
+
+  const startDateOnly = start.split(" ")[0];
+  const endDateOnly = end.split(" ")[0];
+
+  const startDate = safeDateFromISO(startDateOnly);
+  const endDate = safeDateFromISO(endDateOnly);
+
+  const cursor = new Date(startDate.getFullYear(), startDate.getMonth(), 1, 12);
+
+  while (cursor <= endDate) {
+    months.push({
+      year: cursor.getFullYear(),
+      month: cursor.getMonth(),
+    });
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  return months;
+};

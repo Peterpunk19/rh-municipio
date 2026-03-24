@@ -24,7 +24,6 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } 
 import { formatDate } from "@/utils/formatter";
 import { logger } from "@/lib/logger";
 import CardContent from "@mui/material/CardContent";
-import { generateUniqueKey } from "@/utils";
 import CustomSelect from "@/app/components/forms/theme-elements/CustomSelect";
 import EmployeeDetails from "@/components/customComponents/EmployeeDetails";
 import IncidentStatusHistory from "@/components/customComponents/IncidentStatusHistory";
@@ -212,7 +211,7 @@ const EmployeeIncident = () => {
         <Grid size={12}>
           <Grid container>
             <Grid size={{ lg: 6, xs: 12 }}>
-              {incidentStatus.length ? (
+              {incidentStatus.length && (
                 <Box>
                   <CustomSelect
                     value={data.incidentStatusId || 0}
@@ -225,125 +224,124 @@ const EmployeeIncident = () => {
                       },
                     }}
                   >
-                    <MenuItem key={generateUniqueKey()} value={0}>
+                    <MenuItem key={0} value={0}>
                       Cambiar estatus de incidencia
                     </MenuItem>
                     {incidentStatus.map((item: any) => (
-                      <MenuItem key={generateUniqueKey()} value={item.id}>
+                      <MenuItem key={item.id} value={item.id}>
                         {item.display_name}
                       </MenuItem>
                     ))}
                   </CustomSelect>
                 </Box>
-              ) : null}
-            </Grid>
-            <Grid size={{ lg: 6, xs: 12 }}>
-              <Stack direction={{ xs: "column", sm: "row" }} justifyContent="flex-end" sx={{ width: "100%" }}>
-                <Box display="flex" gap={1}>
-                  <PDFGenerator
-                    data={{
-                      ...employeeIncidentData,
-                      signatory: signatoryData,
-                      immediateResponsible: immediateResponsibleData,
-                    }}
-                    title="Formato de incidencia"
-                    fileName={`incidencia-${employeeIncidentData.folio}`}
-                    template={
-                      employeeIncidentData.incident?.name === IncidentTypes.ARRESTO
-                        ? (ArrestoIncident as any)
-                        : (IncidentTemplate as any)
-                    }
-                    optionsConfig={{
-                      displayMode: "button",
-                    }}
-                  />
-                </Box>
-              </Stack>
+              )}
             </Grid>
           </Grid>
         </Grid>
 
-        <Grid2 size={12}>
-          {responseMessage && (
+        {responseMessage && (
+          <Grid2 size={12}>
             <Alert severity={isSuccess ? "success" : "error"}>
               <Typography variant="body1" fontWeight={600}>
                 {responseMessage}
               </Typography>
             </Alert>
-          )}
-        </Grid2>
+          </Grid2>
+        )}
 
         <Grid size={12}>
           <BlankCard>
             <CardContent>
-              <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="space-between" mb={2}>
-                <Box textAlign="left">
-                  <Typography variant="h5">Folio: {employeeIncidentData.folio}</Typography>
-                  <Box mt={1}>
-                    <Chip
-                      variant="outlined"
-                      size="medium"
-                      color={employeeIncidentData.incident_status.btn_color}
-                      label={`${employeeIncidentData.incident_status.display_name} - ${
-                        currentStatus
-                          ? formatDate(currentStatus.created_at, "dd/MM/yyyy HH:mm")
-                          : formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")
-                      }`}
-                    />
-                  </Box>
-                </Box>
+              <Stack
+                sx={{ mb: 3 }}
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems={{ xs: "flex-start", sm: "center" }}
+                spacing={2}
+              >
+                <Box>
+                  <Typography variant="h5">{employeeIncidentData.incident.display_name}</Typography>
 
-                <Box
-                  sx={{
-                    textAlign: {
-                      xs: "center",
-                      sm: "left",
-                    },
-                  }}
-                >
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Folio: {employeeIncidentData.folio}
+                  </Typography>
                   {employeeIncidentData.oficio && (
-                    <Typography variant="h5">Oficio: {employeeIncidentData.oficio}</Typography>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      Oficio: {employeeIncidentData.oficio}
+                    </Typography>
                   )}
                 </Box>
+
+                <Stack direction="row" spacing={1}>
+                  <Chip
+                    size="medium"
+                    color={employeeIncidentData.incident_status.btn_color}
+                    label={employeeIncidentData.incident_status.display_name}
+                  />
+                  <Chip
+                    size="medium"
+                    color={employeeIncidentData.incident_status.btn_color}
+                    label={
+                      currentStatus
+                        ? formatDate(currentStatus.created_at, "dd/MM/yyyy HH:mm")
+                        : formatDate(employeeIncidentData.created_at, "dd/MM/yyyy HH:mm")
+                    }
+                  />
+                </Stack>
               </Stack>
-              <Divider></Divider>
 
-              <Grid container spacing={3} mt={2} mb={4}>
-                <Grid size={6}>
-                  <EmployeeDetails data={employeeIncidentData} />
+              <Grid container spacing={3}>
+                {/* LEFT */}
+                <Grid size={{ lg: 8, xs: 12 }}>
+                  <Stack spacing={3}>
+                    <EmployeeDetails data={employeeIncidentData} /> {/* 👈 aquí */}
+                    <IncidentDetails data={employeeIncidentData} />
+                    <Paper variant="outlined" sx={{ height: "100%" }}>
+                      <Box p={3} display="flex" flexDirection="column" gap="4px" height="100%">
+                        <Grid container>
+                          <Grid size={{ lg: 12, xs: 12 }} mb={2}>
+                            <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
+                              JUSTIFICACIÓN
+                            </Typography>
+                            <Divider></Divider>
+                          </Grid>
+                          <Grid size={{ lg: 9, xs: 12 }}>
+                            <Typography variant="body2" color="text.secondary">
+                              {employeeIncidentData.description}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    </Paper>
+                    <IncidentStatusHistory data={employeeIncidentData} />
+                  </Stack>
                 </Grid>
-                <Grid size={6}>
-                  <IncidentDetails data={employeeIncidentData} />
-                </Grid>
-                {employeeIncidentData.incident.display_calendar_dates ? (
-                  <Grid size={12}>
+
+                {/* RIGHT */}
+                <Grid size={{ lg: 4, xs: 12 }}>
+                  <Stack spacing={3}>
                     <IncidentDays data={employeeIncidentData} />
-                  </Grid>
-                ) : null}
-              </Grid>
-
-              <Grid mb={3} size={12}>
-                <Paper variant="outlined" sx={{ height: "100%" }}>
-                  <Box p={3} display="flex" flexDirection="column" gap="4px" height="100%">
-                    <Grid container>
-                      <Grid size={{ lg: 12, xs: 12 }} mb={2}>
-                        <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-                          JUSTIFICACIÓN
-                        </Typography>
-                        <Divider></Divider>
-                      </Grid>
-                      <Grid size={{ lg: 9, xs: 12 }}>
-                        <Typography variant="subtitle1" mb={0.5} fontWeight={600}>
-                          {employeeIncidentData.description}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </Paper>
-              </Grid>
-
-              <Grid mb={3} size={12}>
-                <IncidentStatusHistory data={employeeIncidentData} />
+                    <Paper variant="outlined" sx={{ p: 2 }}>
+                      <PDFGenerator
+                        data={{
+                          ...employeeIncidentData,
+                          signatory: signatoryData,
+                          immediateResponsible: immediateResponsibleData,
+                        }}
+                        title="Formato de incidencia"
+                        fileName={`incidencia-${employeeIncidentData.folio}`}
+                        template={
+                          employeeIncidentData.incident?.name === IncidentTypes.ARRESTO
+                            ? (ArrestoIncident as any)
+                            : (IncidentTemplate as any)
+                        }
+                        optionsConfig={{
+                          displayMode: "button",
+                        }}
+                      />
+                    </Paper>
+                  </Stack>
+                </Grid>
               </Grid>
             </CardContent>
           </BlankCard>
