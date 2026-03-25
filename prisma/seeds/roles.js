@@ -93,5 +93,23 @@ const roles = [
     display_name: "Responsable Inmediato",
     description: "Responsable Inmediato de organismo administrativo",
   },
+  {
+    id: 18,
+    name: "soporte_nivel_1",
+    display_name: "Soporte  Nivel 1",
+    description: "Soporte básico (Help Desk)",
+  },
+  {
+    id: 19,
+    name: "soporte_nivel_2",
+    display_name: "Soporte  Nivel 2",
+    description: "Soporte funcional (RH / sistema)",
+  },
+  {
+    id: 20,
+    name: "soporte_nivel_3",
+    display_name: "Soporte  Nivel 3",
+    description: "Soporte técnico",
+  },
 ];
 module.exports = roles;
