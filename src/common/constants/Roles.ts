@@ -16,6 +16,9 @@ export const ROLES = {
   SECRETARIO: "secretario",
   COORDINADOR: "coordinador",
   RESPONSABLE_INMEDIATO: "responsable_inmediato",
+  SOPORTE_NIVEL_1: "soporte_nivel_1",
+  SOPORTE_NIVEL_2: "soporte_nivel_2",
+  SOPORTE_NIVEL_3: "soporte_nivel_3",
 } as const;
 
 export const ROLES_ID_VALUES = {
@@ -36,6 +39,9 @@ export const ROLES_ID_VALUES = {
   [ROLES.SECRETARIO]: 15,
   [ROLES.COORDINADOR]: 16,
   [ROLES.RESPONSABLE_INMEDIATO]: 17,
+  [ROLES.SOPORTE_NIVEL_1]: 18,
+  [ROLES.SOPORTE_NIVEL_2]: 19,
+  [ROLES.SOPORTE_NIVEL_3]: 20,
 } as const;
 
 export type RoleKey = keyof typeof ROLES;
@@ -59,6 +65,9 @@ export const ROLES_ID: Record<number, RoleKey> = {
   15: "SECRETARIO",
   16: "COORDINADOR",
   17: "RESPONSABLE_INMEDIATO",
+  18: "SOPORTE_NIVEL_1",
+  19: "SOPORTE_NIVEL_2",
+  20: "SOPORTE_NIVEL_3",
 };
 export const ROLE_EXCLUSIONS = {
   USER_CREATION: [ROLES.DIRECTOR, ROLES.EMPLEADO],
