@@ -39,7 +39,7 @@ const incident = {
   INCAPACIDAD: incidentData.find((i) => i.name === "incapacidad").id,
   JUSTIFICACION_ENTRADA: incidentData.find((i) => i.name === "justificacion_entrada").id,
   JUSTIFICACION_SALIDA: incidentData.find((i) => i.name === "justificacion_salida").id,
-  JUSTIFICACION_ENTRADA_SALIDA: incidentData.find((i) => i.name === "justificacion_entrada_salida").id,
+  JUSTIFICACION_RELOJ: incidentData.find((i) => i.name === "justificacion_reloj").id,
   LACTANCIA: incidentData.find((i) => i.name === "lactancia").id,
   PATERNIDAD: incidentData.find((i) => i.name === "paternidad").id,
   PERMISO_ESPECIAL: incidentData.find((i) => i.name === "permiso_especial").id,

@@ -18,7 +18,7 @@ export const INCIDENT_COMPONENTS = {
   [IncidentTypes.INCAPACIDAD]: IncapacityIncident,
   [IncidentTypes.JUSTIFICACION_ENTRADA]: EntryJustificationIncident,
   [IncidentTypes.JUSTIFICACION_SALIDA]: ExitJustificationIncident,
-  [IncidentTypes.JUSTIFICACION_ENTRADA_SALIDA]: ExitJustificationIncident,
+  [IncidentTypes.JUSTIFICACION_RELOJ]: ExitJustificationIncident,
   [IncidentTypes.LACTANCIA]: LactationIncident,
   [IncidentTypes.PATERNIDAD]: PaternityIncident,
   [IncidentTypes.PERMISO_ESPECIAL]: ExitJustificationIncident,

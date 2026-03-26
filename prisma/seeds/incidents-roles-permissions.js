@@ -49,7 +49,7 @@ const basePermissions = [
   },
   {
     incident_id: 4,
-    // name: "justificacion_entrada_salida",
+    // name: "justificacion_reloj",
     can_view: true,
     can_create: true,
     can_validate: false,
