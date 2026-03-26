@@ -34,8 +34,8 @@ const incident = [
   },
   {
     id: 4,
-    name: "justificacion_entrada_salida",
-    display_name: "JUSTIFICACION DE ENTRADA Y SALIDA",
+    name: "justificacion_reloj",
+    display_name: "JUSTIFICACION DE RELOJ",
     type: 1,
     active: true,
     display_calendar_dates: true,
