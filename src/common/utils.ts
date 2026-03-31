@@ -8,6 +8,7 @@ import { HttpResponse } from "@/common/response/model";
 import type { WhereKey } from "@/interfaces/WhereConfig";
 import { handleHttpResponse } from "@/common/response/handler";
 import { ROLES, ROLES_ID, RoleValue } from "@/common/constants/Roles";
+import { INCIDENT_TYPES_ID } from "@/common/constants/IncidentTypes";
 import { ROLES_ID_VALUES } from "@/common/constants/Roles";
 
 export const encryptPassword = async (password: string): Promise<string> => {
@@ -316,8 +317,12 @@ export const validateIncidentDatesRange = (incidentDates: string[], startDate: s
   const start = new Date(startDate);
   const end = new Date(endDate);
 
+  start.setHours(0, 0, 0, 0);
+  end.setHours(23, 59, 59, 999);
+
   return incidentDates.filter((dateStr) => {
     const d = new Date(dateStr);
+    d.setHours(12, 0, 0, 0);
     return d < start || d > end;
   });
 };
@@ -396,6 +401,42 @@ export const validateIncidentDateConflicts = async (
   }
 
   const dateObjects = incidentDates.map((date) => new Date(date));
+
+  if (incidentId === INCIDENT_TYPES_ID.ARRESTO) {
+    const arrestoConflicts = transaction
+      ? await transaction.employeeIncidentDays.findMany({
+          where: {
+            date: { in: dateObjects },
+            employee_incident: {
+              employee_id: employeeId,
+              incident_id: INCIDENT_TYPES_ID.ARRESTO,
+              active: true,
+            },
+          },
+          select: { date: true },
+        })
+      : await prisma.employeeIncidentDays.findMany({
+          where: {
+            date: { in: dateObjects },
+            employee_incident: {
+              employee_id: employeeId,
+              incident_id: INCIDENT_TYPES_ID.ARRESTO,
+              active: true,
+            },
+          },
+          select: { date: true },
+        });
+
+    if (arrestoConflicts.length > 0) {
+      return {
+        hasConflicts: true,
+        conflicts: arrestoConflicts,
+        error: HttpResponse.failure(HttpMessages.incidentRules.notSameDay, {
+          dates: arrestoConflicts.map((d: any) => d.date.toISOString().slice(0, 10)),
+        }),
+      };
+    }
+  }
 
   const conflicts = transaction
     ? await transaction.employeeIncidentDays.findMany({

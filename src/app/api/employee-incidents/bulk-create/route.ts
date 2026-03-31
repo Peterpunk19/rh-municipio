@@ -65,6 +65,8 @@ export async function POST(request: NextRequest) {
       description: body.description,
       oficio: body.oficio ?? null,
       incidentDates: body.incidentDates ?? [],
+      startHour: body.startHour ?? null,
+      endHour: body.endHour ?? null,
       roleId: Number(roleId),
       userId: Number(userId),
       createdBy: employeeId ? Number(employeeId) : Number(userId),

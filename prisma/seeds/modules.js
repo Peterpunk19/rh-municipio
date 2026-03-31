@@ -183,6 +183,14 @@ const modules = [
     icon: "IconPoint",
     parent_id: null,
   },
+  {
+    id: 24,
+    name: "crear_incidencia_masiva",
+    display_name: "Creación masiva de incidencias",
+    route: "/admin/employees-incidents/bulk-create",
+    icon: "IconPoint",
+    parent_id: 2,
+  },
 ];
 
 module.exports = modules;

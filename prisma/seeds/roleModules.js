@@ -1,4 +1,4 @@
-const adminRoleModules = Array.from({ length: 23 }, (_, index) => ({
+const adminRoleModules = Array.from({ length: 24 }, (_, index) => ({
   role_id: 1,
   module_id: index + 1,
   can_view: true,
@@ -66,6 +66,12 @@ const adminNominaRoleModules = [
   { role_id: 8, module_id: 21, can_view: true },
 ];
 
+const soporteRoleModules = [
+  { role_id: 18, module_id: 2, can_view: true, can_create: true, can_edit: true, can_delete: true },
+  { role_id: 18, module_id: 3, can_view: true },
+  { role_id: 18, module_id: 24, can_view: true, can_create: true },
+];
+
 module.exports = [
   ...adminRoleModules,
   ...adminIncidenciaRoleModules,
@@ -74,4 +80,5 @@ module.exports = [
   ...subEnlaceRoleModules,
   ...licenciaMedicaRoleModules,
   ...adminNominaRoleModules,
+  ...soporteRoleModules,
 ];

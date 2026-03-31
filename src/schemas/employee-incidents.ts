@@ -98,6 +98,8 @@ export const EmployeeIncidentsBulkCreateSchema = z
         ),
       )
       .optional(),
+    startHour: z.number().nullable().optional(),
+    endHour: z.number().nullable().optional(),
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: validationMessages.invalidDateRange("Fecha de Terminación", "Fecha de Inicio"),

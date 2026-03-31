@@ -4,7 +4,7 @@ import { IncidentRulesValidationSchema } from "@/schemas/incident-rules";
 import { HttpResponse } from "@/common/response/model";
 import { HttpMessages } from "@/common/response/messages";
 import { handleHttpResponse } from "@/common/response/handler";
-import { getParamsFromUrl } from "@/common/utils";
+import { getParamsFromUrl, validateIncidentDateConflicts } from "@/common/utils";
 import { validateRequestByUrlParams } from "@/common/request/validateRequest";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/middleware/authMiddleware";
@@ -39,6 +39,25 @@ export async function GET(request: NextRequest) {
       startDate: startDate ? new Date(startDate) : undefined,
       endDate: endDate ? new Date(endDate) : undefined,
     });
+
+    if (startDate && endDate) {
+      const datesToCheck = [startDate];
+      if (startDate !== endDate) {
+        datesToCheck.push(endDate);
+      }
+
+      const conflictValidation = await validateIncidentDateConflicts(
+        Number(employeeId),
+        datesToCheck,
+        Number(incidentId),
+      );
+
+      if (conflictValidation.hasConflicts) {
+        const response = HttpResponse.failure(HttpMessages.incidentRules.notSameDay, conflictValidation.conflicts);
+        return handleHttpResponse(response);
+      }
+    }
+
     return handleHttpResponse(validation);
   } catch (error: any) {
     logger.error({ error: error.message, stack: error.stack });
