@@ -31,10 +31,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       const response = HttpResponse.failure(HttpMessages.employee.notFoundById, {}, StatusCodes.NOT_FOUND);
       return handleHttpResponse(response);
     }
-    if (!existingEmployee.active) {
-      const response = HttpResponse.failure(HttpMessages.employee.inactive, {}, StatusCodes.FORBIDDEN);
-      return handleHttpResponse(response);
-    }
+
     const response = HttpResponse.success(HttpMessages.employee.foundById, existingEmployee);
     return handleHttpResponse(response);
   } catch (error) {

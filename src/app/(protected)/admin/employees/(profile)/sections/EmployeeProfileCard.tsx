@@ -19,9 +19,14 @@ const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
   const defaultImageFemale: string = "/images/profile/user-10.jpg";
   const redirectToEdit = "/admin/employees/edit/";
   const fullName = `${employeeData.name} ${employeeData.paternal_last_name} ${employeeData.maternal_last_name}` || "";
-  const category = employeeData?.employee_hiring[0]?.category?.display_name || "";
-  const secretary = employeeData?.employee_ascriptions[0].direccion?.secretaria?.display_name || "";
-  const direction = employeeData?.employee_ascriptions[0].direccion?.display_name || "";
+  const currentHiring = employeeData?.employee_hiring?.[0];
+  const currentAscription = employeeData?.employee_ascriptions?.[0];
+  const statusEmployee = employeeData?.status_employee?.display_name ?? "Sin estatus";
+
+  const category = currentHiring?.category?.display_name || "Sin contrato";
+  const secretary = currentAscription?.direccion?.secretaria?.display_name || "";
+  const direction = currentAscription?.direccion?.display_name || "Sin ascripción";
+
   const [openVigencia, setOpenVigencia] = React.useState(false);
   const fileName = `${normalizeText(fullName)}_${formatDate(new Date(), "dd_MM_yyyy")}`;
 
@@ -47,7 +52,15 @@ const EmployeeProfileCard = ({ employeeData }: EmployeePageProps) => {
 
         {/* Acciones (lado derecho) */}
         <Box>
-          <Chip size="medium" color="primary" label={`Numero de empleado: ${employeeData?.number_employee}`} />
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Chip size="medium" color="primary" label={`Número de empleado: ${employeeData?.number_employee}`} />
+
+            <Chip
+              size="medium"
+              color={statusEmployee === "ACTIVO" ? "success" : statusEmployee === "INACTIVO" ? "error" : "default"}
+              label={statusEmployee}
+            />
+          </Stack>
           <Stack direction="row" spacing={1} mt={1}>
             <IconButton aria-label="vigencia" onClick={() => setOpenVigencia(true)}>
               <IconAmbulance stroke={1.5} />

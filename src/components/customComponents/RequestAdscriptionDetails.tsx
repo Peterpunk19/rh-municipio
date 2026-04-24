@@ -1,5 +1,6 @@
 import React from "react";
 import { Grid2 as Grid, Typography, Stack } from "@mui/material";
+import {formatDateToString} from "@/utils/formatter";
 
 export interface RequestAdscriptionDetailsProps {
   newDireccion?: {
@@ -40,11 +41,7 @@ export const RequestAdscriptionDetails = (
           <Grid size={{ lg: 7, xs: 12 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography variant="subtitle1" fontWeight={600} mb={0.5}>
-                {new Date(request_date).toLocaleDateString('es-ES', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {formatDateToString(request_date)}
               </Typography>
             </Stack>
           </Grid>
@@ -60,11 +57,7 @@ export const RequestAdscriptionDetails = (
           <Grid size={{ lg: 7, xs: 12 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography variant="subtitle1" fontWeight={600} mb={0.5}>
-                {new Date(start_date).toLocaleDateString('es-ES', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {formatDateToString(start_date)}
               </Typography>
             </Stack>
           </Grid>

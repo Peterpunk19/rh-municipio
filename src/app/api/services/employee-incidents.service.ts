@@ -595,14 +595,6 @@ export const EmployeeIncidentsService = {
                 start_job_date: true,
                 end_job_date: true,
                 employee_type_id: true,
-                direccion: {
-                  select: {
-                    id: true,
-                    display_name: true,
-                    secretaria: true,
-                    secretaria_id: true,
-                  },
-                },
               },
             },
             employee_ascriptions: {
@@ -742,16 +734,6 @@ export const EmployeeIncidentsService = {
               },
               employee_type: {
                 select: { id: true, name: true, display_name: true },
-              },
-              direccion: {
-                select: {
-                  id: true,
-                  name: true,
-                  display_name: true,
-                  secretaria: {
-                    select: { id: true, name: true, display_name: true },
-                  },
-                },
               },
             },
           },

@@ -121,7 +121,7 @@ export const EmployeeRequestService = {
             connect: { id: Number(employeeRequest.requestStatusId) },
           },
           created_by: {
-            connect: { id: Number(employeeRequest.employeeId) },
+            connect: { id: Number(employeeRequest.requestedById) },
           },
           created_at: new Date(),
         },
@@ -438,46 +438,17 @@ export const EmployeeRequestService = {
                 },
               },
             },
-            employee_ascriptions: {
+            employee_hiring: {
               where: {
                 active: true,
               },
+              take: 1,
               select: {
                 id: true,
-                start_date: true,
-                end_date: true,
-                direccion: {
-                  select: {
-                    id: true,
-                    name: true,
-                    display_name: true,
-                    secretaria: {
-                      select: {
-                        id: true,
-                        name: true,
-                        display_name: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            employee_hiring: {
-              select: {
-                direccion: {
-                  select: {
-                    id: true,
-                    name: true,
-                    display_name: true,
-                    secretaria: {
-                      select: {
-                        id: true,
-                        name: true,
-                        display_name: true,
-                      },
-                    },
-                  },
-                },
+                active: true,
+                start_job_date: true,
+                end_job_date: true,
+                employee_type_id: true,
                 category: {
                   select: {
                     id: true,
@@ -490,6 +461,34 @@ export const EmployeeRequestService = {
                     id: true,
                     name: true,
                     display_name: true,
+                  },
+                },
+                employee_ascriptions: {
+                  where: {
+                    active: true,
+                  },
+                  take: 1,
+                  orderBy: {
+                    start_date: "desc",
+                  },
+                  select: {
+                    id: true,
+                    start_date: true,
+                    end_date: true,
+                    direccion: {
+                      select: {
+                        id: true,
+                        name: true,
+                        display_name: true,
+                        secretaria: {
+                          select: {
+                            id: true,
+                            name: true,
+                            display_name: true,
+                          },
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -671,10 +670,13 @@ export const EmployeeRequestService = {
         employeeNumber: employeeRequest.employee.number_employee,
         rfc: employeeRequest.employee.rfc,
         curp: employeeRequest.employee.curp,
-        publicOrganization: employeeRequest.employee.employee_hiring[0].direccion?.secretaria.display_name,
-        administrativeOrganization: employeeRequest.employee.employee_hiring[0].direccion?.display_name,
+        publicOrganization:
+          employeeRequest.employee.employee_hiring[0].employee_ascriptions[0].direccion?.secretaria.display_name,
+        administrativeOrganization:
+          employeeRequest.employee.employee_hiring[0].employee_ascriptions[0].direccion?.display_name,
         category: employeeRequest.employee.employee_hiring[0].category?.display_name,
-        employee_ascriptions: employeeRequest.employee.employee_ascriptions[0],
+        employee_hiring: employeeRequest.employee.employee_hiring[0],
+        employee_ascriptions: employeeRequest.employee.employee_hiring[0].employee_ascriptions[0],
         employee_attendance_type: employeeRequest.employee.employee_attendance_type[0],
         employee_type: employeeRequest.employee.employee_hiring[0].employee_type,
       },
@@ -793,6 +795,11 @@ export const EmployeeRequestService = {
       if (statusId === REQUEST_STATUS_ID.APROBADA) {
         const requestTypeId = employeeRequestFound.request.id;
         const employeeId = employeeRequestFound.employee.id;
+        const employeeHiringId = employeeRequestFound.employee.employee_hiring.id;
+        const ascriptionStartDate = employeeRequestFound.request_details.start_date;
+
+        const endDate = new Date(ascriptionStartDate);
+        endDate.setDate(endDate.getDate() - 1);
 
         switch (requestTypeId) {
           case REQUEST_TYPES.SCHEDULE:
@@ -854,10 +861,6 @@ export const EmployeeRequestService = {
               const { new_direccion, new_location, new_attendance, start_at } = employeeRequestFound.request_details;
               const now = new Date();
 
-              const startDate = start_at ? new Date(start_at) : now;
-              const endDate = new Date(startDate);
-              endDate.setFullYear(endDate.getFullYear() + 1);
-
               await tx.employeeAscriptions.updateMany({
                 where: {
                   employee_id: employeeId,
@@ -865,7 +868,7 @@ export const EmployeeRequestService = {
                 },
                 data: {
                   active: false,
-                  end_date: now,
+                  end_date: endDate,
                   updated_at: now,
                 },
               });
@@ -873,10 +876,11 @@ export const EmployeeRequestService = {
               await tx.employeeAscriptions.create({
                 data: {
                   employee_id: employeeId,
+                  employee_hiring_id: employeeHiringId,
                   direccion_id: new_direccion.id,
                   active: true,
-                  start_date: startDate,
-                  end_date: endDate,
+                  start_date: ascriptionStartDate,
+                  end_date: null,
                   created_by_id: approvedBy,
                   created_at: now,
                   updated_at: now,
@@ -1063,20 +1067,6 @@ export const EmployeeRequestService = {
             curp: true,
             employee_hiring: {
               select: {
-                direccion: {
-                  select: {
-                    id: true,
-                    name: true,
-                    display_name: true,
-                    secretaria: {
-                      select: {
-                        id: true,
-                        name: true,
-                        display_name: true,
-                      },
-                    },
-                  },
-                },
                 employee_type: {
                   select: {
                     id: true,

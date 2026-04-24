@@ -20,7 +20,7 @@ export const fetchCategoryData = async (options?: { signal?: AbortSignal }): Pro
     return response.data;
   } catch (error) {
     console.error("Failed to fetch category:", error);
-    return null;
+    return { success: false, responseObject: [] };
   }
 };
 
@@ -52,7 +52,7 @@ export const fetchEmployeeTypesData = async (): Promise<IResponseObject | null> 
     return response.data;
   } catch (error) {
     console.error("Failed to fetch employeeType:", error);
-    return null;
+    return { success: false, responseObject: [] };
   }
 };
 

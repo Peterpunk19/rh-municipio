@@ -29,7 +29,9 @@ const ActiveFiltersChips = ({
     );
   };
 
-  const entries = Object.entries(values || {}).filter(([_, v]) => v);
+  const entries = Object.entries(values || {}).filter(([key, v]) => {
+    return v && filtersMap[key];
+  });
 
   if (entries.length === 0) return null;
 
@@ -44,6 +46,8 @@ const ActiveFiltersChips = ({
     >
       {entries.map(([key, value]) => {
         const filter = filtersMap[key];
+
+        if (!filter) return null;
 
         const label = filter?.label || key;
 

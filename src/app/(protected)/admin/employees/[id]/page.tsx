@@ -18,6 +18,7 @@ import { logger } from "@/lib/logger";
 import PersonalTab from "../(profile)/sections/PersonalTab";
 import AddressTab from "../(profile)/sections/AddressTab";
 import HiringTab from "../(profile)/sections/HiringTab";
+import TerminateContractModal from "../(profile)/sections/TerminateContractModal";
 import LocationScheduleTab from "../(profile)/sections/LocationScheduleTab";
 import EmployeeProfileCard from "../(profile)/sections/EmployeeProfileCard";
 import { useParams } from "next/navigation";
@@ -33,6 +34,8 @@ import { useDispatch } from "@/store/hooks";
 import { a11yPropsProfile } from "@/common/utils";
 import { useTabsWithQueryParam } from "@/hooks/useTabsWithQueryParam";
 import PageContainer from "@/app/components/container/PageContainer";
+import CreateContractModal from "@/app/(protected)/admin/employees/(profile)/sections/CreateContractModal";
+import { fetchCategoryData, fetchEmployeeTypesData, fetchSecretariasData } from "@/services/catalogs";
 
 const TAB_QUERY_MAP = {
   personal: 0,
@@ -77,35 +80,61 @@ const Profile = () => {
   const [employeeData, setEmployeeData] = React.useState<any>(null);
   const [fullName, setFullName] = React.useState<any>("");
 
-  React.useEffect(() => {
-    async function fetchEmployee() {
-      try {
-        if (!id) {
-          redirect("/admin/employees");
-          return;
-        }
+  const [openTerminateModal, setOpenTerminateModal] = React.useState(false);
+  const [selectedHiring, setSelectedHiring] = React.useState<any>(null);
 
-        setLoading(true);
-        const response = await getEmployeeById(id as string);
+  const [openCreateContractModal, setOpenCreateContractModal] = React.useState(false);
 
-        if (response.statusCode === StatusCodes.OK) {
-          setEmployeeData(response.responseObject);
-          const fullName =
-            `${response.responseObject.number_employee} - ${response.responseObject.name} ${response.responseObject.paternal_last_name} ${response.responseObject.maternal_last_name}` ||
-            "";
-          setFullName(fullName);
-        } else {
-          redirect("/admin/employees");
-        }
+  const [categories, setCategories] = React.useState<any[]>([]);
+  const [employeeTypes, setEmployeeTypes] = React.useState<any[]>([]);
+  const [secretarias, setSecretarias] = React.useState<any[]>([]);
 
-        setLoading(false);
-      } catch (error: any) {
-        logger.error({ error: error.message, stack: error.stack });
-        setLoading(false);
+  async function fetchCatalogs() {
+    try {
+      const [categoriesResponse, employeeTypesResponse, secretariasResponse] = await Promise.all([
+        fetchCategoryData(),
+        fetchEmployeeTypesData(),
+        fetchSecretariasData(),
+      ]);
+
+      if (categoriesResponse.success) setCategories(categoriesResponse.responseObject || []);
+      if (employeeTypesResponse.success) setEmployeeTypes(employeeTypesResponse.responseObject || []);
+      if (secretariasResponse.success) setSecretarias(secretariasResponse.responseObject || []);
+    } catch (error: any) {
+      logger.error({ error: error.message, stack: error.stack });
+    }
+  }
+
+  async function fetchEmployee() {
+    try {
+      if (!id) {
+        redirect("/admin/employees");
+        return;
+      }
+
+      setLoading(true);
+      const response = await getEmployeeById(id as string);
+
+      if (response.statusCode === StatusCodes.OK) {
+        setEmployeeData(response.responseObject);
+        const fullName =
+          `${response.responseObject.number_employee} - ${response.responseObject.name} ${response.responseObject.paternal_last_name} ${response.responseObject.maternal_last_name}` ||
+          "";
+        setFullName(fullName);
+      } else {
         redirect("/admin/employees");
       }
-    }
 
+      setLoading(false);
+    } catch (error: any) {
+      logger.error({ error: error.message, stack: error.stack });
+      setLoading(false);
+      redirect("/admin/employees");
+    }
+  }
+
+  React.useEffect(() => {
+    fetchCatalogs();
     fetchEmployee();
   }, [id]);
 
@@ -123,6 +152,21 @@ const Profile = () => {
 
   if (!employeeData && !loading) return <div>Empleado no encontrado</div>;
   if (loading) return <div>Cargando...</div>;
+
+  const handleTerminateContract = (hiring: any) => {
+    console.log("Terminar contrato:", hiring);
+
+    // abrir modal
+    setSelectedHiring(hiring);
+    setOpenTerminateModal(true);
+  };
+
+  const handleCreateNewContract = (employeeData: any) => {
+    console.log("Nuevo contrato:", employeeData);
+
+    // abrir modal
+    setOpenCreateContractModal(true);
+  };
 
   return (
     <PageContainer title={fullName}>
@@ -156,7 +200,7 @@ const Profile = () => {
                     a11y: "personalInformation",
                   },
                   {
-                    label: "Datos de contratación",
+                    label: "Historial de contratación",
                     icon: <IconArticle size={22} />,
                     a11y: "hiringInformation",
                   },
@@ -214,7 +258,11 @@ const Profile = () => {
               </TabPanel>
 
               <TabPanel value={value} index={1}>
-                <HiringTab employeeData={employeeData} />
+                <HiringTab
+                  employeeData={employeeData}
+                  onTerminateContract={handleTerminateContract}
+                  onCreateNewContract={handleCreateNewContract}
+                />
               </TabPanel>
 
               <TabPanel value={value} index={2}>
@@ -282,6 +330,32 @@ const Profile = () => {
           </BlankCard>
         </Grid>
       </Grid>
+      {openTerminateModal && (
+        <TerminateContractModal
+          open={openTerminateModal}
+          hiring={selectedHiring}
+          onClose={() => setOpenTerminateModal(false)}
+          onSuccess={() => {
+            setOpenTerminateModal(false);
+            fetchEmployee();
+          }}
+        />
+      )}
+
+      {openCreateContractModal && (
+        <CreateContractModal
+          open={openCreateContractModal}
+          employeeData={employeeData}
+          categories={categories}
+          employeeTypes={employeeTypes}
+          secretarias={secretarias}
+          onClose={() => setOpenCreateContractModal(false)}
+          onSuccess={() => {
+            setOpenCreateContractModal(false);
+            fetchEmployee();
+          }}
+        />
+      )}
     </PageContainer>
   );
 };
