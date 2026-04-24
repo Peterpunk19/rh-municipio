@@ -37,6 +37,19 @@ export const formatDateStringFilters = (dateStr: string): string => {
   }
 };
 
+export const formatDateToString = (dateString?: string) => {
+  if (!dateString) return "-";
+
+  const date = new Date(dateString);
+  const localDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+
+  return localDate.toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 type ScheduleItem = {
   start_day: { display_name: string };
   start_hour: { display_name: string };

@@ -43,14 +43,13 @@ export async function createEmployeeSeed({
   });
 
   // 3. Hiring
-  await prisma.employeeHiring.create({
+  const employeeHiringId = await prisma.employeeHiring.create({
     data: {
       employee_id: employee.id,
       start_job_date: new Date("2021-01-01"),
       end_job_date: new Date("2030-01-01"),
       category_id: categoryId,
       employee_type_id: employeeTypeId,
-      direccion_id: direccionId,
       active: true,
       created_at: new Date(),
     },
@@ -60,6 +59,7 @@ export async function createEmployeeSeed({
   const ascription = await prisma.employeeAscriptions.create({
     data: {
       employee_id: employee.id,
+      employee_hiring_id: employeeHiringId.id,
       start_date: new Date("2021-01-01"),
       end_date: new Date("2030-01-01"),
       direccion_id: direccionId,

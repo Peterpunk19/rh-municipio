@@ -127,12 +127,20 @@ const BulkCreateIncidentsForm: React.FC = () => {
   }, [selectedSecretaria]);
 
   useEffect(() => {
-    if (selectedDireccion) {
+    const isIncidentConfigured =
+      selectedSecretaria > 0 &&
+      selectedDireccion > 0 &&
+      selectedIncidentType > 0 &&
+      !!startDate &&
+      !!endDate &&
+      (!isArrestoIncident || (startHourId > 0 && endHourId > 0));
+
+    if (isIncidentConfigured) {
       fetchEmployeesByDireccion(Number(selectedDireccion));
     } else {
       setEmployees([]);
     }
-  }, [selectedDireccion]);
+  }, [selectedSecretaria, selectedDireccion, selectedIncidentType, startDate, endDate]);
 
   const fetchSecretarias = async () => {
     try {
@@ -419,6 +427,15 @@ const BulkCreateIncidentsForm: React.FC = () => {
   };
 
   useEffect(() => {
+    const canValidate =
+      selectedIncidentType > 0 &&
+      !!startDate &&
+      !!endDate &&
+      employees.length > 0 &&
+      (!isArrestoIncident || (startHourId > 0 && endHourId > 0));
+
+    if (!canValidate) return;
+
     validateEmployeeIncidents();
   }, [selectedIncidentType, startDate, endDate, selectedDates, startHourId, endHourId]);
 

@@ -1,14 +1,14 @@
 const bcrypt = require("bcryptjs");
 const pLimit = require("p-limit").default;
-const limit = pLimit(4); // 2–4 suele ser ideal
+const limit = pLimit(4);
 
 const normalizeName = (displayName) => {
   if (displayName === undefined) return "";
   return displayName
     .trim()
-    .replace(/['".(),`´-]/g, "") // quita ' " . ( ) , ` ´
+    .replace(/['".(),`´-]/g, "")
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // quita acentos combinados
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/\s+/g, "_");
 };
@@ -18,13 +18,11 @@ const timeToHourName = (time) => {
 };
 
 const direccionAliases = {
-  // legacy => BD
   coordinacion_de_politica_fiscal: "coordinacion_general_de_politica_fiscal",
   direccion_de_mercados: "direccion_de_mercados_y_panteones",
 };
 
 const professionAliases = {
-  // legacy => BD
   375: "162",
   178: "162",
   582: "162",
@@ -46,41 +44,30 @@ const professionAliases = {
 };
 
 const normalizeCategoryName = (displayName) => {
-  return (
-    displayName
-      .trim()
-      // expandir abreviaturas ANTES de limpiar comillas
-      .replace(/\b(ALBAÑILPENS\.?)\b/gi, "ALBAÑIL")
-      .replace(/\b(ELECTROMEC\.?)\b/gi, "ELECTROMECANICO ")
-      .replace(/\b(OF\.?)\b/gi, "OFICIAL ")
-      .replace(/\b(OPER\.?)\b/gi, "OPERADOR ")
-      .replace(/\b(ADMVO\.?)\b/gi, "ADMINISTRATIVO ")
-      .replace(/\b(ESP\.?)\b/gi, "ESPECIALIZADO ")
-      .replace(/\b(ESPEC\.?)\b/gi, "ESPECIALIZADO ")
-      .replace(/\b(AUX\.?)\b/gi, "AUXILIAR ")
-      .replace(/\b(TEC\.?)\b/gi, "TECNICO ")
-      .replace(/\b(EJEC\.?)\b/gi, "EJECUTIVA ")
-      .replace(/\b(AYUD\.?)\b/gi, "AYUDANTE ")
-      .replace(/\b(SEC\.?)\b/gi, "SECRETARIA ")
-      // quitar variantes de "PENSIONADO"
-      .replace(/\b(pens(?:ion\w*|i\w*|\.?)?|pns\.?)\b/gi, "")
-      .replace(/\b(pesionado?)\b/gi, "")
-      .replace(/\b(pen)\b/gi, "")
-      // limpiar caracteres extraños
-      .replace(/['".(),`´]/g, " ")
-      // normalizar acentos
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      // bajar a minúsculas
-      .toLowerCase()
-      // colapsar espacios múltiples
-      .replace(/\s+/g, "_")
-      // quitar guiones bajos sobrantes
-      .replace(/^_+|_+$/g, "")
-  );
+  return displayName
+    .trim()
+    .replace(/\b(ALBAÑILPENS\.?)\b/gi, "ALBAÑIL")
+    .replace(/\b(ELECTROMEC\.?)\b/gi, "ELECTROMECANICO ")
+    .replace(/\b(OF\.?)\b/gi, "OFICIAL ")
+    .replace(/\b(OPER\.?)\b/gi, "OPERADOR ")
+    .replace(/\b(ADMVO\.?)\b/gi, "ADMINISTRATIVO ")
+    .replace(/\b(ESP\.?)\b/gi, "ESPECIALIZADO ")
+    .replace(/\b(ESPEC\.?)\b/gi, "ESPECIALIZADO ")
+    .replace(/\b(AUX\.?)\b/gi, "AUXILIAR ")
+    .replace(/\b(TEC\.?)\b/gi, "TECNICO ")
+    .replace(/\b(EJEC\.?)\b/gi, "EJECUTIVA ")
+    .replace(/\b(AYUD\.?)\b/gi, "AYUDANTE ")
+    .replace(/\b(SEC\.?)\b/gi, "SECRETARIA ")
+    .replace(/\b(pens(?:ion\w*|i\w*|\.?)?|pns\.?)\b/gi, "")
+    .replace(/\b(pesionado?)\b/gi, "")
+    .replace(/\b(pen)\b/gi, "")
+    .replace(/['".(),`´]/g, " ")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .replace(/^_+|_+$/g, "");
 };
-
-const normalizeCache = new Map();
 
 function chunkArray(arr, size) {
   const res = [];
@@ -111,14 +98,14 @@ module.exports = async function seedEmployeesOptimized({
     dayMap,
     locationMap,
   } = maps;
-  console.log("👷 Seeding employees (optimized, safe mode)");
 
-  /* =========================
-       1️⃣ Detect existing USERS
-    ========================= */
+  console.log("👷 Seeding employees (optimized, safe mode)");
 
   const curps = employees.map((e) => e.curp).filter(Boolean);
 
+  /* =========================
+     1️⃣ Detect existing USERS
+  ========================= */
   const existingUsers = await prisma.user.findMany({
     where: { username: { in: curps } },
     select: { id: true, username: true },
@@ -127,9 +114,8 @@ module.exports = async function seedEmployeesOptimized({
   const userByCurp = new Map(existingUsers.map((u) => [u.username, u]));
 
   /* =========================
-       2️⃣ Create missing USERS
-    ========================= */
-
+     2️⃣ Create missing USERS
+  ========================= */
   const usersToCreate = await Promise.all(
     employees
       .filter((e) => e.curp && !userByCurp.has(e.curp))
@@ -153,9 +139,8 @@ module.exports = async function seedEmployeesOptimized({
   }
 
   /* =========================
-       3️⃣ Reload USERS map
-    ========================= */
-
+     3️⃣ Reload USERS map
+  ========================= */
   const users = await prisma.user.findMany({
     where: { username: { in: curps } },
     select: { id: true, username: true },
@@ -164,9 +149,8 @@ module.exports = async function seedEmployeesOptimized({
   const userIdByCurp = new Map(users.map((u) => [u.username, u.id]));
 
   /* =========================
-       5️⃣ Main loop (SAFE)
-    ========================= */
-
+     4️⃣ Insert EMPLOYEES
+  ========================= */
   const employeesToInsert = [];
 
   for (const e of employees) {
@@ -176,7 +160,6 @@ module.exports = async function seedEmployeesOptimized({
     if (!userId) continue;
 
     const resolvedProfessionCode = professionAliases[e.professionCode] ?? e.professionCode;
-
     const professionId = resolvedProfessionCode ? professionMap[String(resolvedProfessionCode)]?.id : null;
 
     employeesToInsert.push({
@@ -228,12 +211,14 @@ module.exports = async function seedEmployeesOptimized({
 
   const addresses = [];
   const tradeUnions = [];
-  const hirings = [];
-  const ascriptions = [];
   const userLinks = [];
   const employeeLocations = [];
   const employeeAttendanceTypes = [];
   const jobSchedules = [];
+
+  let hiringsCreated = 0;
+  let ascriptionsCreated = 0;
+
   const locationStats = {
     noSchedule: [],
     noLocationName: [],
@@ -247,13 +232,13 @@ module.exports = async function seedEmployeesOptimized({
     const employee = employeeByNumber.get(String(e.numberEmployee));
     if (!employee) continue;
 
-    /* ---------- USER LINK (update después) ---------- */
-
     const employeeId = employee.id;
 
+    /* ---------- USER LINK ---------- */
     if (userId) {
       userLinks.push({ userId, employeeId });
     }
+
     if (Number(e.roleId) !== 3) continue;
 
     /* ---------- ADDRESS ---------- */
@@ -280,30 +265,67 @@ module.exports = async function seedEmployeesOptimized({
       });
     }
 
-    /* ---------- HIRING + ASCRIPTION ---------- */
+    /* ---------- HIRING + ASCRIPTION (modificado) ---------- */
     if (e.hiringDate) {
       const resolvedDireccionName = direccionAliases[e._direccionKey] ?? e._direccionKey;
+      const direccionId = resolvedDireccionName ? (direccionMap[resolvedDireccionName]?.id ?? null) : null;
+      const startJobDate = new Date(e.hiringDate);
+      const endJobDate = e.endJobDate ? new Date(e.endJobDate) : null;
+      const categoryId = categoriesMap[e._categoryKey]?.id ?? null;
+      const employeeTypeId = employeeTypesMap[e._employeeTypeKey]?.id ?? null;
 
-      const direccionId = resolvedDireccionName ? direccionMap[resolvedDireccionName]?.id : null;
+      await prisma.$transaction(async (tx) => {
+        let hiring = await tx.employeeHiring.findFirst({
+          where: {
+            employee_id: employeeId,
+            category_id: categoryId,
+            employee_type_id: employeeTypeId,
+            active: true,
+          },
+        });
 
-      hirings.push({
-        employee_id: employeeId,
-        start_job_date: new Date(e.hiringDate),
-        end_job_date: e.endJobDate ? new Date(e.endJobDate) : null,
-        category_id: categoriesMap[e._categoryKey]?.id ?? null,
-        employee_type_id: employeeTypesMap[e._employeeTypeKey]?.id ?? null,
-        direccion_id: direccionId,
-        created_at: now,
-      });
+        if (!hiring) {
+          hiring = await tx.employeeHiring.create({
+            data: {
+              employee_id: employeeId,
+              start_job_date: startJobDate,
+              end_job_date: endJobDate,
+              category_id: categoryId,
+              employee_type_id: employeeTypeId,
+              active: true,
+              created_at: now,
+              updated_at: now,
+            },
+          });
+          hiringsCreated++;
+        }
 
-      ascriptions.push({
-        employee_id: employeeId,
-        start_date: new Date(e.hiringDate),
-        end_date: e.endJobDate ? new Date(e.endJobDate) : null,
-        direccion_id: direccionId,
-        created_by_id: 1,
-        created_at: now,
-        updated_at: now,
+        const existingAscription = await tx.employeeAscriptions.findFirst({
+          where: {
+            employee_id: employeeId,
+            employee_hiring_id: hiring.id,
+            direccion_id: direccionId,
+            start_date: startJobDate,
+            end_date: endJobDate,
+          },
+        });
+
+        if (!existingAscription) {
+          await tx.employeeAscriptions.create({
+            data: {
+              employee_id: employeeId,
+              employee_hiring_id: hiring.id,
+              start_date: startJobDate,
+              end_date: endJobDate,
+              direccion_id: direccionId,
+              created_by_id: 1,
+              active: true,
+              created_at: now,
+              updated_at: now,
+            },
+          });
+          ascriptionsCreated++;
+        }
       });
     }
 
@@ -331,7 +353,7 @@ module.exports = async function seedEmployeesOptimized({
       } else {
         employeeLocations.push({
           employee_id: employeeId,
-          location_id: location.id, // 🔒 garantizado
+          location_id: location.id,
           active: true,
           created_by: 1,
           created_at: now,
@@ -366,8 +388,8 @@ module.exports = async function seedEmployeesOptimized({
         schedule.checkout !== "00:00"
       ) {
         const jornadaMapping = scheduleMappings[schedule.jornada];
-
         if (!jornadaMapping) continue;
+
         const startHour = hourMap[timeToHourName(schedule.checkin)];
         const endHour = hourMap[timeToHourName(schedule.checkout)];
         if (!startHour || !endHour) continue;
@@ -403,20 +425,6 @@ module.exports = async function seedEmployeesOptimized({
 
   for (const batch of chunkArray(tradeUnions, CHUNK)) {
     await prisma.employeeTradeUnion.createMany({
-      data: batch,
-      skipDuplicates: true,
-    });
-  }
-
-  for (const batch of chunkArray(hirings, CHUNK)) {
-    await prisma.employeeHiring.createMany({
-      data: batch,
-      skipDuplicates: true,
-    });
-  }
-
-  for (const batch of chunkArray(ascriptions, CHUNK)) {
-    await prisma.employeeAscriptions.createMany({
       data: batch,
       skipDuplicates: true,
     });
@@ -468,8 +476,8 @@ module.exports = async function seedEmployeesOptimized({
   console.log("Employees:", employeesToInsert.length);
   console.log("Addresses:", addresses.length);
   console.log("TradeUnions:", tradeUnions.length);
-  console.log("Hirings:", hirings.length);
-  console.log("Ascriptions:", ascriptions.length);
+  console.log("Hirings:", hiringsCreated);
+  console.log("Ascriptions:", ascriptionsCreated);
   console.log("User links:", userLinks.length);
   console.log("EmployeeLocations:", employeeLocations.length);
   console.log("EmployeeAttendanceTypes:", employeeAttendanceTypes.length);

@@ -64,7 +64,7 @@ export const EmployeeService = {
           },
           take: 1,
           orderBy: {
-            created_at: "desc",
+            start_date: "desc",
           },
           include: {
             direccion: {
@@ -75,19 +75,22 @@ export const EmployeeService = {
           },
         },
         employee_hiring: {
-          where: {
-            active: true,
-          },
-          take: 1,
           orderBy: {
-            created_at: "desc",
+            start_job_date: "desc",
           },
           include: {
             category: true,
             employee_type: true,
-            direccion: {
+            employee_ascriptions: {
+              orderBy: {
+                start_date: "desc",
+              },
               include: {
-                secretaria: true,
+                direccion: {
+                  include: {
+                    secretaria: true,
+                  },
+                },
               },
             },
           },
@@ -244,7 +247,6 @@ export const EmployeeService = {
           end_job_date: employee.endJobDate,
           category_id: employee.categoryId ? Number(employee.categoryId) : null,
           employee_type_id: employee.employeeTypeId ? Number(employee.employeeTypeId) : null,
-          direccion_id: employee.direccionId ? Number(employee.direccionId) : null,
           created_at: new Date(),
         },
       });
@@ -252,6 +254,7 @@ export const EmployeeService = {
       const createEmployeeAscriptions = await tx.employeeAscriptions.create({
         data: {
           employee_id: createEmployee.id,
+          employee_hiring_id: createEmployeeHiring.id,
           start_date: employee.startJobDate,
           end_date: employee.endJobDate,
           direccion_id: employee.direccionId ? Number(employee.direccionId) : null,
@@ -363,7 +366,7 @@ export const EmployeeService = {
     }
 
     if (employeeFilters.secretaria) {
-      employeeHiringConditions.push({
+      employeeAscriptionsConditions.push({
         direccion: {
           secretaria_id: employeeFilters.secretaria,
           active: true,
@@ -502,14 +505,6 @@ export const EmployeeService = {
                 display_name: true,
               },
             },
-            direccion: {
-              select: {
-                id: true,
-                display_name: true,
-                secretaria: true,
-                secretaria_id: true,
-              },
-            },
           },
         },
         employee_location: {
@@ -627,6 +622,7 @@ export const EmployeeService = {
           where: {
             active: true,
           },
+          orderBy: { start_date: "desc" },
           take: 1,
           select: {
             id: true,
@@ -754,8 +750,24 @@ export const EmployeeService = {
                at.display_name AS attendance_type_display_name,
                g.name AS gender_name
         FROM Employee AS e
-                 JOIN EmployeeHiring AS eh ON eh.employee_id = e.id AND eh.active = 1
-                 JOIN EmployeeAscriptions AS ea ON ea.employee_id = e.id AND ea.active = 1
+                 JOIN EmployeeHiring AS eh
+                      ON eh.id = (
+                          SELECT eh2.id
+                          FROM EmployeeHiring eh2
+                          WHERE eh2.employee_id = e.id
+                            AND eh2.active = 1
+                          ORDER BY eh2.start_job_date DESC, eh2.id DESC
+                          LIMIT 1
+                      )
+                 JOIN EmployeeAscriptions AS ea
+                      ON ea.id = (
+                          SELECT ea2.id
+                          FROM EmployeeAscriptions ea2
+                          WHERE ea2.employee_hiring_id = eh.id
+                            AND ea2.active = 1
+                          ORDER BY ea2.start_date DESC, ea2.id DESC
+                          LIMIT 1
+                      )
                  JOIN Direccion AS d ON ea.direccion_id = d.id
                  JOIN Secretaria AS s ON d.secretaria_id = s.id
                  JOIN Category AS c ON eh.category_id = c.id
@@ -925,7 +937,7 @@ export const EmployeeService = {
           postal_code: employee.postalCode,
           postal_code_sat: employee.postalCodeSat,
           municipality_id: Number(employee.municipalityId),
-          created_at: new Date(),
+          updated_at: new Date(),
         },
         where: {
           id: currentEmployee?.employee_address[0]?.id,
@@ -938,15 +950,26 @@ export const EmployeeService = {
           end_job_date: employee.endJobDate,
           category_id: employee.categoryId ? Number(employee.categoryId) : null,
           employee_type_id: employee.employeeTypeId ? Number(employee.employeeTypeId) : null,
-          direccion_id: employee.direccionId ? Number(employee.direccionId) : null,
-          created_at: new Date(),
+          updated_at: new Date(),
         },
         where: {
           id: currentEmployee?.employee_hiring[0]?.id,
         },
       });
 
-      return [updatedUser, updatedEmployee, updatedEmployeeHiring, updatedEmployeeAddress];
+      const updatedEmployeeAscription = await tx.employeeAscriptions.update({
+        data: {
+          start_date: employee.startJobDate,
+          end_date: employee.endJobDate,
+          direccion_id: employee.direccionId ? Number(employee.direccionId) : null,
+          updated_at: new Date(),
+        },
+        where: {
+          id: currentEmployee?.employee_ascriptions[0]?.id,
+        },
+      });
+
+      return [updatedUser, updatedEmployee, updatedEmployeeHiring, updatedEmployeeAddress, updatedEmployeeAscription];
     });
   },
 
@@ -958,7 +981,6 @@ export const EmployeeService = {
         end_job_date: employeeHiring.endJobDate,
         category_id: Number(employeeHiring.categoryId),
         employee_type_id: Number(employeeHiring.employeeTypeId),
-        direccion_id: Number(employeeHiring.direccionId),
       },
     });
   },

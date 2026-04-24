@@ -23,3 +23,12 @@ export const EmployeeHiringSchema = z.object({
   created_by_user: EmployeeSchema.optional(),
   employee_attendance: z.array(z.object({ id: z.number().int().positive() })),
 });
+
+export const EmployeeHiringPostSchema = z.object({
+  employeeId: z.coerce.number().int().positive(),
+  startJobDate: z.string().min(1, "La fecha de alta es obligatoria"),
+  endJobDate: z.string().nullable().optional(),
+  categoryId: z.coerce.number().int().positive(),
+  employeeTypeId: z.coerce.number().int().positive(),
+  direccionId: z.coerce.number().int().positive(),
+});
