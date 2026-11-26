@@ -1,0 +1,27 @@
+# Agregar al compose de RH Municipio, NO al de GOJIRA Systems.
+# Ejemplo desarrollo: docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.zlink.yml up -d --build zlink-sync
+services:
+  zlink-sync:
+    build:
+      context: .
+      dockerfile: workers/zlink-sync/Dockerfile
+    restart: "on-failure:3" # Limita reintentos si se invalida la autenticacion; alertar al operador.
+    env_file:
+      - ./workers/zlink-sync/.env
+    environment:
+      ZLINK_SESSION_FILE: /app/state/session.json
+      ZLINK_LOCK_FILE: /run/zlink/sync.lock
+    volumes:
+      - zlink_sync_session:/app/state
+    tmpfs:
+      - /run/zlink:mode=0700,uid=1000,gid=1000
+    networks:
+      - app_network
+    # NO exponer puertos. Requiere salida HTTPS a Zlink y acceso a la BD interna.
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  zlink_sync_session:
